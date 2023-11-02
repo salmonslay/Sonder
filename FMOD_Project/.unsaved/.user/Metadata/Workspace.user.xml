@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="Workspace" id="{7fa019b0-2a06-4c20-94a4-0eb32ee1a84d}">
+		<relationship name="projectSettings">
+			<destination>{cfc5677b-a0d4-45b7-be57-93c4980bd293}</destination>
+		</relationship>
+		<relationship name="changelist">
+			<destination>{7a9fdd57-2e32-46a4-93d5-b9b5536386b7}</destination>
+		</relationship>
+	</object>
+	<object class="ProjectSettings" id="{cfc5677b-a0d4-45b7-be57-93c4980bd293}">
+		<property name="openWindows">
+			<value>Mixer 1</value>
+		</property>
+		<property name="windowLayout">
+			<value>AAAACAAAABIAUwBhAG4AZABiAG8AeAAgADEAAABCAdnQywADAAD/////////+AAACgAAAAV4AAADwAAAAcwAAAffAAADRAAAAAACAAAACgAAAAAAAAAAFwAACf8AAAV3AAAAFABQAHIAbwBmAGkAbABlAHIAIAAxAAAAQgHZ0MsAAwAA//////////gAAAoAAAAFeAAAA8AAAAHMAAAH3wAAA28AAAAAAgAAAAoAAAAAAAAAABcAAAn/AAAFdwAAACAAUAByAGUAcwBlAHQAIABCAHIAbwB3AHMAZQByACAAMQAAAEIB2dDLAAMAAP//+acAAADH///7OAAAA7b///moAAAA5v//+zcAAAO1AAAAAQAAAAAKAP//+agAAADm///7NwAAA7UAAAAOAE0AaQB4AGUAcgAgADIAAABCAdnQywADAAD/////////+AAACgAAAAV4AAADwAAAAcwAAAhNAAAFiwAAAAACAAAACgAAAAAAAAAAFwAACf8AAAV3AAAADgBNAGkAeABlAHIAIAAxAAAAQgHZ0MsAAwAA//////////gAAAoAAAAFeAAAA8EAAACWAAAITgAABFUAAAAAAgAAAAoAAAAAAAAAABcAAAn/AAAFdwAAABwARQB2AGUAbgB0ACAARQBkAGkAdABvAHIAIAAyAAAAQgHZ0MsAAwAA//////////gAAAoAAAAFeAAAA8AAAAHMAAAH3wAAA28AAAAAAgAAAAoAAAAAAAAAABcAAAn/AAAFdwAAABwARQB2AGUAbgB0ACAARQBkAGkAdABvAHIAIAAxAAAAQgHZ0MsAAwAA///1//////gAAAAAAAAFeP///pUAAADbAAACtAAAAn4AAAABAgAAAAoA///2AAAAABf/////AAAFdwAAABYAQQB1AGQAaQBvACAAQgBpAG4AIAAxAAAAQgHZ0MsAAwAAAAAENwAAATUAAAXIAAAEJAAABDgAAAFUAAAFxwAABCMAAAAAAAAAAAoAAAAEOAAAAVQAAAXHAAAEIw==</value>
+		</property>
+		<relationship name="activePlatform">
+			<destination>{4450301f-3f62-40f6-8908-c53e5f326e0b}</destination>
+		</relationship>
+	</object>
+	<object class="WorkspaceChangelist" id="{7a9fdd57-2e32-46a4-93d5-b9b5536386b7}" />
+</objects>
