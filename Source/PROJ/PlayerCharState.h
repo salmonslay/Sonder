@@ -24,6 +24,5 @@ public:
 
 	/** Called when the state exits to transition to a different state */
 	virtual void Exit() {} 
-
 		
 };

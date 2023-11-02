@@ -9,7 +9,7 @@
 class UPlayerCharState; 
 
 /**
- * This is the state machine for the player(s) 
+ * This is the state machine for the player 
  */
 
 UCLASS()

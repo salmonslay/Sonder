@@ -7,7 +7,7 @@
 
 ACharacterStateMachine::ACharacterStateMachine()
 {
-	// Create a state 
+	// Create the states 
 	DummyState = CreateDefaultSubobject<UDummyPlayerState>(TEXT("Dummy State"));
 
 	// Set starting state 
