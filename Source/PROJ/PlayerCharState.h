@@ -6,6 +6,9 @@
 #include "Components/ActorComponent.h"
 #include "PlayerCharState.generated.h"
 
+/**
+ * The base class that all player states should/must inherit from 
+ */
 
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJ_API UPlayerCharState : public UActorComponent
