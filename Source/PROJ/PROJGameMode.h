@@ -12,7 +12,9 @@ class APROJGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 public:
+	
 	APROJGameMode();
+	
 };
 
 
