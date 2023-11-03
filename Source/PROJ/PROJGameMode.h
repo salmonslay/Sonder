@@ -14,14 +14,6 @@ class APROJGameMode : public AGameModeBase
 public:
 	
 	APROJGameMode();
-
-protected:
-
-	virtual void BeginPlay() override;
-
-private:
-
-	void SetUpCamera(); 
 	
 };
 
