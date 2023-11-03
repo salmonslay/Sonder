@@ -12,7 +12,17 @@ class APROJGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 public:
+	
 	APROJGameMode();
+
+protected:
+
+	virtual void BeginPlay() override;
+
+private:
+
+	void SetUpCamera(); 
+	
 };
 
 
