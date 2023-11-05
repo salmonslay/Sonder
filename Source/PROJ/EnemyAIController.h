@@ -13,5 +13,10 @@ UCLASS()
 class PROJ_API AEnemyAIController : public AAIController
 {
 	GENERATED_BODY()
-	
+
+public:
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent TempMesh;
+
+	virtual void BeginPlay() override;
 };
