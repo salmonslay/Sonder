@@ -21,8 +21,6 @@ void ACharactersCamera::BeginPlay()
 {
 	Super::BeginPlay();	
 	CameraSpline = CameraSplineClass->CameraSpline;
-	//PlayerOne = UGameplayStatics::GetPlayerCharacter(GetWorld(),0);
-	//PlayerTwo = UGameplayStatics::GetPlayerCharacter(GetWorld(),1);
 	FTimerHandle Handle;
 	GetWorld()->GetTimerManager().SetTimer(Handle,this, &ACharactersCamera::GetPlayers,2.0f);
 	
