@@ -30,12 +30,10 @@ void ACharactersCamera::BeginPlay()
 
 void ACharactersCamera::GetPlayers()
 {
-	APROJGameMode* CurrentGameMode = Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this));
-	if (CurrentGameMode != nullptr)
+	if (APROJGameMode* CurrentGameMode = Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this)); CurrentGameMode != nullptr)
 	{
 		PlayerOne = CurrentGameMode->GetActivePlayer(0);
-		AGameStateBase* GSB = UGameplayStatics::GetGameState(this);
-		if (GSB->PlayerArray.Num() > 1)
+		if (const AGameStateBase* Gsb = UGameplayStatics::GetGameState(this); Gsb->PlayerArray.Num() > 1)
 		{
 			PlayerTwo = CurrentGameMode->GetActivePlayer(1);
 		}
@@ -52,21 +50,21 @@ void ACharactersCamera::Tick(float DeltaSeconds)
 	
 }
 
-void ACharactersCamera::MoveCamera()
+void ACharactersCamera::MoveCamera() const
 {
 	if (bAllowMovement)
 	{
 		if (PlayerOne != nullptr && PlayerTwo != nullptr)
 		{
-				FVector MiddlePostion = (PlayerOne->GetActorLocation()/2) + (PlayerTwo->GetActorLocation()/2);
-				FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(MiddlePostion, ESplineCoordinateSpace::World);
-				FVector TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeed);
+			const FVector MiddleLocation = (PlayerOne->GetActorLocation()/2) + (PlayerTwo->GetActorLocation()/2);
+			const FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(MiddleLocation, ESplineCoordinateSpace::World);
+			const FVector TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeed);
 				CameraComponent->SetWorldLocation(TargetLocation);
 			
 		} else if (PlayerTwo == nullptr)
 		{
-			FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(PlayerOne->GetActorLocation(), ESplineCoordinateSpace::World);
-			FVector TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeed);
+			const FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(PlayerOne->GetActorLocation(), ESplineCoordinateSpace::World);
+			const FVector TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeed);
 			CameraComponent->SetWorldLocation(TargetLocation);
 		}
 		else
