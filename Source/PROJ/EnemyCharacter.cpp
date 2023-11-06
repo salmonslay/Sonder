@@ -3,6 +3,8 @@
 
 #include "EnemyCharacter.h"
 
+#include "EnemyAIController.h"
+
 // Sets default values
 AEnemyCharacter::AEnemyCharacter()
 {
@@ -16,6 +18,19 @@ void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 	
+}
+
+void AEnemyCharacter::InitializeController()
+{
+	if(bIsControllerInitialized) return;
+	bIsControllerInitialized = true;
+	AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController());
+	if(AIController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("HAsController"));
+
+		AIController->Initialize();
+	}
 }
 
 // Called every frame
