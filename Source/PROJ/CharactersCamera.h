@@ -25,10 +25,13 @@ protected:
 
 private:
 	virtual void Tick(float DeltaSeconds) override;
+	void MoveCamera();
 
 	UCameraComponent* CameraComponent;
 
-	void MoveCamera();
+	UPROPERTY(EditAnywhere)
+	double InterpSpeed;
+	
 
 	ACharacter* PlayerOne;
 	ACharacter* PlayerTwo;
