@@ -7,6 +7,7 @@
 #include "Camera/CameraActor.h"
 #include "CharactersCamera.generated.h"
 
+class APROJCharacter;
 /**
  * 
  */
@@ -25,7 +26,12 @@ protected:
 
 private:
 	virtual void Tick(float DeltaSeconds) override;
+	
 	void MoveCamera();
+
+	void GetPlayers();
+
+	bool bAllowMovement;
 
 	UCameraComponent* CameraComponent;
 
@@ -33,8 +39,8 @@ private:
 	double InterpSpeed;
 	
 
-	ACharacter* PlayerOne;
-	ACharacter* PlayerTwo;
+	APROJCharacter* PlayerOne = nullptr;
+	APROJCharacter* PlayerTwo = nullptr;
 
 	USplineComponent* CameraSpline;
 	
