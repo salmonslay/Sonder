@@ -3,3 +3,62 @@
 
 #include "EnemyAIController.h"
 
+#include "PROJCharacter.h"
+#include "PROJGameMode.h"
+#include "BehaviorTree/BehaviorTree.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "GameFramework/Character.h"
+#include "GameFramework/GameModeBase.h"
+#include "Kismet/GameplayStatics.h"
+
+void AEnemyAIController::Initialize()
+{
+	if(BT)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("BehaviourTReetorun %s"), *BT->GetName());
+		RunBehaviorTree(BT);
+	}
+	
+	//GetBlackboardComponent()->SetValueAsObject(TEXT("PlayerOne"), UGameplayStatics::GetPlayerCharacter(this, 0));
+
+	APROJGameMode* CurrentGameMode = Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this));
+	if (CurrentGameMode != nullptr)
+	{
+		P1 = CurrentGameMode->GetActivePlayer(0);
+		P2 = CurrentGameMode->GetActivePlayer(1);
+
+		if (P1 != nullptr)
+		{
+			GetBlackboardComponent()->SetValueAsObject(TEXT("PlayerOne"), P1);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No player 1"));
+		}
+		if (P2 != nullptr)
+		{
+			GetBlackboardComponent()->SetValueAsObject(TEXT("PlayerTwo"), P2);
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("No player 2"));
+
+		}
+	}
+	
+
+	
+
+	//GetBlackboardComponent()->SetValueAsObject(TEXT("PlayerTwo"), UGameplayStatics::GetPlayerCharacter(this, 1));
+	//UE_LOG(LogTemp, Warning, TEXT("P1 loc %f, %f, %f"),  Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this))->P1->GetActorLocation().X, Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this))->P1->GetActorLocation().Y, Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this))->P1->GetActorLocation().Z);
+	//UE_LOG(LogTemp, Warning, TEXT("P2 loc %f, %f, %f"),  Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this))->P2->GetActorLocation().X, Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this))->P2->GetActorLocation().Y, Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this))->P2->GetActorLocation().Z);
+
+	//UE_LOG(LogTemp, Warning, TEXT("P2 loc %f, %f, %f"), UGameplayStatics::GetPlayerCharacter(this, 1)->GetActorLocation().X, UGameplayStatics::GetPlayerCharacter(this, 1)->GetActorLocation().Y, UGameplayStatics::GetPlayerCharacter(this, 1)->GetActorLocation().Z);
+
+
+}
+
+void AEnemyAIController::BeginPlay()
+{
+	Super::BeginPlay();
+}

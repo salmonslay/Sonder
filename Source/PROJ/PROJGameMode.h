@@ -6,6 +6,8 @@
 #include "GameFramework/GameModeBase.h"
 #include "PROJGameMode.generated.h"
 
+class APROJCharacter;
+
 UCLASS(minimalapi)
 class APROJGameMode : public AGameModeBase
 {
@@ -14,7 +16,13 @@ class APROJGameMode : public AGameModeBase
 public:
 	
 	APROJGameMode();
-	
+
+	APROJCharacter* GetActivePlayer(int Index);
+
+
+	virtual void BeginPlay() override;
+
+
 };
 
 
