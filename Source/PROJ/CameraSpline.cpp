@@ -10,6 +10,7 @@ ACameraSpline::ACameraSpline()
 	PrimaryActorTick.bCanEverTick = true;
 
 	CameraSpline = CreateDefaultSubobject<USplineComponent>("CameraSpline");
+	
 
 }
 

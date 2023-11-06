@@ -18,7 +18,7 @@ class PROJ_API ACharactersCamera : public ACameraActor
 	ACharactersCamera();
 
 	UPROPERTY(EditAnywhere)
-	ACameraSpline* CameraSpline;
+	ACameraSpline* CameraSplineClass;
 
 protected:
 	virtual void BeginPlay();
@@ -27,5 +27,12 @@ private:
 	virtual void Tick(float DeltaSeconds) override;
 
 	UCameraComponent* CameraComponent;
+
+	void MoveCamera();
+
+	ACharacter* PlayerOne;
+	ACharacter* PlayerTwo;
+
+	USplineComponent* CameraSpline;
 	
 };

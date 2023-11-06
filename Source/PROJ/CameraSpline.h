@@ -20,4 +20,5 @@ public:
 	USplineComponent* CameraSpline;
 
 	
+	
 };
