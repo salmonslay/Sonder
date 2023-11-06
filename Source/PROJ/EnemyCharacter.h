@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "EnemyCharacter.generated.h"
 
+class UBehaviorTree;
+
 UCLASS()
 class PROJ_API AEnemyCharacter : public ACharacter
 {
@@ -19,6 +21,14 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	FTimerHandle InitializerTimerHandle;
+
+	void InitializeController();
+
+
+private:
+	bool bIsControllerInitialized = false;
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;

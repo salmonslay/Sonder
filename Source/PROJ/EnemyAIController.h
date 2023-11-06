@@ -14,9 +14,17 @@ class PROJ_API AEnemyAIController : public AAIController
 {
 	GENERATED_BODY()
 
+private:
+	UPROPERTY(EditAnywhere,  meta=(AllowPrivateAccess = true))
+	UBehaviorTree* BT = nullptr;
+	
+
+
 public:
 	UPROPERTY(EditAnywhere)
-	UStaticMeshComponent TempMesh;
+	UStaticMeshComponent* TempMesh;
+
+	void Initialize();
 
 	virtual void BeginPlay() override;
 };
