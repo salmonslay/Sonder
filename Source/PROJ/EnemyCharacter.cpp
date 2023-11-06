@@ -17,12 +17,15 @@ AEnemyCharacter::AEnemyCharacter()
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
+
+	GetWorldTimerManager().SetTimer(InitializerTimerHandle, this, &AEnemyCharacter::InitializeController, 2, false, 2);
 	
 }
 
 void AEnemyCharacter::InitializeController()
 {
 	if(bIsControllerInitialized) return;
+	UE_LOG(LogTemp, Warning, TEXT("Start initializing controller"));
 	bIsControllerInitialized = true;
 	AEnemyAIController* AIController = Cast<AEnemyAIController>(GetController());
 	if(AIController)
