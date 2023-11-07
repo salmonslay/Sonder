@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "EnemyCharacter.generated.h"
 
+class UBaseHealthComponent;
 class UBehaviorTree;
 
 UCLASS()
@@ -28,6 +29,8 @@ protected:
 
 private:
 	bool bIsControllerInitialized = false;
+
+	
 	
 public:	
 	// Called every frame
@@ -35,5 +38,10 @@ public:
 
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+
+	UPROPERTY(VisibleAnywhere, Category=Health)
+	UBaseHealthComponent* HealthComponent = nullptr;
+
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 };
