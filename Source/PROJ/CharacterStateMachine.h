@@ -29,6 +29,8 @@ protected:
 	virtual void BeginPlay() override;
 	
 	virtual void Tick(float DeltaSeconds) override;
+
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override; 
 	
 private:
 
@@ -38,6 +40,9 @@ private:
 
 	// The player's current state
 	UPROPERTY()
-	UPlayerCharState* CurrentState; 
+	UPlayerCharState* CurrentState;
+
+	UPROPERTY(EditAnywhere)
+	class UPlayerBasicAttack* BasicAttack; 
 	
 };
