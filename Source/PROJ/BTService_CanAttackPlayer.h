@@ -4,21 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
-#include "BTService_AlternateTargetPlayer.generated.h"
+#include "BTService_CanAttackPlayer.generated.h"
 
-class AEnemyAIController;
-class APROJCharacter;
 class AEnemyCharacter;
+class APROJCharacter;
 /**
  * 
  */
 UCLASS()
-class PROJ_API UBTService_AlternateTargetPlayer : public UBTService_BlackboardBase
+class PROJ_API UBTService_CanAttackPlayer : public UBTService_BlackboardBase
 {
 	GENERATED_BODY()
-		
+
+			
 public: /** Constructor*/
-	UBTService_AlternateTargetPlayer();
+	UBTService_CanAttackPlayer();
 
 	/** I have no idea when this is called but it is needed */
 	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;
@@ -30,17 +30,16 @@ protected:
 	/** Tick node is called every tick service is in progress*/
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
-	UPROPERTY()
-	AEnemyCharacter* OwnerCharacter;
 
-	UPROPERTY()
-	AEnemyAIController* OwnerController;
+	UPROPERTY(VisibleAnywhere)
+	AEnemyCharacter* OwnerCharacter = nullptr;
 
-	APROJCharacter* Player1 = nullptr;
-	APROJCharacter* Player2 = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float RadiusToDamagePlayer = 0.f;
+
 
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;
 	
-
 };

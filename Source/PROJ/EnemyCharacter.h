@@ -42,6 +42,15 @@ public:
 	UPROPERTY(VisibleAnywhere, Category=Health)
 	UBaseHealthComponent* HealthComponent = nullptr;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnTakenDamageEvent();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnAttackEvent();
+
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DamageToPlayer = 0.f;
 
 };
