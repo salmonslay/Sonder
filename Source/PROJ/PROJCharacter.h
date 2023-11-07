@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "PROJCharacter.generated.h"
 
+class UBaseHealthComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
@@ -19,7 +20,6 @@ UCLASS(config=Game)
 class APROJCharacter : public ACharacter
 {
 	GENERATED_BODY()
-	
 	
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -38,24 +38,45 @@ class APROJCharacter : public ACharacter
 	UInputAction* LookAction;
 
 public:
-	APROJCharacter();
 	
+	APROJCharacter();
+
+	/** Toggles depth movement */
+	void SetDepthMovementEnabled(const bool bNewEnable) { bDepthMovementEnabled = bNewEnable; }
+
+	UPROPERTY(VisibleAnywhere, Category=Health)
+	UBaseHealthComponent* HealthComponent = nullptr;
+
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DamageToPlayer = 0.f;
+
+	// Components seem to not be able to create events (easily), which is why the event is declared here 
+	/** Event called when player performs a basic attack */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnBasicAttack(); 
 
 protected:
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
-
-	/** Called for looking input */
-	void Look(const FInputActionValue& Value);
-			
-
-protected:
+	
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	// To add mapping context
 	virtual void BeginPlay();
+
+private:
+
+	/** Determines if player can move in both axes */
+	bool bDepthMovementEnabled = false;
+
+	UPROPERTY(EditAnywhere)
+	class UPlayerBasicAttack* BasicAttack;
+
+	void CreateComponents(); 
 	
 };
 

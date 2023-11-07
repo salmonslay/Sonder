@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "PROJCharacter.h"
+
+#include "BaseHealthComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -8,11 +10,9 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "PlayerBasicAttack.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
-
-//////////////////////////////////////////////////////////////////////////
-// APROJCharacter
 
 APROJCharacter::APROJCharacter()
 {
@@ -24,7 +24,7 @@ APROJCharacter::APROJCharacter()
 	bUseControllerRotationYaw = false;
 	bUseControllerRotationRoll = false;
 
-	// Configure character movement, auto rotation. Do we want it? 
+	// Configure character movement, auto rotation 
 	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
 	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500.0f, 0.0f); // ...at this rotation rate
 
@@ -37,24 +37,15 @@ APROJCharacter::APROJCharacter()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 
+	CreateComponents(); 
+}
 
+void APROJCharacter::CreateComponents()
+{
+	HealthComponent = CreateDefaultSubobject<UBaseHealthComponent>("HealthComponent");
 
-	// Camera stuff below, we handle camera separately from the player so we dont use it 
-	
-	// Create a camera boom (pulls in towards the player if there is a collision)
-	// CameraBoom = CreateDefaultSubobject<USpringArmComponent>(TEXT("CameraBoom"));
-	// CameraBoom->SetupAttachment(RootComponent);
-	// CameraBoom->TargetArmLength = 400.0f; // The camera follows at this distance behind the character	
-	// CameraBoom->bUsePawnControlRotation = true; // Rotate the arm based on the controller
-
-	// Create a follow camera
-	// FollowCamera = CreateDefaultSubobject<UCameraComponent>(TEXT("FollowCamera"));
-	// FollowCamera->SetupAttachment(CameraBoom, USpringArmComponent::SocketName); // Attach the camera to the end of the boom and let the boom adjust to match the controller orientation
-	// FollowCamera->bUsePawnControlRotation = false; // Camera does not rotate relative to arm
-
-
-	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
-	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
+	BasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(FName("Basic Attack")); 
+	BasicAttack->SetupAttachment(RootComponent); 
 }
 
 void APROJCharacter::BeginPlay()
@@ -72,9 +63,6 @@ void APROJCharacter::BeginPlay()
 	}
 }
 
-//////////////////////////////////////////////////////////////////////////
-// Input
-
 void APROJCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
@@ -87,8 +75,8 @@ void APROJCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APROJCharacter::Move);
 
-		// Looking, we dont use it 
-		// EnhancedInputComponent->BindAction(LookAction, ETriggerEvent::Triggered, this, &APROJCharacter::Look);
+		// Attack 
+		FindComponentByClass<UPlayerBasicAttack>()->SetUpInput(EnhancedInputComponent); 
 	}
 	else
 	{
@@ -107,28 +95,26 @@ void APROJCharacter::Move(const FInputActionValue& Value)
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get forward vector, we only move horizontally as of now 
-		// const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		// get forward vector 
+		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	
 		// get right vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// add movement 
-		// AddMovementInput(ForwardDirection, MovementVector.Y);
+		// add movement, only in depth if enabled 
+		if(bDepthMovementEnabled)
+			AddMovementInput(ForwardDirection, MovementVector.Y);
+		
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
 }
 
-// Makes the player move based on look direction determined by mouse position, we dont want that 
-// void APROJCharacter::Look(const FInputActionValue& Value)
-// {
-// 	// input is a Vector2D
-// 	FVector2D LookAxisVector = Value.Get<FVector2D>();
-//
-// 	if (Controller != nullptr)
-// 	{
-// 		// add yaw and pitch input to controller
-// 		AddControllerYawInput(LookAxisVector.X);
-// 		AddControllerPitchInput(LookAxisVector.Y);
-// 	}
-// }
+float APROJCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser); 
+	
+	DamageApplied = HealthComponent->TakeDamage(DamageApplied); 
+	
+	return DamageApplied;
+}

@@ -13,10 +13,20 @@ void AProjPlayerController::BeginPlay()
 	SetCamera(); 
 }
 
+void AProjPlayerController::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	// TODO: Figure out why the player camera changes automatically after a few seconds so this can be removed 
+	if(GetViewTarget() != MainCam) 
+		SetViewTarget(MainCam); 
+}
+
 void AProjPlayerController::SetCamera()
 {
-	const auto MainCamera = Cast<ACameraActor>(UGameplayStatics::GetActorOfClass(this, ACameraActor::StaticClass()));
-
-	if(IsValid(MainCamera)) 
-		SetViewTarget(MainCamera);
+	if(!MainCam)
+		MainCam = Cast<ACameraActor>(UGameplayStatics::GetActorOfClass(this, ACameraActor::StaticClass())); 
+	
+	if(IsValid(MainCam)) 
+		SetViewTarget(MainCam); 
 }

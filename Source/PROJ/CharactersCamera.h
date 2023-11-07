@@ -27,7 +27,7 @@ protected:
 private:
 	virtual void Tick(float DeltaSeconds) override;
 	
-	void MoveCamera();
+	void MoveCamera() const;
 
 	void GetPlayers();
 

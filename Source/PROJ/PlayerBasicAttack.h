@@ -19,6 +19,9 @@ public:
 	/** Called to connect input to attack function */
 	void SetUpInput(UEnhancedInputComponent* InputComp);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void FooEvent();
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -43,6 +46,7 @@ private:
 
 	void EnableCanAttack();
 
-	class ACharacterStateMachine* Player; 
+	UPROPERTY()
+	class APROJCharacter* Player; 
 	
 };
