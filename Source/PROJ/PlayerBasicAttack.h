@@ -27,6 +27,16 @@ private:
 	UPROPERTY(EditAnywhere)
 	class UInputAction* AttackInputAction; 
 
+	/** Damage inflicted on enemies */
 	UPROPERTY(EditAnywhere)
-	float Damage = 5.f; 
+	float Damage = 5.f;
+
+	/** How long time needs to pass between attacks */
+	UPROPERTY(EditAnywhere)
+	float AttackCooldown = 0.5f; 
+	
+	bool bCanAttack = true;
+
+	void EnableCanAttack(); 
+	
 };
