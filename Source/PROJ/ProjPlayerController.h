@@ -17,11 +17,15 @@ class PROJ_API AProjPlayerController : public APlayerController
 
 protected:
 
-	virtual void BeginPlay() override; 
+	virtual void BeginPlay() override;
+
+	virtual void Tick(float DeltaSeconds) override;
 	
 private:
 
 	/** Finds the camera in the level and sets it as view target/the player's camera */
-	void SetCamera(); 
+	void SetCamera();
+
+	ACameraActor* MainCam; 
 	
 };

@@ -27,6 +27,7 @@ void UPlayerBasicAttack::BeginPlay()
 	Player = Cast<ACharacterStateMachine>(GetOwner()); 
 }
 
+// TODO: This whole function is only run locally rn, make sure what needs to be networked, is networked 
 void UPlayerBasicAttack::Attack()
 {
 	if(!bCanAttack)

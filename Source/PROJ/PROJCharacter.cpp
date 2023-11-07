@@ -107,28 +107,16 @@ void APROJCharacter::Move(const FInputActionValue& Value)
 		const FRotator Rotation = Controller->GetControlRotation();
 		const FRotator YawRotation(0, Rotation.Yaw, 0);
 
-		// get forward vector, we only move horizontally as of now 
-		// const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+		// get forward vector 
+		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
 	
 		// get right vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
-		// add movement 
-		// AddMovementInput(ForwardDirection, MovementVector.Y);
+		// add movement, only in depth if enabled 
+		if(bDepthMovementEnabled)
+			AddMovementInput(ForwardDirection, MovementVector.Y);
+		
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
 }
-
-// Makes the player move based on look direction determined by mouse position, we dont want that 
-// void APROJCharacter::Look(const FInputActionValue& Value)
-// {
-// 	// input is a Vector2D
-// 	FVector2D LookAxisVector = Value.Get<FVector2D>();
-//
-// 	if (Controller != nullptr)
-// 	{
-// 		// add yaw and pitch input to controller
-// 		AddControllerYawInput(LookAxisVector.X);
-// 		AddControllerPitchInput(LookAxisVector.Y);
-// 	}
-// }

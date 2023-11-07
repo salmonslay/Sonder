@@ -20,7 +20,6 @@ class APROJCharacter : public ACharacter
 {
 	GENERATED_BODY()
 	
-	
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
@@ -38,24 +37,27 @@ class APROJCharacter : public ACharacter
 	UInputAction* LookAction;
 
 public:
-	APROJCharacter();
 	
+	APROJCharacter();
+
+	/** Toggles depth movement */
+	void SetDepthMovementEnabled(const bool bNewEnable) { bDepthMovementEnabled = bNewEnable; }
 
 protected:
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
-
-	/** Called for looking input */
-	void Look(const FInputActionValue& Value);
-			
-
-protected:
+	
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	// To add mapping context
 	virtual void BeginPlay();
+
+private:
+
+	/** Determines if player can move in both axes */
+	bool bDepthMovementEnabled = false; 
 	
 };
 
