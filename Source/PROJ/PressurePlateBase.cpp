@@ -26,6 +26,7 @@ void APressurePlateBase::BeginPlay()
 {
 	Super::BeginPlay();
 	
+	
 }
 
 // Called every frame
