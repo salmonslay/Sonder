@@ -43,6 +43,7 @@ private:
 
 	void EnableCanAttack();
 
+	UPROPERTY()
 	class ACharacterStateMachine* Player; 
 	
 };
