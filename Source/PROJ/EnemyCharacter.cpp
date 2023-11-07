@@ -40,6 +40,7 @@ void AEnemyCharacter::InitializeController()
 	}
 }
 
+
 // Called every frame
 void AEnemyCharacter::Tick(float DeltaTime)
 {
@@ -58,7 +59,11 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 	AActor* DamageCauser)
 {
 	float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	if(HealthComponent->IsDead()) return DamageAmount;
+	if(HealthComponent->IsDead())
+	{
+		KillMe();
+		return DamageAmount;
+	}
 	DamageApplied = FMath::Min(HealthComponent->GetHealth(), DamageApplied);
 	HealthComponent->SetHealth(HealthComponent->GetHealth() - DamageApplied);
 	OnTakenDamageEvent();
@@ -66,3 +71,7 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 	return DamageApplied;
 }
 
+void AEnemyCharacter::KillMe()
+{
+	OnDeathEvent();
+}

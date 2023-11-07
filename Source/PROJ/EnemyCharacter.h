@@ -30,7 +30,7 @@ protected:
 private:
 	bool bIsControllerInitialized = false;
 
-	
+	void KillMe();
 	
 public:	
 	// Called every frame
@@ -47,6 +47,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnAttackEvent();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDeathEvent();
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
