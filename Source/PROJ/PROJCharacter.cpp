@@ -1,6 +1,8 @@
 // Copyright Epic Games, Inc. All Rights Reserved.
 
 #include "PROJCharacter.h"
+
+#include "BaseHealthComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -37,7 +39,7 @@ APROJCharacter::APROJCharacter()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 
-
+	HealthComponent = CreateDefaultSubobject<UBaseHealthComponent>("HealthComponent");
 
 	// Camera stuff below, we handle camera separately from the player so we dont use it 
 	
@@ -56,6 +58,7 @@ APROJCharacter::APROJCharacter()
 	// Note: The skeletal mesh and anim blueprint references on the Mesh component (inherited from Character) 
 	// are set in the derived blueprint asset named ThirdPersonCharacter (to avoid direct content references in C++)
 }
+
 
 void APROJCharacter::BeginPlay()
 {
@@ -118,6 +121,21 @@ void APROJCharacter::Move(const FInputActionValue& Value)
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
 }
+
+
+float APROJCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	AActor* DamageCauser)
+{
+	float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	if(HealthComponent->IsDead())
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Player dead%f"), DamageApplied)
+		return DamageAmount;
+	}
+	DamageApplied = FMath::Min(HealthComponent->GetHealth(), DamageApplied);
+	HealthComponent->SetHealth(HealthComponent->GetHealth() - DamageApplied);
+	UE_LOG(LogTemp, Warning, TEXT("Damage applied to player ,%f"), DamageApplied)
+	return DamageApplied;}
 
 // Makes the player move based on look direction determined by mouse position, we dont want that 
 // void APROJCharacter::Look(const FInputActionValue& Value)
