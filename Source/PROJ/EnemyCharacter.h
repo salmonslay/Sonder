@@ -17,6 +17,9 @@ class PROJ_API AEnemyCharacter : public ACharacter
 public:
 	// Sets default values for this character's properties
 	AEnemyCharacter();
+	
+	/** Property replication */
+    void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
 	// Called when the game starts or when spawned
@@ -39,7 +42,7 @@ public:
 	// Called to bind functionality to input
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
-	UPROPERTY(VisibleAnywhere, Category=Health)
+	UPROPERTY(VisibleAnywhere, Category=Health, Replicated)
 	UBaseHealthComponent* HealthComponent = nullptr;
 
 	UFUNCTION(BlueprintImplementableEvent)
