@@ -1,0 +1,3 @@
+Key,SourceString,Comment
+"HelloWorld","Hello World! Two variables: {0}, {1}","This is a comment about hello world"
+"GoodbyeWorld","Goodbye World!","This is a comment about goodbye world"

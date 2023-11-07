@@ -45,17 +45,6 @@ void AEnemyAIController::Initialize()
 
 		}
 	}
-	
-
-	
-
-	//GetBlackboardComponent()->SetValueAsObject(TEXT("PlayerTwo"), UGameplayStatics::GetPlayerCharacter(this, 1));
-	//UE_LOG(LogTemp, Warning, TEXT("P1 loc %f, %f, %f"),  Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this))->P1->GetActorLocation().X, Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this))->P1->GetActorLocation().Y, Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this))->P1->GetActorLocation().Z);
-	//UE_LOG(LogTemp, Warning, TEXT("P2 loc %f, %f, %f"),  Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this))->P2->GetActorLocation().X, Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this))->P2->GetActorLocation().Y, Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this))->P2->GetActorLocation().Z);
-
-	//UE_LOG(LogTemp, Warning, TEXT("P2 loc %f, %f, %f"), UGameplayStatics::GetPlayerCharacter(this, 1)->GetActorLocation().X, UGameplayStatics::GetPlayerCharacter(this, 1)->GetActorLocation().Y, UGameplayStatics::GetPlayerCharacter(this, 1)->GetActorLocation().Z);
-
-
 }
 
 void AEnemyAIController::BeginPlay()

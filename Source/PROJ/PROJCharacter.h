@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "PROJCharacter.generated.h"
 
+class UBaseHealthComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
@@ -42,6 +43,14 @@ public:
 
 	/** Toggles depth movement */
 	void SetDepthMovementEnabled(const bool bNewEnable) { bDepthMovementEnabled = bNewEnable; }
+
+	UPROPERTY(VisibleAnywhere, Category=Health)
+	UBaseHealthComponent* HealthComponent = nullptr;
+
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DamageToPlayer = 0.f;
 
 protected:
 
