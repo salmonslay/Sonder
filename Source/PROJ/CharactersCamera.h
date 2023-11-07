@@ -24,12 +24,20 @@ class PROJ_API ACharactersCamera : public ACameraActor
 protected:
 	virtual void BeginPlay();
 
+public:
+
+	
+	FVector TargetLocation;
+
 private:
 	virtual void Tick(float DeltaSeconds) override;
 	
-	void MoveCamera() const;
+	void MoveCamera();
 
 	void GetPlayers();
+
+	
+	
 
 	bool bAllowMovement;
 
@@ -43,5 +51,9 @@ private:
 	APROJCharacter* PlayerTwo = nullptr;
 
 	USplineComponent* CameraSpline;
+
+	
+
+	
 	
 };
