@@ -38,12 +38,12 @@ private:
 	/** How long time needs to pass between attacks */
 	UPROPERTY(EditAnywhere)
 	float AttackCooldown = 0.5f; 
-	
+
 	bool bCanAttack = true;
 
 	void EnableCanAttack();
 
 	UPROPERTY()
-	class ACharacterStateMachine* Player; 
+	class APROJCharacter* Player; 
 	
 };

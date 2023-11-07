@@ -3,7 +3,6 @@
 
 #include "PlayerBasicAttack.h"
 
-#include "CharacterStateMachine.h"
 #include "EnhancedInputComponent.h"
 #include "PROJCharacter.h"
 #include "Engine/DamageEvents.h"
@@ -24,9 +23,10 @@ void UPlayerBasicAttack::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Player = Cast<ACharacterStateMachine>(GetOwner()); 
+	Player = Cast<APROJCharacter>(GetOwner()); 
 }
 
+// TODO: This whole function is only run locally rn, make sure what needs to be networked, is networked 
 void UPlayerBasicAttack::Attack()
 {
 	if(!bCanAttack)

@@ -12,36 +12,50 @@ class PROJ_API UBaseHealthComponent : public UActorComponent
 {
 	GENERATED_BODY()
 
-public:	
+public:
+	
 	// Sets default values for this component's properties
 	UBaseHealthComponent();
 
 protected:
+	
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
 public:
 
+	/** Call when player takes damage, returns the actual damage taken */
+	float TakeDamage(float DamageAmount);
 
-	// Called every frame
-	virtual void TickComponent(float DeltaTime, ELevelTick TickType, FActorComponentTickFunction* ThisTickFunction) override;
+	/** Called when damage taken was enough to reach <= 0 */
+	void PlayerDied(); 
 
-	UFUNCTION(BlueprintCallable)
+	/** Returns true if players is dead */
+	UFUNCTION(BlueprintPure)
 	bool IsDead() const;
 
-	UFUNCTION(BlueprintCallable)
+	/** Returns health as its float value */
+	UFUNCTION(BlueprintPure)
 	float GetHealth() const;
-	UFUNCTION(BlueprintCallable)
+
+	/** Returns health as a percentage 0-1 */
+	UFUNCTION(BlueprintPure)
 	float GetHealthPercent() const;
+
+	/** Set new health to passed value, clamped between 0 and max health */
 	UFUNCTION(BlueprintCallable)
 	void SetHealth(float NewHealth);
+
+	/** Sets maximum health for the player */
 	UFUNCTION()
 	void SetMaxHealth(float NewMaxHealth);
+
+	/** Sets current health to max health */
 	UFUNCTION(BlueprintCallable)
 	void RefillHealth();
 
-
 private:
+	
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Health, meta=(AllowPrivateAccess = true), SaveGame)
 	float CurrentHealth;
 
