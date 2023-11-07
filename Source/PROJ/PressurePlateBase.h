@@ -6,6 +6,9 @@
 #include "GameFramework/Actor.h"
 #include "PressurePlateBase.generated.h"
 
+class AMovingPlatform;
+class UBoxComponent;
+
 UCLASS()
 class PROJ_API APressurePlateBase : public AActor
 {
@@ -23,4 +26,10 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	UPROPERTY(EditAnywhere)
+	UBoxComponent* TriggerArea = nullptr;
+
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* PressurePlateMesh = nullptr;
+	
 };

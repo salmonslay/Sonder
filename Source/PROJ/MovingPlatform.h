@@ -26,6 +26,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)	
 	void StartMoving();
 
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)	
+	void StartReverse();
+
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* PlatformMesh;
 
