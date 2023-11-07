@@ -10,6 +10,7 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "PlayerBasicAttack.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
 
@@ -36,7 +37,15 @@ APROJCharacter::APROJCharacter()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 
-	HealthComponent = CreateDefaultSubobject<UBaseHealthComponent>("HealthComponent"); 
+	CreateComponents(); 
+}
+
+void APROJCharacter::CreateComponents()
+{
+	HealthComponent = CreateDefaultSubobject<UBaseHealthComponent>("HealthComponent");
+
+	BasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(FName("Basic Attack")); 
+	BasicAttack->SetupAttachment(RootComponent); 
 }
 
 void APROJCharacter::BeginPlay()
@@ -65,6 +74,9 @@ void APROJCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 
 		// Moving
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APROJCharacter::Move);
+
+		// Attack 
+		FindComponentByClass<UPlayerBasicAttack>()->SetUpInput(EnhancedInputComponent); 
 	}
 	else
 	{
@@ -100,18 +112,9 @@ void APROJCharacter::Move(const FInputActionValue& Value)
 float APROJCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
 	AActor* DamageCauser)
 {
-	float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+	float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser); 
 	
-	if(HealthComponent->IsDead())
-	{
-		UE_LOG(LogTemp, Warning, TEXT("Player dead%f"), DamageApplied)
-		return DamageAmount;
-	}
-	
-	DamageApplied = FMath::Min(HealthComponent->GetHealth(), DamageApplied);
-	HealthComponent->SetHealth(HealthComponent->GetHealth() - DamageApplied);
-	
-	UE_LOG(LogTemp, Warning, TEXT("Damage applied to player ,%f"), DamageApplied)
+	DamageApplied = HealthComponent->TakeDamage(DamageApplied); 
 	
 	return DamageApplied;
 }

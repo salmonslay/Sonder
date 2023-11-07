@@ -52,6 +52,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DamageToPlayer = 0.f;
 
+	// Components seem to not be able to create events (easily), which is why the event is declared here 
+	/** Event called when player performs a basic attack */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnBasicAttack(); 
+
 protected:
 
 	/** Called for movement input */
@@ -66,7 +71,12 @@ protected:
 private:
 
 	/** Determines if player can move in both axes */
-	bool bDepthMovementEnabled = false; 
+	bool bDepthMovementEnabled = false;
+
+	UPROPERTY(EditAnywhere)
+	class UPlayerBasicAttack* BasicAttack;
+
+	void CreateComponents(); 
 	
 };
 
