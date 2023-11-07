@@ -3,6 +3,7 @@
 
 #include "PlayerBasicAttack.h"
 
+#include "CharacterStateMachine.h"
 #include "EnhancedInputComponent.h"
 #include "PROJCharacter.h"
 #include "Engine/DamageEvents.h"
@@ -19,12 +20,21 @@ void UPlayerBasicAttack::SetUpInput(UEnhancedInputComponent* InputComp)
 	InputComp->BindAction(AttackInputAction, ETriggerEvent::Started, this, &UPlayerBasicAttack::Attack);
 }
 
+void UPlayerBasicAttack::BeginPlay()
+{
+	Super::BeginPlay();
+
+	Player = Cast<ACharacterStateMachine>(GetOwner()); 
+}
+
 void UPlayerBasicAttack::Attack()
 {
 	if(!bCanAttack)
 		return; 
 	
 	UE_LOG(LogTemp, Warning, TEXT("Attack!"))
+
+	Player->OnBasicAttack(); 
 
 	TArray<AActor*> OverlappingActors; 
 	GetOverlappingActors(OverlappingActors, AActor::StaticClass()); // TODO: Replace the class filter with eventual better class (if it exists)

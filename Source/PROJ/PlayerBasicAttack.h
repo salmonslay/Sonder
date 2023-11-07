@@ -17,7 +17,11 @@ public:
 	UPlayerBasicAttack();
 
 	/** Called to connect input to attack function */
-	void SetUpInput(UEnhancedInputComponent* InputComp); 
+	void SetUpInput(UEnhancedInputComponent* InputComp);
+
+protected:
+
+	virtual void BeginPlay() override;
 
 private:
 
@@ -37,6 +41,8 @@ private:
 	
 	bool bCanAttack = true;
 
-	void EnableCanAttack(); 
+	void EnableCanAttack();
+
+	class ACharacterStateMachine* Player; 
 	
 };
