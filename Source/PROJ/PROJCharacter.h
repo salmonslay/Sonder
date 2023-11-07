@@ -55,7 +55,9 @@ public:
 	// Components seem to not be able to create events (easily), which is why the event is declared here 
 	/** Event called when player performs a basic attack */
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnBasicAttack(); 
+	void OnBasicAttack();
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 protected:
 
@@ -73,9 +75,9 @@ private:
 	/** Determines if player can move in both axes */
 	bool bDepthMovementEnabled = false;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	class UPlayerBasicAttack* BasicAttack;
-
+	
 	void CreateComponents(); 
 	
 };
