@@ -10,7 +10,7 @@
 // Sets default values for this component's properties
 UPlayerBasicAttack::UPlayerBasicAttack()
 {
-	PrimaryComponentTick.bCanEverTick = false;
+	PrimaryComponentTick.bCanEverTick = false; // Note tick is turned off 
 
 }
 
