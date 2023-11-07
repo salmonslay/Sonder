@@ -25,7 +25,7 @@
 	<object class="MixerBusPanner" id="{70fb6047-4eef-4403-af82-ff14e61a7b10}" />
 	<object class="MixerSend" id="{07037d38-0610-43ef-8e85-8844829ec1b5}">
 		<property name="inputFormat">
-			<value>1</value>
+			<value>2</value>
 		</property>
 		<relationship name="automators">
 			<destination>{8580c60f-05b9-4812-871a-c11a5195b9c5}</destination>
@@ -36,7 +36,7 @@
 	</object>
 	<object class="MixerSend" id="{0f8b788d-01c6-471b-8d32-12e785e3099a}">
 		<property name="inputFormat">
-			<value>1</value>
+			<value>2</value>
 		</property>
 		<relationship name="automators">
 			<destination>{88b728cf-8d69-4f48-84b0-e49a1b06d953}</destination>
@@ -47,7 +47,7 @@
 	</object>
 	<object class="MixerSend" id="{001079f0-07b5-4581-8172-aed1d63e1a46}">
 		<property name="inputFormat">
-			<value>1</value>
+			<value>2</value>
 		</property>
 		<relationship name="automators">
 			<destination>{534bcc10-e2f3-486a-b257-49eb796175d8}</destination>
