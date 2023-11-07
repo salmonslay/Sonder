@@ -61,6 +61,7 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 	if(HealthComponent->IsDead()) return DamageAmount;
 	DamageApplied = FMath::Min(HealthComponent->GetHealth(), DamageApplied);
 	HealthComponent->SetHealth(HealthComponent->GetHealth() - DamageApplied);
+	OnTakenDamageEvent();
 	UE_LOG(LogTemp, Warning, TEXT("Damage applied to enemy ,%f"), DamageApplied)
 	return DamageApplied;
 }

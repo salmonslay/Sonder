@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "PROJCharacter.generated.h"
 
+class UBaseHealthComponent;
 class USpringArmComponent;
 class UCameraComponent;
 class UInputMappingContext;
@@ -39,7 +40,14 @@ class APROJCharacter : public ACharacter
 
 public:
 	APROJCharacter();
-	
+
+	UPROPERTY(VisibleAnywhere, Category=Health)
+	UBaseHealthComponent* HealthComponent = nullptr;
+
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DamageToPlayer = 0.f;
 
 protected:
 
