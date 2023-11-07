@@ -24,18 +24,11 @@ public:
 	/** Switches the current state to the new one */
 	void SwitchState(UPlayerCharState* NewState);
 
-	// Components seem to not be able to create events (easily), which is why the event is declared here 
-	/** Event called when player performs a basic attack */
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnBasicAttack(); 
-
 protected:
 
 	virtual void BeginPlay() override;
 	
 	virtual void Tick(float DeltaSeconds) override;
-
-	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override; 
 	
 private:
 
@@ -46,8 +39,5 @@ private:
 	// The player's current state
 	UPROPERTY()
 	UPlayerCharState* CurrentState;
-
-	UPROPERTY(EditAnywhere)
-	class UPlayerBasicAttack* BasicAttack; 
 	
 };
