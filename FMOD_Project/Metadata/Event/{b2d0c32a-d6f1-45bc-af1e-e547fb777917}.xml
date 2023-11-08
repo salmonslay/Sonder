@@ -2,10 +2,10 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="Event" id="{b2d0c32a-d6f1-45bc-af1e-e547fb777917}">
 		<property name="name">
-			<value>Hurt</value>
+			<value>Hurt1</value>
 		</property>
 		<property name="outputFormat">
-			<value>1</value>
+			<value>2</value>
 		</property>
 		<relationship name="folder">
 			<destination>{f29c3ef4-1edc-4a98-860d-49acaea3f324}</destination>
@@ -96,6 +96,7 @@
 	<object class="MixerBusEffectChain" id="{32e75c7f-351d-43d7-85a1-5c6b8149f87d}">
 		<relationship name="effects">
 			<destination>{7a95d2cb-e483-4789-a3a1-0219ad3bda7f}</destination>
+			<destination>{055a7457-2016-4f07-80f3-62f213c196eb}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{ea7a8f32-cb27-42ae-838f-d9fb759a72e2}" />
@@ -106,4 +107,21 @@
 	</object>
 	<object class="MixerBusFader" id="{d5bf8012-5fc5-41a5-bb56-4e1bec49bca7}" />
 	<object class="MixerBusFader" id="{7a95d2cb-e483-4789-a3a1-0219ad3bda7f}" />
+	<object class="SpatialiserEffect" id="{055a7457-2016-4f07-80f3-62f213c196eb}">
+		<property name="distanceRolloffType">
+			<value>2</value>
+		</property>
+		<property name="maximumDistance">
+			<value>17</value>
+		</property>
+		<property name="overrideRange">
+			<value>true</value>
+		</property>
+		<property name="extentMode">
+			<value>1</value>
+		</property>
+		<property name="LFEUpmixEnabled">
+			<value>true</value>
+		</property>
+	</object>
 </objects>
