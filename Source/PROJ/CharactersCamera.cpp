@@ -79,7 +79,7 @@ void ACharactersCamera::RotateCamera()
 	{
 		
 		FRotator Rotate = CurrentCameraSplineClass->CameraRotation->GetComponentRotation();
-		FRotator RotateCorrect = FMath::RInterpTo(CameraComponent->GetComponentRotation(), Rotate,FApp::GetDeltaTime(),1.0f);
+		FRotator RotateCorrect = FMath::RInterpTo(CameraComponent->GetComponentRotation(), Rotate,FApp::GetDeltaTime(),InterpSpeedRotation);
 		if (CameraComponent->GetComponentRotation() != Rotate)
 		{
 			CameraComponent->SetWorldRotation(RotateCorrect);
@@ -102,7 +102,7 @@ void ACharactersCamera::MoveCamera()
 			{
 				const FVector MiddleLocation = (PlayerOne->GetActorLocation()/2) + (PlayerTwo->GetActorLocation()/2);
 				const FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(MiddleLocation, ESplineCoordinateSpace::World);
-				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeed);
+				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeedLocation);
 					CameraComponent->SetWorldLocation(TargetLocation);
 				
 			} else if (PlayerTwo == nullptr)
@@ -110,13 +110,13 @@ void ACharactersCamera::MoveCamera()
 				const FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(PlayerOne->GetActorLocation(), ESplineCoordinateSpace::World);
 				
 				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(),
-				                                  InterpSpeed);
+				                                  InterpSpeedLocation);
 				CameraComponent->SetWorldLocation(TargetLocation);
 			}
 			else if (PlayerOne == nullptr)
 			{
 				FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(PlayerTwo->GetActorLocation(), ESplineCoordinateSpace::World);
-				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeed);
+				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeedLocation);
 				CameraComponent->SetWorldLocation(TargetLocation);
 				
 			}
