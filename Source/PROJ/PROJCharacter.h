@@ -51,9 +51,12 @@ public:
 	UPROPERTY(EditAnywhere, Category=Health)
 	class UPlayerHealthComponent* HealthComponent = nullptr;
 
+	UEnhancedInputComponent* GetInputComponent() const { return EnhancedInputComp; }; 
+
 #pragma region Events 
 	
-	// Components seem to not be able to create events (easily), which is why the event is declared here 
+	// Components seem to not be able to create events (easily), which is why most events are declared here 
+	
 	/** Event called when player performs a basic attack */
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnBasicAttack();
@@ -87,7 +90,10 @@ private:
 	UPROPERTY()
 	class UPlayerBasicAttack* BasicAttack;
 	
-	void CreateComponents(); 
+	void CreateComponents();
+
+	UPROPERTY()
+	UEnhancedInputComponent* EnhancedInputComp; 
 	
 };
 

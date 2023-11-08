@@ -68,6 +68,8 @@ void APROJCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 {
 	// Set up action bindings
 	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
+
+		EnhancedInputComp = EnhancedInputComponent; 
 		
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
@@ -77,7 +79,7 @@ void APROJCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APROJCharacter::Move);
 
 		// Attack 
-		FindComponentByClass<UPlayerBasicAttack>()->SetUpInput(EnhancedInputComponent); 
+		FindComponentByClass<UPlayerBasicAttack>()->SetUpInput(EnhancedInputComponent);
 	}
 	else
 	{
@@ -122,7 +124,7 @@ float APROJCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 {
 	float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser); 
 	
-	DamageApplied = HealthComponent->TakeDamage(DamageApplied); 
+	DamageApplied = HealthComponent->TakeDamage(DamageApplied);
 	
 	return DamageApplied;
 }
