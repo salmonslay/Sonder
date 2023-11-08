@@ -19,9 +19,6 @@ public:
 	/** Called to connect input to attack function */
 	void SetUpInput(UEnhancedInputComponent* InputComp);
 
-	UFUNCTION(BlueprintImplementableEvent)
-	void FooEvent();
-
 protected:
 
 	virtual void BeginPlay() override;
@@ -41,7 +38,7 @@ private:
 	/** How long time needs to pass between attacks */
 	UPROPERTY(EditAnywhere)
 	float AttackCooldown = 0.5f; 
-	
+
 	bool bCanAttack = true;
 
 	void EnableCanAttack();

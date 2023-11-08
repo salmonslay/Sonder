@@ -10,11 +10,15 @@
 #include "GameFramework/GameState.h"
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 ACharactersCamera::ACharactersCamera()
 {
 	CameraComponent = this->GetCameraComponent();
 	PrimaryActorTick.bCanEverTick = true;
+	bReplicates = true;
+
+	
 }
 
 void ACharactersCamera::BeginPlay()
@@ -44,6 +48,8 @@ void ACharactersCamera::GetPlayers()
 	}
 }
 
+
+
 void ACharactersCamera::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
@@ -52,7 +58,7 @@ void ACharactersCamera::Tick(float DeltaSeconds)
 	
 }
 
-void ACharactersCamera::MoveCamera() const
+void ACharactersCamera::MoveCamera()
 {
 	if (bAllowMovement)
 	{
@@ -64,18 +70,27 @@ void ACharactersCamera::MoveCamera() const
 			{
 				const FVector MiddleLocation = (PlayerOne->GetActorLocation()/2) + (PlayerTwo->GetActorLocation()/2);
 				const FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(MiddleLocation, ESplineCoordinateSpace::World);
-				const FVector TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeed);
+				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeed);
 					CameraComponent->SetWorldLocation(TargetLocation);
 				
 			} else if (PlayerTwo == nullptr)
 			{
 				const FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(PlayerOne->GetActorLocation(), ESplineCoordinateSpace::World);
-				const FVector TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeed);
+				
+				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(),
+				                                  InterpSpeed);
 				CameraComponent->SetWorldLocation(TargetLocation);
+			}
+			else if (PlayerOne == nullptr)
+			{
+				FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(PlayerTwo->GetActorLocation(), ESplineCoordinateSpace::World);
+				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeed);
+				CameraComponent->SetWorldLocation(TargetLocation);
+				
 			}
 			else
 			{
-				UE_LOG(LogTemp, Warning, TEXT("No Players"));
+				
 			}
 		}
 	}
