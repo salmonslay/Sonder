@@ -25,7 +25,7 @@ void ANetworkManager::Tick(float DeltaTime)
 }
 
 
-FString ANetworkManager::GetIpClean()
+FString ANetworkManager::GetLocalAddress()
 {
 	bool bCanBindAll;
 	TSharedPtr<class FInternetAddr> Addr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->GetLocalHostAddr(
@@ -33,4 +33,30 @@ FString ANetworkManager::GetIpClean()
 	FString MyIP = Addr->ToString(false);
 
 	return MyIP;
+}
+
+FString ANetworkManager::LocalAddressToShortcode(FString IPv4)
+{
+	IPv4 = IPv4.ToUpper();
+	
+	for (auto& Elem : ShortcodeToIPv4Map)
+	{
+		if (IPv4.StartsWith(Elem.Value))
+			return IPv4.Replace(*Elem.Value, *Elem.Key);
+	}
+
+	return IPv4;
+}
+
+FString ANetworkManager::ShortcodeToLocalAddress(FString Shortcode)
+{
+	Shortcode = Shortcode.ToUpper();
+	
+	for (auto& Elem : ShortcodeToIPv4Map)
+	{
+		if (Shortcode.StartsWith(Elem.Key))
+			return Shortcode.Replace(*Elem.Key, *Elem.Value);
+	}
+
+	return Shortcode;
 }
