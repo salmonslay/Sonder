@@ -32,6 +32,8 @@ class PROJ_API UBTTask_Patrol : public UBTTask_BlackboardBase
 	UPROPERTY()
 	AEnemyCharacter* OwnerCharacter;
 
+	FVector OwnerCharacterLocation = FVector::ZeroVector;
+
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;
 
@@ -40,5 +42,7 @@ class PROJ_API UBTTask_Patrol : public UBTTask_BlackboardBase
 
 	UPROPERTY(EditAnywhere)
 	float DownDistanceToCheck = 0.f;
+
+	void TurnAround();
 	
 };

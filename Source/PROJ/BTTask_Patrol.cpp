@@ -5,6 +5,8 @@
 
 #include "AIController.h"
 #include "EnemyCharacter.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 UBTTask_Patrol::UBTTask_Patrol()
 {
@@ -35,34 +37,63 @@ void UBTTask_Patrol::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 
 	if (OwnerCharacter == nullptr) return;
 
-	FVector ForwardPoint = OwnerCharacter->GetActorLocation() + (OwnerCharacter->GetActorForwardVector() * DistanceToCheck);
-	FVector ForwardDownPoint = OwnerCharacter->GetActorLocation() + (OwnerCharacter->GetActorForwardVector() * DistanceToCheck * DownDistanceToCheck);
-	
+	OwnerCharacterLocation = OwnerCharacter->GetActorLocation();
+
+	FVector ForwardPoint = OwnerCharacterLocation + (OwnerCharacter->GetActorForwardVector() * DistanceToCheck);
+	FVector ForwardDownPoint = ForwardPoint + FVector(0, 0, -DownDistanceToCheck);
+
+
+	OwnerComp.GetBlackboardComponent()->SetValueAsVector("ForwardPoint", ForwardPoint);
+
 	if (bDebug)
 	{
-		//DrawDebugSphere(GetWorld(), OwnerCharacter->GetActorLocation() , 30.f, 24, FColor::Purple, false, .2f);
-		DrawDebugLine(GetWorld(), OwnerCharacter->GetActorLocation() , ForwardPoint, FColor::Green, false, 2, 0, 1);
-		DrawDebugLine(GetWorld(), OwnerCharacter->GetActorLocation() , ForwardDownPoint, FColor::Green, false, 2, 0, 1);
-
+		DrawDebugLine(GetWorld(), OwnerCharacterLocation, ForwardPoint, FColor::Green, false, 2, 0, 1);
+		DrawDebugLine(GetWorld(), OwnerCharacterLocation, ForwardDownPoint, FColor::Green, false, 2, 0, 1);
 	}
 
+	
+
+	
 	/*
+	UCharacterMovementComponent* CharacterMovementComponent = OwnerCharacter->GetCharacterMovement();
 
-	// Define the end location for the line trace, assuming you want to trace downwards
-	FVector EndLocation = StartLocation - FVector(0, 0, 1000); // Adjust the Z value as needed
+	FVector MovementVector = FVector::ZeroVector;
 
+
+	MovementVector = OwnerCharacter->GetActorForwardVector() * OwnerCharacter->GetCharacterMovement()->GetMaxSpeed();
+
+
+	// Set the initial desired movement direction (forward)
+	FVector DesiredMovementDirection = FVector(1.0f, 0.0f, 0.0f);
+	
+	// find out which way is forward
+	const FRotator Rotation = OwnerComp.GetAIOwner()->GetControlRotation();
+	const FRotator YawRotation(0, Rotation.Yaw, 0);
+
+	// get forward vector 
+	const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
+
+	// get right vector 
+	const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
+	
+	OwnerCharacter->AddMovementInput(ForwardDirection, MovementVector.X);
+	
+*/
 	FHitResult HitResult;
 	FCollisionQueryParams CollisionParams;
-	CollisionParams.AddIgnoredActor(this); // Ignore the actor itself if needed
+	CollisionParams.AddIgnoredActor(OwnerCharacter); // Ignore the actor itself if needed
 
+	
 	// Perform the line trace
-	if (GetWorld()->LineTraceSingleByChannel(HitResult, StartLocation, EndLocation, ECC_Visibility, CollisionParams))
+	if (GetWorld()->LineTraceSingleByChannel(HitResult, OwnerCharacterLocation, ForwardPoint, ECC_Visibility, CollisionParams)
+		|| !GetWorld()->LineTraceSingleByChannel(HitResult, OwnerCharacterLocation, ForwardDownPoint, ECC_Visibility, CollisionParams))
 	{
-		// The line trace hit something
-		AActor* HitActor = HitResult.GetActor();
-		FVector ImpactPoint = HitResult.ImpactPoint;
-
-		// You can perform further actions based on the hit result
+		TurnAround();
 	}
-	*/
+	
+}
+
+void UBTTask_Patrol::TurnAround()
+{
+	
 }
