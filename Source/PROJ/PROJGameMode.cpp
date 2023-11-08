@@ -27,8 +27,13 @@ APROJGameMode::APROJGameMode()
 APROJCharacter* APROJGameMode::GetActivePlayer(const int Index) const
 {
 	AGameStateBase* GSB = GetGameState<AGameStateBase>();
+	ensure (GSB != nullptr);
+	
 	APROJCharacter* PlayerToReturn =nullptr;
-
+	if (GSB->PlayerArray.Num() <= Index)
+	{
+		return PlayerToReturn;
+	}
 	if (GSB->PlayerArray[Index] != nullptr)
 	{
 		PlayerToReturn =  Cast<APROJCharacter>(GSB->PlayerArray[Index]->GetPawn());

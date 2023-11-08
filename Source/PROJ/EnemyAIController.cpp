@@ -47,6 +47,15 @@ void AEnemyAIController::Initialize()
 	}
 }
 
+APROJCharacter* AEnemyAIController::GetPlayerFromController(int Index)
+{
+	if (Index == 0)
+	{
+		return P1;
+	}
+	return P2;
+}
+
 void AEnemyAIController::BeginPlay()
 {
 	Super::BeginPlay();
