@@ -4,9 +4,6 @@
 		<property name="assetPath">
 			<value>SFX/Puzzle/RollingConveyor_Placeholder.wav</value>
 		</property>
-		<property name="isStreaming">
-			<value>true</value>
-		</property>
 		<property name="frequencyInKHz">
 			<value>96</value>
 		</property>

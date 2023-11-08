@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="Event" id="{f822e2f1-3b2c-4a85-b9aa-736f771b6fb4}">
 		<property name="name">
-			<value>MovingObstacle</value>
+			<value>Moving Obstacle</value>
 		</property>
 		<property name="outputFormat">
 			<value>2</value>
@@ -62,7 +62,11 @@
 			<destination>{d296c49f-9499-4308-b391-2af5c9ba477a}</destination>
 		</relationship>
 	</object>
-	<object class="EventAutomatableProperties" id="{9a692e1f-b290-4b6c-b837-3baddff0f0cb}" />
+	<object class="EventAutomatableProperties" id="{9a692e1f-b290-4b6c-b837-3baddff0f0cb}">
+		<property name="maxVoices">
+			<value>4</value>
+		</property>
+	</object>
 	<object class="MarkerTrack" id="{d6725240-9e38-4212-a982-df7db0923578}" />
 	<object class="MarkerTrack" id="{031e910c-5962-4c6f-bf03-a91e5d4ba7fd}" />
 	<object class="GroupTrack" id="{c4c8310f-4e5f-44c5-b863-87c5b41fe7a5}">
@@ -136,15 +140,11 @@
 		<property name="startOffset">
 			<value>49.5</value>
 		</property>
-		<property name="looping">
-			<value>true</value>
-		</property>
 		<relationship name="modulators">
 			<destination>{6a22a08a-bc03-43cf-8e4a-3522dacfdcdc}</destination>
 		</relationship>
 		<relationship name="audioFile">
 			<destination>{2f017292-4068-46bf-93a1-dd14d4fa7370}</destination>
-			<destination>{996a97ec-4f4a-445c-bf34-02bcd06868af}</destination>
 		</relationship>
 	</object>
 	<object class="EventMixerGroup" id="{2ad11e27-de68-4266-9285-0fcb74d2f331}">
@@ -162,6 +162,9 @@
 		</relationship>
 	</object>
 	<object class="SingleSound" id="{8568caa2-fa2b-46bd-a973-e695487de4ab}">
+		<property name="isAsync">
+			<value>true</value>
+		</property>
 		<property name="start">
 			<value>14</value>
 		</property>
