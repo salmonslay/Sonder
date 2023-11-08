@@ -10,6 +10,10 @@ ACameraSpline::ACameraSpline()
 	PrimaryActorTick.bCanEverTick = true;
 
 	CameraSpline = CreateDefaultSubobject<USplineComponent>("CameraSpline");
+
+	CameraRotation = CreateDefaultSubobject<UStaticMeshComponent>("CameraRotation");
+
+	CameraRotation->SetupAttachment(CameraSpline);
 	
 
 }
