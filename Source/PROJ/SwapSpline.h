@@ -3,8 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/Actor.h"
 #include "SwapSpline.generated.h"
+
+class ACharactersCamera;
 
 UCLASS()
 class PROJ_API ASwapSpline : public AActor
@@ -22,5 +25,25 @@ protected:
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
+
+	//UPROPERTY(EditAnywhere)
+	//ACameraSpline* CurrentCameraSpline;
+
+	UPROPERTY(EditAnywhere)
+	ACameraSpline* NextCameraSpline;
+
+	UPROPERTY(EditAnywhere)
+	ACharactersCamera* CharactersCamera;
+
+	
+
+private:
+
+	UFUNCTION()
+	void OverlapBegin(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+	
+	void SplineSwap();
+
+	UBoxComponent* TriggerArea;
 
 };
