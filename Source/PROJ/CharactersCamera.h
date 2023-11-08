@@ -49,7 +49,10 @@ private:
 	UCameraComponent* CameraComponent;
 
 	UPROPERTY(EditAnywhere)
-	double InterpSpeed;
+	double InterpSpeedLocation;
+
+	UPROPERTY(EditAnywhere)
+	double InterpSpeedRotation;
 	
 
 	APROJCharacter* PlayerOne = nullptr;
