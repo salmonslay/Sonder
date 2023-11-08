@@ -5,7 +5,7 @@
 			<value>Footsteps</value>
 		</property>
 		<property name="outputFormat">
-			<value>1</value>
+			<value>2</value>
 		</property>
 		<relationship name="folder">
 			<destination>{f29c3ef4-1edc-4a98-860d-49acaea3f324}</destination>
@@ -308,6 +308,7 @@
 		<relationship name="effects">
 			<destination>{4596c84e-f8f5-4621-bd20-19f91109fc3a}</destination>
 			<destination>{68f4f59f-6f86-43ff-87d8-d4ba11f6d9c7}</destination>
+			<destination>{bf61dd9f-aa77-4376-b5bd-95eb97254609}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{8f40d0fb-edae-480b-a8e0-8daf5726734e}" />
@@ -919,6 +920,20 @@
 	<object class="ThreeEQEffect" id="{68f4f59f-6f86-43ff-87d8-d4ba11f6d9c7}">
 		<property name="lowGain">
 			<value>-4</value>
+		</property>
+	</object>
+	<object class="SpatialiserEffect" id="{bf61dd9f-aa77-4376-b5bd-95eb97254609}">
+		<property name="distanceRolloffType">
+			<value>1</value>
+		</property>
+		<property name="overrideRange">
+			<value>true</value>
+		</property>
+		<property name="extentMode">
+			<value>1</value>
+		</property>
+		<property name="LFEUpmixEnabled">
+			<value>true</value>
 		</property>
 	</object>
 	<object class="MixerBusFader" id="{d7c65ce7-b916-42cc-9735-7e6acea87867}" />
