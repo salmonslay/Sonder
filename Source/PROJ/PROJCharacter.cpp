@@ -2,7 +2,6 @@
 
 #include "PROJCharacter.h"
 
-#include "BaseHealthComponent.h"
 #include "Engine/LocalPlayer.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -11,6 +10,7 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "PlayerBasicAttack.h"
+#include "PlayerHealthComponent.h"
 #include "Net/UnrealNetwork.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -43,7 +43,7 @@ APROJCharacter::APROJCharacter()
 
 void APROJCharacter::CreateComponents()
 {
-	HealthComponent = CreateDefaultSubobject<UBaseHealthComponent>("HealthComponent");
+	HealthComponent = CreateDefaultSubobject<UPlayerHealthComponent>(FName("Player Health Component"));
 
 	BasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(FName("Basic Attack")); 
 	BasicAttack->SetupAttachment(RootComponent); 
