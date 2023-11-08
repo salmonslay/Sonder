@@ -25,9 +25,6 @@ protected:
 
 private:
 
-	/** Function called when player presses attack button */
-	void Attack();
-
 	UPROPERTY(EditAnywhere)
 	class UInputAction* AttackInputAction; 
 
@@ -45,5 +42,19 @@ private:
 
 	UPROPERTY()
 	class APROJCharacter* Player; 
+
+	/** Locally run function called when player presses attack button */
+	void Attack();
+	
+	/**
+	 * Function executed on server ONLY when client attacks, called from client. This function will probably only call
+	 * the multicast function unless we will have some functionality that should only be run on the server 
+	 */ 
+	UFUNCTION(Server, Reliable)
+	void ServerRPCAttack(); 
+
+	/** Attack function run on each game instance, client and server */
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCAttack(); 
 	
 };
