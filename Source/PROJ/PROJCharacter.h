@@ -7,9 +7,6 @@
 #include "Logging/LogMacros.h"
 #include "PROJCharacter.generated.h"
 
-class UBaseHealthComponent;
-class USpringArmComponent;
-class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -44,21 +41,33 @@ public:
 	/** Toggles depth movement */
 	void SetDepthMovementEnabled(const bool bNewEnable) { bDepthMovementEnabled = bNewEnable; }
 
-	UPROPERTY(VisibleAnywhere, Category=Health)
-	UBaseHealthComponent* HealthComponent = nullptr;
-
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DamageToPlayer = 0.f;
+	
+	UPROPERTY(EditAnywhere, Category=Health)
+	class UPlayerHealthComponent* HealthComponent = nullptr;
 
+#pragma region Events 
+	
 	// Components seem to not be able to create events (easily), which is why the event is declared here 
 	/** Event called when player performs a basic attack */
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnBasicAttack();
 
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	/** Event called when player takes damage, with the damage taken passed as an argument */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDamageTaken(float DamageAmount);
 
+	/** Event called when player dies */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnPlayerDied();
+
+#pragma endregion 
+	
 protected:
 
 	/** Called for movement input */
