@@ -18,26 +18,31 @@ class PROJ_API ACharactersCamera : public ACameraActor
 
 	ACharactersCamera();
 
-	UPROPERTY(EditAnywhere)
-	ACameraSpline* CameraSplineClass;
+	
 
 protected:
-	virtual void BeginPlay();
+	virtual void BeginPlay() override;
 
 public:
-
+	ACameraSpline* AssignSpline(ACameraSpline* CameraSplineClass);
 	
 	FVector TargetLocation;
 
+	UPROPERTY(EditAnywhere)
+	ACameraSpline* DefaultCameraSplineClass;
+
 private:
 	virtual void Tick(float DeltaSeconds) override;
+
 	
 	void MoveCamera();
 
 	void GetPlayers();
 
-	
-	
+	void RotateCamera();
+
+	UPROPERTY()
+	ACameraSpline* CurrentCameraSplineClass;
 
 	bool bAllowMovement;
 
