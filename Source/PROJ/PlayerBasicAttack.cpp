@@ -26,16 +26,16 @@ void UPlayerBasicAttack::BeginPlay()
 	Player = Cast<APROJCharacter>(GetOwner()); 
 }
 
-// TODO: This whole function is only run locally rn, make sure what needs to be networked, is networked 
 void UPlayerBasicAttack::Attack()
 {
-	if(!bCanAttack)
+	// Code here is only run locally 
+	
+	// Ensure player cant spam attack and is locally controlled 
+	if(!bCanAttack || !Player->IsLocallyControlled())
 		return; 
 	
-	UE_LOG(LogTemp, Warning, TEXT("Attack!"))
-
-	Player->OnBasicAttack(); 
-
+	UE_LOG(LogTemp, Warning, TEXT("Local attack"))
+	
 	TArray<AActor*> OverlappingActors; 
 	GetOverlappingActors(OverlappingActors, AActor::StaticClass()); // TODO: Replace the class filter with eventual better class (if it exists)
 
@@ -50,7 +50,32 @@ void UPlayerBasicAttack::Attack()
 	bCanAttack = false; 
 	
 	FTimerHandle TimerHandle; 
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UPlayerBasicAttack::EnableCanAttack, AttackCooldown); 
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UPlayerBasicAttack::EnableCanAttack, AttackCooldown);
+
+	// Run server function which will update each client and itself 
+	ServerRPCAttack(); 
+}
+
+void UPlayerBasicAttack::ServerRPCAttack_Implementation()
+{
+	// Code here is only run on server, will probably not be changed unless we'll have server specific behaviour 
+	
+	// Should only run on server 
+	if(!GetOwner()->HasAuthority())
+		return; 
+
+	UE_LOG(LogTemp, Warning, TEXT("Server attack"))
+	
+	MulticastRPCAttack(); 
+}
+
+void UPlayerBasicAttack::MulticastRPCAttack_Implementation()
+{
+	// Code here is run on each player (client and server)
+	
+	UE_LOG(LogTemp, Warning, TEXT("Multicast attack"))
+
+	Player->OnBasicAttack(); 
 }
 
 void UPlayerBasicAttack::EnableCanAttack()

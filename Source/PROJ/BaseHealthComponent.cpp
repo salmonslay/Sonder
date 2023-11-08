@@ -7,8 +7,6 @@
 // Sets default values for this component's properties
 UBaseHealthComponent::UBaseHealthComponent()
 {
-	// Set this component to be initialized when the game starts, and to be ticked every frame.  You can turn these features
-	// off to improve performance if you don't need them.
 	PrimaryComponentTick.bCanEverTick = false; // Note: Tick is turned off 
 
 }
@@ -30,17 +28,17 @@ float UBaseHealthComponent::TakeDamage(float DamageAmount)
 	SetHealth(GetHealth() - DamageAmount);
 
 	if(IsDead())
-		PlayerDied();
+		IDied();
 	
-	UE_LOG(LogTemp, Warning, TEXT("Damage applied to player: %f"), DamageAmount)
+	UE_LOG(LogTemp, Warning, TEXT("Damage applied to %s: %f"), *GetOwner()->GetActorNameOrLabel(), DamageAmount)
 
 	return DamageAmount; 
 }
 
-void UBaseHealthComponent::PlayerDied()
+void UBaseHealthComponent::IDied()
 {
-	// TODO: Everything that should happen when a player dies 
-	UE_LOG(LogTemp, Warning, TEXT("Player died")) 
+	// TODO: Everything that should happen when the owner dies 
+	UE_LOG(LogTemp, Warning, TEXT("%s died"), *GetOwner()->GetActorNameOrLabel()) 
 }
 
 float UBaseHealthComponent::GetHealth() const
