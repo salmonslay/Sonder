@@ -24,13 +24,13 @@ protected:
 
 public:
 
-	/** Call when player takes damage, returns the actual damage taken */
-	float TakeDamage(float DamageAmount);
+	/** Call when owner takes damage, returns the actual damage taken */
+	virtual float TakeDamage(float DamageAmount);
 
-	/** Called when damage taken was enough to reach <= 0 */
-	void PlayerDied(); 
+	/** Called when damage taken was enough to reach health <= 0 */
+	virtual void IDied(); 
 
-	/** Returns true if players is dead */
+	/** Returns true if owner is dead */
 	UFUNCTION(BlueprintPure)
 	bool IsDead() const;
 
@@ -46,7 +46,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetHealth(float NewHealth);
 
-	/** Sets maximum health for the player */
+	/** Sets maximum health for the owner */
 	UFUNCTION()
 	void SetMaxHealth(float NewMaxHealth);
 

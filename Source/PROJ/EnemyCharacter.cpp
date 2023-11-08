@@ -4,6 +4,8 @@
 #include "EnemyCharacter.h"
 
 #include "EnemyAIController.h"
+#include "Net/UnrealNetwork.h"
+#include "Engine/Engine.h"
 #include "BaseHealthComponent.h"
 
 
@@ -40,6 +42,7 @@ void AEnemyCharacter::InitializeController()
 	}
 }
 
+
 // Called every frame
 void AEnemyCharacter::Tick(float DeltaTime)
 {
@@ -58,11 +61,26 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 	AActor* DamageCauser)
 {
 	float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	if(HealthComponent->IsDead()) return DamageAmount;
-	DamageApplied = FMath::Min(HealthComponent->GetHealth(), DamageApplied);
-	HealthComponent->SetHealth(HealthComponent->GetHealth() - DamageApplied);
-	OnTakenDamageEvent();
-	UE_LOG(LogTemp, Warning, TEXT("Damage applied to enemy ,%f"), DamageApplied)
+	DamageApplied = HealthComponent->TakeDamage(DamageApplied); 
+
+	if (HealthComponent->IsDead())
+	{
+		KillMe();
+	}
 	return DamageApplied;
 }
 
+
+
+void AEnemyCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	//Replicate current health.
+	DOREPLIFETIME(AEnemyCharacter, HealthComponent);
+	
+}
+void AEnemyCharacter::KillMe()
+{
+	OnDeathEvent();
+}
