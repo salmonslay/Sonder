@@ -25,6 +25,8 @@ public:
 
 	void Initialize();
 
+	APROJCharacter* GetPlayerFromController(int Index);
+
 	
 	UPROPERTY(EditAnywhere)
 	UBehaviorTree* BT = nullptr;
