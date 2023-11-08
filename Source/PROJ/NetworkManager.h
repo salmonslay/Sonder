@@ -23,16 +23,26 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
+	/**
+	 * @return The local IPv4 address of this computer 
+	 */
 	UFUNCTION(BlueprintPure)
 	static FString GetLocalAddress();
 
-	// Tries to convert an IPv4 address to a shortcode. If the address is not in the map, it will return the original address.
-	// For example: 192.168.0.34 will return X34.
+	/**
+	 * Tries to convert an IPv4 address to a shortcode. If the address is not in the map, it will return the original address.
+	 * @param IPv4 The address to convert
+	 * @return A shortcode if possible, else the original address
+	 * @note 192.168.0.34 will return X34.
+	 */
 	UFUNCTION(BlueprintPure)
 	static FString LocalAddressToShortcode(FString IPv4);
 
-	// Tries to convert a shortcode to an IPv4 address. If the shortcode is not in the map, it will return the provided input.
-	// Example: X34 will return 192.168.0.34
+	/**
+	 * Tries to convert a shortcode to an IPv4 address. If the shortcode is not in the map, it will return the provided input.
+	 * @param Shortcode The shortcode to convert
+	 * @return An IPv4 address if possible, else the original input.
+	 */
 	UFUNCTION(BlueprintPure)
 	static FString ShortcodeToLocalAddress(FString Shortcode);
 

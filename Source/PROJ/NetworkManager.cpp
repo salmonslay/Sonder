@@ -37,12 +37,12 @@ FString ANetworkManager::GetLocalAddress()
 
 FString ANetworkManager::LocalAddressToShortcode(FString IPv4)
 {
-	IPv4 = IPv4.ToUpper();
+	IPv4 = IPv4.ToUpper(); // case-insensitive because there's no reason not to :)
 	
 	for (auto& Elem : ShortcodeToIPv4Map)
 	{
 		if (IPv4.StartsWith(Elem.Value))
-			return IPv4.Replace(*Elem.Value, *Elem.Key);
+			return IPv4.Replace(*Elem.Value, *Elem.Key); // return a shortcode if the three first octets match
 	}
 
 	return IPv4;
