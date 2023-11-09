@@ -9,12 +9,14 @@
 /**
  * Health component used for the players 
  */
-UCLASS()
+UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJ_API UPlayerHealthComponent : public UBaseHealthComponent
 {
 	GENERATED_BODY()
 
 public:
+
+	UPlayerHealthComponent();
 
 	virtual float TakeDamage(float DamageAmount) override;
 

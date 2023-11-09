@@ -17,7 +17,6 @@ UBTTask_Patrol::UBTTask_Patrol()
 void UBTTask_Patrol::OnGameplayTaskActivated(UGameplayTask& Task)
 {
 	Super::OnGameplayTaskActivated(Task);
-
 	
 }
 
@@ -45,6 +44,8 @@ void UBTTask_Patrol::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 	if (OwnerCharacter == nullptr) return;
 
 	OwnerCharacterLocation = OwnerCharacter->GetActorLocation();
+
+	OwnerCharacter->SetActorRotation(EnemyRotation);
 
 	if (Player1 == nullptr || Player2 == nullptr)
 	{
@@ -81,9 +82,9 @@ void UBTTask_Patrol::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Turn around"));
 		}
-		FRotator NewRotation = FRotator(0.0f, OwnerCharacter->GetActorRotation().Yaw + 180.0f, 0.0f);
-		
-        OwnerCharacter->SetActorRotation(NewRotation);
+		//FRotator NewRotation = FRotator(0.0f, OwnerCharacter->GetActorRotation().Yaw + 180.0f, 0.0f);
+		EnemyRotation = FRotator(0.0f, OwnerCharacter->GetActorRotation().Yaw + 180.0f, 0.0f);
+        OwnerCharacter->SetActorRotation(EnemyRotation);
 	}
 	OwnerCharacter->AddMovementInput(OwnerCharacter->GetActorForwardVector(), PatrolSpeed);
 }

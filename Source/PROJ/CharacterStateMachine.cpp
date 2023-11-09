@@ -10,29 +10,53 @@ ACharacterStateMachine::ACharacterStateMachine()
 	// Create the states 
 	DummyState = CreateDefaultSubobject<UDummyPlayerState>(TEXT("Dummy State"));
 
-	// Set starting state 
-	CurrentState = DummyState;
 }
 
 void ACharacterStateMachine::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CurrentState->Enter(); 
+	CurrentState = GetStartingState(); 
+
+	if(CurrentState)
+		CurrentState->Enter();
+}
+
+void ACharacterStateMachine::UpdateStateInputComp() const
+{
+	CurrentState->UpdateInputCompOnEnter(GetInputComponent()); 
 }
 
 void ACharacterStateMachine::Tick(const float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 
-	CurrentState->Update(DeltaSeconds); 
+	if(CurrentState)
+		CurrentState->Update(DeltaSeconds);
+}
+
+UPlayerCharState* ACharacterStateMachine::GetStartingState() const
+{
+	return DummyState; // This is placeholder and should not return the dummy state 
+}
+
+void ACharacterStateMachine::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
+{
+	Super::SetupPlayerInputComponent(PlayerInputComponent);
+
+	UpdateStateInputComp(); 
 }
 
 void ACharacterStateMachine::SwitchState(UPlayerCharState* NewState)
 {
-	CurrentState->Exit();
+	if(CurrentState == NewState)
+		return; 
+	
+	if(CurrentState)
+		CurrentState->Exit();
 
 	CurrentState = NewState;
 
-	NewState->Enter(); 
+	CurrentState->Enter();
+	CurrentState->UpdateInputCompOnEnter(GetInputComponent()); 
 } 

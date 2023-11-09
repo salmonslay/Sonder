@@ -5,12 +5,19 @@
 
 #include "PROJCharacter.h"
 
+
+UPlayerHealthComponent::UPlayerHealthComponent()
+{
+	PrimaryComponentTick.bCanEverTick = false; // Note: Tick is turned off 
+}
+
 void UPlayerHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
 	Player = Cast<APROJCharacter>(GetOwner()); 
 }
+
 
 float UPlayerHealthComponent::TakeDamage(const float DamageAmount)
 {
