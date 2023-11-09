@@ -25,7 +25,7 @@ public:
 private:
 
 	UPROPERTY(EditAnywhere)
-	float DashForce = 100.f;
+	float DashForce = 180000.f; 
 
 	/** The impulse/force need to be applied on the server */
 	UFUNCTION(Server, Reliable)
@@ -35,11 +35,16 @@ private:
 	void MulticastRPCDash();
 
 	UFUNCTION(Server, Reliable)
-	void ServerExit(); 
+	void ServerExit(const FVector InputVec); 
 
 	float TempTimer = 0;
 
 	UPROPERTY(EditAnywhere)
-	TEnumAsByte<ECollisionChannel> DashBarCollisionChannel; 
+	TEnumAsByte<ECollisionChannel> DashBarCollisionChannel;
+
+	UPROPERTY(EditAnywhere)
+	float MaxDashDistance = 250.f;
+
+	FVector StartLoc; 
 	
 };
