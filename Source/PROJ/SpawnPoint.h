@@ -6,6 +6,17 @@
 #include "GameFramework/Actor.h"
 #include "SpawnPoint.generated.h"
 
+class UCapsuleComponent;
+class AEnemyCharacter;
+class ACombatManager;
+
+USTRUCT()
+struct FEnemyToSpawn
+{
+	GENERATED_BODY()
+	TSubclassOf<AEnemyCharacter> Class;	
+};
+
 UCLASS()
 class PROJ_API ASpawnPoint : public AActor
 {
@@ -23,8 +34,21 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	void AddEnemyToSpawn(TSubclassOf<ACharacter> EnemyClass);
+	UPROPERTY(EditDefaultsOnly)
+	float SpawnCheckFrequency = .5f;
 
+	void AddEnemyToSpawn(TSubclassOf<AEnemyCharacter> EnemyClass);
+
+	void TrySpawnNext();
+
+	UPROPERTY(EditAnywhere)
+	UCapsuleComponent* CapsuleComponent;
+
+	ACombatManager* Manager = nullptr;
+
+	bool bCombatOver = false; 
 private:
-	TQueue<TSubclassOf<ACharacter>> EnemiesToSpawn = TQueue<TSubclassOf<ACharacter>>();
+	TQueue<FEnemyToSpawn> EnemiesToSpawn = TQueue<FEnemyToSpawn>();
+
+	FTimerHandle SpawnCheckTimerHandle;
 };

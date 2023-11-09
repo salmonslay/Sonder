@@ -1,6 +1,9 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
 #include "CombatManager.h"
+
+#include "CombatTrigger.h"
+#include "EnemyCharacter.h"
 #include "Components/BoxComponent.h"
 
 // Sets default values
@@ -23,6 +26,14 @@ void ACombatManager::BeginPlay()
 	{
 		WavesQueue.Add(Wave);
 	}
+	for(ASpawnPoint* SpawnPoint : SpawnPoints)
+	{
+		SpawnPoint->Manager = this;
+	}
+	for(ACombatTrigger* CombatTrigger : CombatTriggers)
+	{
+		CombatTrigger->Manager = this;
+	}
 }
 
 // Called every frame
@@ -30,29 +41,40 @@ void ACombatManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if(bCombatStarted && !bCombatEnded && !WavesQueue.IsEmpty() && !bWaitingForWave &&
-		NumActiveEnemies <= WavesQueue[0].AllowedRemainingEnemiesForWave)
+	if(bCombatStarted && !bCombatEnded && GetLocalRole() == ROLE_Authority && !WavesQueue.IsEmpty() &&
+		!bWaitingForWave && NumActiveEnemies <= WavesQueue[0].AllowedRemainingEnemiesForWave)
 	{
-		if (WavesQueue[0].TimeToWaveAfterEnemiesKilled <= 0)
+		if (float Wait = WavesQueue[0].TimeToWaveAfterEnemiesKilled <= 0)
 		{
-			//Handle wave immediately
+			HandleSpawn();
 		}
 		else
 		{
 			bWaitingForWave = true;
-			//Handle wave on a timer
+			GetWorldTimerManager().SetTimer(WaveWaitTimerHandle, this, &ACombatManager::HandleSpawn, Wait, false);
 		}
 	}
 }
 
-void ACombatManager::AddEnemy(ACharacter* Enemy)
+void ACombatManager::AddEnemy(AEnemyCharacter* Enemy)
 {
 	Enemies.Emplace(Enemy);
 }
 
-void ACombatManager::RemoveEnemy(ACharacter* Enemy)
+void ACombatManager::RemoveEnemy(AEnemyCharacter* Enemy)
 {
 	Enemies.Remove(Enemy);
+	NumActiveEnemies--;
+	if(WavesQueue.IsEmpty() && NumActiveEnemies <= 0 && GetLocalRole() == ROLE_Authority)
+	{
+		for(ASpawnPoint* SpawnPoint : SpawnPoints)
+		{
+			SpawnPoint->bCombatOver = true;
+		}
+		bCombatEnded = true;
+		GetWorldTimerManager().ClearTimer(WaveWaitTimerHandle);
+		OnCombatEnd();
+	}
 }
 
 void ACombatManager::StartCombat()
@@ -77,10 +99,11 @@ void ACombatManager::OnRep_CombatEnded()
 void ACombatManager::HandleSpawn()
 {
 	bWaitingForWave = false;
-	FEnemyWave Wave = WavesQueue.Pop();
+	const FEnemyWave Wave = WavesQueue.Pop();
+	NumActiveEnemies += Wave.NumEnemies;
 	for(int i = 0; i < Wave.NumEnemies; i++)
 	{
-		
+		SpawnPoints[i % SpawnPoints.Num()]->AddEnemyToSpawn(Wave.EnemyClass);
 	}
 }
 

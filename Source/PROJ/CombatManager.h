@@ -2,13 +2,14 @@
 
 #pragma once
 
-#include "Runtime/Core/Public/Containers/Queue.h"
 #include "SpawnPoint.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
 #include "CombatManager.generated.h"
 
 
+class ACombatTrigger;
+class AEnemyCharacter;
 class UBoxComponent;
 class ASpawnPoint;
 
@@ -18,7 +19,7 @@ struct FEnemyWave
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, Category="Enemy Spawn Wave")
-	TSubclassOf<ACharacter> EnemyClass;
+	TSubclassOf<AEnemyCharacter> EnemyClass;
 	
 	UPROPERTY(EditAnywhere, Category="Enemy Spawn Wave")
 	TArray<ASpawnPoint*> SpawnPoints;
@@ -53,15 +54,21 @@ public:
 	UPROPERTY(EditAnywhere, Category="Bounds")
 	UBoxComponent* ManagerBounds;
 
-	void AddEnemy(ACharacter* Enemy);
+	void AddEnemy(AEnemyCharacter* Enemy);
 
-	void RemoveEnemy(ACharacter* Enemy);
+	void RemoveEnemy(AEnemyCharacter* Enemy);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemies")
 	int NumActiveEnemies = 0;
 
 	UPROPERTY(EditAnywhere, Category="Spawn")
 	TArray<FEnemyWave> Waves;
+
+	UPROPERTY(EditAnywhere, Category="Spawn")
+	TArray<ASpawnPoint*> SpawnPoints;
+
+	UPROPERTY(EditAnywhere, Category="Combat Triggers")
+	TArray<ACombatTrigger*> CombatTriggers;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnCombatBegin();
@@ -81,6 +88,8 @@ private:
 
 	bool bWaitingForWave = false;
 
+	FTimerHandle WaveWaitTimerHandle;
+
 	UFUNCTION()
 	void OnRep_CombatStarted();
 
@@ -88,9 +97,6 @@ private:
 	void OnRep_CombatEnded();
 	
 	void HandleSpawn();
-	
-	UPROPERTY(VisibleAnywhere, Category="Spawn")
-	TArray<ASpawnPoint*> SpawnPoints;
 	
 	UPROPERTY(VisibleAnywhere, Category="Enemies")
 	TArray<ACharacter*> Enemies;
