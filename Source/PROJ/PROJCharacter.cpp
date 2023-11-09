@@ -43,10 +43,11 @@ APROJCharacter::APROJCharacter()
 
 void APROJCharacter::CreateComponents()
 {
-	HealthComponent = CreateDefaultSubobject<UPlayerHealthComponent>(FName("Player Health Component"));
+	HealthComponent = Cast<UPlayerHealthComponent>(GetComponentByClass(UPlayerHealthComponent::StaticClass()));
 
 	BasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(FName("Basic Attack"));
 	BasicAttack->SetupAttachment(RootComponent);
+	BasicAttack->SetCollisionProfileName("Pawn");
 }
 
 void APROJCharacter::BeginPlay()
@@ -93,7 +94,12 @@ void APROJCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	// DOREPLIFETIME(APROJCharacter, Variable) // Ex. of how variables are added 
+	//DOREPLIFETIME(APROJCharacter, HealthComponent) // Ex. of how variables are added 
+}
+
+void APROJCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
 }
 
 void APROJCharacter::Move(const FInputActionValue& Value)
@@ -127,9 +133,22 @@ float APROJCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	if (HealthComponent != nullptr)
+	{
 		DamageApplied = HealthComponent->TakeDamage(DamageApplied);
+
+	}
 	else
-		UE_LOG(LogTemp, Error, TEXT("Health Component is null!"));
+	{
+		//ensure (GetController() != nullptr);
+		if(GetController()->IsLocalController())
+		{
+			UE_LOG(LogTemp, Error, TEXT("Health Component is null on listen server player!"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Health Component is null on client player!"));
+		}
+	}
 
 	return DamageApplied;
 }
