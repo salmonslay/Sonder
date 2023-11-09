@@ -4,13 +4,23 @@
 #include "ProjPlayerController.h"
 
 #include "Camera/CameraActor.h"
+#include "GameFramework/GameModeBase.h"
 #include "Kismet/GameplayStatics.h"
 
 void AProjPlayerController::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SetCamera(); 
+	SetCamera();
+
+	PlayerCount++; 
+}
+
+void AProjPlayerController::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	PlayerCount--; 
 }
 
 void AProjPlayerController::Tick(float DeltaSeconds)

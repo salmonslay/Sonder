@@ -24,14 +24,26 @@ ACharactersCamera::ACharactersCamera()
 void ACharactersCamera::BeginPlay()
 {
 	Super::BeginPlay();
+	
+	AssignSpline(DefaultCameraSplineClass);
+	FTimerHandle Handle;
+	GetWorld()->GetTimerManager().SetTimer(Handle,this, &ACharactersCamera::GetPlayers,4.0f);
+	
+}
+
+ACameraSpline* ACharactersCamera::AssignSpline(ACameraSpline* CameraSplineClass)
+{
 	if (CameraSplineClass)
 	{
+		
 		CameraSpline = CameraSplineClass->CameraSpline;
+		CurrentCameraSplineClass = CameraSplineClass;
+		
+		return CurrentCameraSplineClass;
+		
+		
 	}
-	
-	FTimerHandle Handle;
-	GetWorld()->GetTimerManager().SetTimer(Handle,this, &ACharactersCamera::GetPlayers,2.0f);
-	
+	return nullptr;
 }
 
 void ACharactersCamera::GetPlayers()
@@ -50,11 +62,32 @@ void ACharactersCamera::GetPlayers()
 
 
 
+
 void ACharactersCamera::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
 	
 	MoveCamera();
+
+	RotateCamera();
+	
+}
+
+void ACharactersCamera::RotateCamera()
+{
+	if (CameraSpline)
+	{
+		
+		FRotator Rotate = CurrentCameraSplineClass->CameraRotation->GetComponentRotation();
+		FRotator RotateCorrect = FMath::RInterpTo(CameraComponent->GetComponentRotation(), Rotate,FApp::GetDeltaTime(),InterpSpeedRotation);
+		if (CameraComponent->GetComponentRotation() != Rotate)
+		{
+			CameraComponent->SetWorldRotation(RotateCorrect);
+		}
+		
+		
+		
+	}
 	
 }
 
@@ -65,12 +98,11 @@ void ACharactersCamera::MoveCamera()
 		if (CameraSpline)
 		{
 			
-		
 			if (PlayerOne != nullptr && PlayerTwo != nullptr)
 			{
 				const FVector MiddleLocation = (PlayerOne->GetActorLocation()/2) + (PlayerTwo->GetActorLocation()/2);
 				const FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(MiddleLocation, ESplineCoordinateSpace::World);
-				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeed);
+				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeedLocation);
 					CameraComponent->SetWorldLocation(TargetLocation);
 				
 			} else if (PlayerTwo == nullptr)
@@ -78,13 +110,13 @@ void ACharactersCamera::MoveCamera()
 				const FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(PlayerOne->GetActorLocation(), ESplineCoordinateSpace::World);
 				
 				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(),
-				                                  InterpSpeed);
+				                                  InterpSpeedLocation);
 				CameraComponent->SetWorldLocation(TargetLocation);
 			}
 			else if (PlayerOne == nullptr)
 			{
 				FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(PlayerTwo->GetActorLocation(), ESplineCoordinateSpace::World);
-				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeed);
+				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeedLocation);
 				CameraComponent->SetWorldLocation(TargetLocation);
 				
 			}

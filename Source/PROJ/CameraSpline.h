@@ -19,6 +19,9 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	USplineComponent* CameraSpline;
 
+	UPROPERTY(EditAnywhere)
+	UStaticMeshComponent* CameraRotation;
+
 	
 	
 };

@@ -19,7 +19,7 @@ APROJCharacter::APROJCharacter()
 {
 	// Set size for collision capsule
 	GetCapsuleComponent()->InitCapsuleSize(42.f, 96.0f);
-		
+
 	// Don't rotate when the controller rotates. Let that just affect the camera.
 	bUseControllerRotationPitch = false;
 	bUseControllerRotationYaw = false;
@@ -38,15 +38,15 @@ APROJCharacter::APROJCharacter()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 
-	CreateComponents(); 
+	CreateComponents();
 }
 
 void APROJCharacter::CreateComponents()
 {
 	HealthComponent = CreateDefaultSubobject<UPlayerHealthComponent>(FName("Player Health Component"));
 
-	BasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(FName("Basic Attack")); 
-	BasicAttack->SetupAttachment(RootComponent); 
+	BasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(FName("Basic Attack"));
+	BasicAttack->SetupAttachment(RootComponent);
 }
 
 void APROJCharacter::BeginPlay()
@@ -57,7 +57,8 @@ void APROJCharacter::BeginPlay()
 	//Add Input Mapping Context
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
-		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
+			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
@@ -67,8 +68,8 @@ void APROJCharacter::BeginPlay()
 void APROJCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
-		
+	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
@@ -77,17 +78,20 @@ void APROJCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APROJCharacter::Move);
 
 		// Attack 
-		FindComponentByClass<UPlayerBasicAttack>()->SetUpInput(EnhancedInputComponent); 
+		FindComponentByClass<UPlayerBasicAttack>()->SetUpInput(EnhancedInputComponent);
 	}
 	else
 	{
-		UE_LOG(LogTemplateCharacter, Error, TEXT("'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."), *GetNameSafe(this));
+		UE_LOG(LogTemplateCharacter, Error,
+		       TEXT(
+			       "'%s' Failed to find an Enhanced Input component! This template is built to use the Enhanced Input system. If you intend to use the legacy system, then you will need to update this C++ file."
+		       ), *GetNameSafe(this));
 	}
 }
 
 void APROJCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps); 
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	// DOREPLIFETIME(APROJCharacter, Variable) // Ex. of how variables are added 
 }
@@ -105,24 +109,27 @@ void APROJCharacter::Move(const FInputActionValue& Value)
 
 		// get forward vector 
 		const FVector ForwardDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::X);
-	
+
 		// get right vector 
 		const FVector RightDirection = FRotationMatrix(YawRotation).GetUnitAxis(EAxis::Y);
 
 		// add movement, only in depth if enabled 
-		if(bDepthMovementEnabled)
+		if (bDepthMovementEnabled)
 			AddMovementInput(ForwardDirection, MovementVector.Y);
-		
+
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
 }
 
 float APROJCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
-	AActor* DamageCauser)
+                                 AActor* DamageCauser)
 {
-	float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser); 
-	
-	DamageApplied = HealthComponent->TakeDamage(DamageApplied); 
-	
+	float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
+
+	if (HealthComponent != nullptr)
+		DamageApplied = HealthComponent->TakeDamage(DamageApplied);
+	else
+		UE_LOG(LogTemp, Error, TEXT("Health Component is null!"));
+
 	return DamageApplied;
 }

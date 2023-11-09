@@ -6,6 +6,8 @@
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "BTTask_Patrol.generated.h"
 
+class AEnemyAIController;
+class APROJCharacter;
 class AEnemyCharacter;
 /**
  * 
@@ -32,6 +34,9 @@ class PROJ_API UBTTask_Patrol : public UBTTask_BlackboardBase
 	UPROPERTY()
 	AEnemyCharacter* OwnerCharacter;
 
+	UPROPERTY()
+	AEnemyAIController* OwnerController;
+
 	FVector OwnerCharacterLocation = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere)
@@ -43,6 +48,16 @@ class PROJ_API UBTTask_Patrol : public UBTTask_BlackboardBase
 	UPROPERTY(EditAnywhere)
 	float DownDistanceToCheck = 0.f;
 
-	void TurnAround();
+	UPROPERTY(EditAnywhere)
+	float DownForwardDistanceToCheck = 0.f;
 	
+	UPROPERTY(EditAnywhere)
+	float PatrolSpeed = 0.f;
+
+
+	UPROPERTY()
+	APROJCharacter* Player1 = nullptr;
+	
+	UPROPERTY()
+	APROJCharacter* Player2 = nullptr;
 };

@@ -4,6 +4,7 @@
 #include "PROJCharacter.h"
 #include "ProjPlayerController.h"
 #include "GameFramework/GameStateBase.h"
+#include "GameFramework/PlayerStart.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
 #include "UObject/ConstructorHelpers.h"
@@ -23,11 +24,16 @@ APROJGameMode::APROJGameMode()
 	PlayerControllerClass = AProjPlayerController::StaticClass();
 }
 
-APROJCharacter* APROJGameMode::GetActivePlayer(int Index)
+APROJCharacter* APROJGameMode::GetActivePlayer(const int Index) const
 {
 	AGameStateBase* GSB = GetGameState<AGameStateBase>();
+	ensure (GSB != nullptr);
+	
 	APROJCharacter* PlayerToReturn =nullptr;
-
+	if (GSB->PlayerArray.Num() <= Index)
+	{
+		return PlayerToReturn;
+	}
 	if (GSB->PlayerArray[Index] != nullptr)
 	{
 		PlayerToReturn =  Cast<APROJCharacter>(GSB->PlayerArray[Index]->GetPawn());
@@ -36,9 +42,75 @@ APROJCharacter* APROJGameMode::GetActivePlayer(int Index)
 
 }
 
-
-void APROJGameMode::BeginPlay()
+void APROJGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
-	Super::BeginPlay();
+	Super::EndPlay(EndPlayReason);
+
+	PlayerCount = 0; 
+}
+
+void APROJGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
+{
+	Super::InitGame(MapName, Options, ErrorMessage);
+
+	// Find and store player starts 
+	TArray<AActor*> TempPlayerStarts;
+
+	UGameplayStatics::GetAllActorsOfClass(this, APlayerStart::StaticClass(), TempPlayerStarts); 
 	
+	for(const auto PlayerStartActor : TempPlayerStarts)
+	{
+		if(auto PlayerStart = Cast<APlayerStart>(PlayerStartActor))
+			UnusedPlayerStarts.Add(PlayerStart); 
+	}
+}
+
+void APROJGameMode::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId,
+                             FString& ErrorMessage)
+{
+	if(UnusedPlayerStarts.IsEmpty())
+		ErrorMessage = "Server full. No valid player starts, are there 2 in the level?";
+
+	Super::PreLogin(Options, Address, UniqueId, ErrorMessage); 
+}
+
+FString APROJGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId,
+	const FString& Options, const FString& Portal)
+{
+	// No unused player starts, player cannot spawn 
+	if(UnusedPlayerStarts.IsEmpty())
+	{
+		UE_LOG(LogTemp, Error, TEXT("No unused player starts in InitNewPlayer. Are there 2 in the level?"))
+		return FString("No unused player starts. Are there 2 in the level?"); 
+	}
+
+	// Set the new player's spawn position 
+	NewPlayerController->StartSpot = UnusedPlayerStarts.Pop();
+
+	// Get the pawn class to use based on player count, we might want to handle this differently in the future 
+	const auto PawnClassToSpawn = PlayerPawnClasses[PlayerCount];
+
+	DefaultPawnClass = PawnClassToSpawn;
+
+	// Set the pawn used in the player controller 
+	if(const auto PlayerController = Cast<AProjPlayerController>(NewPlayerController))
+	{
+		PlayerController->SetControlledPawnClass(PawnClassToSpawn); 
+	}
+
+	PlayerCount++; 
+	
+	return Super::InitNewPlayer(NewPlayerController, UniqueId, Options, Portal);
+}
+
+UClass* APROJGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)
+{
+	/* Override Functionality to get Pawn from PlayerController */
+	if (const AProjPlayerController* MyController = Cast<AProjPlayerController>(InController))
+	{
+		return MyController->GetControlledPawnClass();
+	}
+
+	/* If we don't get the right Controller, use the Default Pawn */
+	return DefaultPawnClass;
 }
