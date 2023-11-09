@@ -55,6 +55,9 @@ class PROJ_API UBTTask_Patrol : public UBTTask_BlackboardBase
 	float PatrolSpeed = 0.f;
 
 
+	FRotator EnemyRotation = FRotator(0, 90, 0);
+
+
 	UPROPERTY()
 	APROJCharacter* Player1 = nullptr;
 	

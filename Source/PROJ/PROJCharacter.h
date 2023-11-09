@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "PROJCharacter.generated.h"
 
+class AProjPlayerController;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -51,6 +52,12 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Health, Replicated)
 	class UPlayerHealthComponent* HealthComponent = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Health, Replicated)
+	class UPlayerHealthComponent* PlayerHealthComponent = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Health, Replicated)
+	class UNewPlayerHealthComponent* NewPlayerHealthComponent = nullptr;
+	
 	UFUNCTION(BlueprintPure, BlueprintCallable)
 	FTransform GetSpawnTransform() const { return SpawnTransform; }
 
@@ -59,6 +66,10 @@ public:
 
 
 	virtual void PossessedBy(AController* NewController) override;
+
+	
+
+	
 
 #pragma region Events 
 	

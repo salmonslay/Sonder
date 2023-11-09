@@ -18,6 +18,8 @@ class PROJ_API UEnemyHealthComponent : public UBaseHealthComponent
 	
 public:
 
+	UEnemyHealthComponent();
+
 	virtual float TakeDamage(float DamageAmount) override;
 
 	virtual void IDied() override;

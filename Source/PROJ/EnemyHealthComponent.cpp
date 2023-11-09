@@ -4,6 +4,10 @@
 #include "EnemyHealthComponent.h"
 
 #include "EnemyCharacter.h"
+UEnemyHealthComponent::UEnemyHealthComponent()
+{
+	PrimaryComponentTick.bCanEverTick = false; // Note: Tick is turned off 
+}
 
 void UEnemyHealthComponent::BeginPlay()
 {
@@ -11,6 +15,7 @@ void UEnemyHealthComponent::BeginPlay()
 	
 	EnemyCharacter = Cast<AEnemyCharacter>(GetOwner()); 
 }
+
 
 float UEnemyHealthComponent::TakeDamage(const float DamageAmount)
 {

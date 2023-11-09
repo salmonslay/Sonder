@@ -1,17 +1,17 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PlayerHealthComponent.h"
+#include "NewPlayerHealthComponent.h"
 
 #include "PROJCharacter.h"
 
 
-UPlayerHealthComponent::UPlayerHealthComponent()
+UNewPlayerHealthComponent::UNewPlayerHealthComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false; // Note: Tick is turned off 
 }
 
-void UPlayerHealthComponent::BeginPlay()
+void UNewPlayerHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
@@ -19,7 +19,7 @@ void UPlayerHealthComponent::BeginPlay()
 }
 
 
-float UPlayerHealthComponent::TakeDamage(const float DamageAmount)
+float UNewPlayerHealthComponent::TakeDamage(const float DamageAmount)
 {
 	// Run only on the local player 
 	if(!Player->IsLocallyControlled())
@@ -32,7 +32,7 @@ float UPlayerHealthComponent::TakeDamage(const float DamageAmount)
 	return DamageTaken; 
 }
 
-void UPlayerHealthComponent::ServerRPCDamageTaken_Implementation(const float DamageTaken)
+void UNewPlayerHealthComponent::ServerRPCDamageTaken_Implementation(const float DamageTaken)
 {
 	// Run only on server 
 	if(!Player->HasAuthority())
@@ -41,12 +41,12 @@ void UPlayerHealthComponent::ServerRPCDamageTaken_Implementation(const float Dam
 	MulticastRPCDamageTaken(DamageTaken); 
 }
 
-void UPlayerHealthComponent::MulticastRPCDamageTaken_Implementation(const float DamageTaken)
+void UNewPlayerHealthComponent::MulticastRPCDamageTaken_Implementation(const float DamageTaken)
 {
 	Player->OnDamageTaken(DamageTaken); 
 }
 
-void UPlayerHealthComponent::IDied()
+void UNewPlayerHealthComponent::IDied()
 {
 	Super::IDied();
 
@@ -57,7 +57,7 @@ void UPlayerHealthComponent::IDied()
 	ServerRPCPlayerDied(); 
 }
 
-void UPlayerHealthComponent::ServerRPCPlayerDied_Implementation()
+void UNewPlayerHealthComponent::ServerRPCPlayerDied_Implementation()
 {
 	// Run only on server 
 	if(!Player->HasAuthority())
@@ -66,7 +66,7 @@ void UPlayerHealthComponent::ServerRPCPlayerDied_Implementation()
 	MulticastRPCPlayerDied(); 
 }
 
-void UPlayerHealthComponent::MulticastRPCPlayerDied_Implementation()
+void UNewPlayerHealthComponent::MulticastRPCPlayerDied_Implementation()
 {
 	Player->OnPlayerDied(); 
 }
