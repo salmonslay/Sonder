@@ -41,8 +41,10 @@ public:
 	/** Toggles depth movement */
 	void SetDepthMovementEnabled(const bool bNewEnable) { bDepthMovementEnabled = bNewEnable; }
 
-	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
-	                         AActor* DamageCauser) override;
+	/** Returns true if player can traverse in the depth axis */
+	bool IsDepthMovementEnabled() const { return bDepthMovementEnabled; }
+
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -52,6 +54,8 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Health, Replicated)
 	class UPlayerHealthComponent* HealthComponent = nullptr;
 
+	UEnhancedInputComponent* GetInputComponent() const { return EnhancedInputComp; }; 
+	
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Health, Replicated)
 	class UPlayerHealthComponent* PlayerHealthComponent = nullptr;
 
@@ -63,17 +67,13 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetSpawnTransform(const FTransform& NewTransform) { SpawnTransform = NewTransform; }
-
-
+	
 	virtual void PossessedBy(AController* NewController) override;
-
-	
-
-	
 
 #pragma region Events 
 	
-	// Components seem to not be able to create events (easily), which is why the event is declared here 
+	// Components seem to not be able to create events (easily), which is why most events are declared here 
+	
 	/** Event called when player performs a basic attack */
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnBasicAttack();
@@ -104,8 +104,12 @@ private:
 
 	UPROPERTY()
 	class UPlayerBasicAttack* BasicAttack;
-
+	
 	void CreateComponents();
 
+	UPROPERTY()
+	UEnhancedInputComponent* EnhancedInputComp; 
+
 	FTransform SpawnTransform;
+	
 };
