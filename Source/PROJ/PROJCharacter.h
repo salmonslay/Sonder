@@ -41,6 +41,9 @@ public:
 	/** Toggles depth movement */
 	void SetDepthMovementEnabled(const bool bNewEnable) { bDepthMovementEnabled = bNewEnable; }
 
+	/** Returns true if player can traverse in the depth axis */
+	bool IsDepthMovementEnabled() const { return bDepthMovementEnabled; }
+
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;

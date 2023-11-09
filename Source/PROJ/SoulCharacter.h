@@ -18,13 +18,20 @@ public:
 
 	ASoulCharacter(); 
 
+	// states are public so switch state can be called with the appropriate state easily 
+	
+	UPROPERTY(EditAnywhere)
+	class USoulBaseState* BaseState;
+
+	UPROPERTY(EditAnywhere)
+	class USoulDashingState* DashingState;
+	
 protected:
 
 	virtual UPlayerCharState* GetStartingState() const override;
 	
 private:
 
-	UPROPERTY(EditAnywhere)
-	class USoulBaseState* BaseState; 
+	
 	
 };

@@ -26,6 +26,13 @@ void UPlayerBasicAttack::BeginPlay()
 	Player = Cast<APROJCharacter>(GetOwner()); 
 }
 
+void UPlayerBasicAttack::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	GetWorld()->GetTimerManager().ClearAllTimersForObject(this); 
+}
+
 void UPlayerBasicAttack::Attack()
 {
 	// Code here is only run locally 

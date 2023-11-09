@@ -30,6 +30,17 @@ private:
 	class UInputAction* DashInputAction;
 
 	/** Run locally and called when player presses the dash-button */ 
-	void Dash(); 
+	void Dash();
+
+	/** Run only on server, will tell all players that a player dashed */
+	UFUNCTION(Server, Reliable)
+	void ServerRPCDash();
+
+	/** Run for every player, server and client */
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCDash();
+
+	UPROPERTY()
+	class ASoulCharacter* SoulCharacter; 
 	
 };

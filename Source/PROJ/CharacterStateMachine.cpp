@@ -49,6 +49,9 @@ void ACharacterStateMachine::SetupPlayerInputComponent(UInputComponent* PlayerIn
 
 void ACharacterStateMachine::SwitchState(UPlayerCharState* NewState)
 {
+	if(CurrentState == NewState)
+		return; 
+	
 	if(CurrentState)
 		CurrentState->Exit();
 

@@ -21,7 +21,7 @@ public:
 
 	/** Called when player transitions into this state, not safe to update the input component in this state because of
 	 *  race conditions */
-	virtual void Enter() {} 
+	virtual void Enter();  
 
 	/** Function where it's safe to update the player's input component. Called approx. at the same time as Enter() */ 
 	virtual void UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp);
@@ -40,7 +40,7 @@ protected:
 
 	/** The owning player */
 	UPROPERTY()
-	class APROJCharacter* PlayerOwner; 
+	class ACharacterStateMachine* PlayerOwner; 
 
 	virtual void BeginPlay() override;
 		

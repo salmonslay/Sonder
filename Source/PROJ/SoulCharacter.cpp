@@ -4,17 +4,18 @@
 #include "SoulCharacter.h"
 
 #include "SoulBaseState.h"
+#include "SoulDashingState.h"
 
 ASoulCharacter::ASoulCharacter()
 {
 	BaseState = CreateDefaultSubobject<USoulBaseState>(FName("Soul Base State"));
+
+	DashingState = CreateDefaultSubobject<USoulDashingState>(FName("Dashing State")); 
 
 	// CurrentState = BaseState; 
 }
 
 UPlayerCharState* ASoulCharacter::GetStartingState() const
 {
-	UE_LOG(LogTemp, Warning, TEXT("Sub starting state"))
-
 	return BaseState; 
 }
