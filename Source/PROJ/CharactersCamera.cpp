@@ -6,6 +6,7 @@
 #include "PROJCharacter.h"
 #include "PROJGameMode.h"
 #include "Camera/CameraComponent.h"
+#include "Components/BoxComponent.h"
 #include "GameFramework/Character.h"
 #include "GameFramework/GameState.h"
 #include "GameFramework/GameStateBase.h"
@@ -16,6 +17,8 @@ ACharactersCamera::ACharactersCamera()
 {
 	CameraComponent = this->GetCameraComponent();
 	PrimaryActorTick.bCanEverTick = true;
+	
+	
 	bReplicates = true;
 
 	
@@ -91,6 +94,20 @@ void ACharactersCamera::RotateCamera()
 	
 }
 
+void ACharactersCamera::MoveWalls(FVector MiddlePoint)
+{
+	FVector Offset = tan(CameraComponent->FieldOfView/2) * (this->GetActorLocation() - MiddlePoint);
+
+	WallOne->SetActorLocation(FVector(380,(MiddlePoint.Y + Offset.Y),160));
+	WallTwo->SetActorLocation(FVector(380,(MiddlePoint.Y - Offset.Y),160));
+
+	UE_LOG(LogTemp, Log, TEXT("Actor location: %s"), *MiddlePoint.ToString());
+
+	UE_LOG(LogTemp, Log, TEXT("Actor location: %s"), *(MiddlePoint + Offset).ToString());
+
+	UE_LOG(LogTemp, Log, TEXT("Actor location: %s"), *(MiddlePoint - Offset).ToString());
+}
+
 void ACharactersCamera::MoveCamera()
 {
 	if (bAllowMovement)
@@ -103,7 +120,8 @@ void ACharactersCamera::MoveCamera()
 				const FVector MiddleLocation = (PlayerOne->GetActorLocation()/2) + (PlayerTwo->GetActorLocation()/2);
 				const FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(MiddleLocation, ESplineCoordinateSpace::World);
 				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeedLocation);
-					CameraComponent->SetWorldLocation(TargetLocation);
+				CameraComponent->SetWorldLocation(TargetLocation);
+				MoveWalls(TargetLocation);
 				
 			} else if (PlayerTwo == nullptr)
 			{
@@ -126,24 +144,6 @@ void ACharactersCamera::MoveCamera()
 			}
 		}
 	}
-		
-		/*
-		else if (PlayerTwo == nullptr)
-		{
-			FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(PlayerOne->GetActorLocation(), ESplineCoordinateSpace::World);
-			FVector TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeed);
-			CameraComponent->SetWorldLocation(TargetLocation);
-		}
-		else if (PlayerOne == nullptr)
-		{
-			FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(PlayerTwo->GetActorLocation(), ESplineCoordinateSpace::World);
-			FVector TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeed);
-			CameraComponent->SetWorldLocation(TargetLocation);
-		}
-		else
-		{
-			
-		}*/
 		
 		
 	

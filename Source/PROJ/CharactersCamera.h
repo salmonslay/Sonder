@@ -31,6 +31,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	ACameraSpline* DefaultCameraSplineClass;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	AActor* WallOne;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	AActor* WallTwo;
+
 private:
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -41,8 +47,12 @@ private:
 
 	void RotateCamera();
 
+	void MoveWalls(FVector MiddlePoint);
+
 	UPROPERTY()
 	ACameraSpline* CurrentCameraSplineClass;
+
+	
 
 	bool bAllowMovement;
 

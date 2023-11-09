@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "SwapSpline.generated.h"
 
+class ACameraSpline;
 class ACharactersCamera;
 
 UCLASS()
@@ -44,6 +45,7 @@ private:
 	
 	void SplineSwap();
 
+	UPROPERTY()
 	UBoxComponent* TriggerArea;
 
 };
