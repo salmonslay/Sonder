@@ -24,8 +24,13 @@ void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GetWorldTimerManager().SetTimer(InitializerTimerHandle, this, &AEnemyCharacter::InitializeController, 2, false, 2);
 	
+	if(!GetController())
+	{
+		SpawnDefaultController();
+	}
+	GetWorldTimerManager().SetTimer(InitializerTimerHandle, this, &AEnemyCharacter::InitializeController, 2, false, 2);
+
 }
 
 void AEnemyCharacter::InitializeController()
@@ -39,6 +44,10 @@ void AEnemyCharacter::InitializeController()
 		UE_LOG(LogTemp, Warning, TEXT("HAsController"));
 
 		AIController->Initialize();
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Controller cast failed"));
 	}
 }
 
@@ -90,4 +99,10 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& Out
 	// redundant now that has own health comp??
 	DOREPLIFETIME(AEnemyCharacter, EnemyHealthComponent);
 	
+}
+
+void AEnemyCharacter::InitializeControllerFromManager()
+{
+	if(bIsControllerInitialized) return;
+	InitializeController();
 }
