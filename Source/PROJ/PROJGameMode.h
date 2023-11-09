@@ -31,7 +31,7 @@ public:
 	
 private:
 
-	TArray<APlayerStart*> UnusedPlayerStarts;
+	TArray<class APlayerStart*> UnusedPlayerStarts;
 
 	UPROPERTY(EditDefaultsOnly)
 	TArray<TSubclassOf<APROJCharacter>> PlayerPawnClasses; 

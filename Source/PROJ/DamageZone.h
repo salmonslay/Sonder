@@ -46,15 +46,12 @@ private:
 	// The global game time at which this zone last damaged a player
 	float LastDamageTime = -10000.f; // We start in the negative so that the player takes damage immediately
 
-	// Whether or not the player is currently in the zone
-	bool bIsPlayerInZone = false;
+	/**
+	 * The players that are currently in the zone. 
+	 */
+	UPROPERTY()
+	TArray<AActor*> PlayerActors;
 
-	bool bHasPlayedEffectsDuringThisOverlap = false;
-	bool bHasBeenDamagedDuringThisOverlap = false;
-
-	// The player that is currently in the zone. This can only be the player that is locally controlled by this client.
-	// If the player is not locally controlled or no one is in the zone, this will be nullptr.
-	AActor* PlayerActor;
-
-	void PlayEffects();
+	UPROPERTY()
+	TArray<AActor*> PlayersDamagedThisOverlap;
 };
