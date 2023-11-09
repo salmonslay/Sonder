@@ -50,6 +50,11 @@ void ASpawnPoint::TrySpawnNext()
 		if(SpawnedEnemy)
 		{
 			EnemiesToSpawn.Pop();
+			if (!SpawnedEnemy->bIsControllerInitialized)
+			{
+				SpawnedEnemy->InitializeControllerFromManager();
+				SpawnedEnemy->Manager = Manager;
+			}
 			Manager->AddEnemy(SpawnedEnemy);
 		}
 	}
