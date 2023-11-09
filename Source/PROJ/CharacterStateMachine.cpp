@@ -11,7 +11,7 @@ ACharacterStateMachine::ACharacterStateMachine()
 	DummyState = CreateDefaultSubobject<UDummyPlayerState>(TEXT("Dummy State"));
 
 	// Set starting state 
-	CurrentState = DummyState; 
+	CurrentState = DummyState;
 }
 
 void ACharacterStateMachine::BeginPlay()
@@ -35,4 +35,4 @@ void ACharacterStateMachine::SwitchState(UPlayerCharState* NewState)
 	CurrentState = NewState;
 
 	NewState->Enter(); 
-}
+} 

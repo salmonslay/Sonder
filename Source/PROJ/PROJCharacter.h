@@ -7,8 +7,6 @@
 #include "Logging/LogMacros.h"
 #include "PROJCharacter.generated.h"
 
-class USpringArmComponent;
-class UCameraComponent;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -19,14 +17,6 @@ UCLASS(config=Game)
 class APROJCharacter : public ACharacter
 {
 	GENERATED_BODY()
-
-	/** Camera boom positioning the camera behind the character */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	USpringArmComponent* CameraBoom;
-
-	/** Follow camera */
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category = Camera, meta = (AllowPrivateAccess = "true"))
-	UCameraComponent* FollowCamera;
 	
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
@@ -45,29 +35,59 @@ class APROJCharacter : public ACharacter
 	UInputAction* LookAction;
 
 public:
-	APROJCharacter();
 	
+	APROJCharacter();
 
+	/** Toggles depth movement */
+	void SetDepthMovementEnabled(const bool bNewEnable) { bDepthMovementEnabled = bNewEnable; }
+
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float DamageToPlayer = 0.f;
+	
+	UPROPERTY(EditAnywhere, Category=Health, BlueprintReadOnly)
+	class UPlayerHealthComponent* HealthComponent = nullptr;
+
+#pragma region Events 
+	
+	// Components seem to not be able to create events (easily), which is why the event is declared here 
+	/** Event called when player performs a basic attack */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnBasicAttack();
+
+	/** Event called when player takes damage, with the damage taken passed as an argument */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDamageTaken(float DamageAmount);
+
+	/** Event called when player dies */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnPlayerDied();
+
+#pragma endregion 
+	
 protected:
 
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
-
-	/** Called for looking input */
-	void Look(const FInputActionValue& Value);
-			
-
-protected:
+	
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 	
 	// To add mapping context
 	virtual void BeginPlay();
 
-public:
-	/** Returns CameraBoom subobject **/
-	FORCEINLINE class USpringArmComponent* GetCameraBoom() const { return CameraBoom; }
-	/** Returns FollowCamera subobject **/
-	FORCEINLINE class UCameraComponent* GetFollowCamera() const { return FollowCamera; }
+private:
+
+	/** Determines if player can move in both axes */
+	bool bDepthMovementEnabled = false;
+
+	UPROPERTY()
+	class UPlayerBasicAttack* BasicAttack;
+	
+	void CreateComponents(); 
+	
 };
 

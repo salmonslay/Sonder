@@ -38,6 +38,6 @@ private:
 
 	// The player's current state
 	UPROPERTY()
-	UPlayerCharState* CurrentState; 
+	UPlayerCharState* CurrentState;
 	
 };
