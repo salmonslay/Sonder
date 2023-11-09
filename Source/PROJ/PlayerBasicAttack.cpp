@@ -23,7 +23,9 @@ void UPlayerBasicAttack::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Player = Cast<APROJCharacter>(GetOwner()); 
+	Player = Cast<APROJCharacter>(GetOwner());
+
+	SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap); 
 }
 
 void UPlayerBasicAttack::EndPlay(const EEndPlayReason::Type EndPlayReason)

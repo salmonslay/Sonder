@@ -30,7 +30,9 @@ void USoulDashingState::Enter()
 		// disable input for the remainder of the dash 
 		PlayerOwner->DisableInput(PlayerOwner->GetLocalViewingPlayerController());
 		
-		TempTimer = 0; 
+		TempTimer = 0;
+
+		StartLoc = PlayerOwner->GetActorLocation(); 
 	}
 
 }
@@ -39,9 +41,17 @@ void USoulDashingState::Update(const float DeltaTime)
 {
 	Super::Update(DeltaTime);
 
+	// Change state/stop dash when velocity is 0 (collided) or travelled max distance 
+	if(PlayerOwner->GetCharacterMovement()->Velocity.IsNearlyZero() || FVector::Dist(StartLoc, PlayerOwner->GetActorLocation()) > MaxDashDistance)
+	{
+		PlayerOwner->SwitchState(Cast<ASoulCharacter>(PlayerOwner)->BaseState);
+		return; 
+	} 
+
+	// Failsafe to exit dash mode, probably not necessary but will keep for now 
 	TempTimer += DeltaTime;
 
-	if(TempTimer > 0.5f)
+	if(TempTimer > 1.5f)
 		PlayerOwner->SwitchState(Cast<ASoulCharacter>(PlayerOwner)->BaseState); 
 }
 
@@ -55,15 +65,30 @@ void USoulDashingState::Exit()
 	PlayerOwner->EnableInput(PlayerOwner->GetLocalViewingPlayerController());
 	PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Block); 
 
-	ServerExit(); 
+	ServerExit(PlayerOwner->GetCharacterMovement()->GetLastInputVector()); 
 }
 
-void USoulDashingState::ServerExit_Implementation()
+void USoulDashingState::ServerExit_Implementation(const FVector InputVec)
 {
 	if(!PlayerOwner->HasAuthority())
 		return;
 
-	PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Block); 
+	PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Block);
+
+	// Cancel velocity if no input, set to max vel if there is input 
+	// if(InputVec.IsZero())
+	// 	PlayerOwner->GetCharacterMovement()->Velocity = FVector::ZeroVector;
+	// else
+
+	// TODO: Improve this 
+
+	FVector VelDir = PlayerOwner->GetCharacterMovement()->Velocity;
+	VelDir.Z = 0;
+
+	if(!PlayerOwner->IsDepthMovementEnabled())
+		VelDir.X = 0;
+	
+	PlayerOwner->GetCharacterMovement()->Velocity = PlayerOwner->GetCharacterMovement()->MaxWalkSpeed * VelDir.GetSafeNormal(); 
 }
 
 void USoulDashingState::MulticastRPCDash_Implementation()
@@ -71,9 +96,9 @@ void USoulDashingState::MulticastRPCDash_Implementation()
 	if(!PlayerOwner->IsLocallyControlled())
 		return;
 
-	// might not be needed
+	// Will prob put event call for sounds etc. here 
 	
-	UE_LOG(LogTemp, Warning, TEXT("Multicast dash"))
+	// UE_LOG(LogTemp, Warning, TEXT("Multicast dash"))
 }
 
 void USoulDashingState::ServerRPCDash_Implementation(const FVector DashDir)
