@@ -25,6 +25,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)	
 	void StartMoving();
+	
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)	
+    void CheckPlates();
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)	
 	void StartReverse();
