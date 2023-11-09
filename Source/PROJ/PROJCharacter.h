@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "PROJCharacter.generated.h"
 
+class AProjPlayerController;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -17,7 +18,7 @@ UCLASS(config=Game)
 class APROJCharacter : public ACharacter
 {
 	GENERATED_BODY()
-	
+
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
@@ -35,7 +36,6 @@ class APROJCharacter : public ACharacter
 	UInputAction* LookAction;
 
 public:
-	
 	APROJCharacter();
 
 	/** Toggles depth movement */
@@ -51,10 +51,24 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DamageToPlayer = 0.f;
 	
-	UPROPERTY(EditAnywhere, Category=Health)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Health, Replicated)
 	class UPlayerHealthComponent* HealthComponent = nullptr;
 
 	UEnhancedInputComponent* GetInputComponent() const { return EnhancedInputComp; }; 
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Health, Replicated)
+	class UPlayerHealthComponent* PlayerHealthComponent = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Health, Replicated)
+	class UNewPlayerHealthComponent* NewPlayerHealthComponent = nullptr;
+	
+	UFUNCTION(BlueprintPure, BlueprintCallable)
+	FTransform GetSpawnTransform() const { return SpawnTransform; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetSpawnTransform(const FTransform& NewTransform) { SpawnTransform = NewTransform; }
+	
+	virtual void PossessedBy(AController* NewController) override;
 
 #pragma region Events 
 	
@@ -72,21 +86,19 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnPlayerDied();
 
-#pragma endregion 
-	
-protected:
+#pragma endregion
 
+protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
-	
+
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+
 	// To add mapping context
 	virtual void BeginPlay();
 
 private:
-
 	/** Determines if player can move in both axes */
 	bool bDepthMovementEnabled = false;
 
@@ -97,6 +109,7 @@ private:
 
 	UPROPERTY()
 	UEnhancedInputComponent* EnhancedInputComp; 
+
+	FTransform SpawnTransform;
 	
 };
-

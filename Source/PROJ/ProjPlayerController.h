@@ -10,6 +10,8 @@
  * 
  */
 
+class APROJCharacter;
+
 UCLASS()
 class PROJ_API AProjPlayerController : public APlayerController
 {
@@ -28,6 +30,8 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	virtual void Tick(float DeltaSeconds) override;
+
+	virtual void OnPossess(APawn* InPawn) override;
 	
 private:
 
@@ -46,5 +50,8 @@ private:
 	TSubclassOf<APawn> BlobPawnClass;
 	
 	TSubclassOf<APawn> UsedPawnClass;
+
+	UPROPERTY()
+	APROJCharacter* PlayerCharacter;
 	
 };

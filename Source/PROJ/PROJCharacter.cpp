@@ -9,8 +9,10 @@
 #include "EnhancedInputComponent.h"
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
+#include "NewPlayerHealthComponent.h"
 #include "PlayerBasicAttack.h"
 #include "PlayerHealthComponent.h"
+#include "ProjPlayerController.h"
 #include "Net/UnrealNetwork.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -38,15 +40,26 @@ APROJCharacter::APROJCharacter()
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 
-	CreateComponents();
+	
+	//PlayerHealthComponent = CreateDefaultSubobject<UPlayerHealthComponent>("PlayerHealthCompNew");
+	//PlayerHealthComponent->SetIsReplicated(true);
+
+	NewPlayerHealthComponent = CreateDefaultSubobject<UNewPlayerHealthComponent>("NewPlayerHealthComp");
+	NewPlayerHealthComponent->SetIsReplicated(true);
+
+	BasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(FName("Basic Attack"));
+	BasicAttack->SetupAttachment(RootComponent);
+	BasicAttack->SetCollisionProfileName("Pawn");
+	//CreateComponents(); // tried not doing this, healthicomponents is not initiated correctly
 }
 
 void APROJCharacter::CreateComponents()
 {
-	HealthComponent = CreateDefaultSubobject<UPlayerHealthComponent>(FName("Player Health Component"));
+
 
 	BasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(FName("Basic Attack"));
 	BasicAttack->SetupAttachment(RootComponent);
+	BasicAttack->SetCollisionProfileName("Pawn");
 }
 
 void APROJCharacter::BeginPlay()
@@ -55,6 +68,8 @@ void APROJCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	//Add Input Mapping Context
+
+	if (!IsLocallyControlled()) return;
 	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
@@ -62,6 +77,10 @@ void APROJCharacter::BeginPlay()
 		{
 			Subsystem->AddMappingContext(DefaultMappingContext, 0);
 		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Cast to PlayerController failed"));
 	}
 }
 
@@ -95,8 +114,16 @@ void APROJCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	// DOREPLIFETIME(APROJCharacter, Variable) // Ex. of how variables are added 
+	DOREPLIFETIME(APROJCharacter, NewPlayerHealthComponent) // Ex. of how variables are added 
 }
+
+void APROJCharacter::PossessedBy(AController* NewController)
+{
+	Super::PossessedBy(NewController);
+	
+}
+
+
 
 void APROJCharacter::Move(const FInputActionValue& Value)
 {
@@ -128,10 +155,13 @@ float APROJCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 {
 	float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser); 
 
-	if (HealthComponent != nullptr)
-		DamageApplied = HealthComponent->TakeDamage(DamageApplied);
-	else
-		UE_LOG(LogTemp, Error, TEXT("Health Component is null!"));
+	//ensure (HealthComponent != nullptr);
+	if (NewPlayerHealthComponent != nullptr)
+	{
+		DamageApplied = NewPlayerHealthComponent->TakeDamage(DamageApplied);
+		UE_LOG(LogTemp, Warning, TEXT("Player %s damaged with %f"), *GetName(), DamageApplied);
+
+	}
 
 	return DamageApplied;
 }
