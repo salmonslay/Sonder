@@ -17,7 +17,7 @@ UCLASS(config=Game)
 class APROJCharacter : public ACharacter
 {
 	GENERATED_BODY()
-	
+
 	/** MappingContext */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category = Input, meta = (AllowPrivateAccess = "true"))
 	UInputMappingContext* DefaultMappingContext;
@@ -35,24 +35,30 @@ class APROJCharacter : public ACharacter
 	UInputAction* LookAction;
 
 public:
-	
 	APROJCharacter();
 
 	/** Toggles depth movement */
 	void SetDepthMovementEnabled(const bool bNewEnable) { bDepthMovementEnabled = bNewEnable; }
 
-	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
+	                         AActor* DamageCauser) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DamageToPlayer = 0.f;
-	
-	UPROPERTY(EditAnywhere, Category=Health)
+
+	UPROPERTY(EditAnywhere, Category=Health, BlueprintReadOnly)
 	class UPlayerHealthComponent* HealthComponent = nullptr;
 
-#pragma region Events 
-	
+	UFUNCTION(BlueprintPure, BlueprintCallable)
+	FTransform GetSpawnTransform() const { return SpawnTransform; }
+
+	UFUNCTION(BlueprintCallable)
+	void SetSpawnTransform(const FTransform& NewTransform) { SpawnTransform = NewTransform; }
+
+#pragma region Events
+
 	// Components seem to not be able to create events (easily), which is why the event is declared here 
 	/** Event called when player performs a basic attack */
 	UFUNCTION(BlueprintImplementableEvent)
@@ -66,28 +72,26 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnPlayerDied();
 
-#pragma endregion 
-	
-protected:
+#pragma endregion
 
+protected:
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
-	
+
 	// APawn interface
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
-	
+
 	// To add mapping context
 	virtual void BeginPlay();
 
 private:
-
 	/** Determines if player can move in both axes */
 	bool bDepthMovementEnabled = false;
 
 	UPROPERTY()
 	class UPlayerBasicAttack* BasicAttack;
-	
-	void CreateComponents(); 
-	
-};
 
+	void CreateComponents();
+
+	FTransform SpawnTransform;
+};
