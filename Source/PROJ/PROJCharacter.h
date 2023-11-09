@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "PROJCharacter.generated.h"
 
+class AProjPlayerController;
 class UInputMappingContext;
 class UInputAction;
 struct FInputActionValue;
@@ -47,18 +48,31 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DamageToPlayer = 0.f;
-
-	UPROPERTY(EditAnywhere, Category=Health, BlueprintReadOnly)
+	
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Health, Replicated)
 	class UPlayerHealthComponent* HealthComponent = nullptr;
 
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Health, Replicated)
+	class UPlayerHealthComponent* PlayerHealthComponent = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Health, Replicated)
+	class UNewPlayerHealthComponent* NewPlayerHealthComponent = nullptr;
+	
 	UFUNCTION(BlueprintPure, BlueprintCallable)
 	FTransform GetSpawnTransform() const { return SpawnTransform; }
 
 	UFUNCTION(BlueprintCallable)
 	void SetSpawnTransform(const FTransform& NewTransform) { SpawnTransform = NewTransform; }
 
-#pragma region Events
 
+	virtual void PossessedBy(AController* NewController) override;
+
+	
+
+	
+
+#pragma region Events 
+	
 	// Components seem to not be able to create events (easily), which is why the event is declared here 
 	/** Event called when player performs a basic attack */
 	UFUNCTION(BlueprintImplementableEvent)

@@ -4,19 +4,20 @@
 
 #include "CoreMinimal.h"
 #include "BaseHealthComponent.h"
-#include "PlayerHealthComponent.generated.h"
+#include "NewPlayerHealthComponent.generated.h"
 
 /**
- * Health component used for the players 
+ * 
  */
 UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
-class PROJ_API UPlayerHealthComponent : public UBaseHealthComponent
+class PROJ_API UNewPlayerHealthComponent : public UBaseHealthComponent
 {
 	GENERATED_BODY()
 
+	
 public:
 
-	UPlayerHealthComponent();
+	UNewPlayerHealthComponent();
 
 	virtual float TakeDamage(float DamageAmount) override;
 
@@ -46,5 +47,4 @@ private:
 	/** Function run on each game instance when player dies, run on server and client */
 	UFUNCTION(NetMulticast, Reliable) 
 	void MulticastRPCPlayerDied(); 
-	
 };
