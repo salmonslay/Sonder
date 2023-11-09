@@ -5,7 +5,7 @@
 			<value>Shockwave</value>
 		</property>
 		<property name="outputFormat">
-			<value>1</value>
+			<value>2</value>
 		</property>
 		<relationship name="folder">
 			<destination>{f29c3ef4-1edc-4a98-860d-49acaea3f324}</destination>
@@ -147,6 +147,7 @@
 	<object class="MixerBusEffectChain" id="{b72e79a0-589e-46dd-89e0-71ca70b19ee3}">
 		<relationship name="effects">
 			<destination>{d12124e6-8950-4a8c-acb9-5a3457dbdabf}</destination>
+			<destination>{ef1b5ff6-b4bb-402f-af55-582d67b5da49}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{beabf028-b587-4265-97c3-aab184b71b46}" />
@@ -200,6 +201,7 @@
 	</object>
 	<object class="MixerBusPanner" id="{e0dbc7a5-938e-4fbc-b398-c237f81ee318}" />
 	<object class="MixerBusFader" id="{d12124e6-8950-4a8c-acb9-5a3457dbdabf}" />
+	<object class="SpatialiserEffect" id="{ef1b5ff6-b4bb-402f-af55-582d67b5da49}" />
 	<object class="AutomationPoint" id="{70701fdc-2736-4f62-98f5-a91778cbb90e}">
 		<property name="position">
 			<value>0</value>
