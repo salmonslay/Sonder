@@ -56,6 +56,7 @@ public:
 
 	void AddEnemy(AEnemyCharacter* Enemy);
 
+	UFUNCTION(BlueprintCallable)
 	void RemoveEnemy(AEnemyCharacter* Enemy);
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemies")
