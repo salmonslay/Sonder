@@ -1,8 +1,7 @@
 ﻿// Fill out your copyright notice in the Description page of Project Settings.
 
-#include "Components/BoxComponent.h"
 #include "CombatManager.h"
-
+#include "Components/BoxComponent.h"
 
 // Sets default values
 ACombatManager::ACombatManager()
@@ -22,7 +21,7 @@ void ACombatManager::BeginPlay()
 	//GatherOverlappingSpawnPoints();
 	for(FEnemyWave Wave : Waves)
 	{
-		WavesQueue.Enqueue(Wave);
+		WavesQueue.Add(Wave);
 	}
 }
 
@@ -30,6 +29,20 @@ void ACombatManager::BeginPlay()
 void ACombatManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+
+	if(bCombatStarted && !bCombatEnded && !WavesQueue.IsEmpty() && !bWaitingForWave &&
+		NumActiveEnemies <= WavesQueue[0].AllowedRemainingEnemiesForWave)
+	{
+		if (WavesQueue[0].TimeToWaveAfterEnemiesKilled <= 0)
+		{
+			//Handle wave immediately
+		}
+		else
+		{
+			bWaitingForWave = true;
+			//Handle wave on a timer
+		}
+	}
 }
 
 void ACombatManager::AddEnemy(ACharacter* Enemy)
@@ -60,54 +73,18 @@ void ACombatManager::OnRep_CombatEnded()
 {
 	OnCombatEnd();
 }
-/*
-void ACombatManager::GatherOverlappingSpawnPoints()
-{
-	TArray<AActor*> OverlappingSpawnPoints;
-	ManagerBounds->GetOverlappingActors(OverlappingSpawnPoints, ASpawnPoint::StaticClass());
-	for (AActor* SP : OverlappingSpawnPoints)
-	{
-		ASpawnPoint* SpawnPoint = Cast<ASpawnPoint>(SP);
-		if(SpawnPoint)
-		{
-			SpawnPoints.Add(SpawnPoint);
-		}
-	}
-}
-*/
+
 void ACombatManager::HandleSpawn()
 {
-	
-}
-
-void ACombatManager::PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent)
-{
-	//Needs destructors for the spawn points when they are removed from the array.
-	/*
-	if(PropertyChangedEvent.GetPropertyName() == TEXT("SpawnPoints"))
+	bWaitingForWave = false;
+	FEnemyWave Wave = WavesQueue.Pop();
+	for(int i = 0; i < Wave.NumEnemies; i++)
 	{
-		const int Index = PropertyChangedEvent.GetArrayIndex(TEXT("SpawnPoints"));
-		switch (PropertyChangedEvent.ChangeType)
-		{
-		case EPropertyChangeType::ArrayAdd:
-			if(SpawnPoints.Num() > Index && SpawnPoints[Index] == nullptr)
-			{
-				SpawnPoints[Index] = GetWorld()->SpawnActor<ASpawnPoint>(SpawnPointBPClass, GetActorLocation(), GetActorRotation());
-				if(SpawnPoints[Index])
-				{
-					SpawnPoints[Index]->SetActorTransform(GetActorTransform());
-					SpawnPoints[Index]->Rename(TEXT("SpawnPoint" + Index));
-				}
-			}
-			return;
-		case EPropertyChangeType::ArrayRemove:
-			PropertyChangedEvent.Property->BeginDestroy();
-			return;
-		default:
-			return;
-		}
+		
 	}
-	*/
-	Super::PostEditChangeChainProperty(PropertyChangedEvent);
 }
 
+void ACombatManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+}

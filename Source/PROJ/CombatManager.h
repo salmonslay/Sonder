@@ -2,7 +2,7 @@
 
 #pragma once
 
-#include "Containers/Queue.h"
+#include "Runtime/Core/Public/Containers/Queue.h"
 #include "SpawnPoint.h"
 #include "CoreMinimal.h"
 #include "GameFramework/Actor.h"
@@ -79,13 +79,13 @@ private:
 	UPROPERTY(ReplicatedUsing=OnRep_CombatEnded)
 	bool bCombatEnded = false;
 
+	bool bWaitingForWave = false;
+
 	UFUNCTION()
 	void OnRep_CombatStarted();
 
 	UFUNCTION()
 	void OnRep_CombatEnded();
-	
-	//void GatherOverlappingSpawnPoints();
 	
 	void HandleSpawn();
 	
@@ -96,7 +96,8 @@ private:
 	TArray<ACharacter*> Enemies;
 
 	UPROPERTY(VisibleAnywhere, Category="Spawn")
-	TQueue<FEnemyWave> WavesQueue;
+	TArray<FEnemyWave> WavesQueue;
 
-	virtual void PostEditChangeChainProperty(FPropertyChangedChainEvent& PropertyChangedEvent) override;
+	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 };
