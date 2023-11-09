@@ -6,16 +6,16 @@
 #include "CharacterStateMachine.h"
 #include "SoulBaseState.h"
 #include "SoulCharacter.h"
+#include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
 void USoulDashingState::Enter()
 {
-	Super::Enter();
+	Super::Enter(); 
 
 	if(PlayerOwner->IsLocallyControlled()) 
 	{
-		if(!IsValid(CharMovementComp)) 
-			CharMovementComp = PlayerOwner->GetCharacterMovement();
+		PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Ignore); 
 		
 		// Set dash direction to input vector if player is moving, otherwise the forward vector 
 		FVector DashDir = PlayerOwner->GetLastMovementInputVector().IsNearlyZero() ? PlayerOwner->GetActorForwardVector() : PlayerOwner->GetLastMovementInputVector(); 
@@ -49,8 +49,21 @@ void USoulDashingState::Exit()
 {
 	Super::Exit();
 
-	if(PlayerOwner->IsLocallyControlled())
-		PlayerOwner->EnableInput(PlayerOwner->GetLocalViewingPlayerController());
+	if(!PlayerOwner->IsLocallyControlled())
+		return;
+	
+	PlayerOwner->EnableInput(PlayerOwner->GetLocalViewingPlayerController());
+	PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Block); 
+
+	ServerExit(); 
+}
+
+void USoulDashingState::ServerExit_Implementation()
+{
+	if(!PlayerOwner->HasAuthority())
+		return;
+
+	PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Block); 
 }
 
 void USoulDashingState::MulticastRPCDash_Implementation()
@@ -58,6 +71,8 @@ void USoulDashingState::MulticastRPCDash_Implementation()
 	if(!PlayerOwner->IsLocallyControlled())
 		return;
 
+	// might not be needed
+	
 	UE_LOG(LogTemp, Warning, TEXT("Multicast dash"))
 }
 
@@ -66,11 +81,9 @@ void USoulDashingState::ServerRPCDash_Implementation(const FVector DashDir)
 	if(!PlayerOwner->HasAuthority())
 		return;
 
-	CharMovementComp = PlayerOwner->GetCharacterMovement();
+	PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Ignore); 
 	
-	CharMovementComp->AddImpulse(DashForce * DashDir);
-
-	UE_LOG(LogTemp, Warning, TEXT("Applied force: %s, fwd vec: %s"), *(DashForce * DashDir).ToCompactString(), *PlayerOwner->GetActorForwardVector().ToCompactString()) 
+	PlayerOwner->GetCharacterMovement()->AddImpulse(DashForce * DashDir);
 
 	MulticastRPCDash(); 
 }
