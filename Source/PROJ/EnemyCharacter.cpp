@@ -6,7 +6,7 @@
 #include "EnemyAIController.h"
 #include "Net/UnrealNetwork.h"
 #include "Engine/Engine.h"
-#include "BaseHealthComponent.h"
+#include "EnemyHealthComponent.h"
 
 
 // Sets default values
@@ -15,7 +15,7 @@ AEnemyCharacter::AEnemyCharacter()
  	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = true;
 
-	HealthComponent = CreateDefaultSubobject<UBaseHealthComponent>(TEXT("HealthComponent"));
+	EnemyHealthComponent = CreateDefaultSubobject<UEnemyHealthComponent>(TEXT("EnemyHealthComponent"));
 
 }
 
@@ -61,11 +61,22 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 	AActor* DamageCauser)
 {
 	float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
-	DamageApplied = HealthComponent->TakeDamage(DamageApplied); 
 
-	if (HealthComponent->IsDead())
+	if (EnemyHealthComponent)
 	{
-		KillMe();
+		DamageApplied = EnemyHealthComponent->TakeDamage(DamageApplied);
+		if (EventInstigator->IsLocalController())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Enemy killed by listen server player"));
+		}
+		else
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Enemy killed by client player"));
+		}
+	}
+	else
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Enemy health component is nullptr"));
 	}
 	return DamageApplied;
 }
@@ -76,11 +87,7 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& Out
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	//Replicate current health.
-	DOREPLIFETIME(AEnemyCharacter, HealthComponent);
+	// redundant now that has own health comp??
+	DOREPLIFETIME(AEnemyCharacter, EnemyHealthComponent);
 	
-}
-void AEnemyCharacter::KillMe()
-{
-	OnDeathEvent();
 }

@@ -18,7 +18,7 @@ public:
 	APROJGameMode(); 
 
 	APROJCharacter* GetActivePlayer(int Index) const;
-
+	
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
@@ -28,6 +28,7 @@ public:
 	virtual FString InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal) override;
 
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
+	
 	
 private:
 

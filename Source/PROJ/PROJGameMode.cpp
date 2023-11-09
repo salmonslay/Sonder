@@ -42,6 +42,7 @@ APROJCharacter* APROJGameMode::GetActivePlayer(const int Index) const
 
 }
 
+
 void APROJGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
@@ -106,8 +107,8 @@ FString APROJGameMode::InitNewPlayer(APlayerController* NewPlayerController, con
 UClass* APROJGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)
 {
 	/* Override Functionality to get Pawn from PlayerController */
-	if (const AProjPlayerController* MyController = Cast<AProjPlayerController>(InController))
-	{
+if (const AProjPlayerController* MyController = Cast<AProjPlayerController>(InController))
+{
 		return MyController->GetControlledPawnClass();
 	}
 
