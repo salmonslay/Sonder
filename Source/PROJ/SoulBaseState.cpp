@@ -45,13 +45,13 @@ void USoulBaseState::Dash()
 		return;
 
 	PlayerOwner->SwitchState(SoulCharacter->DashingState); 
-	
-	// UE_LOG(LogTemp, Warning, TEXT("Dash"))
 }
 
 void USoulBaseState::MulticastRPCDash_Implementation()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Multicast dash"))
+	// UE_LOG(LogTemp, Warning, TEXT("Multicast dash"))
+
+	
 }
 
 void USoulBaseState::ServerRPCDash_Implementation()

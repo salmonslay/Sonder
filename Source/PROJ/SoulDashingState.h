@@ -24,18 +24,22 @@ public:
 
 private:
 
-	UPROPERTY()
-	class UCharacterMovementComponent* CharMovementComp;
-
 	UPROPERTY(EditAnywhere)
 	float DashForce = 100.f;
 
+	/** The impulse/force need to be applied on the server */
 	UFUNCTION(Server, Reliable)
 	void ServerRPCDash(const FVector DashDir); 
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCDash();
 
+	UFUNCTION(Server, Reliable)
+	void ServerExit(); 
+
 	float TempTimer = 0;
+
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<ECollisionChannel> DashBarCollisionChannel; 
 	
 };
