@@ -48,7 +48,7 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DamageToPlayer = 0.f;
 	
-	UPROPERTY(EditAnywhere, Category=Health)
+	UPROPERTY(EditAnywhere, Category=Health, BlueprintReadOnly)
 	class UPlayerHealthComponent* HealthComponent = nullptr;
 
 #pragma region Events 
