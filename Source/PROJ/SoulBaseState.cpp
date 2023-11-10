@@ -20,14 +20,13 @@ void USoulBaseState::Enter()
 void USoulBaseState::Update(const float DeltaTime)
 {
 	Super::Update(DeltaTime);
-
 	
 }
 
 void USoulBaseState::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
 {
 	Super::UpdateInputCompOnEnter(InputComp);
-
+	
 	InputComp->BindAction(DashInputAction, ETriggerEvent::Started, this, &USoulBaseState::Dash);
 }
 
@@ -43,7 +42,7 @@ void USoulBaseState::Dash()
 	// Only run locally 
 	if(!PlayerOwner->IsLocallyControlled())
 		return;
-
+	
 	PlayerOwner->SwitchState(SoulCharacter->DashingState); 
 }
 

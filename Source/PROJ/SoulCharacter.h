@@ -20,7 +20,7 @@ public:
 
 	// states are public so switch state can be called with the appropriate state easily 
 	
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USoulBaseState* BaseState;
 
 	UPROPERTY(EditAnywhere)

@@ -45,6 +45,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	float MaxDashDistance = 250.f;
 
-	FVector StartLoc; 
+	FVector StartLoc;
 	
 };

@@ -41,6 +41,5 @@ private:
 	void MulticastRPCDash();
 
 	UPROPERTY()
-	class ASoulCharacter* SoulCharacter; 
-	
+	class ASoulCharacter* SoulCharacter;
 };
