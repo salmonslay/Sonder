@@ -18,7 +18,7 @@
 		<relationship name="effects">
 			<destination>{b5fab5a5-257c-49eb-a127-ca143b840ce0}</destination>
 			<destination>{56b219ad-e347-437f-9c38-f897984c9611}</destination>
-			<destination>{6bc01fd0-dd88-4ae2-bd44-594ac437e801}</destination>
+			<destination>{e21a6643-8b2d-4e0e-8dc9-4718bae7f827}</destination>
 			<destination>{5a5a0a91-61cd-4116-99a2-51cf182e4984}</destination>
 			<destination>{03aaabf9-f66e-4c65-8c2c-8f81dc15b404}</destination>
 		</relationship>
@@ -32,7 +32,7 @@
 			<value>15.5</value>
 		</property>
 		<property name="level">
-			<value>-25</value>
+			<value>-19.5</value>
 		</property>
 		<relationship name="modulators">
 			<destination>{c77179ff-605e-498c-9c57-51a29e15f1c6}</destination>
@@ -43,7 +43,7 @@
 			<value>7000</value>
 		</property>
 		<property name="wetLevel">
-			<value>-9.5</value>
+			<value>-6.5</value>
 		</property>
 		<property name="dryLevel">
 			<value>-80</value>
@@ -52,12 +52,12 @@
 			<destination>{c4aa9b17-8321-4f38-97a3-5f2f171b6e29}</destination>
 		</relationship>
 	</object>
-	<object class="ThreeEQEffect" id="{6bc01fd0-dd88-4ae2-bd44-594ac437e801}">
-		<property name="lowGain">
-			<value>-3</value>
+	<object class="MultibandEqEffect" id="{e21a6643-8b2d-4e0e-8dc9-4718bae7f827}">
+		<property name="frequencyA">
+			<value>886.545654</value>
 		</property>
-		<property name="highGain">
-			<value>-16.5</value>
+		<property name="qualityA">
+			<value>0.885344803</value>
 		</property>
 	</object>
 	<object class="MixerBusFader" id="{5a5a0a91-61cd-4116-99a2-51cf182e4984}" />
