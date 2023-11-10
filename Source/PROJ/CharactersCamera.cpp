@@ -33,8 +33,12 @@ void ACharactersCamera::BeginPlay()
 	GetWorld()->GetTimerManager().SetTimer(Handle,this, &ACharactersCamera::GetPlayers,4.0f);
 
 
-	WallOne->SetActorEnableCollision(false);
-	WallTwo->SetActorEnableCollision(false);
+	if (WallOne && WallTwo)
+	{
+		WallOne->SetActorEnableCollision(false);
+		WallTwo->SetActorEnableCollision(false);
+	}
+	
 	FTimerHandle WallHandle;
 	GetWorld()->GetTimerManager().SetTimer(WallHandle,this, &ACharactersCamera::SetWallCollision,5.0f);
 	
