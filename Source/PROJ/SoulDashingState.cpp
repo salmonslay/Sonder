@@ -30,7 +30,7 @@ void USoulDashingState::Enter()
 		// disable input for the remainder of the dash 
 		PlayerOwner->DisableInput(PlayerOwner->GetLocalViewingPlayerController());
 		
-		TempTimer = 0;
+		// TempTimer = 0;
 
 		StartLoc = PlayerOwner->GetActorLocation(); 
 	}
@@ -49,10 +49,10 @@ void USoulDashingState::Update(const float DeltaTime)
 	} 
 
 	// Failsafe to exit dash mode, probably not necessary but will keep for now 
-	TempTimer += DeltaTime;
-
-	if(TempTimer > 1.5f)
-		PlayerOwner->SwitchState(Cast<ASoulCharacter>(PlayerOwner)->BaseState); 
+	// TempTimer += DeltaTime;
+	//
+	// if(TempTimer > 1.5f)
+	// 	PlayerOwner->SwitchState(Cast<ASoulCharacter>(PlayerOwner)->BaseState); 
 }
 
 void USoulDashingState::Exit()
@@ -68,12 +68,19 @@ void USoulDashingState::Exit()
 	ServerExit(PlayerOwner->GetCharacterMovement()->GetLastInputVector()); 
 }
 
+void USoulDashingState::MulticastExit_Implementation()
+{
+	PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Block);
+	
+	Cast<ASoulCharacter>(PlayerOwner)->OnDashEnd();
+}
+
 void USoulDashingState::ServerExit_Implementation(const FVector InputVec)
 {
 	if(!PlayerOwner->HasAuthority())
 		return;
 
-	PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Block);
+	// PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Block);
 
 	// Cancel velocity if no input, set to max vel if there is input 
 	// if(InputVec.IsZero())
@@ -88,7 +95,9 @@ void USoulDashingState::ServerExit_Implementation(const FVector InputVec)
 	if(!PlayerOwner->IsDepthMovementEnabled())
 		VelDir.X = 0;
 	
-	PlayerOwner->GetCharacterMovement()->Velocity = PlayerOwner->GetCharacterMovement()->MaxWalkSpeed * VelDir.GetSafeNormal(); 
+	PlayerOwner->GetCharacterMovement()->Velocity = PlayerOwner->GetCharacterMovement()->MaxWalkSpeed * VelDir.GetSafeNormal();
+
+	MulticastExit(); 
 }
 
 void USoulDashingState::MulticastRPCDash_Implementation()
