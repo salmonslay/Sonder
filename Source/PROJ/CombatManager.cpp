@@ -103,7 +103,7 @@ void ACombatManager::HandleSpawn()
 	NumActiveEnemies += Wave.NumEnemies;
 	for(int i = 0; i < Wave.NumEnemies; i++)
 	{
-		SpawnPoints[i % SpawnPoints.Num()]->AddEnemyToSpawn(Wave.EnemyClass);
+		Wave.SpawnPoints[i % Wave.SpawnPoints.Num()]->AddEnemyToSpawn(Wave.EnemyClass);
 	}
 }
 
