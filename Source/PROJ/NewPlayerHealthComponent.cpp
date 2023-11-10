@@ -18,7 +18,7 @@ void UNewPlayerHealthComponent::BeginPlay()
 	Player = Cast<APROJCharacter>(GetOwner()); 
 }
 
-
+/*
 float UNewPlayerHealthComponent::TakeDamage(const float DamageAmount)
 {
 	// Run only on the local player 
@@ -31,13 +31,21 @@ float UNewPlayerHealthComponent::TakeDamage(const float DamageAmount)
 
 	return DamageTaken; 
 }
+*/
 
 void UNewPlayerHealthComponent::ServerRPCDamageTaken_Implementation(const float DamageTaken)
 {
 	// Run only on server 
 	if(!Player->HasAuthority())
-		return; 
+		return;
 	
+	CurrentHealth -= DamageTaken;
+	if (CurrentHealth <= 0)
+	{
+		IDied();
+		CurrentHealth = MaxHealth;
+	}
+
 	MulticastRPCDamageTaken(DamageTaken); 
 }
 
@@ -50,23 +58,27 @@ void UNewPlayerHealthComponent::IDied()
 {
 	Super::IDied();
 
-	// Run only on the local player, place this before Super call? 
-	if(!Player->IsLocallyControlled())
-		return; 
-	
-	ServerRPCPlayerDied(); 
+	// Run only on the local player, place this before Super call?
+
+	UE_LOG(LogTemp, Error, TEXT("Dies On Server before super"));
+
+	//if(!Player->IsLocallyControlled())
+	{
+		//UE_LOG(LogTemp, Error, TEXT("Dies On Server"));
+		ServerRPCPlayerDied(); 
+	}
 }
 
 void UNewPlayerHealthComponent::ServerRPCPlayerDied_Implementation()
 {
 	// Run only on server 
-	if(!Player->HasAuthority())
-		return;
-
+	UE_LOG(LogTemp, Error, TEXT("Dies On Server "));
+	Player->OnPlayerDied(); 
 	MulticastRPCPlayerDied(); 
 }
 
 void UNewPlayerHealthComponent::MulticastRPCPlayerDied_Implementation()
 {
-	Player->OnPlayerDied(); 
+	Player->OnPlayerDied();
+	CurrentHealth = MaxHealth;
 }

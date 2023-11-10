@@ -44,14 +44,16 @@ void ACombatManager::Tick(float DeltaTime)
 	if(bCombatStarted && !bCombatEnded && GetLocalRole() == ROLE_Authority && !WavesQueue.IsEmpty() &&
 		!bWaitingForWave && NumActiveEnemies <= WavesQueue[0].AllowedRemainingEnemiesForWave)
 	{
-		if (float Wait = WavesQueue[0].TimeToWaveAfterEnemiesKilled <= 0)
+		float Wait = WavesQueue[0].TimeToWaveAfterEnemiesKilled;
+		if (Wait <= 0)
 		{
 			HandleSpawn();
+			UE_LOG(LogTemp, Warning, TEXT("Delay wpanf %f"), Wait);
 		}
 		else
 		{
 			bWaitingForWave = true;
-			GetWorldTimerManager().SetTimer(WaveWaitTimerHandle, this, &ACombatManager::HandleSpawn, Wait, false);
+			GetWorldTimerManager().SetTimer(WaveWaitTimerHandle, this, &ACombatManager::HandleSpawn, Wait, false, Wait);
 		}
 	}
 }
@@ -99,12 +101,13 @@ void ACombatManager::OnRep_CombatEnded()
 void ACombatManager::HandleSpawn()
 {
 	bWaitingForWave = false;
-	const FEnemyWave Wave = WavesQueue.Pop();
+	const FEnemyWave Wave = WavesQueue[0];
 	NumActiveEnemies += Wave.NumEnemies;
 	for(int i = 0; i < Wave.NumEnemies; i++)
 	{
 		Wave.SpawnPoints[i % Wave.SpawnPoints.Num()]->AddEnemyToSpawn(Wave.EnemyClass);
 	}
+	WavesQueue.RemoveAt(0);
 }
 
 void ACombatManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
