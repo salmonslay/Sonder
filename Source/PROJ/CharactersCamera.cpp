@@ -31,6 +31,12 @@ void ACharactersCamera::BeginPlay()
 	AssignSpline(DefaultCameraSplineClass);
 	FTimerHandle Handle;
 	GetWorld()->GetTimerManager().SetTimer(Handle,this, &ACharactersCamera::GetPlayers,4.0f);
+
+
+	WallOne->SetActorEnableCollision(false);
+	WallTwo->SetActorEnableCollision(false);
+	FTimerHandle WallHandle;
+	GetWorld()->GetTimerManager().SetTimer(WallHandle,this, &ACharactersCamera::SetWallCollision,5.0f);
 	
 }
 
@@ -96,16 +102,21 @@ void ACharactersCamera::RotateCamera()
 
 void ACharactersCamera::MoveWalls(FVector MiddlePoint)
 {
-	FVector Offset = tan(CameraComponent->FieldOfView/2) * (this->GetActorLocation() - MiddlePoint);
+	float FOV = CameraComponent->FieldOfView/2;
+	FVector Camloc = CameraComponent->GetComponentLocation();
+	double Offset = FMath::Tan(FOV) * (FVector::Distance(MiddlePoint,Camloc));
 
-	WallOne->SetActorLocation(FVector(380,(MiddlePoint.Y + Offset.Y),160));
-	WallTwo->SetActorLocation(FVector(380,(MiddlePoint.Y - Offset.Y),160));
+	WallOne->SetActorLocation(FVector(MiddlePoint.X,(MiddlePoint.Y-Offset/2),MiddlePoint.Z));
+	WallTwo->SetActorLocation(FVector(MiddlePoint.X,MiddlePoint.Y+Offset/2,MiddlePoint.Z));
+	
+	
+	
+}
 
-	UE_LOG(LogTemp, Log, TEXT("Actor location: %s"), *MiddlePoint.ToString());
-
-	UE_LOG(LogTemp, Log, TEXT("Actor location: %s"), *(MiddlePoint + Offset).ToString());
-
-	UE_LOG(LogTemp, Log, TEXT("Actor location: %s"), *(MiddlePoint - Offset).ToString());
+void ACharactersCamera::SetWallCollision()
+{
+	WallOne->SetActorEnableCollision(true);
+	WallTwo->SetActorEnableCollision(true);
 }
 
 void ACharactersCamera::MoveCamera()
@@ -117,11 +128,12 @@ void ACharactersCamera::MoveCamera()
 			
 			if (PlayerOne != nullptr && PlayerTwo != nullptr)
 			{
-				const FVector MiddleLocation = (PlayerOne->GetActorLocation()/2) + (PlayerTwo->GetActorLocation()/2);
+				const FVector MiddleLocation = PlayerOne->GetActorLocation()/2 + PlayerTwo->GetActorLocation()/2;
+				MoveWalls(MiddleLocation);
 				const FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(MiddleLocation, ESplineCoordinateSpace::World);
 				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeedLocation);
 				CameraComponent->SetWorldLocation(TargetLocation);
-				MoveWalls(TargetLocation);
+				
 				
 			} else if (PlayerTwo == nullptr)
 			{

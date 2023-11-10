@@ -49,6 +49,8 @@ private:
 
 	void MoveWalls(FVector MiddlePoint);
 
+	void SetWallCollision();
+
 	UPROPERTY()
 	ACameraSpline* CurrentCameraSplineClass;
 
