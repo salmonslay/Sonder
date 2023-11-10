@@ -13,7 +13,7 @@ void UEnemyHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	EnemyCharacter = Cast<AEnemyCharacter>(GetOwner()); 
+	EnemyCharacter = Cast<AEnemyCharacter>(GetOwner());
 }
 
 
@@ -25,6 +25,7 @@ float UEnemyHealthComponent::TakeDamage(const float DamageAmount)
 
 	const float DamageTaken = Super::TakeDamage(DamageAmount);
 
+	
 	ServerRPCDamageTaken(DamageTaken); 
 
 	return DamageTaken; 
@@ -35,7 +36,13 @@ void UEnemyHealthComponent::ServerRPCDamageTaken_Implementation(const float Dama
 	// Run only on server 
 	if(!EnemyCharacter->HasAuthority())
 		return; 
-	
+
+	CurrentHealth -= DamageTaken;
+	if (CurrentHealth <= 0)
+	{
+		IDied();
+	}
+
 	MulticastRPCDamageTaken(DamageTaken); 
 }
 
@@ -66,6 +73,7 @@ void UEnemyHealthComponent::ServerRPCPlayerDied_Implementation()
 
 void UEnemyHealthComponent::MulticastRPCPlayerDied_Implementation()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Multicast died"));
 	EnemyCharacter->OnDeathEvent(); 
 }
 

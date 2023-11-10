@@ -22,6 +22,12 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Health, meta=(AllowPrivateAccess = true), SaveGame)
+	float CurrentHealth;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Health, meta=(AllowPrivateAccess = true), SaveGame)
+	float MaxHealth = 100;
+
 public:
 
 	/** Call when owner takes damage, returns the actual damage taken */
@@ -56,10 +62,6 @@ public:
 
 private:
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Health, meta=(AllowPrivateAccess = true), SaveGame)
-	float CurrentHealth;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Health, meta=(AllowPrivateAccess = true), SaveGame)
-	float MaxHealth = 100;
+	
 		
 };
