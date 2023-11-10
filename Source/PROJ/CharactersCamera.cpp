@@ -102,21 +102,26 @@ void ACharactersCamera::RotateCamera()
 
 void ACharactersCamera::MoveWalls(FVector MiddlePoint)
 {
-	float FOV = CameraComponent->FieldOfView/2;
-	FVector Camloc = CameraComponent->GetComponentLocation();
-	double Offset = FMath::Tan(FOV) * (FVector::Distance(MiddlePoint,Camloc));
+	if (WallOne && WallTwo)
+	{
+		float FOV = CameraComponent->FieldOfView/2;
+		FVector Camloc = CameraComponent->GetComponentLocation();
+		double Offset = FMath::Tan(FOV) * (FVector::Distance(MiddlePoint,Camloc));
 
-	WallOne->SetActorLocation(FVector(MiddlePoint.X,(MiddlePoint.Y-Offset/2),MiddlePoint.Z));
-	WallTwo->SetActorLocation(FVector(MiddlePoint.X,MiddlePoint.Y+Offset/2,MiddlePoint.Z));
-	
-	
+		WallOne->SetActorLocation(FVector(MiddlePoint.X,(MiddlePoint.Y-Offset/2),MiddlePoint.Z));
+		WallTwo->SetActorLocation(FVector(MiddlePoint.X,MiddlePoint.Y+Offset/2,MiddlePoint.Z));
+	}
 	
 }
 
 void ACharactersCamera::SetWallCollision()
 {
-	WallOne->SetActorEnableCollision(true);
-	WallTwo->SetActorEnableCollision(true);
+	if (WallOne && WallTwo)
+	{
+		WallOne->SetActorEnableCollision(true);
+		WallTwo->SetActorEnableCollision(true);
+	}
+	
 }
 
 void ACharactersCamera::MoveCamera()
