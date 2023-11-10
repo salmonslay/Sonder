@@ -22,6 +22,12 @@ protected:
 	// Called when the game starts
 	virtual void BeginPlay() override;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Health, meta=(AllowPrivateAccess = true), SaveGame, ReplicatedUsing=OnRep_HealthChange)
+	float CurrentHealth;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Health, meta=(AllowPrivateAccess = true), SaveGame, Replicated)
+	float MaxHealth = 100;
+
 public:
 
 	/** Call when owner takes damage, returns the actual damage taken */
@@ -54,12 +60,19 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RefillHealth();
 
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+
+	UFUNCTION()
+	void OnRep_HealthChange();
+
+
+	UFUNCTION()
+	void HealthUpdate();
+
 private:
 	
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category=Health, meta=(AllowPrivateAccess = true), SaveGame)
-	float CurrentHealth;
-
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category=Health, meta=(AllowPrivateAccess = true), SaveGame)
-	float MaxHealth = 100;
+	
 		
 };
