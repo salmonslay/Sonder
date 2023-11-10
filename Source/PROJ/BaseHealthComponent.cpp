@@ -3,6 +3,7 @@
 #include "BaseHealthComponent.h"
 
 #include "EnemyCharacter.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values for this component's properties
 UBaseHealthComponent::UBaseHealthComponent()
@@ -24,12 +25,14 @@ float UBaseHealthComponent::TakeDamage(float DamageAmount)
 	if(IsDead())
 		return 0; 
 	
-	DamageAmount = FMath::Min(GetHealth(), DamageAmount); 
-	SetHealth(GetHealth() - DamageAmount);
+	if (GetOwner()->GetLocalRole() == ROLE_Authority) // körs på servern
+	{
+		// om authority - uppdatera hälsa
+		DamageAmount = FMath::Min(GetHealth(), DamageAmount); 
+		SetHealth(GetHealth() - DamageAmount);
+		HealthUpdate();
+	}
 
-	if(IsDead())
-		IDied();
-	
 	UE_LOG(LogTemp, Warning, TEXT("Damage applied to %s: %f"), *GetOwner()->GetActorNameOrLabel(), DamageAmount)
 
 	return DamageAmount; 
@@ -64,6 +67,28 @@ void UBaseHealthComponent::SetMaxHealth(const float NewMaxHealth)
 void UBaseHealthComponent::RefillHealth()
 {
 	CurrentHealth = MaxHealth;
+}
+
+void UBaseHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UBaseHealthComponent,  CurrentHealth);
+
+}
+
+void UBaseHealthComponent::OnRep_HealthChange()
+{
+	HealthUpdate();
+}
+
+void UBaseHealthComponent::HealthUpdate()
+{
+	if (GetOwner()->GetLocalRole() == ROLE_Authority)
+	{
+		if(IsDead())
+			IDied();
+	}
 }
 
 bool UBaseHealthComponent::IsDead() const

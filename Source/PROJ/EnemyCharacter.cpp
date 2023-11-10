@@ -74,14 +74,6 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 	if (EnemyHealthComponent)
 	{
 		DamageApplied = EnemyHealthComponent->TakeDamage(DamageApplied);
-		if (EventInstigator->IsLocalController())
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Enemy killed by listen server player"));
-		}
-		else
-		{
-			UE_LOG(LogTemp, Warning, TEXT("Enemy killed by client player"));
-		}
 	}
 	else
 	{
