@@ -96,9 +96,9 @@ void USoulDashingState::MulticastRPCDash_Implementation()
 	if(!PlayerOwner->IsLocallyControlled())
 		return;
 
-	// Will prob put event call for sounds etc. here 
-	
-	// UE_LOG(LogTemp, Warning, TEXT("Multicast dash"))
+	Cast<ASoulCharacter>(PlayerOwner)->OnDash();
+
+	UE_LOG(LogTemp, Warning, TEXT("Multicast dash"))
 }
 
 void USoulDashingState::ServerRPCDash_Implementation(const FVector DashDir)
