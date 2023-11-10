@@ -43,6 +43,7 @@ void UNewPlayerHealthComponent::ServerRPCDamageTaken_Implementation(const float 
 	if (CurrentHealth <= 0)
 	{
 		IDied();
+		CurrentHealth = MaxHealth;
 	}
 
 	MulticastRPCDamageTaken(DamageTaken); 
@@ -78,5 +79,6 @@ void UNewPlayerHealthComponent::ServerRPCPlayerDied_Implementation()
 
 void UNewPlayerHealthComponent::MulticastRPCPlayerDied_Implementation()
 {
-	Player->OnPlayerDied(); 
+	Player->OnPlayerDied();
+	CurrentHealth = MaxHealth;
 }
