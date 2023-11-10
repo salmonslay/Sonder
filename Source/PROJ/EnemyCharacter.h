@@ -6,6 +6,8 @@
 #include "GameFramework/Character.h"
 #include "EnemyCharacter.generated.h"
 
+class ACombatManager;
+class UEnemyHealthComponent;
 class UBaseHealthComponent;
 class UBehaviorTree;
 
@@ -21,6 +23,10 @@ public:
 	/** Property replication */
     void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	void InitializeControllerFromManager();
+
+	bool bIsControllerInitialized = false;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -29,9 +35,10 @@ protected:
 
 	void InitializeController();
 
+	
+
 
 private:
-	bool bIsControllerInitialized = false;
 
 	void KillMe();
 	
@@ -43,13 +50,14 @@ public:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UPROPERTY(VisibleAnywhere, Category=Health, Replicated)
-	UBaseHealthComponent* HealthComponent = nullptr;
+	UEnemyHealthComponent* EnemyHealthComponent = nullptr;
+
+	/** Event called when enemy has taken damage*/
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnTakenDamageEvent(float DamageTaken);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnTakenDamageEvent();
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnAttackEvent();
+	void OnBasicAttackEvent();
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDeathEvent();
@@ -58,5 +66,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DamageToPlayer = 0.f;
+
+	UPROPERTY(BlueprintReadOnly)
+	ACombatManager* Manager;
 
 };
