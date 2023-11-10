@@ -35,7 +35,10 @@ private:
 	void MulticastRPCDash();
 
 	UFUNCTION(Server, Reliable)
-	void ServerExit(const FVector InputVec); 
+	void ServerExit(const FVector InputVec);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastExit(); 
 
 	float TempTimer = 0;
 

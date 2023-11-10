@@ -30,6 +30,9 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDash(); 
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDashEnd();
 
 #pragma endregion 
 	
