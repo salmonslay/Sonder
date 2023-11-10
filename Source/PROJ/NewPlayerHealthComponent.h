@@ -19,7 +19,7 @@ public:
 
 	UNewPlayerHealthComponent();
 
-	virtual float TakeDamage(float DamageAmount) override;
+	//virtual float TakeDamage(float DamageAmount) override;
 
 	virtual void IDied() override;
 
