@@ -61,7 +61,7 @@ void UNewPlayerHealthComponent::IDied()
 
 	UE_LOG(LogTemp, Error, TEXT("Dies On Server before super"));
 
-	if(!Player->IsLocallyControlled())
+	//if(!Player->IsLocallyControlled())
 	{
 		//UE_LOG(LogTemp, Error, TEXT("Dies On Server"));
 		ServerRPCPlayerDied(); 
@@ -71,13 +71,8 @@ void UNewPlayerHealthComponent::IDied()
 void UNewPlayerHealthComponent::ServerRPCPlayerDied_Implementation()
 {
 	// Run only on server 
-	if(Player->HasAuthority())
-	{
-		UE_LOG(LogTemp, Error, TEXT("Dies On Server "));
-		Player->OnPlayerDied(); 
-		return;
-	}
-
+	UE_LOG(LogTemp, Error, TEXT("Dies On Server "));
+	Player->OnPlayerDied(); 
 	MulticastRPCPlayerDied(); 
 }
 
