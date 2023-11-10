@@ -25,6 +25,13 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class USoulDashingState* DashingState;
+
+#pragma region Events
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDash(); 
+
+#pragma endregion 
 	
 protected:
 
