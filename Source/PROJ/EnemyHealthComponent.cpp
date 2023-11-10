@@ -16,6 +16,7 @@ void UEnemyHealthComponent::BeginPlay()
 	EnemyCharacter = Cast<AEnemyCharacter>(GetOwner());
 }
 
+/*
 
 float UEnemyHealthComponent::TakeDamage(const float DamageAmount)
 {
@@ -24,12 +25,12 @@ float UEnemyHealthComponent::TakeDamage(const float DamageAmount)
 		return Super::TakeDamage(DamageAmount);
 
 	const float DamageTaken = Super::TakeDamage(DamageAmount);
-
 	
 	ServerRPCDamageTaken(DamageTaken); 
 
 	return DamageTaken; 
 }
+*/
 
 void UEnemyHealthComponent::ServerRPCDamageTaken_Implementation(const float DamageTaken)
 {
