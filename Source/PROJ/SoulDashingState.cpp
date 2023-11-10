@@ -93,12 +93,11 @@ void USoulDashingState::ServerExit_Implementation(const FVector InputVec)
 
 void USoulDashingState::MulticastRPCDash_Implementation()
 {
-	if(!PlayerOwner->IsLocallyControlled())
-		return;
-
-	// Will prob put event call for sounds etc. here 
+	// run on both client and server 
 	
-	// UE_LOG(LogTemp, Warning, TEXT("Multicast dash"))
+	Cast<ASoulCharacter>(PlayerOwner)->OnDash();
+
+	UE_LOG(LogTemp, Warning, TEXT("Multicast dash"))
 }
 
 void USoulDashingState::ServerRPCDash_Implementation(const FVector DashDir)

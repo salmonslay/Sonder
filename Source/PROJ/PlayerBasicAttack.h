@@ -38,6 +38,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	float AttackCooldown = 0.5f; 
 
+	UPROPERTY(Replicated)
 	bool bCanAttack = true;
 
 	void EnableCanAttack();
@@ -57,6 +58,9 @@ private:
 
 	/** Attack function run on each game instance, client and server */
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCAttack(); 
+	void MulticastRPCAttack();
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 	
 };

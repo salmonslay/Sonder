@@ -50,14 +50,8 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DamageToPlayer = 0.f;
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Health, Replicated)
-	class UPlayerHealthComponent* HealthComponent = nullptr;
 
-	UEnhancedInputComponent* GetInputComponent() const { return EnhancedInputComp; }; 
-	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Health, Replicated)
-	class UPlayerHealthComponent* PlayerHealthComponent = nullptr;
+	UEnhancedInputComponent* GetInputComponent() const { return EnhancedInputComp; } 
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Health, Replicated)
 	class UNewPlayerHealthComponent* NewPlayerHealthComponent = nullptr;

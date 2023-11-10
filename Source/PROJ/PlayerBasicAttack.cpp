@@ -6,6 +6,7 @@
 #include "EnhancedInputComponent.h"
 #include "PROJCharacter.h"
 #include "Engine/DamageEvents.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values for this component's properties
 UPlayerBasicAttack::UPlayerBasicAttack()
@@ -45,24 +46,21 @@ void UPlayerBasicAttack::Attack()
 	
 	UE_LOG(LogTemp, Warning, TEXT("Local attack"))
 	
-	TArray<AActor*> OverlappingActors; 
-	GetOverlappingActors(OverlappingActors, AActor::StaticClass()); // TODO: Replace the class filter with eventual better class (if it exists)
 
-	// calls take damage on every overlapping actor except itself
-	// TODO: When the attack animation in in place, we prob want to delay this so it times with when the animation hits 
-	for(const auto Actor : OverlappingActors)
-	{
-		if(Actor != GetOwner())
-			Actor->TakeDamage(Damage, FDamageEvent(), GetOwner()->GetInstigatorController(), GetOwner()); 
-	}
-
-	bCanAttack = false; 
 	
 	FTimerHandle TimerHandle; 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UPlayerBasicAttack::EnableCanAttack, AttackCooldown);
 
 	// Run server function which will update each client and itself 
 	ServerRPCAttack(); 
+}
+
+void UPlayerBasicAttack::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UPlayerBasicAttack,  bCanAttack);
+
 }
 
 void UPlayerBasicAttack::ServerRPCAttack_Implementation()
@@ -80,7 +78,20 @@ void UPlayerBasicAttack::ServerRPCAttack_Implementation()
 
 void UPlayerBasicAttack::MulticastRPCAttack_Implementation()
 {
+	
 	// Code here is run on each player (client and server)
+	TArray<AActor*> OverlappingActors; 
+	GetOverlappingActors(OverlappingActors, AActor::StaticClass()); // TODO: Replace the class filter with eventual better class (if it exists)
+
+	// calls take damage on every overlapping actor except itself
+	// TODO: When the attack animation in in place, we prob want to delay this so it times with when the animation hits 
+	for(const auto Actor : OverlappingActors)
+	{
+		if(Actor != GetOwner())
+			Actor->TakeDamage(Damage, FDamageEvent(), GetOwner()->GetInstigatorController(), GetOwner()); 
+	}
+
+	bCanAttack = false; 
 	
 	UE_LOG(LogTemp, Warning, TEXT("Multicast attack"))
 

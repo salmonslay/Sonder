@@ -20,7 +20,7 @@ public:
 
 	UEnemyHealthComponent();
 
-	virtual float TakeDamage(float DamageAmount) override;
+	//virtual float TakeDamage(float DamageAmount) override;
 
 	virtual void IDied() override;
 
@@ -29,6 +29,7 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+	
 
 	UPROPERTY()
 	class AEnemyCharacter* EnemyCharacter;
