@@ -36,10 +36,6 @@ public:
 
 #pragma endregion 
 	
-protected:
-
-	virtual UPlayerCharState* GetStartingState() const override;
-	
 private:
 
 	
