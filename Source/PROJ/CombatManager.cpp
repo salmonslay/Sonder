@@ -5,6 +5,7 @@
 #include "CombatTrigger.h"
 #include "EnemyCharacter.h"
 #include "Components/BoxComponent.h"
+#include "Net/UnrealNetwork.h"
 
 // Sets default values
 ACombatManager::ACombatManager()
@@ -14,6 +15,8 @@ ACombatManager::ACombatManager()
 
 	ManagerBounds = CreateDefaultSubobject<UBoxComponent>(TEXT("Bounds"));
 	RootComponent = ManagerBounds;
+
+	bReplicates = true;
 }
 
 // Called when the game starts or when spawned
@@ -81,7 +84,7 @@ void ACombatManager::RemoveEnemy(AEnemyCharacter* Enemy)
 
 void ACombatManager::StartCombat()
 {
-	if (GetLocalRole() == ROLE_Authority)
+	if (GetLocalRole() == ROLE_Authority && !bCombatStarted)
 	{
 		bCombatStarted = true;
 		OnCombatBegin();
@@ -113,4 +116,7 @@ void ACombatManager::HandleSpawn()
 void ACombatManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ACombatManager, bCombatStarted);
+	DOREPLIFETIME(ACombatManager, bCombatEnded);
 }
