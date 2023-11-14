@@ -33,6 +33,45 @@
 		<property name="dryLevel">
 			<value>-80</value>
 		</property>
+		<relationship name="automators">
+			<destination>{b89b6ee4-3c9e-439e-b45f-a611f34a71ca}</destination>
+		</relationship>
 	</object>
 	<object class="MixerBusFader" id="{73679405-d7a4-4d77-b3b1-38a344f586d8}" />
+	<object class="Automator" id="{b89b6ee4-3c9e-439e-b45f-a611f34a71ca}">
+		<property name="nameOfPropertyBeingAutomated">
+			<value>wetLevel</value>
+		</property>
+		<relationship name="automationCurves">
+			<destination>{2cd57935-6856-4d2a-bc26-2566d9d695b0}</destination>
+		</relationship>
+	</object>
+	<object class="AutomationCurve" id="{2cd57935-6856-4d2a-bc26-2566d9d695b0}">
+		<relationship name="parameter">
+			<destination>{bc5c54d9-1ee4-47e1-8d41-b3c7465e8b9e}</destination>
+		</relationship>
+		<relationship name="automationPoints">
+			<destination>{f86541a2-66e6-42ef-8b92-67723b84c42b}</destination>
+			<destination>{959349a1-701f-4828-83b6-1c360254affa}</destination>
+		</relationship>
+	</object>
+	<object class="AutomationPoint" id="{f86541a2-66e6-42ef-8b92-67723b84c42b}">
+		<property name="position">
+			<value>0</value>
+		</property>
+		<property name="value">
+			<value>-80</value>
+		</property>
+		<property name="curveShape">
+			<value>-1</value>
+		</property>
+	</object>
+	<object class="AutomationPoint" id="{959349a1-701f-4828-83b6-1c360254affa}">
+		<property name="position">
+			<value>1</value>
+		</property>
+		<property name="value">
+			<value>-14</value>
+		</property>
+	</object>
 </objects>
