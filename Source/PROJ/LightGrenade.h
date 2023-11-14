@@ -40,8 +40,10 @@ private:
 	class UInputAction* AttackInputAction;
 	
 	UPROPERTY(EditAnywhere)
-	float Damage = 5.f;
+	float Damage = 5.0f;
 
+	UPROPERTY(EditAnywhere)
+	float FireSpeed = 1.0f;
 	
 	/** How long time needs to pass between attacks */
 	UPROPERTY(EditAnywhere)
@@ -65,7 +67,7 @@ private:
 	void StartCountdown();
 
 	UPROPERTY()
-	class APROJCharacter* Player; 
+	class ASoulCharacter* Player; 
 
 	/** Locally run function called when player presses throw button */
 	void Throw();

@@ -4,17 +4,21 @@
 #include "LightGrenade.h"
 #include "EnhancedInputComponent.h"
 #include "PROJCharacter.h"
+#include "SoulCharacter.h"
 #include "Engine/DamageEvents.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
 ALightGrenade::ALightGrenade()
 {
-	GrenadeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GrenadeMesh"));
-	GrenadeMesh->SetupAttachment(RootComponent);
 
 	ExplosionArea = CreateDefaultSubobject<USphereComponent>(TEXT("ExplosionArea"));
-	ExplosionArea->SetupAttachment(GrenadeMesh);
+	ExplosionArea->SetupAttachment(RootComponent);
+	
+	GrenadeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GrenadeMesh"));
+	GrenadeMesh->SetupAttachment(ExplosionArea);
+
+	
 	
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
@@ -34,8 +38,10 @@ void ALightGrenade::BeginPlay()
 	
 	UE_LOG(LogTemp, Warning, TEXT("Begin"));
 
+	FTimerHandle TimerHandle; 
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::Throw, 5.0f);
 
-	Player = Cast<APROJCharacter>(GetOwner());
+	Player = Cast<ASoulCharacter>(GetOwner());
 
 	ExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap); 
 	
@@ -65,6 +71,12 @@ void ALightGrenade::Throw()
 	EnableGrenade();
 	StartCountdown();
 	*/
+
+	FVector LandingLoc = ExplosionArea->GetComponentLocation() + FVector(0,0,1000)/* - Player->FireLoc->GetComponentLocation()*/;
+	
+	ExplosionArea->SetPhysicsLinearVelocity(LandingLoc*FireSpeed);
+	
+	
 	
 }
 
