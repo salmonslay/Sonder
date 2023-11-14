@@ -30,10 +30,10 @@ protected:
 	
 	virtual void Tick(float DeltaSeconds) override;
 
-	void UpdateStateInputComp() const; 
+	void UpdateStateInputComp(); 
 
-	/** Override without calling Super and return the wanted starting state */
-	virtual UPlayerCharState* GetStartingState() const; 
+	/** Returns the base state for the appropriate character */
+	UPlayerCharState* GetStartingState() const; 
 	
 	// The player's current state
 	UPROPERTY()
