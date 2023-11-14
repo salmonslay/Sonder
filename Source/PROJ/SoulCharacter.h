@@ -16,12 +16,12 @@ class PROJ_API ASoulCharacter : public ACharacterStateMachine
 
 public:
 
-	ASoulCharacter(); 
+	ASoulCharacter();
 
 	// states are public so switch state can be called with the appropriate state easily 
 	
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	class USoulBaseState* BaseState;
+	UPROPERTY(EditAnywhere)
+	class USoulBaseStateNew* BaseStateNew;
 
 	UPROPERTY(EditAnywhere)
 	class USoulDashingState* DashingState;

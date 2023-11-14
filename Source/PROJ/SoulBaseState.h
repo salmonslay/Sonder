@@ -7,6 +7,8 @@
 #include "SoulBaseState.generated.h"
 
 /**
+ * DEPRECATED. DO NOT USE. USE SOULBASESTATENEW INSTEAD
+ * 
  * This is the base/default state that is used by the soul character, i.e. when running around "normally" 
  */
 UCLASS()
@@ -24,6 +26,9 @@ public:
 
 	virtual void Exit() override;
 
+	// Should not be needed but sometimes only works with it (why!?) 
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
 private:
 
 	UPROPERTY(EditAnywhere)
@@ -32,14 +37,16 @@ private:
 	/** Run locally and called when player presses the dash-button */ 
 	void Dash();
 
-	/** Run only on server, will tell all players that a player dashed */
-	UFUNCTION(Server, Reliable)
-	void ServerRPCDash();
-
-	/** Run for every player, server and client */
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCDash();
-
 	UPROPERTY()
 	class ASoulCharacter* SoulCharacter;
+
+	UPROPERTY(Replicated, EditAnywhere)
+	float DashCooldown = 1.f; 
+
+	bool bDashCoolDownActive = false;
+
+	void DisableDashCooldown() { bDashCoolDownActive = false; }
+	
+	bool bHasSetUpInput = false; 
+	
 };

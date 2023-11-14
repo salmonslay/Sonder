@@ -4,7 +4,7 @@
 #include "SoulDashingState.h"
 
 #include "CharacterStateMachine.h"
-#include "SoulBaseState.h"
+#include "SoulBaseStateNew.h"
 #include "SoulCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -44,7 +44,7 @@ void USoulDashingState::Update(const float DeltaTime)
 	// Change state/stop dash when velocity is 0 (collided) or travelled max distance 
 	if(PlayerOwner->GetCharacterMovement()->Velocity.IsNearlyZero() || FVector::Dist(StartLoc, PlayerOwner->GetActorLocation()) > MaxDashDistance)
 	{
-		PlayerOwner->SwitchState(Cast<ASoulCharacter>(PlayerOwner)->BaseState);
+		PlayerOwner->SwitchState(Cast<ASoulCharacter>(PlayerOwner)->BaseStateNew);
 		return; 
 	} 
 
@@ -106,7 +106,7 @@ void USoulDashingState::MulticastRPCDash_Implementation()
 	
 	Cast<ASoulCharacter>(PlayerOwner)->OnDash();
 
-	UE_LOG(LogTemp, Warning, TEXT("Multicast dash"))
+	// UE_LOG(LogTemp, Warning, TEXT("Multicast dash"))
 }
 
 void USoulDashingState::ServerRPCDash_Implementation(const FVector DashDir)
