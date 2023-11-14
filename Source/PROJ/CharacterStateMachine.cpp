@@ -8,7 +8,7 @@
 ACharacterStateMachine::ACharacterStateMachine()
 {
 	// Create the states 
-	DummyState = CreateDefaultSubobject<UDummyPlayerState>(TEXT("Dummy State"));
+	DummyState = CreateDefaultSubobject<UDummyPlayerState>(TEXT("DummyStateNew"));
 
 }
 
@@ -24,7 +24,10 @@ void ACharacterStateMachine::BeginPlay()
 
 void ACharacterStateMachine::UpdateStateInputComp() const
 {
-	CurrentState->UpdateInputCompOnEnter(GetInputComponent()); 
+	if(CurrentState)
+		CurrentState->UpdateInputCompOnEnter(GetInputComponent());
+	else
+		UE_LOG(LogTemp, Error, TEXT("No current state, %s - lcl ctrl: %i"), *GetActorNameOrLabel(), IsLocallyControlled())
 }
 
 void ACharacterStateMachine::Tick(const float DeltaSeconds)

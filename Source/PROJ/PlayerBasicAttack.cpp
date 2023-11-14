@@ -46,8 +46,6 @@ void UPlayerBasicAttack::Attack()
 	
 	UE_LOG(LogTemp, Warning, TEXT("Local attack"))
 	
-
-	
 	FTimerHandle TimerHandle; 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UPlayerBasicAttack::EnableCanAttack, AttackCooldown);
 
@@ -87,7 +85,8 @@ void UPlayerBasicAttack::MulticastRPCAttack_Implementation()
 	// TODO: When the attack animation in in place, we prob want to delay this so it times with when the animation hits 
 	for(const auto Actor : OverlappingActors)
 	{
-		if(Actor != GetOwner())
+		// Friendly fire off 
+		if(!Actor->ActorHasTag(FName("Player")))
 			Actor->TakeDamage(Damage, FDamageEvent(), GetOwner()->GetInstigatorController(), GetOwner()); 
 	}
 
