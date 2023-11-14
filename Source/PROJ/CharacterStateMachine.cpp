@@ -4,11 +4,13 @@
 
 #include "DummyPlayerState.h"
 #include "PlayerCharState.h"
+#include "RobotBaseState.h"
+#include "SoulBaseStateNew.h"
 
 ACharacterStateMachine::ACharacterStateMachine()
 {
 	// Create the states 
-	DummyState = CreateDefaultSubobject<UDummyPlayerState>(TEXT("Dummy State"));
+	DummyState = CreateDefaultSubobject<UDummyPlayerState>(TEXT("DummyStateNew"));
 
 }
 
@@ -16,15 +18,24 @@ void ACharacterStateMachine::BeginPlay()
 {
 	Super::BeginPlay();
 
-	CurrentState = GetStartingState(); 
+	CurrentState = GetStartingState();
 
 	if(CurrentState)
 		CurrentState->Enter();
 }
 
-void ACharacterStateMachine::UpdateStateInputComp() const
+void ACharacterStateMachine::UpdateStateInputComp() 
 {
-	CurrentState->UpdateInputCompOnEnter(GetInputComponent()); 
+	// UE_LOG(LogTemp, Warning, TEXT("Updating input comp new, %s"), *GetActorNameOrLabel())
+
+	if(CurrentState)
+		CurrentState->UpdateInputCompOnEnter(GetInputComponent());
+	else
+	{
+		CurrentState = GetStartingState();
+		CurrentState->UpdateInputCompOnEnter(GetInputComponent());
+		// UE_LOG(LogTemp, Error, TEXT("No current state, %s - lcl ctrl: %i"), *GetActorNameOrLabel(), IsLocallyControlled())
+	}
 }
 
 void ACharacterStateMachine::Tick(const float DeltaSeconds)
@@ -37,7 +48,14 @@ void ACharacterStateMachine::Tick(const float DeltaSeconds)
 
 UPlayerCharState* ACharacterStateMachine::GetStartingState() const
 {
-	return DummyState; // This is placeholder and should not return the dummy state 
+	if(const auto SoulBaseState = FindComponentByClass<USoulBaseStateNew>())
+		return SoulBaseState;
+	
+	if(const auto RobotBaseState = FindComponentByClass<URobotBaseState>())
+		return RobotBaseState;
+
+	UE_LOG(LogTemp, Warning, TEXT("Error. %s has no base state"), *GetActorNameOrLabel())
+	return DummyState; // Should not get here 
 }
 
 void ACharacterStateMachine::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

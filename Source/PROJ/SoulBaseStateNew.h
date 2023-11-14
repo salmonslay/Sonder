@@ -4,15 +4,13 @@
 
 #include "CoreMinimal.h"
 #include "PlayerCharState.h"
-#include "SoulBaseState.generated.h"
+#include "SoulBaseStateNew.generated.h"
 
 /**
- * DEPRECATED. DO NOT USE. USE SOULBASESTATENEW INSTEAD
- * 
  * This is the base/default state that is used by the soul character, i.e. when running around "normally" 
  */
 UCLASS()
-class PROJ_API USoulBaseState : public UPlayerCharState
+class PROJ_API USoulBaseStateNew : public UPlayerCharState
 {
 	GENERATED_BODY()
 
@@ -26,9 +24,6 @@ public:
 
 	virtual void Exit() override;
 
-	// Should not be needed but sometimes only works with it (why!?) 
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
 private:
 
 	UPROPERTY(EditAnywhere)
@@ -40,7 +35,7 @@ private:
 	UPROPERTY()
 	class ASoulCharacter* SoulCharacter;
 
-	UPROPERTY(Replicated, EditAnywhere)
+	UPROPERTY(EditAnywhere)
 	float DashCooldown = 1.f; 
 
 	bool bDashCoolDownActive = false;

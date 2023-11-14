@@ -44,9 +44,7 @@ void UPlayerBasicAttack::Attack()
 	if(!bCanAttack || !Player->IsLocallyControlled())
 		return; 
 	
-	UE_LOG(LogTemp, Warning, TEXT("Local attack"))
-	
-
+	// UE_LOG(LogTemp, Warning, TEXT("Local attack"))
 	
 	FTimerHandle TimerHandle; 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UPlayerBasicAttack::EnableCanAttack, AttackCooldown);
@@ -71,7 +69,7 @@ void UPlayerBasicAttack::ServerRPCAttack_Implementation()
 	if(!GetOwner()->HasAuthority())
 		return; 
 
-	UE_LOG(LogTemp, Warning, TEXT("Server attack"))
+	// UE_LOG(LogTemp, Warning, TEXT("Server attack"))
 	
 	MulticastRPCAttack(); 
 }
@@ -87,13 +85,14 @@ void UPlayerBasicAttack::MulticastRPCAttack_Implementation()
 	// TODO: When the attack animation in in place, we prob want to delay this so it times with when the animation hits 
 	for(const auto Actor : OverlappingActors)
 	{
-		if(Actor != GetOwner())
+		// Friendly fire off 
+		if(!Actor->ActorHasTag(FName("Player")))
 			Actor->TakeDamage(Damage, FDamageEvent(), GetOwner()->GetInstigatorController(), GetOwner()); 
 	}
 
 	bCanAttack = false; 
 	
-	UE_LOG(LogTemp, Warning, TEXT("Multicast attack"))
+	// UE_LOG(LogTemp, Warning, TEXT("Multicast attack"))
 
 	Player->OnBasicAttack(); 
 }

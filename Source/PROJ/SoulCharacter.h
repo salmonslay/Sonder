@@ -16,12 +16,12 @@ class PROJ_API ASoulCharacter : public ACharacterStateMachine
 
 public:
 
-	ASoulCharacter(); 
+	ASoulCharacter();
 
 	// states are public so switch state can be called with the appropriate state easily 
 	
 	UPROPERTY(EditAnywhere)
-	class USoulBaseState* BaseState;
+	class USoulBaseStateNew* BaseStateNew;
 
 	UPROPERTY(EditAnywhere)
 	class USoulDashingState* DashingState;
@@ -35,10 +35,6 @@ public:
 	void OnDashEnd();
 
 #pragma endregion 
-	
-protected:
-
-	virtual UPlayerCharState* GetStartingState() const override;
 	
 private:
 
