@@ -13,5 +13,26 @@ UCLASS()
 class PROJ_API ARobotStateMachine : public ACharacterStateMachine
 {
 	GENERATED_BODY()
+
+public:
+
+	ARobotStateMachine();
+
+	virtual void BeginPlay() override;
+
+	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
+
+	// States (public for easy access to switch states)
+	
+	UPROPERTY(EditAnywhere)
+	class URobotBaseState* RobotBaseState;
+
+	UPROPERTY(EditAnywhere)
+	class URobotHookingState* HookState; 
+
+private:
+
+
+	
 	
 };
