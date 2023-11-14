@@ -7,7 +7,7 @@ void UDummyPlayerState::Enter()
 {
 	Super::Enter();
 
-	UE_LOG(LogTemp, Warning, TEXT("Entered dummy state"))
+	UE_LOG(LogTemp, Warning, TEXT("Entered dummy state, actor: %s"), *GetOwner()->GetActorNameOrLabel())
 }
 
 void UDummyPlayerState::Update(const float DeltaTime)
