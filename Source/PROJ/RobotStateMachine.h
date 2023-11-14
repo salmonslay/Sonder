@@ -18,21 +18,30 @@ public:
 
 	ARobotStateMachine();
 
-	virtual void BeginPlay() override;
-
-	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
-
 	// States (public for easy access to switch states)
 	
 	UPROPERTY(EditAnywhere)
 	class URobotBaseState* RobotBaseState;
 
 	UPROPERTY(EditAnywhere)
-	class URobotHookingState* HookState; 
+	class URobotHookingState* HookState;
+
+	// Events
+
+	/** Run when hook is shot out, regardless if it hit Soul or an obstacle */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHookShotStart();
+
+	/** Run when hook is fully retracted, regardless if it hit Soul or an obstacle */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHookShotEnd();
+
+	/** Run when Robot collides with Soul */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHookExplosion(); 
 
 private:
-
-
+	
 	
 	
 };

@@ -4,6 +4,7 @@
 #include "RobotBaseState.h"
 
 #include "EnhancedInputComponent.h"
+#include "RobotHookingState.h"
 #include "RobotStateMachine.h"
 
 void URobotBaseState::Enter()
@@ -11,16 +12,14 @@ void URobotBaseState::Enter()
 	Super::Enter();
 
 	if(!RobotCharacter)
-		RobotCharacter = Cast<ARobotStateMachine>(PlayerOwner); 
-
-	UE_LOG(LogTemp, Warning, TEXT("Entered robot base state, lcl ctrl: %i"), RobotCharacter->IsLocallyControlled())
+		RobotCharacter = Cast<ARobotStateMachine>(PlayerOwner);
 }
 
 void URobotBaseState::Update(const float DeltaTime)
 {
 	Super::Update(DeltaTime);
 
-	// UE_LOG(LogTemp, Warning, TEXT("Updating robot base, lcl ctrl: %i, name: %s"), PlayerOwner->HasAuthority(), *PlayerOwner->GetActorNameOrLabel())
+	
 }
 
 void URobotBaseState::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
@@ -43,7 +42,25 @@ void URobotBaseState::Exit()
 	
 }
 
+void URobotBaseState::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	GetWorld()->GetTimerManager().ClearAllTimersForObject(this); 
+}
+
 void URobotBaseState::ShootHook()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Fired hook"))
+	if(bHookShotOnCooldown)
+		return; 
+	
+	// UE_LOG(LogTemp, Warning, TEXT("Fired hook"))
+
+	bHookShotOnCooldown = true;
+	
+	// Enable hook shot after set time 
+	FTimerHandle TimerHandle; 
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &URobotBaseState::DisableHookShotCooldown, HookShotCooldownDelay); 
+	
+	PlayerOwner->SwitchState(RobotCharacter->HookState);
 }

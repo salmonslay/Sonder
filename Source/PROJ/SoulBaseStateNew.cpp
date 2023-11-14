@@ -50,6 +50,13 @@ void USoulBaseStateNew::Exit()
 	// PlayerInputComponent->RemoveActionBinding(DashInputAction, ETriggerEvent::Started); 
 }
 
+void USoulBaseStateNew::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	GetWorld()->GetTimerManager().ClearAllTimersForObject(this); 
+}
+
 void USoulBaseStateNew::Dash()
 {
 	// Only run locally 

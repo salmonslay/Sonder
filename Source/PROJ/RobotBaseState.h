@@ -24,6 +24,8 @@ public:
 
 	virtual void Exit() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 private:
 
 	UPROPERTY(EditDefaultsOnly)
@@ -35,6 +37,13 @@ private:
 	void ShootHook();
 
 	UPROPERTY()
-	class ARobotStateMachine* RobotCharacter; 
-	
+	class ARobotStateMachine* RobotCharacter;
+
+	/** Time needed between hook shots */
+	UPROPERTY(EditAnywhere)
+	float HookShotCooldownDelay = 2.f; 
+
+	bool bHookShotOnCooldown = false;
+
+	void DisableHookShotCooldown() { bHookShotOnCooldown = false; }; 
 };
