@@ -44,7 +44,7 @@ void UPlayerBasicAttack::Attack()
 	if(!bCanAttack || !Player->IsLocallyControlled())
 		return; 
 	
-	UE_LOG(LogTemp, Warning, TEXT("Local attack"))
+	// UE_LOG(LogTemp, Warning, TEXT("Local attack"))
 	
 	FTimerHandle TimerHandle; 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UPlayerBasicAttack::EnableCanAttack, AttackCooldown);
@@ -69,7 +69,7 @@ void UPlayerBasicAttack::ServerRPCAttack_Implementation()
 	if(!GetOwner()->HasAuthority())
 		return; 
 
-	UE_LOG(LogTemp, Warning, TEXT("Server attack"))
+	// UE_LOG(LogTemp, Warning, TEXT("Server attack"))
 	
 	MulticastRPCAttack(); 
 }
@@ -92,7 +92,7 @@ void UPlayerBasicAttack::MulticastRPCAttack_Implementation()
 
 	bCanAttack = false; 
 	
-	UE_LOG(LogTemp, Warning, TEXT("Multicast attack"))
+	// UE_LOG(LogTemp, Warning, TEXT("Multicast attack"))
 
 	Player->OnBasicAttack(); 
 }
