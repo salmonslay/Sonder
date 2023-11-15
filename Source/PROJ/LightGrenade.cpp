@@ -64,21 +64,33 @@ void ALightGrenade::Throw()
 		
 
 	
-	//FTimerHandle TimerHandle; 
-	//GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::EnableCanThrow, ThrowCooldown);
+	
 
 	// Run server function which will update each client and itself
 	EnableGrenade();
 	StartCountdown();
 	*/
 
-	FVector LandingLoc = ExplosionArea->GetComponentLocation() + FVector(0,0,1000)/* - Player->FireLoc->GetComponentLocation()*/;
+	UE_LOG(LogTemp, Warning, TEXT("Throw"));
+
+	FTimerHandle TimerHandle; 
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::StartCountdown, 1.0f);
+
+	//FVector LandingLoc = ExplosionArea->GetComponentLocation() + FVector(0,0,1000)/* - Player->FireLoc->GetComponentLocation()*/;
 	
-	ExplosionArea->SetPhysicsLinearVelocity(LandingLoc*FireSpeed);
+	//ExplosionArea->SetPhysicsLinearVelocity(LandingLoc*FireSpeed);
 	
 	
 	
 }
+
+void ALightGrenade::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ALightGrenade,  bCanThrow);
+}
+
 
 void ALightGrenade::NotifyActorBeginOverlap(AActor* OtherActor)
 {
@@ -95,6 +107,40 @@ void ALightGrenade::NotifyActorBeginOverlap(AActor* OtherActor)
 		if (!bIsExploding)
 		{
 			StartCountdown();
+		}
+		
+	}
+}
+
+void ALightGrenade::ServerRPCExplosion_Implementation()
+{
+	// Code here is only run on server, will probably not be changed unless we'll have server specific behaviour 
+	
+	// Should only run on server 
+	if(!this->HasAuthority())
+		return; 
+
+	UE_LOG(LogTemp, Warning, TEXT("Server attack"));
+
+	bIsExploding = true;
+	MulticastRPCExplosion();
+}
+
+void ALightGrenade::MulticastRPCExplosion_Implementation()
+{
+	TArray<AActor*> OverlapingActors;
+	
+	ExplosionArea->GetOverlappingActors(OverlapingActors,AActor::StaticClass());
+
+	UE_LOG(LogTemp, Warning, TEXT("attack"));
+
+
+	for (AActor* OverlapingActor : OverlapingActors)
+	{
+		if(!OverlapingActor->ActorHasTag("Player"))
+		{
+			UE_LOG(LogTemp, Warning, TEXT("did damage"));
+			//OverlapingActor->TakeDamage(Damage, FDamageEvent(), GetOwner()->GetInstigatorController(), this);
 		}
 		
 	}
@@ -125,49 +171,9 @@ void ALightGrenade::EnableGrenade()
 
 void ALightGrenade::StartCountdown()
 {
+	UE_LOG(LogTemp, Warning, TEXT("Start Countdown"));
 	FTimerHandle TimerHandle; 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::ServerRPCExplosion, ExplodeTime);
 }
 
-
-void ALightGrenade::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(ALightGrenade,  bCanThrow);
-}
-
-
-void ALightGrenade::ServerRPCExplosion_Implementation()
-{
-	// Code here is only run on server, will probably not be changed unless we'll have server specific behaviour 
-	
-	// Should only run on server 
-	if(!GetOwner()->HasAuthority())
-		return; 
-
-	UE_LOG(LogTemp, Warning, TEXT("Server attack"));
-
-	bIsExploding = true;
-	MulticastRPCExplosion();
-}
-
-void ALightGrenade::MulticastRPCExplosion_Implementation()
-{
-	TArray<AActor*> OverlapingActors;
-	
-	ExplosionArea->GetOverlappingActors(OverlapingActors,AActor::StaticClass());
-
-	UE_LOG(LogTemp, Warning, TEXT("attack"));
-
-
-	for (auto OverlapingActor : OverlapingActors)
-	{
-		if(!OverlapingActor->ActorHasTag("Player"))
-		{
-			OverlapingActor->TakeDamage(Damage, FDamageEvent(), GetOwner()->GetInstigatorController(), GetOwner()); 
-		}
-			
-	}
-}
 
