@@ -5,7 +5,11 @@
 #include "EnhancedInputComponent.h"
 #include "PROJCharacter.h"
 #include "SoulCharacter.h"
+#include "VisualizeTexture.h"
 #include "Engine/DamageEvents.h"
+#include "GameFramework/GameStateBase.h"
+#include "GameFramework/PlayerState.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
@@ -41,7 +45,8 @@ void ALightGrenade::BeginPlay()
 	FTimerHandle TimerHandle; 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::Throw, 5.0f);
 
-	Player = Cast<ASoulCharacter>(GetOwner());
+	
+	
 
 	ExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap); 
 	
@@ -71,10 +76,16 @@ void ALightGrenade::Throw()
 	StartCountdown();
 	*/
 
-	UE_LOG(LogTemp, Warning, TEXT("Throw"));
+	//UE_LOG(LogTemp, Warning, TEXT("Throw"));
+
+	Player = Cast<ASoulCharacter>(UGameplayStatics::GetGameState(this)->PlayerArray[1]->GetPawn());
+	if (Player)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Player Exists"));
+	}
 
 	FTimerHandle TimerHandle; 
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::StartCountdown, 1.0f);
+	//GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::StartCountdown, 1.0f);
 
 	//FVector LandingLoc = ExplosionArea->GetComponentLocation() + FVector(0,0,1000)/* - Player->FireLoc->GetComponentLocation()*/;
 	
