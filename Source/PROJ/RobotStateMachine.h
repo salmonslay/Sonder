@@ -17,7 +17,7 @@ class PROJ_API ARobotStateMachine : public ACharacterStateMachine
 public:
 
 	ARobotStateMachine();
-
+	
 	// States (public for easy access to switch states)
 	
 	UPROPERTY(EditAnywhere)
@@ -27,6 +27,9 @@ public:
 	class URobotHookingState* HookState;
 
 	// Events
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnPulse();
 
 	/** Run when hook is shot out, regardless if it hit Soul or an obstacle */
 	UFUNCTION(BlueprintImplementableEvent)

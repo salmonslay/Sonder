@@ -30,11 +30,25 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	class UInputAction* HookShotInputAction;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UInputAction* PulseInputAction;
 	
 	bool bHasSetUpInput = false;
+	
+	bool bCanPulse = true;
 
 	/** Function firing when player presses button to request hook shot */
 	void ShootHook();
+
+	void Pulse();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPCPulse(); 
+
+	/** Pulse function run on each game instance, client and server */
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCPulse();
 
 	UPROPERTY()
 	class ARobotStateMachine* RobotCharacter;
@@ -46,4 +60,12 @@ private:
 	bool bHookShotOnCooldown = false;
 
 	void DisableHookShotCooldown() { bHookShotOnCooldown = false; }; 
+
+	UPROPERTY(EditAnywhere)
+	float PulseCooldown = 1.f; 
+
+	bool bPulseCoolDownActive = false;
+
+	void DisablePulseCooldown() { bPulseCoolDownActive = false; }
+	
 };

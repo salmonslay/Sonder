@@ -96,5 +96,6 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& Out
 void AEnemyCharacter::InitializeControllerFromManager()
 {
 	if(bIsControllerInitialized) return;
+	SetActorRotation(FRotator(0.0f, GetActorRotation().Yaw + 90.0f, 0.0f));
 	InitializeController();
 }
