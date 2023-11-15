@@ -15,7 +15,9 @@ class APROJGameMode : public AGameModeBase
 
 public:
 	
-	APROJGameMode(); 
+	APROJGameMode();
+
+	virtual void BeginPlay() override;
 
 	APROJCharacter* GetActivePlayer(int Index) const;
 	
@@ -29,8 +31,19 @@ public:
 
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
 	
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	void SetPlayerPointers();
+
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	APROJCharacter* ServerPlayer;
+
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	APROJCharacter* ClientPlayer;
 	
 private:
+
+	FTimerHandle PlayerPointerTimerHandle;
 
 	TArray<class APlayerStart*> UnusedPlayerStarts;
 

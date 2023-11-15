@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "CharacterStateMachine.h"
+#include "Components/SphereComponent.h"
 #include "SoulCharacter.generated.h"
 
 /**
@@ -25,6 +26,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class USoulDashingState* DashingState;
+
+	UPROPERTY(EditAnywhere)
+	USphereComponent* FireLoc;
 
 #pragma region Events
 
