@@ -121,32 +121,4 @@ bool Pathfinder::FindPath(const FVector &Start, const FVector &End)
 	bHasPath = false;
 	return false;
 }
-void Pathfinder::ResetFlowFieldNodeCosts() const
-{
-	for(int x = 0; x < Grid->GridLengthX; x++)
-	{
-		for(int y = 0; y < Grid->GridLengthY; y++)
-		{
-			for(int z = 0; z < Grid->GridLengthZ; z++)
-			{
-				Grid->GetNodeFromGrid(x, y, z)->SetFlowFieldCost(INT_MAX);
-			}
-		}
-	}
-}
 
-void Pathfinder::SetDirectionInUnWalkableNode(GridNode* NeighbourNode) const 
-{
-	// to find lowest cost, set lowest cost to max value
-	int LowestCostAwayFromNode = INT_MAX;
-	// check all neighbours. If neighbour has a lower cost than lowest and is walkable, set direction to it
-	for (const GridNode* NeighboursNeighbour : Grid->GetNeighbours(NeighbourNode))
-	{
-		const int CostToNeighbour = NodeFunctions::GetCostToNode(NeighbourNode, NeighboursNeighbour);
-		if (NeighboursNeighbour->IsWalkable() && CostToNeighbour < LowestCostAwayFromNode)
-		{
-			NeighbourNode->SetDirection(NeighboursNeighbour);
-			LowestCostAwayFromNode = CostToNeighbour;
-		}
-	}
-}

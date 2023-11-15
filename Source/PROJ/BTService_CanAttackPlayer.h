@@ -35,6 +35,7 @@ protected:
 	AEnemyCharacter* OwnerCharacter = nullptr;
 
 
+	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float RadiusToDamagePlayer = 0.f;
 
