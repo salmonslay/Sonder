@@ -7,6 +7,7 @@
 #include "GameFramework/PlayerStart.h"
 #include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 #include "UObject/ConstructorHelpers.h"
 
 APROJGameMode::APROJGameMode()
@@ -22,6 +23,15 @@ APROJGameMode::APROJGameMode()
 
 	// set default player controller class to the new controller class 
 	PlayerControllerClass = AProjPlayerController::StaticClass();
+
+	bReplicates = true;
+}
+
+void APROJGameMode::BeginPlay()
+{
+	Super::BeginPlay();
+
+	GetWorldTimerManager().SetTimer(PlayerPointerTimerHandle, this, &APROJGameMode::SetPlayerPointers, 2, true);
 }
 
 APROJCharacter* APROJGameMode::GetActivePlayer(const int Index) const
@@ -114,4 +124,25 @@ if (const AProjPlayerController* MyController = Cast<AProjPlayerController>(InCo
 
 	/* If we don't get the right Controller, use the Default Pawn */
 	return DefaultPawnClass;
+}
+
+void APROJGameMode::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(APROJGameMode, ServerPlayer);
+	DOREPLIFETIME(APROJGameMode, ClientPlayer);
+}
+
+void APROJGameMode::SetPlayerPointers()
+{
+	if(GetLocalRole() == ROLE_Authority)
+	{
+		ServerPlayer = GetActivePlayer(0);
+		ClientPlayer = GetActivePlayer(1);
+	}
+	if(ServerPlayer && ClientPlayer)
+	{
+		GetWorldTimerManager().ClearTimer(PlayerPointerTimerHandle);
+	}
 }
