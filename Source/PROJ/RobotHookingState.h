@@ -24,9 +24,6 @@ public:
 
 private:
 
-	// UFUNCTION(Server, Reliable)
-	// void ServerRPC_Enter(); 
-
 	UPROPERTY()
 	AActor* SoulCharacter; 
 	
@@ -43,7 +40,7 @@ private:
 	
 	/** How fast to travel */
 	UPROPERTY(EditAnywhere)
-	float HookShotTravelSpeed = 1000.f;
+	float HookShotTravelSpeed = 1250.f;
 
 	float DefaultGravityScale = 1.75f;
 
@@ -56,7 +53,7 @@ private:
 	class UCableComponent* HookCable;
 
 	UPROPERTY(EditAnywhere)
-	float ZTargetOffset = -20.f; 
+	float ZTargetOffset = 25.f; 
 
 	// Fail safe to cancel hook shot after set time 
 	float FailSafeTimer = 0;

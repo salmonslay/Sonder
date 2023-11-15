@@ -17,8 +17,6 @@ void URobotHookingState::Enter()
 {
 	Super::Enter();
 
-	UE_LOG(LogTemp, Warning, TEXT("Entered hook state"))
-
 	if(!SoulCharacter)
 		SoulCharacter = UGameplayStatics::GetActorOfClass(this, ASoulCharacter::StaticClass()); 
 	
