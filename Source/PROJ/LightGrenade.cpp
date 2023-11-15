@@ -139,6 +139,8 @@ void ALightGrenade::ServerRPCExplosion_Implementation()
 
 void ALightGrenade::MulticastRPCExplosion_Implementation()
 {
+	ExplosionEvent();
+	
 	TArray<AActor*> OverlapingActors;
 	
 	ExplosionArea->GetOverlappingActors(OverlapingActors,AActor::StaticClass());
@@ -151,10 +153,12 @@ void ALightGrenade::MulticastRPCExplosion_Implementation()
 		if(!OverlapingActor->ActorHasTag("Player"))
 		{
 			UE_LOG(LogTemp, Warning, TEXT("did damage"));
-			//OverlapingActor->TakeDamage(Damage, FDamageEvent(), GetOwner()->GetInstigatorController(), this);
+			OverlapingActor->TakeDamage(Damage, FDamageEvent(), Player->GetInstigatorController(), this);
 		}
 		
 	}
+	
+	DisableGrenade();
 }
 
 void ALightGrenade::EnableCanThrow()

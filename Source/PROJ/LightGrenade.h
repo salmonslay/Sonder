@@ -34,6 +34,9 @@ public:
 	UPROPERTY(BlueprintReadWrite,EditDefaultsOnly)
 	USphereComponent* ExplosionArea = nullptr;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void ExplosionEvent();
+
 private:
 
 	UPROPERTY(EditAnywhere)
