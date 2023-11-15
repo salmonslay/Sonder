@@ -3,9 +3,12 @@
 
 #include "RobotBaseState.h"
 
+#include "CollisionDebugDrawingPublic.h"
 #include "EnhancedInputComponent.h"
 #include "PulseObjectComponent.h"
 #include "RobotStateMachine.h"
+#include "SoulCharacter.h"
+#include "Chaos/CollisionResolutionUtil.h"
 
 void URobotBaseState::Enter()
 {
@@ -98,7 +101,20 @@ void URobotBaseState::ServerRPCPulse_Implementation()
 void URobotBaseState::MulticastRPCPulse_Implementation()
 {
 	
-	// UE_LOG(LogTemp, Warning, TEXT("Multicast attack"))
+	// Code here is run on each player (client and server)
+	TArray<AActor*> OverlappingActors; 
+	RobotCharacter->GetOverlappingActors(OverlappingActors, AActor::StaticClass()); // TODO: Replace the class filter with eventual better class (if it exists)
+
+	// calls take damage on every overlapping actor except itself
+	// TODO: When the attack animation in in place, we prob want to delay this so it times with when the animation hits 
+	for(const auto Actor : OverlappingActors)
+	{
+		if(Actor->ActorHasTag(FName("Soul")) && Actor->GetActorLocation().Z > RobotCharacter->GetActorLocation().Z + 5)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Boost"));
+			Cast<ASoulCharacter>(Actor)->Jump();
+		}
+	}
 
 	RobotCharacter->OnPulse(); 
 }
