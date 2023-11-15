@@ -48,7 +48,7 @@ APROJCharacter::APROJCharacter()
 
 	BasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(FName("Basic Attack"));
 	BasicAttack->SetupAttachment(RootComponent);
-	BasicAttack->SetCollisionProfileName("Pawn");
+	BasicAttack->SetCollisionProfileName("Enemy");
 	//CreateComponents(); // tried not doing this, healthicomponents is not initiated correctly
 }
 
