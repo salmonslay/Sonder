@@ -16,7 +16,7 @@ public:
 	// Sets default values for this actor's properties
 	ACameraSpline();
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	USplineComponent* CameraSpline;
 
 	UPROPERTY(EditAnywhere)

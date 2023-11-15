@@ -4,6 +4,7 @@
 #include "RobotBaseState.h"
 
 #include "EnhancedInputComponent.h"
+#include "PulseObjectComponent.h"
 #include "RobotStateMachine.h"
 
 void URobotBaseState::Enter()
@@ -32,6 +33,9 @@ void URobotBaseState::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
 	if(!bHasSetUpInput)
 	{
 		InputComp->BindAction(HookShotInputAction, ETriggerEvent::Started, this, &URobotBaseState::ShootHook);
+
+		InputComp->BindAction(PulseInputAction, ETriggerEvent::Started, this, &URobotBaseState::Pulse);
+		
 		bHasSetUpInput = true; 
 	}
 }
@@ -47,3 +51,55 @@ void URobotBaseState::ShootHook()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Fired hook"))
 }
+
+void URobotBaseState::Pulse()
+{
+	// Ensure player cant spam attack and is locally controlled 
+	// Only run locally 
+	if(bPulseCoolDownActive || !PlayerOwner->IsLocallyControlled())
+		return;
+
+	bPulseCoolDownActive = true;
+
+	FTimerHandle TimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &URobotBaseState::DisablePulseCooldown, 1);
+
+	// Code here is run only locally
+	TArray<AActor*> OverlappingActors; 
+	RobotCharacter->GetOverlappingActors(OverlappingActors, AActor::StaticClass()); // TODO: Replace the class filter with eventual better class (if it exists)
+
+	// calls take damage on every overlapping actor except itself
+	// TODO: When the attack animation in in place, we prob want to delay this so it times with when the animation hits 
+	for(const auto Actor : OverlappingActors)
+	{
+		// Friendly fire off 
+		//if(!Actor->ActorHasTag(FName("PulseObject")))
+		//	Cast<UPulseObjectComponent>(Actor)->OnActivate();
+	}
+
+	bPulseCoolDownActive = false;
+
+	ServerRPCPulse();
+}
+
+void URobotBaseState::ServerRPCPulse_Implementation()
+{
+	// Code here is only run on server, will probably not be changed unless we'll have server specific behaviour 
+	
+	// Should only run on server 
+	if(!GetOwner()->HasAuthority())
+		return; 
+
+	// UE_LOG(LogTemp, Warning, TEXT("Server pulse"))
+	
+	MulticastRPCPulse();
+}
+
+void URobotBaseState::MulticastRPCPulse_Implementation()
+{
+	
+	// UE_LOG(LogTemp, Warning, TEXT("Multicast attack"))
+
+	RobotCharacter->OnPulse(); 
+}
+
