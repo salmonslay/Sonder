@@ -51,14 +51,5 @@ private:
 	GridNode* OldEndNode = nullptr;
 
 	/** Pointer to grid class*/
-	AGrid* Grid;
-
-	/** Resets flow field cost for all nodes in the grid to a maximum value (used for recalculating the flow field) */
-	void ResetFlowFieldNodeCosts() const;
-
-	/** Sets the direction for a node within a group of unwalkable nodes based on the lowest-cost path to a walkable node*/
-	void SetDirectionInUnWalkableNode(GridNode* NeighbourNode) const; 
-
-	bool bIsDirectionInUnWalkableNodesSet = false;
-	
+	AGrid* Grid;	
 };
