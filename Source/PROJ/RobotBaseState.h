@@ -33,8 +33,7 @@ private:
 	class UInputAction* PulseInputAction;
 	
 	bool bHasSetUpInput = false;
-
-	UPROPERTY(Replicated)
+	
 	bool bCanPulse = true;
 
 	/** Function firing when player presses button to request hook shot */

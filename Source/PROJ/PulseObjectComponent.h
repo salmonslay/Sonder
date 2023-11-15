@@ -26,6 +26,5 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnActivate();
-
-		
+	
 };

@@ -73,11 +73,13 @@ void URobotBaseState::Pulse()
 	for(const auto Actor : OverlappingActors)
 	{
 		// Friendly fire off 
-		if(!Actor->ActorHasTag(FName("PulseObject")))
-			Cast<UPulseObjectComponent>(Actor)->OnActivate();
+		//if(!Actor->ActorHasTag(FName("PulseObject")))
+		//	Cast<UPulseObjectComponent>(Actor)->OnActivate();
 	}
 
-	bPulseCoolDownActive = false; 
+	bPulseCoolDownActive = false;
+
+	ServerRPCPulse();
 }
 
 void URobotBaseState::ServerRPCPulse_Implementation()
