@@ -109,15 +109,9 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 	// TODO: When the attack animation in in place, we prob want to delay this so it times with when the animation hits 
 	for(const auto Actor : OverlappingActors)
 	{
-
-		//TArray<FHitResult> hits = {};
-		
-		//GetWorld()->LineTraceMultiByChannel(OUT hits, RobotCharacter->GetActorLocation(), RobotCharacter->GetActorLocation().Y+10, )
-		// Friendly fire off 
-		if(Actor->ActorHasTag(FName("Soul")) && Actor->GetActorLocation().Z + 20 > RobotCharacter->GetActorLocation().Z)
+		if(Actor->ActorHasTag(FName("Soul")) && Actor->GetActorLocation().Z > RobotCharacter->GetActorLocation().Z + 5)
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Boost"));
-			Cast<ASoulCharacter>(Actor)->CanJump();
 			Cast<ASoulCharacter>(Actor)->Jump();
 		}
 	}
