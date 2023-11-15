@@ -22,6 +22,9 @@ public:
 
 	virtual void SetupPlayerInputComponent(UInputComponent* PlayerInputComponent) override;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnPulse();
+
 	// States (public for easy access to switch states)
 	
 	UPROPERTY(EditAnywhere)

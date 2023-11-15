@@ -11,7 +11,7 @@
 
 void USoulDashingState::Enter()
 {
-	Super::Enter(); 
+	Super::Enter();
 
 	if(PlayerOwner->IsLocallyControlled()) 
 	{
@@ -120,3 +120,4 @@ void USoulDashingState::ServerRPCDash_Implementation(const FVector DashDir)
 
 	MulticastRPCDash(); 
 }
+
