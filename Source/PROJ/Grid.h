@@ -16,26 +16,30 @@ class PROJ_API AGrid : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
+public:
+	
 	// Sets default values for this actor's properties
 	AGrid();
 
-	TArray<FVector> RequestPath(FVector &Start, FVector &End);
+	TArray<FVector> RequestPath(const FVector &Start, const FVector &End, const bool bDoDebugDraw);
 
+
+	TArray<FVector> CurrentPath = TArray<FVector>();
+	
 	/** Timer handle to debug unwalkable nodes and grid, a lot of stuff in begin play can sometimes make nodes not being created fast enough*/
 	FTimerHandle DebugDrawTimerHandle;
 
 	/** Timer handel to start pathfinding, making sure grid and nodes are instantiated before calculations start*/
 	FTimerHandle StartPathfindingTimerHandle;
 
-	/** Method for switching bool to start pathfinding*/
-	void OnStartPathfinding();
+	
 
 	/** bool to start pathfinding */
 	bool bCanStartPathfinding = false;
 
 	bool bAllNodesAdded = false;
-	
+
+	void OnDebugPathDraw() const;
 
 	virtual ~AGrid() override;
 	
@@ -63,8 +67,7 @@ public:
 	FVector TargetLocation = FVector::ZeroVector;
 
 	FVector StartLocation = FVector::ZeroVector;
-
-	void OnDebugPathDraw(TArray<FVector> PathWaypoints);
+	
 
 	/** Gets the max size of grid */
 	int GetGridMaxSize() const
@@ -88,6 +91,13 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+
+	void CheckGridBoundOverlappingActors();
+
+	FTimerHandle CheckOverlappingEnemiesTimerHandle;
+
+	UPROPERTY(EditAnywhere)
+	float CheckOverlappingEnemiesDelay = 02.f;
 
 	UPROPERTY(EditAnywhere)
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypeQueries;

@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "EnemyCharacter.generated.h"
 
+class AGrid;
 class ACombatManager;
 class UEnemyHealthComponent;
 class UBaseHealthComponent;
@@ -27,6 +28,10 @@ public:
 
 	bool bIsControllerInitialized = false;
 
+	void SetGridPointer(AGrid* GridPointer);
+
+	AGrid* GetGridPointer() const;
+	
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -35,13 +40,15 @@ protected:
 
 	void InitializeController();
 
-	
-
 
 private:
 
 	void KillMe();
-	
+
+	UPROPERTY()
+	AGrid* PathfindingGrid;
+
+	void CheckIfOverlappingWithGrid();
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
