@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="AudioFile" id="{6fa50a47-bd7a-4e25-94dd-6416f5ccd23b}">
 		<property name="assetPath">
-			<value>SFX/Puzzle/woodCrateMove2.wav</value>
+			<value>SFX/Puzzle/Box/woodCrateMove2.wav</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>48</value>
