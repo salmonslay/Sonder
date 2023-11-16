@@ -37,6 +37,10 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	AActor* WallTwo;
 
+	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
+	ACameraSpline* CurrentCameraSplineClass;
+
+
 private:
 	virtual void Tick(float DeltaSeconds) override;
 
@@ -51,9 +55,7 @@ private:
 
 	void SetWallCollision();
 
-	UPROPERTY()
-	ACameraSpline* CurrentCameraSplineClass;
-
+	
 	
 
 	bool bAllowMovement;

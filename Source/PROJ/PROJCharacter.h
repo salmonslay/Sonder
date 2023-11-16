@@ -64,6 +64,9 @@ public:
 	
 	virtual void PossessedBy(AController* NewController) override;
 
+	UPROPERTY(EditAnywhere)
+	class UPlayerBasicAttack* BasicAttack;
+
 #pragma region Events 
 	
 	// Components seem to not be able to create events (easily), which is why most events are declared here 
@@ -95,9 +98,6 @@ protected:
 private:
 	/** Determines if player can move in both axes */
 	bool bDepthMovementEnabled = false;
-
-	UPROPERTY()
-	class UPlayerBasicAttack* BasicAttack;
 	
 	void CreateComponents();
 

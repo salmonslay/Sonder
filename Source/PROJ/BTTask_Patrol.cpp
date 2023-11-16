@@ -45,7 +45,7 @@ void UBTTask_Patrol::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 
 	OwnerCharacterLocation = OwnerCharacter->GetActorLocation();
 
-	OwnerCharacter->SetActorRotation(EnemyRotation);
+	//OwnerCharacter->SetActorRotation(EnemyRotation);
 
 	if (Player1 == nullptr || Player2 == nullptr)
 	{
@@ -63,6 +63,7 @@ void UBTTask_Patrol::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 
 	if (bDebug)
 	{
+		DrawDebugSphere(GetWorld(), OwnerCharacterLocation, 30, 30, FColor::Green, false, 0.1, 0, 1);
 		DrawDebugLine(GetWorld(), OwnerCharacterLocation, ForwardPoint, FColor::Green, false, 0.1, 0, 1);
 		DrawDebugLine(GetWorld(), OwnerCharacterLocation, ForwardDownPoint, FColor::Green, false, 0.1, 0, 1);
 	}
