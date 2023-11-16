@@ -24,6 +24,9 @@ public:
 	/** Switches the current state to the new one */
 	void SwitchState(UPlayerCharState* NewState);
 
+	UFUNCTION(BlueprintPure)
+	UPlayerCharState* GetCurrentState() const { return CurrentState; }; 
+
 protected:
 
 	virtual void BeginPlay() override;
