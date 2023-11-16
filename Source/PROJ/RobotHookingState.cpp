@@ -152,7 +152,8 @@ AActor* URobotHookingState::DoLineTrace(FHitResult& HitResultOut)
 	const FVector StartLoc = PlayerOwner->GetActorLocation();
 	FVector EndLoc = CurrentHookTarget;
 
-	AHookShotAttachment* HookTarget = nullptr; 
+	AHookShotAttachment* HookTarget = nullptr;
+	bool bTargetingSoul = true; 
 
 	// Set new end location if player is not actively travelling towards target 
 	if(!bTravellingTowardsTarget)
@@ -168,7 +169,10 @@ AActor* URobotHookingState::DoLineTrace(FHitResult& HitResultOut)
 			// Set EndLoc to Hook location of there is an eligible hook target 
 			HookTarget = AHookShotAttachment::GetHookToTarget(RobotCharacter); 
 			if(HookTarget)
+			{
 				EndLoc = HookTarget->GetActorLocation();
+				bTargetingSoul = false; 
+			}
 		}
 	}
 	
@@ -185,9 +189,20 @@ AActor* URobotHookingState::DoLineTrace(FHitResult& HitResultOut)
 
 	// Return the Hook or Soul if sweep trace did not impact an obstacle 
 	if(!HitResultOut.IsValidBlockingHit())
-		return HookTarget ? HookTarget : SoulCharacter; 
+		return HookTarget ? HookTarget : SoulCharacter;
 
-	// Hit an obstacle 
+	// Hit an obstacle and is targeting Soul
+	if(bTargetingSoul)
+	{
+		// Get eventual Hook
+		HookTarget = AHookShotAttachment::GetHookToTarget(RobotCharacter);
+		if(HookTarget) // If there is a valid HookTarget, update the hit result with line trace towards hook instead of towards Soul 
+			GetWorld()->SweepSingleByChannel(HitResultOut, StartLoc, HookTarget->GetActorLocation(), FQuat::Identity, ECC_Pawn, CollShape, Params);
+		
+		return HookTarget; 
+	}
+
+	// No valid target 
 	return nullptr; 
 }
 
@@ -266,8 +281,6 @@ void URobotHookingState::RetractHook(const float DeltaTime)
 		ServerRPC_RetractHook(EndLocRelToOwner); 
 	} else // Hit a blocking object 
 	{
-		// TODO: Retract when it hits an obstacle, now simply changes state
-
 		const FVector DirToPlayer = (PlayerOwner->GetActorLocation() - CurrentHookTarget).GetSafeNormal();
 		CurrentHookTarget += DirToPlayer * DeltaTime * RetractHookOnMissSpeed; // Move current target closer to player 
 
@@ -275,9 +288,6 @@ void URobotHookingState::RetractHook(const float DeltaTime)
 		const FVector EndLocRelToOwner = PlayerOwner->GetTransform().InverseTransformPosition(CurrentHookTarget);
 
 		ServerRPC_RetractHook(EndLocRelToOwner); 
-		// HookCable->EndLocation = EndLocRelToOwner; 
-		
-		// EndHookShot(); 
 	}
 
 	// Fully retracted hook, change back to base state 
