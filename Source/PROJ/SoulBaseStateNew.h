@@ -31,8 +31,16 @@ private:
 	UPROPERTY(EditAnywhere)
 	class UInputAction* DashInputAction;
 
+	UPROPERTY(EditAnywhere)
+	UInputAction* ThrowGrenadeInputAction;
+
 	/** Run locally and called when player presses the dash-button */ 
 	void Dash();
+
+	void ThrowGrenade();
+
+	UPROPERTY()
+	class ALightGrenade* LightGrenade;
 
 	UPROPERTY()
 	class ASoulCharacter* SoulCharacter;
