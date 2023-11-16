@@ -27,9 +27,6 @@ public:
 
 	/** Tick task is called every tick this task is in progress, set up in execute task */
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
-	
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnAttackPlayer();
 
 	UPROPERTY()
 	AEnemyCharacter* OwnerCharacter;

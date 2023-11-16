@@ -6,6 +6,7 @@
 #include "GameFramework/Character.h"
 #include "EnemyCharacter.generated.h"
 
+class APROJCharacter;
 class AGrid;
 class ACombatManager;
 class UEnemyHealthComponent;
@@ -31,6 +32,15 @@ public:
 	void SetGridPointer(AGrid* GridPointer);
 
 	AGrid* GetGridPointer() const;
+
+	bool GetHasBeenAttacked() const;
+
+	APROJCharacter* GetLatestDamageCauser();
+
+	UPROPERTY(EditDefaultsOnly)
+	float StaggeredThreshold = 0.f;
+
+	void KillMe();
 	
 protected:
 	// Called when the game starts or when spawned
@@ -43,12 +53,18 @@ protected:
 
 private:
 
-	void KillMe();
+	APROJCharacter* LatestDamageCauser;
+
+	bool bHasBeenAttacked = false;
+
+	
 
 	UPROPERTY()
 	AGrid* PathfindingGrid;
 
 	void CheckIfOverlappingWithGrid();
+
+	
 public:	
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -64,10 +80,60 @@ public:
 	void OnTakenDamageEvent(float DamageTaken);
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnBasicAttackEvent();
-
+	void OnChargingAttackEvent(const float ChargingDuration);
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnPerformAttackEvent(const float AttackDuration);
+	
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDeathEvent();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnStunnedEvent();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnUnstunnedEvent();
+	
+	UPROPERTY(ReplicatedUsing=OnRep_Stunned)
+	bool bIsStunned = false;
+
+	UPROPERTY(ReplicatedUsing=OnRep_ChargingAttack)
+	bool bIsChargingAttack = false;
+
+	UPROPERTY(ReplicatedUsing=OnRep_Attack)
+	bool bIsAttacking = false;
+
+	UPROPERTY(Replicated)
+	bool bIsIdle = false;
+	
+	FTimerHandle StunnedTimerHandle;
+
+	FTimerHandle ChargeAttackTimerHandle;
+
+	FTimerHandle AttackTimerHandle;
+
+	UPROPERTY(EditDefaultsOnly)
+	float ChargeAttackDuration = 1.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float PerformAttackDuration = 0.5f;
+	
+	UFUNCTION()
+	void OnRep_Stunned();
+
+	UFUNCTION()
+	void OnRep_ChargingAttack();
+
+	UFUNCTION()
+	void OnRep_Attack();
+	
+	void Stun(const float Duration);
+
+	void ChargeAttack();
+
+	virtual void Attack();
+
+	void Idle();
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
