@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="AudioFile" id="{7684651d-8ab1-49f3-a70e-3100265bad1c}">
 		<property name="assetPath">
-			<value>SFX/PostStep/Cement/S_Cement31.wav</value>
+			<value>SFX/char/PostStep/Cement/S_Cement31.wav</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>96</value>

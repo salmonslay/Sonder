@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="ParameterPreset" id="{20dbdb24-38b7-46f1-8ec5-5d4be8cc3fff}">
+		<property name="name">
+			<value>PressureActivated</value>
+		</property>
+		<relationship name="folder">
+			<destination>{fc4a5593-8a49-4f06-a150-12dbe6800661}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{a95ccfbf-5011-4137-a850-7e14a62fe0b5}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{a95ccfbf-5011-4137-a850-7e14a62fe0b5}">
+		<property name="parameterType">
+			<value>1</value>
+		</property>
+		<property name="maximum">
+			<value>2</value>
+		</property>
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>
