@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{978fab78-d372-41b4-a94b-ca482c1849d5}">
+		<property name="assetPath">
+			<value>SFX/Puzzle/TVBoxActivate.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>96</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>0.41648958333333336</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{542ff4ed-1b88-4c2c-98cc-a4f4c45c5308}</destination>
+		</relationship>
+	</object>
+</objects>
