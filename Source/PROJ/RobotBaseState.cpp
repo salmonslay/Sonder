@@ -58,7 +58,7 @@ void URobotBaseState::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void URobotBaseState::ShootHook()
 {
-	if(bHookShotOnCooldown)
+	if(bHookShotOnCooldown || !RobotCharacter->AbilityTwo)
 		return; 
 	
 	// UE_LOG(LogTemp, Warning, TEXT("Fired hook"))
@@ -76,7 +76,7 @@ void URobotBaseState::Pulse()
 {
 	// Ensure player cant spam attack and is locally controlled 
 	// Only run locally 
-	if(bPulseCoolDownActive || !PlayerOwner->IsLocallyControlled())
+	if(bPulseCoolDownActive || !PlayerOwner->IsLocallyControlled() || !RobotCharacter->AbilityOne)
 		return;
 
 	bPulseCoolDownActive = true;

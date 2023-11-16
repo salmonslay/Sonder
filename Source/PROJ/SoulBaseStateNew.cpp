@@ -62,7 +62,7 @@ void USoulBaseStateNew::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void USoulBaseStateNew::Dash()
 {
 	// Only run locally 
-	if(bDashCoolDownActive || !PlayerOwner->IsLocallyControlled())
+	if(bDashCoolDownActive || !PlayerOwner->IsLocallyControlled() || !SoulCharacter->AbilityOne)
 		return;
 
 	PlayerOwner->SwitchState(SoulCharacter->DashingState); 
@@ -70,6 +70,11 @@ void USoulBaseStateNew::Dash()
 
 void USoulBaseStateNew::ThrowGrenade()
 {
+	// Only run locally 
+	if(!PlayerOwner->IsLocallyControlled() || !SoulCharacter->AbilityTwo)
+		return;
+
+	
 	UE_LOG(LogTemp, Warning, TEXT("Throw Grenade"));
 	if (!LightGrenade)
 	{
