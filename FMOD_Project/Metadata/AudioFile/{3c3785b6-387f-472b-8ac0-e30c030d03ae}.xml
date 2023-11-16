@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="AudioFile" id="{3c3785b6-387f-472b-8ac0-e30c030d03ae}">
 		<property name="assetPath">
-			<value>SFX/PostStep/Metal/Metal 17.wav</value>
+			<value>SFX/char/PostStep/Metal/Metal 17.wav</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>44.0999985</value>
