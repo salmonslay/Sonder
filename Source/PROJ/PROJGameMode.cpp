@@ -125,6 +125,53 @@ UClass* APROJGameMode::GetDefaultPawnClassForController_Implementation(AControll
 	return DefaultPawnClass;
 }
 
+void APROJGameMode::HandleSeamlessTravelPlayer(AController*& C)
+{
+	Super::HandleSeamlessTravelPlayer(C);
+
+	// Default behavior is to spawn new controllers and copy data
+	APlayerController* PC = Cast<APlayerController>(C);
+	if (PC && PC->Player)
+	{
+		// We need to spawn a new PlayerController to replace the old one
+		APlayerController* NewPC = SpawnPlayerController(PC->IsLocalPlayerController() ? ROLE_SimulatedProxy : ROLE_AutonomousProxy, PC->GetFocalLocation(), PC->GetControlRotation());
+
+		if (NewPC)
+		{
+			PC->SeamlessTravelTo(NewPC);
+			NewPC->SeamlessTravelFrom(PC);
+			SwapPlayerControllers(PC, NewPC);
+			PC = NewPC;
+			C = NewPC;
+		}
+		else
+		{
+			UE_LOG(LogGameMode, Warning, TEXT("HandleSeamlessTravelPlayer: Failed to spawn new PlayerController for %s (old class %s)"), *PC->GetHumanReadableName(), *PC->GetClass()->GetName());
+			PC->Destroy();
+			return;
+		}
+	}
+
+	InitSeamlessTravelPlayer(C);
+
+	// Initialize hud and other player details, shared with PostLogin
+	GenericPlayerInitialization(C);
+
+	if(PC)
+	{
+		AProjPlayerController* ProjPC = Cast<AProjPlayerController>(PC);
+		if(ProjPC)
+		{
+			ProjPC->OnFinishSeamlessTravel();
+		}
+	}
+}
+
+void APROJGameMode::PostSeamlessTravel()
+{
+	Super::PostSeamlessTravel();
+}
+
 void APROJGameMode::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -144,4 +191,9 @@ void APROJGameMode::SetPlayerPointers()
 	{
 		GetWorldTimerManager().ClearTimer(PlayerPointerTimerHandle);
 	}
+}
+
+void APROJGameMode::GetSeamlessTravelActorList(bool bToTransition, TArray<AActor*>& ActorList)
+{
+	Super::GetSeamlessTravelActorList(bToTransition, ActorList);
 }

@@ -22,6 +22,9 @@ public:
 	UClass* GetControlledPawnClass() const { return UsedPawnClass; }
 
 	void SetControlledPawnClass(const TSubclassOf<APawn> PawnClass) { UsedPawnClass = PawnClass; }
+	
+	UFUNCTION()
+	void OnFinishSeamlessTravel();
 
 protected:
 
@@ -53,5 +56,7 @@ private:
 
 	UPROPERTY()
 	APROJCharacter* PlayerCharacter;
-	
+
+	UPROPERTY(VisibleAnywhere)
+	AActor* playerSpawnPoint;
 };
