@@ -5,6 +5,7 @@
 
 #include "CharacterStateMachine.h"
 #include "EnhancedInputComponent.h"
+#include "LightGrenade.h"
 #include "PROJCharacter.h"
 #include "SoulCharacter.h"
 #include "SoulDashingState.h"
@@ -33,6 +34,7 @@ void USoulBaseStateNew::UpdateInputCompOnEnter(UEnhancedInputComponent* InputCom
 	if(!bHasSetUpInput)
 	{
 		InputComp->BindAction(DashInputAction, ETriggerEvent::Started, this, &USoulBaseStateNew::Dash);
+		InputComp->BindAction(ThrowGrenadeInputAction,ETriggerEvent::Started,this,&USoulBaseStateNew::ThrowGrenade);
 		bHasSetUpInput = true; 
 	}
 }
@@ -64,4 +66,14 @@ void USoulBaseStateNew::Dash()
 		return;
 
 	PlayerOwner->SwitchState(SoulCharacter->DashingState); 
+}
+
+void USoulBaseStateNew::ThrowGrenade()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Throw Grenade"));
+	if (!LightGrenade)
+	{
+		LightGrenade = GetWorld()->SpawnActor<ALightGrenade>();
+	}
+	LightGrenade->Throw();
 }
