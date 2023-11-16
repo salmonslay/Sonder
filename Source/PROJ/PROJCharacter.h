@@ -39,7 +39,7 @@ public:
 	APROJCharacter();
 
 	/** Toggles depth movement */
-	void SetDepthMovementEnabled(const bool bNewEnable) { bDepthMovementEnabled = bNewEnable; }
+	void SetDepthMovementEnabled(const bool bNewEnable); 
 
 	/** Returns true if player can traverse in the depth axis */
 	bool IsDepthMovementEnabled() const { return bDepthMovementEnabled; }
@@ -93,7 +93,7 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	// To add mapping context
-	virtual void BeginPlay();
+	virtual void BeginPlay() override;
 
 private:
 	/** Determines if player can move in both axes */
@@ -105,5 +105,12 @@ private:
 	UEnhancedInputComponent* EnhancedInputComp; 
 
 	FTransform SpawnTransform;
+
+	/** Set in BeginPlay. Uses the existing rotation rate variable exposed to BluePrints */
+	FRotator RotationRateIn2DView = FRotator(0, 1000.f, 0); 
+
+	/** How fast the player should rotate in 3D view. Negative value means instant */
+	UPROPERTY(EditAnywhere)
+	float RotationRateIn3DView = 500.f; 
 	
 };
