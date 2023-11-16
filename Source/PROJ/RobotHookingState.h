@@ -22,6 +22,9 @@ public:
 
 	virtual void Exit() override;
 
+	/** Switches state to the base state, ending the hook shot */
+	void EndHookShot() const; 
+
 private:
 
 	UPROPERTY()
@@ -72,9 +75,6 @@ private:
 
 	/** Returns the HookTarget if there is no available target, ensuring hook is shot forwards */
 	FVector GetTargetOnNothingInFront() const; 
-
-	/** Switches state to the base state, ending the hook shot */
-	void EndHookShot() const; 
 	
 	/** Returns false if there was a block */
 	bool SetHookTarget();

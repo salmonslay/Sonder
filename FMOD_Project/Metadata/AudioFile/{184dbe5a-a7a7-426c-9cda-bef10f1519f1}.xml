@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="AudioFile" id="{184dbe5a-a7a7-426c-9cda-bef10f1519f1}">
 		<property name="assetPath">
-			<value>SFX/PostStep/Snow/S_Snow3.wav</value>
+			<value>SFX/char/PostStep/Snow/S_Snow3.wav</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>96</value>
