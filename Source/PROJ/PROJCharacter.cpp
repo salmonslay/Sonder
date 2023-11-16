@@ -169,6 +169,9 @@ void APROJCharacter::DisableCoyoteJump()
 
 void APROJCharacter::CoyoteJump()
 {
+	if(!IsLocallyControlled())
+		return;
+	
 	if(bCanCoyoteJump && !bHasJumped && GetCharacterMovement()->MovementMode == MOVE_Falling)
 	{
 		ServerRPC_CoyoteJump();
@@ -177,12 +180,17 @@ void APROJCharacter::CoyoteJump()
 		{
 			GetCharacterMovement()->SetMovementMode(MOVE_Walking); 
 			Jump();
+			UE_LOG(LogTemp, Warning, TEXT("Local jump"))
 		}
 	}
 }
 
 void APROJCharacter::ServerRPC_CoyoteJump_Implementation()
 {
+	if(!HasAuthority())
+		return; 
+
+	UE_LOG(LogTemp, Warning, TEXT("Server jump"))
 	GetCharacterMovement()->SetMovementMode(MOVE_Walking); 
 	Jump();
 }
