@@ -47,8 +47,7 @@ void UBTTask_AttackPlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 	}
 	if (PlayerToAttack && IsValid(PlayerToAttack))
 	{
-		OnAttackPlayer();
-		OwnerCharacter->OnBasicAttackEvent();
+		OwnerCharacter->Attack();
 	
 		UGameplayStatics::ApplyDamage(PlayerToAttack, OwnerCharacter->DamageToPlayer, OwnerCharacter->GetController(), OwnerCharacter, nullptr);
 		if (bDebug)

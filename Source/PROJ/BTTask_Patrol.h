@@ -43,16 +43,16 @@ class PROJ_API UBTTask_Patrol : public UBTTask_BlackboardBase
 	bool bDebug = false;
 
 	UPROPERTY(EditAnywhere)
-	float DistanceToCheck = 0.f;
+	float DistanceToCheck = 100.f;
 
 	UPROPERTY(EditAnywhere)
-	float DownDistanceToCheck = 0.f;
+	float DownDistanceToCheck = 120.f;
 
 	UPROPERTY(EditAnywhere)
-	float DownForwardDistanceToCheck = 0.f;
+	float DownForwardDistanceToCheck = 70.f;
 	
 	UPROPERTY(EditAnywhere)
-	float PatrolSpeed = 0.f;
+	float PatrolSpeed = 10.f;
 
 
 	FRotator EnemyRotation = FRotator(0, 90, 0);
