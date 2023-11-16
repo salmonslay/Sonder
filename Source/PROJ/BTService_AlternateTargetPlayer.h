@@ -6,6 +6,7 @@
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
 #include "BTService_AlternateTargetPlayer.generated.h"
 
+class ASonderGameState;
 class AEnemyAIController;
 class APROJCharacter;
 class AEnemyCharacter;
@@ -36,8 +37,11 @@ protected:
 	UPROPERTY()
 	AEnemyAIController* OwnerController;
 
-	APROJCharacter* Player1 = nullptr;
-	APROJCharacter* Player2 = nullptr;
+	UPROPERTY()
+	ASonderGameState* SGS;
+
+	APROJCharacter* ServerPlayer;
+	APROJCharacter* ClientPlayer;
 
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;

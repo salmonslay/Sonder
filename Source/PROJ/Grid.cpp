@@ -5,6 +5,7 @@
 
 #include "EnemyCharacter.h"
 #include "Pathfinder.h"
+#include "PROJGameMode.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -35,7 +36,6 @@ void AGrid::BeginPlay()
 
 	TArray<APlayerState*> PlayerStateArr = GetWorld()->GetGameState<AGameStateBase>()->PlayerArray;
 	
-	//EnemyPathfinder = new Pathfinder(Cast<APawn>(&PlayerStateArr[0]), Cast<APawn>(&PlayerStateArr[1]),this);
 	
 	if(bDebug)
 	{
@@ -44,6 +44,13 @@ void AGrid::BeginPlay()
 
 	//GetWorldTimerManager().SetTimer(StartPathfindingTimerHandle, this, &AGrid::OnStartPathfinding, 0.1f, false, 0.1f);
 	GetWorldTimerManager().SetTimer(CheckOverlappingEnemiesTimerHandle, this, &AGrid::CheckGridBoundOverlappingActors, CheckOverlappingEnemiesDelay, false, -1 );
+	GetWorldTimerManager().SetTimer(CheckForPlayersTimerHandle, this, &AGrid::CheckForPlayers, CheckForPlayersLoopDelay, true, CheckForPlayersLoopDelay);
+}
+
+void AGrid::CreatePathfinder()
+{
+	EnemyPathfinder = new Pathfinder(ServerPlayer, ClientPlayer,this);
+	bHasPathfinder = true;
 }
 
 
@@ -52,6 +59,21 @@ void AGrid::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePro
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AGrid, GridBounds);
+}
+
+void AGrid::CheckForPlayers()
+{
+
+	if(GetLocalRole() == ROLE_Authority)
+	{
+		ServerPlayer = Cast<APROJGameMode>(GetWorld()->GetAuthGameMode())->ServerPlayer;
+		ClientPlayer = Cast<APROJGameMode>(GetWorld()->GetAuthGameMode())->ClientPlayer;
+	}
+	if(ServerPlayer && ClientPlayer)
+	{
+		bHasFoundBothPlayers = true;
+		GetWorldTimerManager().ClearTimer(CheckForPlayersTimerHandle);
+	}
 }
 
 void AGrid::OnDebugPathDraw() const
@@ -89,7 +111,15 @@ void AGrid::Tick(float DeltaTime)
 	{
 		return;
 	}
-	
+
+	if (!bHasFoundBothPlayers)
+	{
+		return;
+	}
+	if (!bHasPathfinder)
+	{
+		CreatePathfinder();
+	}
 }
 
 
