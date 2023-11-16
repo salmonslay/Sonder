@@ -54,6 +54,25 @@ void AGrid::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePro
 	DOREPLIFETIME(AGrid, GridBounds);
 }
 
+void AGrid::OnDebugPathDraw() const
+{
+	if (CurrentPath.Num() != 0)
+	{
+		for(const FVector Loc  : CurrentPath)
+		{
+			const GridNode* Node = GetNodeFromWorldLocation(Loc); 
+			ensure(Node != nullptr);
+			DrawDebugSphere(GetWorld(), Node->GetWorldCoordinate(), NodeRadius, 10, FColor::Black, false, 0.1);
+		}
+	}
+
+	const GridNode*  Node = GetNodeFromWorldLocation(TargetLocation); 
+	DrawDebugSphere(GetWorld(), Node->GetWorldCoordinate(), NodeDiameter, 10, FColor::Cyan, false, 0.1);
+
+	const GridNode* StartNode = GetNodeFromWorldLocation(StartLocation); 
+	DrawDebugSphere(GetWorld(), StartNode->GetWorldCoordinate(), NodeDiameter, 10, FColor::Purple, false, 0.1);
+}
+
 AGrid::~AGrid()
 {
 	delete [] Nodes;
@@ -65,11 +84,7 @@ AGrid::~AGrid()
 void AGrid::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	if (!bCanStartPathfinding)
-	{
-		return;
-	}
+	
 	if (!bAllNodesAdded)
 	{
 		return;
@@ -78,7 +93,7 @@ void AGrid::Tick(float DeltaTime)
 }
 
 
-TArray<FVector> AGrid::RequestPath( FVector &Start,  FVector &End)
+TArray<FVector> AGrid::RequestPath(const FVector &Start, const FVector &End, const bool bDoDebugDraw)
 {
 	TArray<FVector> NewPath;
 	if (EnemyPathfinder->FindPath(Start, End))
@@ -91,16 +106,12 @@ TArray<FVector> AGrid::RequestPath( FVector &Start,  FVector &End)
 	}
 	
 	Algo::Reverse(NewPath);
-	if (bDebug)
+	if (bDoDebugDraw)
 	{
-		OnDebugPathDraw(NewPath);
+		OnDebugPathDraw();
 	}
+	CurrentPath = NewPath;
 	return NewPath;
-}
-
-void AGrid::OnStartPathfinding()
-{
-	bCanStartPathfinding = true;
 }
 
 
@@ -126,27 +137,6 @@ void AGrid::OnNoNeedUpdate()
 float AGrid::GetNodeRadius() const 
 {
 	return NodeRadius;
-}
-
-void AGrid::OnDebugPathDraw(const TArray<FVector> PathWaypoints)
-{
-	
-	if (PathWaypoints.Num() != 0)
-	{
-		for(const FVector Loc  : PathWaypoints)
-		{
-			const GridNode* Node = GetNodeFromWorldLocation(Loc); 
-			ensure(Node != nullptr);
-			DrawDebugSphere(GetWorld(), Node->GetWorldCoordinate(), NodeRadius, 10, FColor::Black, false, 0.1);
-		}
-	}
-
-	const GridNode*  Node = GetNodeFromWorldLocation(TargetLocation); 
-	DrawDebugSphere(GetWorld(), Node->GetWorldCoordinate(), NodeDiameter, 10, FColor::Cyan, false, 0.1);
-
-	const GridNode* StartNode = GetNodeFromWorldLocation(StartLocation); 
-	DrawDebugSphere(GetWorld(), StartNode->GetWorldCoordinate(), NodeDiameter, 10, FColor::Purple, false, 0.1);
-
 }
 
 

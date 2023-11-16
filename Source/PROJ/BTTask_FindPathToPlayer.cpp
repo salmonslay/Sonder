@@ -5,6 +5,7 @@
 
 #include "AIController.h"
 #include "EnemyCharacter.h"
+#include "Grid.h"
 #include "PROJCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
@@ -36,6 +37,8 @@ void UBTTask_FindPathToPlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 
 	if (OwnerCharacter == nullptr) return;
 
+	OwnerLocation = OwnerCharacter->GetActorLocation();
+
 	OwnerGrid = OwnerCharacter->GetGridPointer();
 
 	if (OwnerGrid == nullptr) return;
@@ -45,8 +48,17 @@ void UBTTask_FindPathToPlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 	if (PlayerObject)
 	{
 		PlayerToAttack = Cast<APROJCharacter>(PlayerObject);
-		
+		if (PlayerToAttack)
+		{
+			CurrentTargetLocation = PlayerToAttack->GetActorLocation();
+		}
 	}
 
+	Path = OwnerGrid->RequestPath(OwnerLocation, CurrentTargetLocation, bDebug);
 	
 }
+
+
+
+
+

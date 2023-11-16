@@ -39,4 +39,11 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;
+
+	FVector CurrentTargetLocation = FVector::ZeroVector;
+
+	FVector OldTargetLocation = FVector::ZeroVector;
+
+	TArray<FVector> Path = TArray<FVector>();
+	
 };
