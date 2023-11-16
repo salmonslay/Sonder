@@ -9,8 +9,6 @@
 #include "PROJCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
-class APROJCharacter;
-
 UBTTask_FindPathToPlayer::UBTTask_FindPathToPlayer()
 {
 	NodeName = TEXT("FindPathToPlayer");
@@ -41,7 +39,11 @@ void UBTTask_FindPathToPlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 
 	OwnerGrid = OwnerCharacter->GetGridPointer();
 
-	if (OwnerGrid == nullptr) return;
+	if (OwnerGrid == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No grid"));
+		return;
+	}
 	
 	APROJCharacter* PlayerToAttack;
 	UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("PlayerToAttack");

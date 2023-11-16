@@ -75,6 +75,7 @@ void UEnemyHealthComponent::ServerRPCPlayerDied_Implementation()
 void UEnemyHealthComponent::MulticastRPCPlayerDied_Implementation()
 {
 	UE_LOG(LogTemp, Warning, TEXT("Multicast died"));
+	EnemyCharacter->KillMe();
 	EnemyCharacter->OnDeathEvent(); 
 }
 
