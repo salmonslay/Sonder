@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects serializationModel="Studio.02.02.00">
-	<object class="AudioFile" id="{6fa50a47-bd7a-4e25-94dd-6416f5ccd23b}">
+	<object class="AudioFile" id="{c824dd4b-d253-4d19-ba32-df548b676431}">
 		<property name="assetPath">
-			<value>SFX/Puzzle/Box/woodCrateMove2.wav</value>
+			<value>SFX/Puzzle/Box/ImpactWoodBox_S011IM.337.wav</value>
 		</property>
 		<property name="frequencyInKHz">
-			<value>48</value>
+			<value>96</value>
 		</property>
 		<property name="channelCount">
 			<value>2</value>
 		</property>
 		<property name="length">
-			<value>2.1226666666666665</value>
+			<value>0.46400000000000002</value>
 		</property>
 		<relationship name="masterAssetFolder">
 			<destination>{542ff4ed-1b88-4c2c-98cc-a4f4c45c5308}</destination>

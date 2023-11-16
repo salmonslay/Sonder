@@ -45,7 +45,7 @@
 	</object>
 	<object class="MasterTrack" id="{e9e0fd29-3756-4cb8-b6d3-0b3283ce1f4a}">
 		<relationship name="automationTracks">
-			<destination>{cc6041bb-fc81-4d3b-a97f-43c2ce5316c3}</destination>
+			<destination>{5d61562d-5480-4da2-b360-677cd601e378}</destination>
 		</relationship>
 		<relationship name="mixerGroup">
 			<destination>{70030d6b-aa08-4427-93c2-f0d467c41dc4}</destination>
@@ -59,7 +59,7 @@
 			<destination>{56fe64b4-4591-430e-a4cf-d82943c84f95}</destination>
 		</relationship>
 		<relationship name="output">
-			<destination>{089e1bfd-ec44-423e-adf6-037dcccf1a44}</destination>
+			<destination>{d296c49f-9499-4308-b391-2af5c9ba477a}</destination>
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{5b77b126-3dce-4fa8-83df-c37c2f7691b7}">
@@ -105,7 +105,7 @@
 			<destination>{e85953da-987e-4cfe-adb0-94008136c2bd}</destination>
 		</relationship>
 	</object>
-	<object class="AutomationTrack" id="{cc6041bb-fc81-4d3b-a97f-43c2ce5316c3}">
+	<object class="AutomationTrack" id="{5d61562d-5480-4da2-b360-677cd601e378}">
 		<relationship name="automator">
 			<destination>{e6070012-2747-4012-a227-55829a0fb996}</destination>
 		</relationship>
@@ -120,8 +120,14 @@
 		<property name="playCount">
 			<value>1</value>
 		</property>
+		<relationship name="modulators">
+			<destination>{3ddbe5d0-9715-4b22-9e24-4416633b99c7}</destination>
+		</relationship>
 		<relationship name="sounds">
-			<destination>{c59636f4-7777-41f3-bad3-efa3c5a79864}</destination>
+			<destination>{e233d993-314e-4308-9236-60f55311a898}</destination>
+			<destination>{19e582a2-9da2-408e-a22a-5ac0fff7c1ae}</destination>
+			<destination>{420025a6-0840-4d9b-aefa-8edf46f71e0f}</destination>
+			<destination>{981b06b4-c76e-4580-8d6c-aa2b0fb3b756}</destination>
 		</relationship>
 	</object>
 	<object class="MultiSound" id="{cabb9d51-b078-4485-b9c1-5f22447b1bb8}">
@@ -178,9 +184,32 @@
 	</object>
 	<object class="MixerBusPanner" id="{a3ed53e4-cd51-42cd-895c-64f75bc3128d}" />
 	<object class="MixerBusFader" id="{a0b4abfc-cf31-477a-ace1-199e46c1a9a3}" />
-	<object class="SingleSound" id="{c59636f4-7777-41f3-bad3-efa3c5a79864}">
+	<object class="RandomizerModulator" id="{3ddbe5d0-9715-4b22-9e24-4416633b99c7}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>pitch</value>
+		</property>
+		<property name="amount">
+			<value>10</value>
+		</property>
+	</object>
+	<object class="SingleSound" id="{e233d993-314e-4308-9236-60f55311a898}">
 		<relationship name="audioFile">
-			<destination>{b3639862-e381-484c-b20d-230442d1a71c}</destination>
+			<destination>{16b3b620-20ae-428a-8910-b1414d29f9aa}</destination>
+		</relationship>
+	</object>
+	<object class="SingleSound" id="{19e582a2-9da2-408e-a22a-5ac0fff7c1ae}">
+		<relationship name="audioFile">
+			<destination>{d685cc7c-4301-4ad5-bd01-76cafdf27ea2}</destination>
+		</relationship>
+	</object>
+	<object class="SingleSound" id="{420025a6-0840-4d9b-aefa-8edf46f71e0f}">
+		<relationship name="audioFile">
+			<destination>{1155353c-9758-4206-8709-c61780a5942e}</destination>
+		</relationship>
+	</object>
+	<object class="SingleSound" id="{981b06b4-c76e-4580-8d6c-aa2b0fb3b756}">
+		<relationship name="audioFile">
+			<destination>{c824dd4b-d253-4d19-ba32-df548b676431}</destination>
 		</relationship>
 	</object>
 	<object class="SingleSound" id="{fb1fc1d6-402b-4094-826d-11d39b82dd03}">
@@ -235,7 +264,10 @@
 			<value>0.60000000000000009</value>
 		</property>
 		<property name="value">
-			<value>-15</value>
+			<value>-12</value>
+		</property>
+		<property name="curveShape">
+			<value>-0.613223612</value>
 		</property>
 	</object>
 	<object class="AutomationPoint" id="{423ec8c5-26d0-42a3-94bb-99c68705d0da}">
@@ -248,10 +280,13 @@
 	</object>
 	<object class="AutomationPoint" id="{714c7d28-e4d1-44fc-be19-7f41fb415c15}">
 		<property name="position">
-			<value>0.024011299435028249</value>
+			<value>2.0833333333331039e-05</value>
 		</property>
 		<property name="value">
-			<value>-20.6741371</value>
+			<value>-80</value>
+		</property>
+		<property name="curveShape">
+			<value>-1</value>
 		</property>
 	</object>
 </objects>

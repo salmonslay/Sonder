@@ -43,5 +43,6 @@ public:
 	bool IsInCameraFieldOfView(const FVector& Location) const;
 
 private:
+	
 	EDifficulty Difficulty;
 };

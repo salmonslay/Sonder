@@ -49,6 +49,8 @@ void UBTTask_FindPathToPlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 	UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("PlayerToAttack");
 	if (PlayerObject)
 	{
+		UE_LOG(LogTemp, Warning, TEXT("FoundPlayer to attack object"));
+
 		PlayerToAttack = Cast<APROJCharacter>(PlayerObject);
 		if (PlayerToAttack)
 		{
@@ -56,8 +58,8 @@ void UBTTask_FindPathToPlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 		}
 	}
 
+	UE_LOG(LogTemp, Warning, TEXT("Is about to try make path from FindPathService"));
 	Path = OwnerGrid->RequestPath(OwnerLocation, CurrentTargetLocation, bDebug);
-	
 }
 
 

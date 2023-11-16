@@ -19,7 +19,7 @@ AEnemyCharacter::AEnemyCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	EnemyHealthComponent = CreateDefaultSubobject<UEnemyHealthComponent>(TEXT("EnemyHealthComponent"));
-
+	
 }
 
 
@@ -181,7 +181,10 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& Out
 
 	// redundant now that has own health comp??
 	DOREPLIFETIME(AEnemyCharacter, EnemyHealthComponent);
-	
+	DOREPLIFETIME(AEnemyCharacter, bIsStunned);
+	DOREPLIFETIME(AEnemyCharacter, bIsChargingAttack);
+	DOREPLIFETIME(AEnemyCharacter, bIsAttacking);
+	DOREPLIFETIME(AEnemyCharacter, bIsIdle);
 }
 
 void AEnemyCharacter::InitializeControllerFromManager()
