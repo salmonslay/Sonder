@@ -145,7 +145,9 @@ void APROJCharacter::Jump()
 
 	bHasJumped = true;
 
-	bCanCoyoteJump = false; 
+	bCanCoyoteJump = false;
+
+	GetCharacterMovement()->GravityScale = DefaultGravityScale;
 
 	// Needs to be set to true every time player jumps because it is reset when apex event is fired 
 	GetCharacterMovement()->bNotifyApex = true;
