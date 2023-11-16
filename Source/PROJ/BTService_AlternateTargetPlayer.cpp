@@ -7,9 +7,10 @@
 #include "EnemyAIController.h"
 #include "EnemyCharacter.h"
 #include "PROJCharacter.h"
-#include "PROJGameMode.h"
+#include "SonderGameState.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 
 UBTService_AlternateTargetPlayer::UBTService_AlternateTargetPlayer()
 {
@@ -19,6 +20,8 @@ UBTService_AlternateTargetPlayer::UBTService_AlternateTargetPlayer()
 void UBTService_AlternateTargetPlayer::OnGameplayTaskActivated(UGameplayTask& Task)
 {
 	Super::OnGameplayTaskActivated(Task);
+
+	SGS = Cast<ASonderGameState>(GetWorld()->GetGameState());
 }
 
 void UBTService_AlternateTargetPlayer::OnGameplayTaskDeactivated(UGameplayTask& Task)
@@ -34,21 +37,23 @@ void UBTService_AlternateTargetPlayer::TickNode(UBehaviorTreeComponent& OwnerCom
 	if (OwnerComp.GetAIOwner() == nullptr) return;
 
 	OwnerCharacter = Cast<AEnemyCharacter>(OwnerComp.GetAIOwner()->GetCharacter());
+	
 
-	/*
-	if (OwnerCharacter == nullptr) return;
+	if (SGS == nullptr)
+	{
+		SGS = Cast<ASonderGameState>(GetWorld()->GetGameState());
+		if (SGS == nullptr)
+		{
+			UE_LOG(LogTemp, Error, TEXT("Invalid game state"));
+			return;
+		}
+	}
+	
 
-	OwnerController = Cast<AEnemyAIController>(OwnerComp.GetAIOwner());
+	ServerPlayer = SGS->GetServerPlayer();
+	ClientPlayer = SGS->GetClientPlayer();
 
-	if (OwnerController == nullptr) return;
-	*/
-
-	APROJGameMode* CurrentGameMode = Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this));
-	if (CurrentGameMode == nullptr) return;
-
-	Player1 = CurrentGameMode->GetActivePlayer(0);
-	Player2 = CurrentGameMode->GetActivePlayer(1);
-	if (Player1 == nullptr)
+	if (ServerPlayer == nullptr)
 	{
 		if (bDebug)
 		{
@@ -56,8 +61,8 @@ void UBTService_AlternateTargetPlayer::TickNode(UBehaviorTreeComponent& OwnerCom
 		}
 		return;
 	}
-
-	if (Player2 == nullptr)
+	
+	if (ClientPlayer == nullptr)
 	{
 		if (bDebug)
 		{
@@ -65,21 +70,22 @@ void UBTService_AlternateTargetPlayer::TickNode(UBehaviorTreeComponent& OwnerCom
 		}
 		return;
 	}
-
-
+	
 	FVector CurrentTargetLocation;
-	// choose player that is closest
-	if (FVector::Distance(OwnerCharacter->GetActorLocation(), Player1->GetActorLocation()) >= FVector::Distance(OwnerCharacter->GetActorLocation(), Player2->GetActorLocation()))
+	FVector OwnerLocation = OwnerCharacter->GetActorLocation();
+	// choose player to target
+	
+	if (FMath::RandRange(0.f, 1.f) < FVector::Distance(OwnerLocation, ServerPlayer->GetActorLocation()) / (FVector::Distance(OwnerLocation, ServerPlayer->GetActorLocation()) + FVector::Distance(OwnerLocation, ClientPlayer->GetActorLocation())))
 	{
-		CurrentTargetLocation = Player2->GetActorLocation();
-		OwnerComp.GetBlackboardComponent()->SetValueAsObject("CurrentTargetPlayer", Player2);
-
+		OwnerComp.GetBlackboardComponent()->SetValueAsObject("CurrentTargetPlayer", ClientPlayer);
+		CurrentTargetLocation = ClientPlayer->GetActorLocation();
 	}
 	else
 	{
-		CurrentTargetLocation = Player1->GetActorLocation();
-		OwnerComp.GetBlackboardComponent()->SetValueAsObject("CurrentTargetPlayer", Player1);
+		OwnerComp.GetBlackboardComponent()->SetValueAsObject("CurrentTargetPlayer", ServerPlayer);
+		CurrentTargetLocation = ServerPlayer->GetActorLocation();
 	}
+	
 	if (bDebug)
 	{
 		DrawDebugSphere(OwnerCharacter->GetWorld(), CurrentTargetLocation, 30.f, 30, FColor::Red, false, 0.3f );
