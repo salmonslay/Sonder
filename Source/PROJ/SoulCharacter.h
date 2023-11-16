@@ -30,6 +30,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	USphereComponent* FireLoc;
 
+
 #pragma region Events
 
 	UFUNCTION(BlueprintImplementableEvent)
@@ -37,6 +38,7 @@ public:
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDashEnd();
+
 
 #pragma endregion 
 	
