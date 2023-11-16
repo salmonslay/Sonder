@@ -41,6 +41,12 @@ public:
 
 	void TrySpawnNext();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnSpawnEnemy();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void DoSpawnEvent();
+
 	UPROPERTY(EditAnywhere)
 	UCapsuleComponent* CapsuleComponent;
 
