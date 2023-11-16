@@ -11,6 +11,8 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "CableComponent.h"
+#include "HookShotAttachment.h"
+#include "StaticsHelper.h"
 #include "Net/UnrealNetwork.h"
 
 void URobotHookingState::Enter()
@@ -37,7 +39,7 @@ void URobotHookingState::Enter()
 	if(SetHookTarget())
 	{
 		StartTravelToTarget(); 
-		// UE_LOG(LogTemp, Warning, TEXT("Shooting towards player"))
+		// UE_LOG(LogTemp, Warning, TEXT("Shooting towards target"))
 	} else // Something blocked 
 	{
 		// Do we want to do something here? Event? 
@@ -52,17 +54,21 @@ void URobotHookingState::Update(const float DeltaTime)
 {
 	Super::Update(DeltaTime);
 
-	// Perform line trace while travelling towards target to see if something is now blocking (for whatever reason)
-	if(bTravellingTowardsTarget && DoLineTrace().IsValidBlockingHit())
-	{
-		EndHookShot(); 
-		return; 
-	}
-	
-	// UE_LOG(LogTemp, Warning, TEXT("Grav scale: %f"), MovementComponent->GravityScale)
-
 	if(bTravellingTowardsTarget)
+	{
+		FHitResult HitResult; 
+		DoLineTrace(HitResult);
+	
+		// Perform line trace while travelling towards target to see if something is now blocking (for whatever reason)
+		if(HitResult.IsValidBlockingHit())
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Ended in update"))
+			EndHookShot();
+			return; 
+		}
+		
 		TravelTowardsTarget(DeltaTime);
+	}
 	
 	RetractHook(DeltaTime);
 
@@ -92,7 +98,8 @@ void URobotHookingState::EndHookShot() const
 
 bool URobotHookingState::SetHookTarget()
 {
-	FHitResult HitResult = DoLineTrace();
+	FHitResult HitResult;
+	const AActor* HitActorTarget = DoLineTrace(HitResult);
 
 	if(!SoulCharacter)
 	{
@@ -101,14 +108,37 @@ bool URobotHookingState::SetHookTarget()
 		return false;
 	}
 	
-	CurrentHookTarget = HitResult.IsValidBlockingHit() ? HitResult.Location : SoulCharacter->GetActorLocation();
+	CurrentHookTarget = HitActorTarget ? HitActorTarget->GetActorLocation() : HitResult.Location;
 
-	CurrentHookTarget += FVector::UpVector * ZTargetOffset; 
+	// Offset target location if targeting Soul 
+	if(HitActorTarget == SoulCharacter)
+		CurrentHookTarget += FVector::UpVector * ZSoulTargetOffset;
+
+	if(!StaticsHelper::ActorIsInFront(RobotCharacter, CurrentHookTarget))
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Target not in front of player"))
+		CurrentHookTarget = GetTargetOnNothingInFront(); 
+		return false; 
+	}
 
 	return !HitResult.IsValidBlockingHit(); 
 }
 
-FHitResult URobotHookingState::DoLineTrace()
+FVector URobotHookingState::GetTargetOnNothingInFront() const
+{
+	FHitResult HitResult;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(PlayerOwner);
+
+	FVector EndLoc = PlayerOwner->GetActorLocation() + PlayerOwner->GetActorForwardVector() * MaxHookShotDistanceOnBlock; 
+	
+	GetWorld()->LineTraceSingleByChannel(HitResult, PlayerOwner->GetActorLocation(), EndLoc, ECC_Pawn, Params);
+
+	// Return hit location or end loc if no hit 
+	return HitResult.IsValidBlockingHit() ? HitResult.Location : EndLoc; 
+}
+
+AActor* URobotHookingState::DoLineTrace(FHitResult& HitResultOut)
 {
 	if(!SoulCharacter)
 		SoulCharacter = UGameplayStatics::GetActorOfClass(this, ASoulCharacter::StaticClass()); 
@@ -116,25 +146,49 @@ FHitResult URobotHookingState::DoLineTrace()
 	if(!SoulCharacter)
 	{
 		UE_LOG(LogTemp, Error, TEXT("No soul when attempting line trace"))
-		return FHitResult(); 
+		return nullptr; 
 	}
-	
-	FHitResult HitResult;
-	FCollisionQueryParams Params;
-	Params.AddIgnoredActors( TArray<AActor*>( {PlayerOwner, SoulCharacter } ) ); // Ignore players
 
 	const FVector StartLoc = PlayerOwner->GetActorLocation();
-	const FVector EndLoc = SoulCharacter->GetActorLocation(); 
+	FVector EndLoc = CurrentHookTarget;
+
+	AHookShotAttachment* HookTarget = nullptr; 
+
+	// Set new end location if player is not actively travelling towards target 
+	if(!bTravellingTowardsTarget)
+	{
+		EndLoc = SoulCharacter->GetActorLocation(); // Default target is Soul
+
+		const FVector DirToSoul = EndLoc - RobotCharacter->GetActorLocation();
+		const bool bSoulInFrontRobot = FVector::DotProduct(RobotCharacter->GetActorForwardVector(), DirToSoul) >= 0;
+
+		// If Soul is NOT in front of Robot, only then check if there is a possible hook point to target 
+		if(!bSoulInFrontRobot)
+		{
+			// Set EndLoc to Hook location of there is an eligible hook target 
+			HookTarget = AHookShotAttachment::GetHookToTarget(RobotCharacter); 
+			if(HookTarget)
+				EndLoc = HookTarget->GetActorLocation();
+		}
+	}
 	
 	// GetWorld()->LineTraceSingleByChannel(HitResult, StartLoc, EndLoc, ECC_Pawn, Params);
 
-	auto CapsuleComp = PlayerOwner->GetCapsuleComponent();
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActors( TArray<AActor*>( {PlayerOwner, SoulCharacter, HookTarget } ) ); // Ignore players and hook 
+
+	const auto CapsuleComp = PlayerOwner->GetCapsuleComponent();
 	
 	// Sweep instead of Line Trace 
-	FCollisionShape CollShape = FCollisionShape::MakeCapsule(CapsuleComp->GetScaledCapsuleRadius() / 2, CapsuleComp->GetScaledCapsuleHalfHeight() / 2);
-	GetWorld()->SweepSingleByChannel(HitResult, StartLoc, EndLoc, FQuat::Identity, ECC_Pawn, CollShape, Params); 
-	
-	return HitResult; 
+	const FCollisionShape CollShape = FCollisionShape::MakeCapsule(CapsuleComp->GetScaledCapsuleRadius() / 2, CapsuleComp->GetScaledCapsuleHalfHeight() / 2);
+	GetWorld()->SweepSingleByChannel(HitResultOut, StartLoc, EndLoc, FQuat::Identity, ECC_Pawn, CollShape, Params); 
+
+	// Return the Hook or Soul if sweep trace did not impact an obstacle 
+	if(!HitResultOut.IsValidBlockingHit())
+		return HookTarget ? HookTarget : SoulCharacter; 
+
+	// Hit an obstacle 
+	return nullptr; 
 }
 
 void URobotHookingState::ShootHook() 
@@ -166,6 +220,7 @@ void URobotHookingState::ServerRPCStartTravel_Implementation()
 void URobotHookingState::MulticastRPCStartTravel_Implementation()
 {
 	PlayerOwner->GetCharacterMovement()->GravityScale = 0;
+	PlayerOwner->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
 }
 
 void URobotHookingState::TravelTowardsTarget(const float DeltaTime)
@@ -174,8 +229,8 @@ void URobotHookingState::TravelTowardsTarget(const float DeltaTime)
 
 	if(FVector::Dist(PlayerOwner->GetActorLocation(), CurrentHookTarget) < ReachedTargetDistTolerance)
 	{
-		CollidedWithSoul(); 
-		EndHookShot(); 
+		CollidedWithSoul(); // TODO: Check if Robot is travelling towards Soul or Hook 
+		EndHookShot();
 		return; 
 	}
 
@@ -188,10 +243,9 @@ void URobotHookingState::ServerTravelTowardsTarget_Implementation(const float De
 {
 	if(!PlayerOwner->HasAuthority())
 		return; 
-	
-	// PlayerOwner->SetActorLocation(PlayerOwner->GetActorLocation() + Direction * HookShotTravelSpeed * DeltaTime);
 
-	PlayerOwner->GetCharacterMovement()->Velocity = Direction * HookShotTravelSpeed; 
+	PlayerOwner->GetCharacterMovement()->Velocity = Direction * HookShotTravelSpeed;
+
 }
 
 void URobotHookingState::CollidedWithSoul()
@@ -247,6 +301,7 @@ void URobotHookingState::ServerRPC_RetractHook_Implementation(const FVector& New
 void URobotHookingState::MulticastRPCHookShotEnd_Implementation(ARobotStateMachine* RobotChar)
 {
 	GetOwner()->FindComponentByClass<UCableComponent>()->SetVisibility(false);
+	PlayerOwner->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking); 
 
 	RobotChar->OnHookShotEnd(); 
 }
