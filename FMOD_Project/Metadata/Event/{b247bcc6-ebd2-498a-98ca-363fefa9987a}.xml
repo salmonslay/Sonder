@@ -144,9 +144,6 @@
 		<property name="isAsync">
 			<value>true</value>
 		</property>
-		<property name="isCutoff">
-			<value>true</value>
-		</property>
 		<property name="length">
 			<value>1.1000000000000001</value>
 		</property>
