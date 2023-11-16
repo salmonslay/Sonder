@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "PlayerCharState.h"
+#include "SoulCharacter.h"
 #include "RobotBaseState.generated.h"
 
 /**
@@ -38,6 +39,8 @@ private:
 	
 	bool bCanPulse = true;
 
+	ACharacter* PlayerActor;
+
 	/** Function firing when player presses button to request hook shot */
 	void ShootHook();
 
@@ -64,8 +67,11 @@ private:
 	UPROPERTY(EditAnywhere)
 	float PulseCooldown = 1.f; 
 
+	/** Pulse Cooldown */
 	bool bPulseCoolDownActive = false;
 
 	void DisablePulseCooldown() { bPulseCoolDownActive = false; }
+
+	void DisableSecondJump() { PlayerActor->JumpMaxCount = 1; }
 	
 };
