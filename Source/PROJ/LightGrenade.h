@@ -45,6 +45,9 @@ public:
 	UPROPERTY()
 	AController* Controller;
 
+	UPROPERTY(Replicated)
+	bool bCanThrow = true;
+
 	void Throw();
 
 private:
@@ -56,17 +59,16 @@ private:
 	float Damage = 5.0f;
 
 	UPROPERTY(EditAnywhere)
-	float FireSpeed = 1.0f;
+	float FireSpeed = 8.0f;
 	
 	/** How long time needs to pass between attacks */
 	UPROPERTY(EditAnywhere)
-	float ThrowCooldown = 0.5f;
+	float ThrowCooldown = 5.0f;
 
 	UPROPERTY(EditAnywhere)
 	float ExplodeTime = 5.0f;
 
-	UPROPERTY(Replicated)
-	bool bCanThrow = true;
+	
 
 	bool bCanOverlap = false;
 
@@ -95,6 +97,13 @@ private:
 	/** Attack function run on each game instance, client and server */
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCExplosion();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPCThrow(); 
+
+	/** Attack function run on each game instance, client and server */
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCThrow();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

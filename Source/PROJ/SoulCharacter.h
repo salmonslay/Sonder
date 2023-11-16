@@ -27,7 +27,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	class USoulDashingState* DashingState;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	USphereComponent* FireLoc;
 
 

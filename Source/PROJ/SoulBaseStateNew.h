@@ -39,8 +39,18 @@ private:
 
 	void ThrowGrenade();
 
+	UFUNCTION(Server, Reliable)
+	void ServerRPCThrowGrenade(); 
+
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCThrowGrenade();
+
 	UPROPERTY()
-	class ALightGrenade* LightGrenade;
+	class AActor* LightGrenade;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> LightGrenadeRef;
 
 	UPROPERTY()
 	class ASoulCharacter* SoulCharacter;

@@ -9,6 +9,7 @@
 #include "PROJCharacter.h"
 #include "SoulCharacter.h"
 #include "SoulDashingState.h"
+#include "Kismet/GameplayStatics.h"
 
 void USoulBaseStateNew::Enter()
 {
@@ -70,10 +71,33 @@ void USoulBaseStateNew::Dash()
 
 void USoulBaseStateNew::ThrowGrenade()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Throw Grenade"));
-	if (!LightGrenade)
+	if (!PlayerOwner->IsLocallyControlled())
 	{
-		LightGrenade = GetWorld()->SpawnActor<ALightGrenade>();
+		return;	
 	}
-	LightGrenade->Throw();
+	
+	ServerRPCThrowGrenade();
 }
+
+void USoulBaseStateNew::ServerRPCThrowGrenade_Implementation()
+{
+	if(!PlayerOwner->HasAuthority())
+		return;
+
+	
+	//LightGrenade = GetWorld()->SpawnActor<AActor>(LightGrenadeRef,SoulCharacter->FireLoc->GetComponentLocation(),SoulCharacter->FireLoc->GetComponentRotation());
+	
+	
+	MulticastRPCThrowGrenade();
+}
+
+
+void USoulBaseStateNew::MulticastRPCThrowGrenade_Implementation()
+{
+	TArray<AActor*> FoundCharacter;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALightGrenade::StaticClass(), FoundCharacter);
+
+	ALightGrenade* Grenade = Cast<ALightGrenade>(FoundCharacter[0]);
+	Grenade->Throw();
+}
+
