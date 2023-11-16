@@ -16,9 +16,8 @@ public:
 	// Sets default values for this actor's properties
 	ALightGrenade();
 
-	void SetUpInput(UEnhancedInputComponent* InputComp);
-
-	virtual void NotifyActorBeginOverlap(AActor* OtherActor) override;
+	UFUNCTION()
+	void ActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
 protected:
 	// Called when the game starts or when spawned
@@ -33,6 +32,20 @@ public:
 
 	UPROPERTY(BlueprintReadWrite,EditDefaultsOnly)
 	USphereComponent* ExplosionArea = nullptr;
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void ExplosionEvent();
+
+	UPROPERTY()
+	class ASoulCharacter* Player;
+
+	UPROPERTY()
+	class APROJCharacter* PlayerBase;
+
+	UPROPERTY()
+	AController* Controller;
+
+	void Throw();
 
 private:
 
@@ -55,6 +68,8 @@ private:
 	UPROPERTY(Replicated)
 	bool bCanThrow = true;
 
+	bool bCanOverlap = false;
+
 	UPROPERTY()
 	bool bIsExploding = false;
 
@@ -66,11 +81,9 @@ private:
 
 	void StartCountdown();
 
-	UPROPERTY()
-	class ASoulCharacter* Player; 
-
-	/** Locally run function called when player presses throw button */
-	void Throw();
+	
+	
+	
 	
 	/**
 	 * Function executed on server ONLY when client attacks, called from client. This function will probably only call
