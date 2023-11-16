@@ -93,7 +93,9 @@ void URobotHookingState::Exit()
 
 void URobotHookingState::EndHookShot() const
 {
-	PlayerOwner->SwitchState(RobotCharacter->RobotBaseState); 
+	// Change state if this state is active 
+	if(Cast<ARobotStateMachine>(GetOwner())->GetCurrentState() == this)
+		PlayerOwner->SwitchState(RobotCharacter->RobotBaseState);
 }
 
 bool URobotHookingState::SetHookTarget()

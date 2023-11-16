@@ -4,10 +4,13 @@
 #include "SoulDashingState.h"
 
 #include "CharacterStateMachine.h"
+#include "RobotHookingState.h"
+#include "RobotStateMachine.h"
 #include "SoulBaseStateNew.h"
 #include "SoulCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 void USoulDashingState::Enter()
 {
@@ -32,7 +35,9 @@ void USoulDashingState::Enter()
 		
 		// TempTimer = 0;
 
-		StartLoc = PlayerOwner->GetActorLocation(); 
+		StartLoc = PlayerOwner->GetActorLocation();
+
+		CancelHookShot(); 
 	}
 
 }
@@ -66,6 +71,33 @@ void USoulDashingState::Exit()
 	PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Block); 
 
 	ServerExit(PlayerOwner->GetCharacterMovement()->GetLastInputVector()); 
+}
+
+void USoulDashingState::CancelHookShot()
+{
+	// Cancel Hook shot on client if Soul is played by the server and vice versa 
+	if(PlayerOwner->HasAuthority())
+		ClientRPC_CancelHookShot();
+	else
+		ServerRPC_CancelHookShot(); 
+}
+
+void USoulDashingState::ClientRPC_CancelHookShot_Implementation()
+{
+	if(!HookState)
+		HookState = UGameplayStatics::GetActorOfClass(this, ARobotStateMachine::StaticClass())->FindComponentByClass<URobotHookingState>(); 
+
+	if(HookState)
+		HookState->EndHookShot();
+}
+
+void USoulDashingState::ServerRPC_CancelHookShot_Implementation()
+{
+	if(!HookState)
+		HookState = UGameplayStatics::GetActorOfClass(this, ARobotStateMachine::StaticClass())->FindComponentByClass<URobotHookingState>(); 
+
+	if(HookState)
+		HookState->EndHookShot();
 }
 
 void USoulDashingState::MulticastExit_Implementation()
