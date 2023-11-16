@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="AudioFile" id="{81a03b1d-8b72-4eec-bd4d-fd8acca7810a}">
 		<property name="assetPath">
-			<value>SFX/PostStep/Wood/S_Wood5.wav</value>
+			<value>SFX/char/PostStep/Wood/S_Wood5.wav</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>96</value>
