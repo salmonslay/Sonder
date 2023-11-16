@@ -5,6 +5,7 @@
 
 #include "AIController.h"
 #include "EnemyCharacter.h"
+#include "SonderGameState.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Camera/PlayerCameraManager.h"
 #include "Kismet/GameplayStatics.h"
@@ -34,27 +35,21 @@ void UBTService_IsInCameraFOV::TickNode(UBehaviorTreeComponent& OwnerComp, uint8
 		return;
 	}
 
-	const APlayerCameraManager* PlayerCam = UGameplayStatics::GetPlayerCameraManager(OwnerCharacter->GetWorld(), 0);
+	OwnerLocation = OwnerCharacter->GetActorLocation();
 
-	if (PlayerCam == nullptr)
+	SGS = Cast<ASonderGameState>(GetWorld()->GetGameState());
+
+	if (SGS == nullptr)
 	{
 		return;
 	}
 
-	
-	// Get the camera loc and rot, calculate direction of cam
-	CameraLocation = PlayerCam->GetCameraLocation();
-	CameraForwardVector = PlayerCam->GetActorForwardVector();
-	
-	const FVector OwnerLocation = OwnerCharacter->GetActorLocation();
-	const FVector DirectionToOwner = (OwnerLocation - CameraLocation).GetSafeNormal();
-
-	const float Angle = FMath::RadiansToDegrees(acosf(FVector::DotProduct(CameraForwardVector, DirectionToOwner)));
-
-	// Check if the angle is within the field of view, set true if yes
-	if (Angle <= FieldOfViewAngle /2 )
+	if (SGS->IsInCameraFieldOfView(OwnerLocation))
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool("IsWithinCameraFOV", true);
 	}
-	OwnerComp.GetBlackboardComponent()->SetValueAsBool("IsWithinCameraFOV", false);
+	else
+	{
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool("IsWithinCameraFOV", false);
+	}
 }
