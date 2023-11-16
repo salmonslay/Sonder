@@ -3,11 +3,14 @@
 
 #include "Grid.h"
 
+#include "EnemyCharacter.h"
 #include "Pathfinder.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/KismetSystemLibrary.h"
 #include "Net/UnrealNetwork.h"
+
+
 
 // Sets default values
 AGrid::AGrid()
@@ -40,7 +43,9 @@ void AGrid::BeginPlay()
 	}
 
 	//GetWorldTimerManager().SetTimer(StartPathfindingTimerHandle, this, &AGrid::OnStartPathfinding, 0.1f, false, 0.1f);
+	GetWorldTimerManager().SetTimer(CheckOverlappingEnemiesTimerHandle, this, &AGrid::CheckGridBoundOverlappingActors, CheckOverlappingEnemiesDelay, false, -1 );
 }
+
 
 void AGrid::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -55,7 +60,8 @@ AGrid::~AGrid()
 	delete EnemyPathfinder;
 }
 
-// Called every frame
+// Called every frame,
+//TODO: make own, better tick
 void AGrid::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
@@ -190,8 +196,6 @@ void AGrid::CreateGrid()
 				TArray<AActor*> ActorsToIgnore;
 				ActorsToIgnore.Add(this);
 				TArray<AActor*> OverlappingActors;
-
-
 				
 				UKismetSystemLibrary::SphereOverlapActors(GetWorld(), NodePos, NodeRadius, ObjectTypeQueries, nullptr, ActorsToIgnore, OverlappingActors );
 				int NewMovementPenalty = OverlappingActors.IsEmpty() ? 0 : MovementPenalty;
@@ -259,6 +263,28 @@ GridNode* AGrid::GetNodeFromWorldLocation(const FVector &NodeWorldLocation) cons
 	const int z = FMath::Clamp(FMath::RoundToInt((GridRelativeZ - NodeRadius) / NodeDiameter), 0, GridLengthZ- 1);
 	
 	return GetNodeFromGrid(x, y, z);
+}
+
+void AGrid::CheckGridBoundOverlappingActors()
+{
+	TArray<AActor*> OverlappingActors;
+	GridBounds->GetOverlappingActors(OverlappingActors, AEnemyCharacter::StaticClass());
+	
+	if (!OverlappingActors.IsEmpty())
+	{
+		for (AActor* OverlappingActor : OverlappingActors)
+		{
+			AEnemyCharacter* EnemyCharacter = Cast<AEnemyCharacter>(OverlappingActor);
+			if (EnemyCharacter != nullptr && IsValid(EnemyCharacter))
+			{
+				EnemyCharacter->SetGridPointer(this);
+				if (bDebug)
+				{
+					UE_LOG(LogTemp, Warning, TEXT("Assigned grid to enemy"));
+				}
+			}
+		}
+	}
 }
 
 void AGrid::OnDebugDraw() const

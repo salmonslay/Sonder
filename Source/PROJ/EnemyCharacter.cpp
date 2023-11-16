@@ -7,6 +7,8 @@
 #include "Net/UnrealNetwork.h"
 #include "Engine/Engine.h"
 #include "EnemyHealthComponent.h"
+#include "Grid.h"
+#include "Components/CapsuleComponent.h"
 
 
 // Sets default values
@@ -18,6 +20,8 @@ AEnemyCharacter::AEnemyCharacter()
 	EnemyHealthComponent = CreateDefaultSubobject<UEnemyHealthComponent>(TEXT("EnemyHealthComponent"));
 
 }
+
+
 
 // Called when the game starts or when spawned
 void AEnemyCharacter::BeginPlay()
@@ -31,6 +35,7 @@ void AEnemyCharacter::BeginPlay()
 	}
 	GetWorldTimerManager().SetTimer(InitializerTimerHandle, this, &AEnemyCharacter::InitializeController, 2, false, 2);
 
+	CheckIfOverlappingWithGrid();
 }
 
 void AEnemyCharacter::InitializeController()
@@ -98,4 +103,35 @@ void AEnemyCharacter::InitializeControllerFromManager()
 	if(bIsControllerInitialized) return;
 	SetActorRotation(FRotator(0.0f, GetActorRotation().Yaw + 90.0f, 0.0f));
 	InitializeController();
+}
+
+void AEnemyCharacter::SetGridPointer(AGrid* GridPointer)
+{
+	if(GridPointer)
+	{
+		PathfindingGrid = GridPointer;
+	}
+}
+
+AGrid* AEnemyCharacter::GetGridPointer() const 
+{
+	return PathfindingGrid;
+}
+
+void AEnemyCharacter::CheckIfOverlappingWithGrid()
+{
+	TArray<AActor*> OverlappingActors;
+	GetCapsuleComponent()->GetOverlappingActors(OverlappingActors, AEnemyCharacter::StaticClass());
+	
+	if (!OverlappingActors.IsEmpty())
+	{
+		for (AActor* OverlappingActor : OverlappingActors)
+		{
+			AGrid* TempGrid = Cast<AGrid>(OverlappingActor);
+			if (TempGrid != nullptr && IsValid(TempGrid))
+			{
+				PathfindingGrid = TempGrid;
+			}
+		}
+	}
 }

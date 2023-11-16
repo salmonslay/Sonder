@@ -16,7 +16,8 @@ class PROJ_API AGrid : public AActor
 {
 	GENERATED_BODY()
 	
-public:	
+public:
+	
 	// Sets default values for this actor's properties
 	AGrid();
 
@@ -88,6 +89,13 @@ protected:
 	virtual void BeginPlay() override;
 
 private:
+
+	void CheckGridBoundOverlappingActors();
+
+	FTimerHandle CheckOverlappingEnemiesTimerHandle;
+
+	UPROPERTY(EditAnywhere)
+	float CheckOverlappingEnemiesDelay = 02.f;
 
 	UPROPERTY(EditAnywhere)
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypeQueries;
