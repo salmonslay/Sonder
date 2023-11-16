@@ -14,10 +14,13 @@ class APROJGameMode : public AGameModeBase
 	GENERATED_BODY()
 
 public:
+	
 	APROJGameMode();
 
-	APROJCharacter* GetActivePlayer(int Index) const;
+	virtual void BeginPlay() override;
 
+	APROJCharacter* GetActivePlayer(int Index) const;
+	
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	virtual void InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage) override;
@@ -27,12 +30,29 @@ public:
 	virtual FString InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal) override;
 
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
+	
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	void SetPlayerPointers();
+
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	APROJCharacter* ServerPlayer;
+
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	APROJCharacter* ClientPlayer;
+	
 private:
+
+	FTimerHandle PlayerPointerTimerHandle;
+
 	TArray<class APlayerStart*> UnusedPlayerStarts;
 
 	UPROPERTY(EditDefaultsOnly)
-	TArray<TSubclassOf<APROJCharacter>> PlayerPawnClasses;
+	TArray<TSubclassOf<APROJCharacter>> PlayerPawnClasses; 
 
-	inline static int PlayerCount = 0;
+	inline static int PlayerCount = 0; 
+	
 };
+
+
+
