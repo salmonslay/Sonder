@@ -24,6 +24,8 @@ public:
 
 	virtual void Exit() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 private:
 
 	UPROPERTY(EditAnywhere)

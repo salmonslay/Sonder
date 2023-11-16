@@ -24,6 +24,8 @@ public:
 
 	virtual void Exit() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 private:
 
 	UPROPERTY(EditDefaultsOnly)
@@ -50,6 +52,14 @@ private:
 
 	UPROPERTY()
 	class ARobotStateMachine* RobotCharacter;
+
+	/** Time needed between hook shots */
+	UPROPERTY(EditAnywhere)
+	float HookShotCooldownDelay = 2.f; 
+
+	bool bHookShotOnCooldown = false;
+
+	void DisableHookShotCooldown() { bHookShotOnCooldown = false; }; 
 
 	UPROPERTY(EditAnywhere)
 	float PulseCooldown = 1.f; 

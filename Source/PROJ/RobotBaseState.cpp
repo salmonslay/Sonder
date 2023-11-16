@@ -3,25 +3,27 @@
 
 #include "RobotBaseState.h"
 
+#include "CollisionDebugDrawingPublic.h"
 #include "EnhancedInputComponent.h"
+#include "RobotHookingState.h"
 #include "PulseObjectComponent.h"
 #include "RobotStateMachine.h"
+#include "SoulCharacter.h"
+#include "Chaos/CollisionResolutionUtil.h"
 
 void URobotBaseState::Enter()
 {
 	Super::Enter();
 
 	if(!RobotCharacter)
-		RobotCharacter = Cast<ARobotStateMachine>(PlayerOwner); 
-
-	UE_LOG(LogTemp, Warning, TEXT("Entered robot base state, lcl ctrl: %i"), RobotCharacter->IsLocallyControlled())
+		RobotCharacter = Cast<ARobotStateMachine>(PlayerOwner);
 }
 
 void URobotBaseState::Update(const float DeltaTime)
 {
 	Super::Update(DeltaTime);
 
-	// UE_LOG(LogTemp, Warning, TEXT("Updating robot base, lcl ctrl: %i, name: %s"), PlayerOwner->HasAuthority(), *PlayerOwner->GetActorNameOrLabel())
+	
 }
 
 void URobotBaseState::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
@@ -47,9 +49,27 @@ void URobotBaseState::Exit()
 	
 }
 
+void URobotBaseState::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	GetWorld()->GetTimerManager().ClearAllTimersForObject(this); 
+}
+
 void URobotBaseState::ShootHook()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Fired hook"))
+	if(bHookShotOnCooldown)
+		return; 
+	
+	// UE_LOG(LogTemp, Warning, TEXT("Fired hook"))
+
+	bHookShotOnCooldown = true;
+	
+	// Enable hook shot after set time 
+	FTimerHandle TimerHandle; 
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &URobotBaseState::DisableHookShotCooldown, HookShotCooldownDelay); 
+	
+	PlayerOwner->SwitchState(RobotCharacter->HookState);
 }
 
 void URobotBaseState::Pulse()
@@ -98,7 +118,20 @@ void URobotBaseState::ServerRPCPulse_Implementation()
 void URobotBaseState::MulticastRPCPulse_Implementation()
 {
 	
-	// UE_LOG(LogTemp, Warning, TEXT("Multicast attack"))
+	// Code here is run on each player (client and server)
+	TArray<AActor*> OverlappingActors; 
+	RobotCharacter->GetOverlappingActors(OverlappingActors, AActor::StaticClass()); // TODO: Replace the class filter with eventual better class (if it exists)
+
+	// calls take damage on every overlapping actor except itself
+	// TODO: When the attack animation in in place, we prob want to delay this so it times with when the animation hits 
+	for(const auto Actor : OverlappingActors)
+	{
+		if(Actor->ActorHasTag(FName("Soul")) && Actor->GetActorLocation().Z > RobotCharacter->GetActorLocation().Z + 5)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Boost"));
+			Cast<ASoulCharacter>(Actor)->Jump();
+		}
+	}
 
 	RobotCharacter->OnPulse(); 
 }
