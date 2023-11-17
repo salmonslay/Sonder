@@ -384,16 +384,17 @@ void URobotHookingState::ServerRPCHookCollision_Implementation()
 	if(!PlayerOwner->HasAuthority())
 		return;
 
-	// Source to spawn "with construct parameters": https://forums.unrealengine.com/t/spawning-an-actor-with-parameters/329151/6 
+	// Source to spawn "with construct parameters": https://forums.unrealengine.com/t/spawning-an-actor-with-parameters/329151/6
+
+	// Spawns the explosion actor and passes the relevant information 
 	const FTransform SpawnTransform(FRotator::ZeroRotator, PlayerOwner->GetActorLocation());
-	if (const auto ExplosionActor = Cast<AHookExplosionActor>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ExplosionClassToSpawnOnCollWithSoul, SpawnTransform)); ExplosionActor != nullptr)
+	if (const auto ExplosionActor = Cast<AHookExplosionActor>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ExplosionClassToSpawnOnCollWithSoul, SpawnTransform)))
 	{
 		const float TravelDistance = FVector::Dist(StartLocation, PlayerOwner->GetActorLocation()); 
-		ExplosionActor->Initialize(TravelDistance, PlayerOwner); // TODO: Calculate travel length 
+		ExplosionActor->Initialize(TravelDistance, PlayerOwner); 
 
 		UGameplayStatics::FinishSpawningActor(ExplosionActor, SpawnTransform);
-	} else
-		UE_LOG(LogTemp, Error, TEXT("Could not spawn explosion actor"))
+	} 
 
 	MulticastRPCHookCollision(); 
 }
