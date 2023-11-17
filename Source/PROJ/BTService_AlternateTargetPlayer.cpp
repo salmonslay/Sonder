@@ -4,13 +4,11 @@
 #include "BTService_AlternateTargetPlayer.h"
 
 #include "AIController.h"
-#include "EnemyAIController.h"
 #include "EnemyCharacter.h"
 #include "PROJCharacter.h"
 #include "SonderGameState.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Kismet/GameplayStatics.h"
-#include "Kismet/KismetMathLibrary.h"
+
 
 UBTService_AlternateTargetPlayer::UBTService_AlternateTargetPlayer()
 {
@@ -89,5 +87,6 @@ void UBTService_AlternateTargetPlayer::TickNode(UBehaviorTreeComponent& OwnerCom
 	if (bDebug)
 	{
 		DrawDebugSphere(OwnerCharacter->GetWorld(), CurrentTargetLocation, 30.f, 30, FColor::Red, false, 0.3f );
+		DrawDebugSphere(OwnerCharacter->GetWorld(), OwnerLocation, 30.f, 30, FColor::Red, false, 0.3f );
 	}
 }

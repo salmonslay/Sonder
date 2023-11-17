@@ -18,6 +18,8 @@ Pathfinder::Pathfinder(APROJCharacter* ServerPlayer, APROJCharacter* ClientPlaye
 
 bool Pathfinder::FindPath(const FVector &Start, const FVector &End)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Calling find path in Pathfinder"));
+
 	TArray<FVector> NewPath;
 	//if (Grid->TargetLocation == FVector::ZeroVector || Grid->StartLocation == FVector::ZeroVector)
 	if (Start == FVector::ZeroVector || End == FVector::ZeroVector)

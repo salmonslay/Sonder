@@ -39,9 +39,6 @@ APROJCharacter::APROJCharacter()
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
-	
-	//PlayerHealthComponent = CreateDefaultSubobject<UPlayerHealthComponent>("PlayerHealthCompNew");
-	//PlayerHealthComponent->SetIsReplicated(true);
 
 	NewPlayerHealthComponent = CreateDefaultSubobject<UNewPlayerHealthComponent>("NewPlayerHealthComp");
 	//NewPlayerHealthComponent->SetIsReplicated(true);
@@ -62,6 +59,7 @@ void APROJCharacter::SetDepthMovementEnabled(const bool bNewEnable)
 
 void APROJCharacter::CreateComponents()
 {
+	// NOTE: This function is not called as of now 
 	NewPlayerHealthComponent = CreateDefaultSubobject<UNewPlayerHealthComponent>("NewPlayerHealthComp");
 	NewPlayerHealthComponent->SetIsReplicated(true);
 
@@ -91,7 +89,14 @@ void APROJCharacter::BeginPlay()
 		UE_LOG(LogTemp, Warning, TEXT("Cast to PlayerController failed"));
 	}
 
-	RotationRateIn2DView = GetCharacterMovement()->RotationRate; 
+	RotationRateIn2DView = GetCharacterMovement()->RotationRate;
+}
+
+void APROJCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	GetWorld()->GetTimerManager().ClearAllTimersForObject(this); 
 }
 
 void APROJCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
@@ -103,6 +108,7 @@ void APROJCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
+		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &APROJCharacter::CoyoteJump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Completed, this, &ACharacter::StopJumping);
 
 		// Moving
@@ -133,7 +139,88 @@ void APROJCharacter::PossessedBy(AController* NewController)
 	
 }
 
+void APROJCharacter::Jump()
+{
+	Super::Jump();
 
+	bHasJumped = true;
+
+	bCanCoyoteJump = false;
+
+	GetCharacterMovement()->GravityScale = DefaultGravityScale;
+
+	// Needs to be set to true every time player jumps because it is reset when apex event is fired 
+	GetCharacterMovement()->bNotifyApex = true;
+}
+
+void APROJCharacter::NotifyJumpApex()
+{
+	Super::NotifyJumpApex();
+
+	// Increase gravity when reaching jump apex for a "Super Mario Jump" 
+	GetCharacterMovement()->GravityScale = GravityScaleWhileFalling; 
+}
+
+void APROJCharacter::DisableCoyoteJump()
+{
+	bCanCoyoteJump = false;
+	bHasCalledTimer = false; 
+}
+
+void APROJCharacter::CoyoteJump()
+{
+	if(!IsLocallyControlled())
+		return;
+	
+	if(bCanCoyoteJump && !bHasJumped && GetCharacterMovement()->MovementMode == MOVE_Falling)
+	{
+		ServerRPC_CoyoteJump();
+		
+		if(!HasAuthority()) // If player is client, also jump locally to prevent stuttering 
+		{
+			GetCharacterMovement()->SetMovementMode(MOVE_Walking); 
+			Jump();
+			UE_LOG(LogTemp, Warning, TEXT("Local jump"))
+		}
+	}
+}
+
+void APROJCharacter::ServerRPC_CoyoteJump_Implementation()
+{
+	if(!HasAuthority())
+		return; 
+
+	UE_LOG(LogTemp, Warning, TEXT("Server jump"))
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking); 
+	Jump();
+}
+
+void APROJCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode)
+{
+	Super::OnMovementModeChanged(PrevMovementMode, PreviousCustomMode);
+
+	const EMovementMode CurrentMovementMode = GetCharacterMovement()->MovementMode;
+
+	// Reset gravity scale when player becomes grounded 
+	if(CurrentMovementMode == MOVE_Walking)
+	{
+		bHasJumped = false;
+		bCanCoyoteJump = true; 
+		GetCharacterMovement()->GravityScale = DefaultGravityScale;
+	}
+	else if(CurrentMovementMode == MOVE_Falling && !bHasJumped)
+	{
+		// Started falling without jumping 
+		GetCharacterMovement()->GravityScale = GravityScaleWhileFalling;
+
+		if(!bHasCalledTimer)
+		{
+			FTimerHandle TimerHandle;
+			GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &APROJCharacter::DisableCoyoteJump, CoyoteJumpPeriod);
+			bHasCalledTimer = true; 
+		}
+	}
+}
 
 void APROJCharacter::Move(const FInputActionValue& Value)
 {
@@ -170,7 +257,6 @@ float APROJCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	{
 		DamageApplied = NewPlayerHealthComponent->TakeDamage(DamageApplied);
 		UE_LOG(LogTemp, Warning, TEXT("Player %s damaged with %f"), *GetName(), DamageApplied);
-
 	}
 
 	return DamageApplied;

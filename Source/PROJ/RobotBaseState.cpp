@@ -10,6 +10,7 @@
 #include "RobotStateMachine.h"
 #include "SoulCharacter.h"
 #include "Chaos/CollisionResolutionUtil.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void URobotBaseState::Enter()
 {
@@ -120,22 +121,24 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 			ASoulCharacter* Soul = Cast<ASoulCharacter>(Actor);
 			PlayerActor = Cast<ACharacter>(Soul);
 			UE_LOG(LogTemp, Warning, TEXT("Boost"));
+			Soul->GetCharacterMovement()->Velocity.Z = 0; 
 			Soul->JumpMaxCount = 2;
 			Soul->Jump();
 			
 			FTimerHandle MemberTimerHandle; 
-			GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f, true, 2.0f); 
+			GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f, false); 
 		}
 
 		if(Actor->ActorHasTag(FName("Soul")) && Actor->GetActorLocation().Z + 20 < RobotCharacter->GetActorLocation().Z)
 		{
 			PlayerActor = Cast<ACharacter>(RobotCharacter);
 			UE_LOG(LogTemp, Warning, TEXT("Boost"));
+			RobotCharacter->GetCharacterMovement()->Velocity.Z = 0; 
 			RobotCharacter->JumpMaxCount = 2;
 			RobotCharacter->Jump();
 			
 			FTimerHandle MemberTimerHandle; 
-			GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f, true, 2.0f); 
+			GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f, false); 
 		}
 	}
 
