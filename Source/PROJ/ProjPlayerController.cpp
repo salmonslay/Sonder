@@ -85,7 +85,10 @@ void AProjPlayerController::OnFinishSeamlessTravel()
 		SpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
 		UClass* SoulClass = Gm->PlayerPawnClasses[1];
 		UClass* RobotClass = Gm->PlayerPawnClasses[0];
-		APROJCharacter* Hero = GetWorld()->SpawnActor<APROJCharacter>(SoulClass, playerSpawnPoint->GetTransform(), SpawnParam); // TODO: don't always spawn soul
+
+		UClass* PickedClass = UGameplayStatics::GetActorOfClass(GetWorld(), RobotClass) ? SoulClass : RobotClass;
+
+		APROJCharacter* Hero = GetWorld()->SpawnActor<APROJCharacter>(PickedClass, playerSpawnPoint->GetTransform(), SpawnParam); // TODO: don't always spawn soul
 		this->Possess(Hero);
 	}
 }
