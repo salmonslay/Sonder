@@ -22,6 +22,9 @@ public:
 
 	virtual void Exit() override;
 
+	/** Switches state to the base state, ending the hook shot */
+	void EndHookShot() const; 
+
 private:
 
 	UPROPERTY()
@@ -53,7 +56,7 @@ private:
 	class UCableComponent* HookCable;
 
 	UPROPERTY(EditAnywhere)
-	float ZTargetOffset = 25.f; 
+	float ZSoulTargetOffset = 25.f; 
 
 	// Fail safe to cancel hook shot after set time 
 	float FailSafeTimer = 0;
@@ -64,15 +67,19 @@ private:
 
 	/** The speed at which the hook cable should retract when it hits a blocking object */
 	UPROPERTY(EditAnywhere)
-	float RetractHookOnMissSpeed = 1000.f; 
+	float RetractHookOnMissSpeed = 1000.f;
 
-	/** Switches state to the base state, ending the hook shot */
-	void EndHookShot() const; 
+	/** How far the hook should shoot out (max distance) when it hits a block or has no valid target */
+	UPROPERTY(EditAnywhere)
+	float MaxHookShotDistanceOnBlock = 1000.f; 
+
+	/** Returns the HookTarget if there is no available target, ensuring hook is shot forwards */
+	FVector GetTargetOnNothingInFront() const; 
 	
 	/** Returns false if there was a block */
 	bool SetHookTarget();
 
-	FHitResult DoLineTrace();
+	AActor* DoLineTrace(FHitResult& HitResultOut);
 
 	/** Shoots out the physical hook, does not move player */
 	void ShootHook();

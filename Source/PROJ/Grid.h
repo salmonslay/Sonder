@@ -35,7 +35,7 @@ public:
 	
 
 	/** bool to start pathfinding */
-	bool bCanStartPathfinding = false;
+	bool bHasPathfinder = false;
 
 	bool bAllNodesAdded = false;
 
@@ -86,11 +86,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
 	UBoxComponent* GridBounds;
 
+	bool bHasFoundBothPlayers = false;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
 private:
+
+	void CreatePathfinder();
 
 	void CheckGridBoundOverlappingActors();
 
@@ -110,8 +114,12 @@ private:
 	float MovementPenalty = 400.f;
 	
 
-	APROJCharacter* Player1;
-	APROJCharacter* Player2;
+	FTimerHandle CheckForPlayersTimerHandle;
+	float CheckForPlayersLoopDelay = 0.5f;
+
+	void CheckForPlayers();
+	APROJCharacter* ServerPlayer;
+	APROJCharacter* ClientPlayer;
 
 	// ============ General grid variables and funcs ============= //
 	

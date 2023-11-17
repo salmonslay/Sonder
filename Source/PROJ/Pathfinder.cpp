@@ -6,10 +6,10 @@
 #include "PROJCharacter.h"
 
 
-Pathfinder::Pathfinder(APawn* ServerPlayerPawn, APawn* ClientPlayerPawn, AGrid* MapGrid) : ServerPlayerPawn(ServerPlayerPawn), ClientPlayerPawn(ClientPlayerPawn), Grid(MapGrid)
+Pathfinder::Pathfinder(APROJCharacter* ServerPlayer, APROJCharacter* ClientPlayer, AGrid* MapGrid) : Grid(MapGrid)
 {
-	ServerPlayerCharacter = Cast<APROJCharacter>(ServerPlayerPawn);
-	ClientPlayerCharacter = Cast<APROJCharacter>(ClientPlayerPawn);
+	ServerPlayerCharacter = Cast<APROJCharacter>(ServerPlayer);
+	ClientPlayerCharacter = Cast<APROJCharacter>(ClientPlayer);
 	ensure(ServerPlayerCharacter != nullptr);
 	ensure(ClientPlayerCharacter != nullptr);
 
@@ -18,6 +18,8 @@ Pathfinder::Pathfinder(APawn* ServerPlayerPawn, APawn* ClientPlayerPawn, AGrid* 
 
 bool Pathfinder::FindPath(const FVector &Start, const FVector &End)
 {
+	UE_LOG(LogTemp, Warning, TEXT("Calling find path in Pathfinder"));
+
 	TArray<FVector> NewPath;
 	//if (Grid->TargetLocation == FVector::ZeroVector || Grid->StartLocation == FVector::ZeroVector)
 	if (Start == FVector::ZeroVector || End == FVector::ZeroVector)
