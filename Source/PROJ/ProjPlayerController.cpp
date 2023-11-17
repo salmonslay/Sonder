@@ -60,11 +60,11 @@ void AProjPlayerController::OnFinishSeamlessTravel()
 	SetInputMode(InputMode);
 
 	// ask server to spawn a hero class depend on player's previous choice, and ask this server version pc to poccess
-	APawn* Pawn = this->GetPawn();
-	if (Pawn)
-		Pawn->Destroy();
+	APawn* Pawn2 = this->GetPawn();
+	if (Pawn2)
+		Pawn2->Destroy();
 
-	Pawn = nullptr;
+	Pawn2 = nullptr;
 
 	TArray<AActor*> PlayerStarts;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
