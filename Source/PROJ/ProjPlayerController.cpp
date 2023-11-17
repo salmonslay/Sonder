@@ -69,13 +69,11 @@ void AProjPlayerController::OnFinishSeamlessTravel()
 	TArray<AActor*> PlayerStarts;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
 
-	if (PlayerStarts.Num() == 0)
+	if (PlayerStarts.Num() < 2)
 	{
-		UE_LOG(LogTemp, Error, TEXT("No player starts found"));
+		UE_LOG(LogTemp, Error, TEXT("Not enough player starts found (%d)"), PlayerStarts.Num());
 		return;
 	}
-
-	playerSpawnPoint = PlayerStarts[0];
 
 	APROJGameMode* Gm = Cast<APROJGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
@@ -83,12 +81,14 @@ void AProjPlayerController::OnFinishSeamlessTravel()
 	{
 		FActorSpawnParameters SpawnParam;
 		SpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		UClass* SoulClass = Gm->PlayerPawnClasses[1];
+
 		UClass* RobotClass = Gm->PlayerPawnClasses[0];
+		UClass* SoulClass = Gm->PlayerPawnClasses[1];
 
 		UClass* PickedClass = UGameplayStatics::GetActorOfClass(GetWorld(), RobotClass) ? SoulClass : RobotClass;
+		const AActor* StartPoint = PickedClass == RobotClass ? PlayerStarts[0] : PlayerStarts[1];
 
-		APROJCharacter* Hero = GetWorld()->SpawnActor<APROJCharacter>(PickedClass, playerSpawnPoint->GetTransform(), SpawnParam);
+		APROJCharacter* Hero = GetWorld()->SpawnActor<APROJCharacter>(PickedClass, StartPoint->GetTransform(), SpawnParam);
 		this->Possess(Hero);
 	}
 }
