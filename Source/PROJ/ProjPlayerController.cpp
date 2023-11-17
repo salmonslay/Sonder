@@ -88,7 +88,7 @@ void AProjPlayerController::OnFinishSeamlessTravel()
 
 		UClass* PickedClass = UGameplayStatics::GetActorOfClass(GetWorld(), RobotClass) ? SoulClass : RobotClass;
 
-		APROJCharacter* Hero = GetWorld()->SpawnActor<APROJCharacter>(PickedClass, playerSpawnPoint->GetTransform(), SpawnParam); // TODO: don't always spawn soul
+		APROJCharacter* Hero = GetWorld()->SpawnActor<APROJCharacter>(PickedClass, playerSpawnPoint->GetTransform(), SpawnParam);
 		this->Possess(Hero);
 	}
 }
