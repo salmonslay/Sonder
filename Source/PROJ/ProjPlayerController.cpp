@@ -56,36 +56,36 @@ void AProjPlayerController::OnPossess(APawn* InPawn)
 
 void AProjPlayerController::OnFinishSeamlessTravel()
 {
-	FInputModeGameOnly inputMode;
-	SetInputMode(inputMode);
+	const FInputModeGameOnly InputMode;
+	SetInputMode(InputMode);
 
 	// ask server to spawn a hero class depend on player's previous choice, and ask this server version pc to poccess
-	APawn* pawn = this->GetPawn();
-	if (pawn)
-		pawn->Destroy();
+	APawn* Pawn = this->GetPawn();
+	if (Pawn)
+		Pawn->Destroy();
 
-	pawn = nullptr;
+	Pawn = nullptr;
 
-	TArray<AActor*> playerStarts;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), playerStarts);
+	TArray<AActor*> PlayerStarts;
+	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
 
-	if (playerStarts.Num() == 0)
+	if (PlayerStarts.Num() == 0)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Please a playerStart in GamePlay map,  AGamePlayGM::SpawnPlayer"))
+		UE_LOG(LogTemp, Error, TEXT("No player starts found"));
 		return;
 	}
 
-	playerSpawnPoint = playerStarts[0];
+	playerSpawnPoint = PlayerStarts[0];
 
-	APROJGameMode* gm = Cast<APROJGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	APROJGameMode* Gm = Cast<APROJGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
-	if (gm)
+	if (Gm)
 	{
-		FActorSpawnParameters spawnParam;
-		spawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		UClass* SoulClass = gm->PlayerPawnClasses[1];
-		UClass* RobotClass = gm->PlayerPawnClasses[0];
-		APROJCharacter* Hero = GetWorld()->SpawnActor<APROJCharacter>(SoulClass, playerSpawnPoint->GetTransform(), spawnParam);
+		FActorSpawnParameters SpawnParam;
+		SpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
+		UClass* SoulClass = Gm->PlayerPawnClasses[1];
+		UClass* RobotClass = Gm->PlayerPawnClasses[0];
+		APROJCharacter* Hero = GetWorld()->SpawnActor<APROJCharacter>(SoulClass, playerSpawnPoint->GetTransform(), SpawnParam); // TODO: don't always spawn soul
 		this->Possess(Hero);
 	}
 }

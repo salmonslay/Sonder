@@ -31,7 +31,7 @@ public:
 
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
 
-	virtual void HandleSeamlessTravelPlayer(AController*& C) override;
+	virtual void HandleSeamlessTravelPlayer(AController*& Controller) override;
 
 	virtual void PostSeamlessTravel() override;
 	

@@ -125,12 +125,12 @@ UClass* APROJGameMode::GetDefaultPawnClassForController_Implementation(AControll
 	return DefaultPawnClass;
 }
 
-void APROJGameMode::HandleSeamlessTravelPlayer(AController*& C)
+void APROJGameMode::HandleSeamlessTravelPlayer(AController*& Controller)
 {
-	Super::HandleSeamlessTravelPlayer(C);
+	Super::HandleSeamlessTravelPlayer(Controller);
 
 	// Default behavior is to spawn new controllers and copy data
-	APlayerController* PC = Cast<APlayerController>(C);
+	APlayerController* PC = Cast<APlayerController>(Controller);
 	if (PC && PC->Player)
 	{
 		// We need to spawn a new PlayerController to replace the old one
@@ -142,7 +142,7 @@ void APROJGameMode::HandleSeamlessTravelPlayer(AController*& C)
 			NewPC->SeamlessTravelFrom(PC);
 			SwapPlayerControllers(PC, NewPC);
 			PC = NewPC;
-			C = NewPC;
+			Controller = NewPC;
 		}
 		else
 		{
@@ -152,10 +152,10 @@ void APROJGameMode::HandleSeamlessTravelPlayer(AController*& C)
 		}
 	}
 
-	InitSeamlessTravelPlayer(C);
+	InitSeamlessTravelPlayer(Controller);
 
 	// Initialize hud and other player details, shared with PostLogin
-	GenericPlayerInitialization(C);
+	GenericPlayerInitialization(Controller);
 
 	if(PC)
 	{
