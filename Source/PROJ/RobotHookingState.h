@@ -31,12 +31,14 @@ private:
 	AActor* SoulCharacter; 
 	
 	UPROPERTY()
-	FVector CurrentHookTarget;
+	FVector CurrentHookTargetLocation;
 
 	UPROPERTY()
 	class ARobotStateMachine* RobotCharacter;
 
 	bool bTravellingTowardsTarget = false;
+
+	bool bHookTargetIsSoul = false; 
 
 	/** How close the player needs to be for it to be considered as reached target */
 	float ReachedTargetDistTolerance = 50.f;
@@ -71,7 +73,14 @@ private:
 
 	/** How far the hook should shoot out (max distance) when it hits a block or has no valid target */
 	UPROPERTY(EditAnywhere)
-	float MaxHookShotDistanceOnBlock = 1000.f; 
+	float MaxHookShotDistanceOnBlock = 1000.f;
+
+	/** Spawns this actor on collision with Soul. The spawned class handles damage */
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AHookExplosionActor> ExplosionClassToSpawnOnCollWithSoul;
+
+	/** Location at the start of the hook shot, used to determine travel length */
+	FVector StartLocation;
 
 	/** Returns the HookTarget if there is no available target, ensuring hook is shot forwards */
 	FVector GetTargetOnNothingInFront() const; 
