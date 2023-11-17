@@ -77,6 +77,7 @@ void USoulBaseStateNew::ThrowGrenade()
 	}
 	
 	ServerRPCThrowGrenade();
+	
 }
 
 void USoulBaseStateNew::ServerRPCThrowGrenade_Implementation()
@@ -97,7 +98,12 @@ void USoulBaseStateNew::MulticastRPCThrowGrenade_Implementation()
 	TArray<AActor*> FoundCharacter;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALightGrenade::StaticClass(), FoundCharacter);
 
-	ALightGrenade* Grenade = Cast<ALightGrenade>(FoundCharacter[0]);
-	Grenade->Throw();
+	if (FoundCharacter[0] != nullptr)
+	{
+		ALightGrenade* Grenade = Cast<ALightGrenade>(FoundCharacter[0]);
+		Grenade->Throw();
+		
+	}
+	
 }
 

@@ -26,9 +26,9 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class USoulDashingState* DashingState;
-
+	
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
-	USphereComponent* FireLoc;
+	USphereComponent* ThrowLoc;
 
 
 #pragma region Events

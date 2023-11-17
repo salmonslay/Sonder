@@ -50,10 +50,15 @@ public:
 
 	void Throw();
 
+	/** How long time needs to pass between attacks */
+	UPROPERTY(EditAnywhere)
+	float ThrowCooldown = 5.0f;
+
+
 private:
 
-	UPROPERTY(EditAnywhere)
-	class UInputAction* AttackInputAction;
+	UPROPERTY()
+	FTimerHandle TimerHandle; 
 	
 	UPROPERTY(EditAnywhere)
 	float Damage = 5.0f;
@@ -61,12 +66,13 @@ private:
 	UPROPERTY(EditAnywhere)
 	float FireSpeed = 8.0f;
 	
-	/** How long time needs to pass between attacks */
-	UPROPERTY(EditAnywhere)
-	float ThrowCooldown = 5.0f;
+	
 
 	UPROPERTY(EditAnywhere)
-	float ExplodeTime = 5.0f;
+	float ExplodeTimeSlow = 5.0f;
+
+	UPROPERTY(EditAnywhere)
+	float ExplodeTimeFast = 0.2f;
 
 	
 
@@ -81,7 +87,7 @@ private:
 
 	void EnableGrenade();
 
-	void StartCountdown();
+	void StartCountdown(float TimeUntilExplosion);
 
 	
 	

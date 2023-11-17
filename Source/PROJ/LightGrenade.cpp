@@ -93,18 +93,20 @@ void ALightGrenade::MulticastRPCThrow_Implementation()
 	
 		EnableGrenade();
 
-		ExplosionArea->SetWorldLocation(Player->FireLoc->GetComponentLocation()); 
+		ExplosionArea->SetWorldLocation(Player->ThrowLoc->GetComponentLocation()); 
+
 		
 		
-		FVector LandingLoc = ExplosionArea->GetComponentLocation() - Player->GetActorLocation();
+		FVector LandingLoc = ExplosionArea->GetComponentLocation() + (Player->GetActorForwardVector()) - Player->GetActorLocation();
 
 		//ExplosionArea->AddImpulse(FVector(2000.0f,2000.0f,0));
 	
-		//ExplosionArea->SetPhysicsLinearVelocity(LandingLoc*FireSpeed);
-		
+		ExplosionArea->SetPhysicsLinearVelocity(LandingLoc*FireSpeed);
 		
 
 		bCanThrow = false;
+
+		StartCountdown(10.0f);
 	}
 }
 
@@ -117,12 +119,13 @@ void ALightGrenade::ActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	
 		if (OtherActor->ActorHasTag("Enemy"))
 		{
-			ServerRPCExplosion();
+			
+			StartCountdown(ExplodeTimeFast);
 		}else if (OtherActor)
 		{
 			if (!bIsExploding)
 			{
-				StartCountdown();
+				StartCountdown(ExplodeTimeSlow);
 			}
 			
 		}
@@ -174,11 +177,12 @@ void ALightGrenade::EnableCanThrow()
 
 void ALightGrenade::DisableGrenade()
 {
-	this->SetHidden(true);
+	//this->SetHidden(true);
 	ExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	GrenadeMesh->SetVisibility(false);
 	bIsExploding = false;
 	
-	FTimerHandle TimerHandle; 
+	
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::EnableCanThrow, ThrowCooldown);
 	
 }
@@ -186,16 +190,17 @@ void ALightGrenade::DisableGrenade()
 void ALightGrenade::EnableGrenade()
 {
 	ExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
-	this->SetHidden(false);
+	GrenadeMesh->SetVisibility(true);
+	//this->SetHidden(false);
 	
 	
 }
 
-void ALightGrenade::StartCountdown()
+void ALightGrenade::StartCountdown(float TimeUntilExplosion)
 {
-	
-	FTimerHandle TimerHandle; 
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::ServerRPCExplosion, ExplodeTime);
+	bIsExploding = true;
+	 
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::ServerRPCExplosion, TimeUntilExplosion);
 }
 
 
