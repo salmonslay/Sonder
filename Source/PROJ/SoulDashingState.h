@@ -27,6 +27,19 @@ private:
 	UPROPERTY(EditAnywhere)
 	float DashForce = 180000.f; 
 
+	float TempTimer = 0;
+
+	UPROPERTY(EditAnywhere)
+	TEnumAsByte<ECollisionChannel> DashBarCollisionChannel;
+
+	UPROPERTY(EditAnywhere)
+	float MaxDashDistance = 250.f;
+
+	FVector StartLoc;
+
+	UPROPERTY()
+	class URobotHookingState* HookState; 
+	
 	/** The impulse/force need to be applied on the server */
 	UFUNCTION(Server, Reliable)
 	void ServerRPCDash(const FVector DashDir); 
@@ -40,14 +53,13 @@ private:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastExit(); 
 
-	float TempTimer = 0;
+	/** Cancels potential hook shot if Robot is shooting towards Soul */
+	void CancelHookShot();
 
-	UPROPERTY(EditAnywhere)
-	TEnumAsByte<ECollisionChannel> DashBarCollisionChannel;
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_CancelHookShot();
 
-	UPROPERTY(EditAnywhere)
-	float MaxDashDistance = 250.f;
-
-	FVector StartLoc;
+	UFUNCTION(Client, Reliable)
+	void ClientRPC_CancelHookShot();
 	
 };

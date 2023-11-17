@@ -8,6 +8,7 @@
 #include "Engine/Engine.h"
 #include "EnemyHealthComponent.h"
 #include "Grid.h"
+#include "PROJCharacter.h"
 #include "Components/CapsuleComponent.h"
 
 
@@ -18,7 +19,7 @@ AEnemyCharacter::AEnemyCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	EnemyHealthComponent = CreateDefaultSubobject<UEnemyHealthComponent>(TEXT("EnemyHealthComponent"));
-
+	
 }
 
 
@@ -71,14 +72,101 @@ void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComp
 
 }
 
+void AEnemyCharacter::OnRep_Stunned()
+{
+	if(bIsStunned)
+		OnStunnedEvent();
+	else
+		OnUnstunnedEvent();
+}
+
+void AEnemyCharacter::OnRep_ChargingAttack()
+{
+	if (bIsChargingAttack)
+	{
+		OnChargingAttackEvent(ChargeAttackDuration);
+	}
+}
+
+void AEnemyCharacter::OnRep_Attack()
+{
+	if (bIsAttacking)
+	{
+		OnPerformAttackEvent(PerformAttackDuration);
+	}
+}
+
+void AEnemyCharacter::Stun(const float Duration)
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		bIsStunned = true;
+		bIsChargingAttack = false;
+		bIsAttacking = false;
+		bIsIdle = false;
+		OnStunnedEvent();
+		GetWorldTimerManager().SetTimer(StunnedTimerHandle, this, &AEnemyCharacter::Idle, Duration, false, -1.f);
+	}
+}
+
+void AEnemyCharacter::ChargeAttack()
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		bIsChargingAttack = true;
+		bIsAttacking = false;
+		bIsStunned = false;
+		bIsIdle = false;
+		OnChargingAttackEvent(ChargeAttackDuration);
+		GetWorldTimerManager().SetTimer(ChargeAttackTimerHandle, this, &AEnemyCharacter::Attack, ChargeAttackDuration, false, -1.f);
+	}
+}
+
+void AEnemyCharacter::Attack()
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		bIsAttacking = true;
+		bIsChargingAttack = false;
+		bIsStunned = false;
+		bIsIdle = false;
+		OnPerformAttackEvent(PerformAttackDuration);
+		GetWorldTimerManager().ClearTimer(ChargeAttackTimerHandle);
+		GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &AEnemyCharacter::Idle, PerformAttackDuration, false, -1.f);
+	}
+}
+
+void AEnemyCharacter::Idle()
+{
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		bIsStunned = false;
+		bIsAttacking = false;
+		bIsChargingAttack = false;
+		bIsIdle = true;
+		GetWorldTimerManager().ClearTimer(AttackTimerHandle);
+		GetWorldTimerManager().ClearTimer(StunnedTimerHandle);
+	}
+}
+
 float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
-	AActor* DamageCauser)
+                                  AActor* DamageCauser)
 {
 	float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	if (EnemyHealthComponent)
 	{
 		DamageApplied = EnemyHealthComponent->TakeDamage(DamageApplied);
+
+		if (DamageCauser && IsValid(DamageCauser))
+		{
+			APROJCharacter* TempDamageCauser = Cast<APROJCharacter>(DamageCauser);
+			if (TempDamageCauser != nullptr)
+			{
+				LatestDamageCauser = TempDamageCauser;
+				bHasBeenAttacked = true; //TODO:Set to false somewhere, maybe in a service
+			}
+		}
 	}
 	else
 	{
@@ -87,15 +175,16 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 	return DamageApplied;
 }
 
-
-
 void AEnemyCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	// redundant now that has own health comp??
 	DOREPLIFETIME(AEnemyCharacter, EnemyHealthComponent);
-	
+	DOREPLIFETIME(AEnemyCharacter, bIsStunned);
+	DOREPLIFETIME(AEnemyCharacter, bIsChargingAttack);
+	DOREPLIFETIME(AEnemyCharacter, bIsAttacking);
+	DOREPLIFETIME(AEnemyCharacter, bIsIdle);
 }
 
 void AEnemyCharacter::InitializeControllerFromManager()
@@ -118,6 +207,17 @@ AGrid* AEnemyCharacter::GetGridPointer() const
 	return PathfindingGrid;
 }
 
+
+APROJCharacter* AEnemyCharacter::GetLatestDamageCauser()
+{
+	return LatestDamageCauser;
+}
+
+bool AEnemyCharacter::GetHasBeenAttacked() const 
+{
+	return bHasBeenAttacked;
+}
+
 void AEnemyCharacter::CheckIfOverlappingWithGrid()
 {
 	TArray<AActor*> OverlappingActors;
@@ -135,3 +235,12 @@ void AEnemyCharacter::CheckIfOverlappingWithGrid()
 		}
 	}
 }
+
+
+void AEnemyCharacter::KillMe()
+{
+	GetWorldTimerManager().ClearTimer(StunnedTimerHandle);
+	GetWorldTimerManager().ClearTimer(ChargeAttackTimerHandle);
+	GetWorldTimerManager().ClearTimer(AttackTimerHandle);
+}
+

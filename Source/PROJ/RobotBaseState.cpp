@@ -10,6 +10,7 @@
 #include "RobotStateMachine.h"
 #include "SoulCharacter.h"
 #include "Chaos/CollisionResolutionUtil.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 void URobotBaseState::Enter()
 {
@@ -81,23 +82,12 @@ void URobotBaseState::Pulse()
 
 	bPulseCoolDownActive = true;
 
-	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &URobotBaseState::DisablePulseCooldown, 1);
+	FTimerHandle PulseTimerHandle;
+	GetWorld()->GetTimerManager().SetTimer(PulseTimerHandle, this, &URobotBaseState::DisablePulseCooldown, PulseCooldown);
 
 	// Code here is run only locally
 	TArray<AActor*> OverlappingActors; 
 	RobotCharacter->GetOverlappingActors(OverlappingActors, AActor::StaticClass()); // TODO: Replace the class filter with eventual better class (if it exists)
-
-	// calls take damage on every overlapping actor except itself
-	// TODO: When the attack animation in in place, we prob want to delay this so it times with when the animation hits 
-	for(const auto Actor : OverlappingActors)
-	{
-		// Friendly fire off 
-		//if(!Actor->ActorHasTag(FName("PulseObject")))
-		//	Cast<UPulseObjectComponent>(Actor)->OnActivate();
-	}
-
-	bPulseCoolDownActive = false;
 
 	ServerRPCPulse();
 }
@@ -128,8 +118,27 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 	{
 		if(Actor->ActorHasTag(FName("Soul")) && Actor->GetActorLocation().Z > RobotCharacter->GetActorLocation().Z + 5)
 		{
+			ASoulCharacter* Soul = Cast<ASoulCharacter>(Actor);
+			PlayerActor = Cast<ACharacter>(Soul);
 			UE_LOG(LogTemp, Warning, TEXT("Boost"));
-			Cast<ASoulCharacter>(Actor)->Jump();
+			Soul->GetCharacterMovement()->Velocity.Z = 0; 
+			Soul->JumpMaxCount = 2;
+			Soul->Jump();
+			
+			FTimerHandle MemberTimerHandle; 
+			GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f, false); 
+		}
+
+		if(Actor->ActorHasTag(FName("Soul")) && Actor->GetActorLocation().Z + 20 < RobotCharacter->GetActorLocation().Z)
+		{
+			PlayerActor = Cast<ACharacter>(RobotCharacter);
+			UE_LOG(LogTemp, Warning, TEXT("Boost"));
+			RobotCharacter->GetCharacterMovement()->Velocity.Z = 0; 
+			RobotCharacter->JumpMaxCount = 2;
+			RobotCharacter->Jump();
+			
+			FTimerHandle MemberTimerHandle; 
+			GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f, false); 
 		}
 	}
 

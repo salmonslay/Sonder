@@ -1,6 +1,7 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "PROJCharacter.h"
 
 
 class GridNode;
@@ -11,7 +12,7 @@ class PROJ_API Pathfinder
 {
 public:
 
-	Pathfinder(APawn* ServerPlayerActor, APawn* ClientPlayerActor, AGrid* MapGrid);
+	Pathfinder(APROJCharacter* ServerPlayer, APROJCharacter* ClientPlayer, AGrid* MapGrid);
 	
 	
 
@@ -34,8 +35,6 @@ public:
 	FVector TargetLocation = FVector::ZeroVector;
 private:
 	
-	APawn* ServerPlayerPawn;
-	APawn* ClientPlayerPawn;
 
 	APROJCharacter* ServerPlayerCharacter;
 

@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="EncodableAsset" id="{bf902779-b373-4669-a68b-720c4603c36a}">
 		<property name="assetPath">
-			<value>SFX/PreStep/</value>
+			<value>SFX/char/PreStep/</value>
 		</property>
 		<relationship name="masterAssetFolder">
 			<destination>{542ff4ed-1b88-4c2c-98cc-a4f4c45c5308}</destination>

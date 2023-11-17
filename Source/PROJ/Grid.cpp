@@ -5,6 +5,7 @@
 
 #include "EnemyCharacter.h"
 #include "Pathfinder.h"
+#include "SonderGameState.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/GameStateBase.h"
 #include "Kismet/KismetSystemLibrary.h"
@@ -31,11 +32,7 @@ void AGrid::BeginPlay()
 	NodeDiameter = NodeRadius * 2;
 
 	CreateGrid();
-
-
-	TArray<APlayerState*> PlayerStateArr = GetWorld()->GetGameState<AGameStateBase>()->PlayerArray;
 	
-	//EnemyPathfinder = new Pathfinder(Cast<APawn>(&PlayerStateArr[0]), Cast<APawn>(&PlayerStateArr[1]),this);
 	
 	if(bDebug)
 	{
@@ -44,7 +41,17 @@ void AGrid::BeginPlay()
 
 	//GetWorldTimerManager().SetTimer(StartPathfindingTimerHandle, this, &AGrid::OnStartPathfinding, 0.1f, false, 0.1f);
 	GetWorldTimerManager().SetTimer(CheckOverlappingEnemiesTimerHandle, this, &AGrid::CheckGridBoundOverlappingActors, CheckOverlappingEnemiesDelay, false, -1 );
+	GetWorldTimerManager().SetTimer(CheckForPlayersTimerHandle, this, &AGrid::CheckForPlayers, CheckForPlayersLoopDelay, true, 0.1f); 
 }
+
+void AGrid::CreatePathfinder()
+{
+	UE_LOG(LogTemp, Warning, TEXT("Creating pathfinder"));
+
+	EnemyPathfinder = new Pathfinder(ServerPlayer, ClientPlayer,this);
+	bHasPathfinder = true;
+}
+
 
 
 void AGrid::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -52,6 +59,25 @@ void AGrid::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimePro
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(AGrid, GridBounds);
+}
+
+
+void AGrid::CheckForPlayers()
+{
+	if(GetLocalRole() == ROLE_Authority)
+	{
+		ServerPlayer = Cast<ASonderGameState>(GetWorld()->GetGameState())->GetServerPlayer();
+		ClientPlayer = Cast<ASonderGameState>(GetWorld()->GetGameState())->GetClientPlayer();
+	}
+	if(ServerPlayer && ClientPlayer)
+	{
+		if (bDebug)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("Grid has set both players"));
+		}
+		bHasFoundBothPlayers = true;
+		GetWorldTimerManager().ClearTimer(CheckForPlayersTimerHandle);
+	}
 }
 
 void AGrid::OnDebugPathDraw() const
@@ -89,7 +115,15 @@ void AGrid::Tick(float DeltaTime)
 	{
 		return;
 	}
-	
+
+	if (!bHasFoundBothPlayers)
+	{
+		return;
+	}
+	if (!bHasPathfinder)
+	{
+		CreatePathfinder();
+	}
 }
 
 
@@ -194,7 +228,10 @@ void AGrid::CreateGrid()
 		}
 	}
 	bAllNodesAdded = true;
-	
+	if (bDebug)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("Done creating grid"));
+	}
 }
 
 void AGrid::AddToArray(const int IndexX, const int IndexY, const int IndexZ, const GridNode Node)  
