@@ -16,12 +16,13 @@
 // Sets default values
 AGrid::AGrid()
 {
- 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	if (GetLocalRole() == ROLE_Authority)
+	{
+		// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
+		PrimaryActorTick.bCanEverTick = true;
 
-	GridBounds = CreateDefaultSubobject<UBoxComponent>(TEXT("GridBounds"));
-
-	bReplicates = true;
+		GridBounds = CreateDefaultSubobject<UBoxComponent>(TEXT("GridBounds"));
+	}
 }
 
 // Called when the game starts or when spawned
@@ -46,19 +47,8 @@ void AGrid::BeginPlay()
 
 void AGrid::CreatePathfinder()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Creating pathfinder"));
-
 	EnemyPathfinder = new Pathfinder(ServerPlayer, ClientPlayer,this);
 	bHasPathfinder = true;
-}
-
-
-
-void AGrid::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(AGrid, GridBounds);
 }
 
 
@@ -88,7 +78,7 @@ void AGrid::OnDebugPathDraw() const
 		{
 			const GridNode* Node = GetNodeFromWorldLocation(Loc); 
 			ensure(Node != nullptr);
-			DrawDebugSphere(GetWorld(), Node->GetWorldCoordinate(), NodeRadius, 10, FColor::Black, false, 0.1);
+			DrawDebugSphere(GetWorld(), Node->GetWorldCoordinate(), NodeRadius, 10, FColor::Green, false, 0.1);
 		}
 	}
 
@@ -156,7 +146,10 @@ void AGrid::OnUpdatedPathFound()
 	{
 		if (!EnemyPathfinder->bIsOldPathStillValid)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Updated path in grid"));
+			if (bDebug)
+			{
+				UE_LOG(LogTemp, Warning, TEXT("Updated path in grid"));
+			}
 			bHasUpdatedPath = true;
 		}
 	}
@@ -195,14 +188,23 @@ void AGrid::CreateGrid()
 		UE_LOG(LogTemp, Warning, TEXT("Grid nodes length X = %i, Y = %i, Z = %i"), GridLengthX, GridLengthY, GridLengthZ );
 	}
 	
-	// The grid's pivot is in the center, need its position as if pivot was in the bottom left corner 
+	// The grid's pivot is in the center, need its position as if pivot was in the bottom left corner
+
+	/*
 	FVector GridBottomLeft = GetActorLocation();
 	GridBottomLeft.X -= GridSize.X / 2;
 	GridBottomLeft.Y -= GridSize.Y / 2;
 	GridBottomLeft.Z -= GridSize.Z / 2;
+*/
 
-	GridBottomLeftLocation = GridBottomLeft; 
 
+	FVector GridTopLeft = GetActorLocation();
+	GridTopLeft.X -= GridSize.X / 2;
+	GridTopLeft.Y -= GridSize.Y / 2;
+	GridTopLeft.Z += GridSize.Z / 2;
+
+	//GridBottomLeftLocation = GridBottomLeft; 
+	GridBottomLeftLocation = GridTopLeft;
 
 	//AActor* OverlapActor = GetWorld()->SpawnActor<AActor>(OverlapCheckActorClass, GetActorLocation(),FRotator::ZeroRotator); 
 	
@@ -212,16 +214,19 @@ void AGrid::CreateGrid()
 		{
 			for(int z = 0; z < GridLengthZ; z++)
 			{
-				FVector NodePos = GridBottomLeft;
+				//FVector NodePos = GridBottomLeft;
+				FVector NodePos = GridTopLeft;
 				NodePos.X += x * NodeDiameter + NodeRadius; 
 				NodePos.Y += y * NodeDiameter + NodeRadius;
-				NodePos.Z += z * NodeDiameter + NodeRadius;
+				//NodePos.Z += z * NodeDiameter + NodeRadius;
+				NodePos.Z -= z * NodeDiameter + NodeRadius;
 
 				TArray<AActor*> ActorsToIgnore;
 				ActorsToIgnore.Add(this);
 				TArray<AActor*> OverlappingActors;
 				
 				UKismetSystemLibrary::SphereOverlapActors(GetWorld(), NodePos, NodeRadius, ObjectTypeQueries, nullptr, ActorsToIgnore, OverlappingActors );
+				
 				int NewMovementPenalty = OverlappingActors.IsEmpty() ? 0 : MovementPenalty;
 				AddToArray(x, y, z, GridNode(OverlappingActors.IsEmpty(), NodePos,  x, y, z, NewMovementPenalty));
 			}
@@ -237,6 +242,10 @@ void AGrid::CreateGrid()
 void AGrid::AddToArray(const int IndexX, const int IndexY, const int IndexZ, const GridNode Node)  
 {
 	Nodes[GetIndex(IndexX, IndexY, IndexZ)] = Node;
+	if (!Node.bWalkable)
+	{
+		Nodes[GetIndex(IndexX, IndexY, IndexZ - 1)].bWalkable = false;
+	}
 }
 
 GridNode* AGrid::GetNodeFromGrid(const int IndexX, const int IndexY, const int IndexZ) const

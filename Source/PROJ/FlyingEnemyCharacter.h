@@ -13,5 +13,17 @@ UCLASS()
 class PROJ_API AFlyingEnemyCharacter : public AEnemyCharacter
 {
 	GENERATED_BODY()
+
+public:
+
+	void SetPointerToPath(const TArray<FVector>* PathPointer);
+
+	bool IsPathValid() const;
+	
+	TArray<FVector> CurrentPath = TArray<FVector>();
+
+private:
+
+	
 	
 };

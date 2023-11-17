@@ -21,7 +21,11 @@ void UBTTask_FindPathToPlayer::OnGameplayTaskActivated(UGameplayTask& Task)
 
 EBTNodeResult::Type UBTTask_FindPathToPlayer::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	return Super::ExecuteTask(OwnerComp, NodeMemory);
+	Super::ExecuteTask(OwnerComp, NodeMemory);
+
+	// code below makes it so TickTask is called 
+	bNotifyTick = 1;
+	return EBTNodeResult::InProgress; 
 }
 
 void UBTTask_FindPathToPlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -41,24 +45,22 @@ void UBTTask_FindPathToPlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 
 	if (OwnerGrid == nullptr)
 	{
-		UE_LOG(LogTemp, Error, TEXT("No grid"));
 		return;
 	}
 	
 	APROJCharacter* PlayerToAttack;
-	UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("PlayerToAttack");
-	if (PlayerObject)
+	UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("CurrentTargetPlayer");
+
+	if (PlayerObject == nullptr)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("FoundPlayer to attack object"));
-
-		PlayerToAttack = Cast<APROJCharacter>(PlayerObject);
-		if (PlayerToAttack)
-		{
-			CurrentTargetLocation = PlayerToAttack->GetActorLocation();
-		}
+		return;
 	}
-
-	UE_LOG(LogTemp, Warning, TEXT("Is about to try make path from FindPathService"));
+	PlayerToAttack = Cast<APROJCharacter>(PlayerObject);
+	if (PlayerToAttack)
+	{
+		CurrentTargetLocation = PlayerToAttack->GetActorLocation();
+	}
+	
 	Path = OwnerGrid->RequestPath(OwnerLocation, CurrentTargetLocation, bDebug);
 }
 
