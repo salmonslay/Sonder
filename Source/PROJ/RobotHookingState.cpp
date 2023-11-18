@@ -164,7 +164,7 @@ AActor* URobotHookingState::DoLineTrace(FHitResult& HitResultOut)
 	AHookShotAttachment* HookTarget = nullptr;
 	bool bTargetingSoul = true; 
 
-	// Set new end location if player is not actively travelling towards target 
+	// Set new end loc if player does not already have a target 
 	if(!bTravellingTowardsTarget)
 	{
 		EndLoc = SoulCharacter->GetActorLocation(); // Default target is Soul
@@ -180,7 +180,8 @@ AActor* URobotHookingState::DoLineTrace(FHitResult& HitResultOut)
 				bTargetingSoul = false; 
 			}
 		}
-	}
+	} else if(bHookTargetIsSoul) // Update target loc if target is Soul, Soul could've moved 
+		CurrentHookTargetLocation = SoulCharacter->GetActorLocation(); 
 	
 	// GetWorld()->LineTraceSingleByChannel(HitResult, StartLoc, EndLoc, ECC_Pawn, Params);
 
