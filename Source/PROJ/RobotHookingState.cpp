@@ -169,11 +169,8 @@ AActor* URobotHookingState::DoLineTrace(FHitResult& HitResultOut)
 	{
 		EndLoc = SoulCharacter->GetActorLocation(); // Default target is Soul
 
-		const FVector DirToSoul = EndLoc - RobotCharacter->GetActorLocation();
-		const bool bSoulInFrontRobot = FVector::DotProduct(RobotCharacter->GetActorForwardVector(), DirToSoul) >= 0;
-
 		// If Soul is NOT in front of Robot, only then check if there is a possible hook point to target 
-		if(!bSoulInFrontRobot)
+		if(!StaticsHelper::ActorIsInFront(RobotCharacter, EndLoc))
 		{
 			// Set EndLoc to Hook location of there is an eligible hook target 
 			HookTarget = AHookShotAttachment::GetHookToTarget(RobotCharacter); 
@@ -384,6 +381,17 @@ void URobotHookingState::ServerRPCHookCollision_Implementation()
 	if(!PlayerOwner->HasAuthority())
 		return;
 
+	MulticastRPCHookCollision(); 
+}
+
+void URobotHookingState::MulticastRPCHookCollision_Implementation()
+{
+	/**
+	 * Note: according to what I can gather, spawning on server should spawn on clients but does not seem to be the
+	 * case here? So I'm spawning the explosion actor for all players instead.
+	 * TODO: Object pooling? Different actor overkill? Just do damage etc. here directly instead? 
+	 */
+	
 	// Source to spawn "with construct parameters": https://forums.unrealengine.com/t/spawning-an-actor-with-parameters/329151/6
 
 	// Spawns the explosion actor and passes the relevant information 
@@ -394,12 +402,7 @@ void URobotHookingState::ServerRPCHookCollision_Implementation()
 		ExplosionActor->Initialize(TravelDistance, PlayerOwner); 
 
 		UGameplayStatics::FinishSpawningActor(ExplosionActor, SpawnTransform);
-	} 
-
-	MulticastRPCHookCollision(); 
-}
-
-void URobotHookingState::MulticastRPCHookCollision_Implementation()
-{
+	}
+	
 	Cast<ARobotStateMachine>(PlayerOwner)->OnHookExplosion(); 
 }
