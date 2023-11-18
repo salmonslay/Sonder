@@ -16,7 +16,7 @@ AHookExplosionActor::AHookExplosionActor()
 	PrimaryActorTick.bCanEverTick = false;
 
 	OverlapSphere = CreateDefaultSubobject<USphereComponent>(FName("Overlap Sphere"));
-	OverlapSphere->SetupAttachment(RootComponent); 
+	SetRootComponent(OverlapSphere); 
 }
 
 // Run before begin play, serving as the class' "constructor" 

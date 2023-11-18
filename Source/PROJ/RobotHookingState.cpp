@@ -325,7 +325,7 @@ void URobotHookingState::MulticastRPCHookShotEnd_Implementation(ARobotStateMachi
 	RobotChar->OnHookShotEnd(); 
 }
 
-void URobotHookingState::ServerRPCHookShotEnd_Implementation(UCableComponent* HookCableComp, ARobotStateMachine* RobotChar, const bool bResetVel)
+void URobotHookingState::ServerRPCHookShotEnd_Implementation(UCableComponent* HookCableComp, ARobotStateMachine* RobotChar, const bool bHasATarget)
 {
 	if(!PlayerOwner->HasAuthority())
 		return;
@@ -334,8 +334,9 @@ void URobotHookingState::ServerRPCHookShotEnd_Implementation(UCableComponent* Ho
 
 	MovementComp->GravityScale = DefaultGravityScale;
 
-	if(bResetVel)
-		MovementComp->Velocity = FVector::ZeroVector;
+	// If targeted a static hook or Soul 
+	if(bHasATarget) // Set velocity to zero if Soul otherwise keep some momentum 
+		MovementComp->Velocity = bHookTargetIsSoul ? FVector::ZeroVector : MovementComp->Velocity / VelocityDivOnReachedHook; 
 
 	MulticastRPCHookShotEnd(RobotChar); 
 }
