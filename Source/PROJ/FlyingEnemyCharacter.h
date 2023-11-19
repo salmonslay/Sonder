@@ -6,6 +6,7 @@
 #include "EnemyCharacter.h"
 #include "FlyingEnemyCharacter.generated.h"
 
+class USpotLightComponent;
 /**
  * 
  */
@@ -16,14 +17,22 @@ class PROJ_API AFlyingEnemyCharacter : public AEnemyCharacter
 
 public:
 
+	virtual void BeginPlay() override;
+
 	void SetPointerToPath(const TArray<FVector>* PathPointer);
 
 	bool IsPathValid() const;
 	
 	TArray<FVector> CurrentPath = TArray<FVector>();
 
-private:
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	USpotLightComponent* Laser;
 
+	UPROPERTY()
+	USceneComponent* LaserEndComponent;
+
+	FVector LaserPointerDestination = FVector::ZeroVector;
+	
 	
 	
 };

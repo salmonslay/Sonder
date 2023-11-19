@@ -51,7 +51,6 @@ void AGrid::CreatePathfinder()
 	bHasPathfinder = true;
 }
 
-
 void AGrid::CheckForPlayers()
 {
 	if(GetLocalRole() == ROLE_Authority)
@@ -120,7 +119,11 @@ void AGrid::Tick(float DeltaTime)
 TArray<FVector> AGrid::RequestPath(const FVector &Start, const FVector &End, const bool bDoDebugDraw)
 {
 	TArray<FVector> NewPath;
-	if (EnemyPathfinder->FindPath(Start, End))
+
+	GridNode* StartNode = GetNodeFromWorldLocation(Start);
+	GridNode* EndNode = GetNodeFromWorldLocation(End);
+	
+	if (EnemyPathfinder->FindPath(StartNode->GetWorldCoordinate(), EndNode->GetWorldCoordinate()))
 	{
 		NewPath = EnemyPathfinder->WayPoints;
 	}
@@ -190,21 +193,24 @@ void AGrid::CreateGrid()
 	
 	// The grid's pivot is in the center, need its position as if pivot was in the bottom left corner
 
-	/*
+	
+
 	FVector GridBottomLeft = GetActorLocation();
 	GridBottomLeft.X -= GridSize.X / 2;
 	GridBottomLeft.Y -= GridSize.Y / 2;
 	GridBottomLeft.Z -= GridSize.Z / 2;
-*/
 
 
+
+	/*
 	FVector GridTopLeft = GetActorLocation();
 	GridTopLeft.X -= GridSize.X / 2;
 	GridTopLeft.Y -= GridSize.Y / 2;
 	GridTopLeft.Z += GridSize.Z / 2;
+	*/
 
-	//GridBottomLeftLocation = GridBottomLeft; 
-	GridBottomLeftLocation = GridTopLeft;
+	GridBottomLeftLocation = GridBottomLeft; 
+	//GridBottomLeftLocation = GridTopLeft;
 
 	//AActor* OverlapActor = GetWorld()->SpawnActor<AActor>(OverlapCheckActorClass, GetActorLocation(),FRotator::ZeroRotator); 
 	
@@ -214,12 +220,12 @@ void AGrid::CreateGrid()
 		{
 			for(int z = 0; z < GridLengthZ; z++)
 			{
-				//FVector NodePos = GridBottomLeft;
-				FVector NodePos = GridTopLeft;
+				FVector NodePos = GridBottomLeft;
+				//FVector NodePos = GridTopLeft;
 				NodePos.X += x * NodeDiameter + NodeRadius; 
 				NodePos.Y += y * NodeDiameter + NodeRadius;
-				//NodePos.Z += z * NodeDiameter + NodeRadius;
-				NodePos.Z -= z * NodeDiameter + NodeRadius;
+				NodePos.Z += z * NodeDiameter + NodeRadius;
+				//NodePos.Z -= z * NodeDiameter + NodeRadius;
 
 				TArray<AActor*> ActorsToIgnore;
 				ActorsToIgnore.Add(this);
@@ -244,7 +250,7 @@ void AGrid::AddToArray(const int IndexX, const int IndexY, const int IndexZ, con
 	Nodes[GetIndex(IndexX, IndexY, IndexZ)] = Node;
 	if (!Node.bWalkable)
 	{
-		Nodes[GetIndex(IndexX, IndexY, IndexZ - 1)].bWalkable = false;
+		Nodes[GetIndex(IndexX, IndexY, IndexZ + 2)].bWalkable = false;
 	}
 }
 

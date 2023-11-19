@@ -8,6 +8,8 @@
 #include "FlyingEnemyCharacter.h"
 #include "PROJCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
 
 UBTTask_FollowPath::UBTTask_FollowPath()
 {
@@ -78,7 +80,7 @@ void UBTTask_FollowPath::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	FVector DirectionToPlayer = CurrentTargetLocation - OwnerLocation;
 	
 	// Entity has reached the current waypoint
-	if (DistanceToWaypoint >= 1.f)
+	if (DistanceToWaypoint > 1.f)
 	{
 		WaypointIndex++;
 	}
@@ -89,13 +91,20 @@ void UBTTask_FollowPath::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		return;
 	}
 	
-	if (OwnerCharacter->CurrentPath.Num() > WaypointIndex)
+	if (WaypointIndex < OwnerCharacter->CurrentPath.Num())
 	{
 		CurrentWaypoint = OwnerCharacter->CurrentPath[WaypointIndex];
 	}
 	
-	//FRotator EnemyRotation = FRotator(DirectionToPlayer.Rotation(), 0.0f, 0.0f);
-	//OwnerCharacter->SetActorRotation(EnemyRotation);
 	DirectionToWaypoint = (CurrentWaypoint - OwnerLocation).GetSafeNormal();
-	OwnerCharacter->AddMovementInput(DirectionToWaypoint, PathFollowingSpeed);
+
+	if (bDebug)
+	{
+		DrawDebugLine(GetWorld(), OwnerLocation, (OwnerLocation * DirectionToWaypoint) * 5.f, FColor::Red, false, 0.2, 0, 5.f);
+	}
+	
+	OwnerCharacter->GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+	OwnerCharacter->GetCharacterMovement()->AddInputVector(DirectionToWaypoint * PathFollowingSpeed);
+	OwnerCharacter->SetActorRotation(DirectionToPlayer.Rotation());
+
 }

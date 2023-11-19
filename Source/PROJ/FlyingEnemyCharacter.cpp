@@ -3,6 +3,15 @@
 
 #include "FlyingEnemyCharacter.h"
 
+#include "Components/SpotLightComponent.h"
+
+void AFlyingEnemyCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	Laser = Cast<USpotLightComponent>(GetComponentByClass(USpotLightComponent::StaticClass()));
+}
+
 void AFlyingEnemyCharacter::SetPointerToPath(const TArray<FVector>* PathPointer)
 {
 	if (PathPointer)
