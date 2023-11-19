@@ -16,6 +16,7 @@ AHookExplosionActor::AHookExplosionActor()
 	PrimaryActorTick.bCanEverTick = false;
 
 	OverlapSphere = CreateDefaultSubobject<USphereComponent>(FName("Overlap Sphere"));
+	SetRootComponent(OverlapSphere); 
 }
 
 // Run before begin play, serving as the class' "constructor" 
@@ -31,10 +32,16 @@ void AHookExplosionActor::BeginPlay()
 {
 	Super::BeginPlay();
 
-	DamageOverlap();
+	// UE_LOG(LogTemp, Warning, TEXT("Hook explosion actor begin play, server: %i"), UKismetSystemLibrary::IsServer(this))
+
+	// Only do damage on server so damage dealt is not doubled 
+	if(UKismetSystemLibrary::IsServer(this))
+		DamageOverlap();
 
 	if(ExplosionNS)
-		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ExplosionNS, GetActorLocation()); 
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, ExplosionNS, GetActorLocation());
+
+	Destroy(); 
 }
 
 void AHookExplosionActor::DamageOverlap()

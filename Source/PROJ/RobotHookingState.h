@@ -82,6 +82,10 @@ private:
 	/** Location at the start of the hook shot, used to determine travel length */
 	FVector StartLocation;
 
+	/** Velocity divisor to apply when reaching a static hook */
+	UPROPERTY(EditAnywhere)
+	float VelocityDivOnReachedHook = 1.2f; 
+
 	/** Returns the HookTarget if there is no available target, ensuring hook is shot forwards */
 	FVector GetTargetOnNothingInFront() const; 
 	
@@ -142,7 +146,7 @@ private:
 
 	/** Run on server when hook is fully retracted regardless if it hit Soul or an obstacle */
 	UFUNCTION(Server, Reliable)
-	void ServerRPCHookShotEnd(UCableComponent* HookCableComp, ARobotStateMachine* RobotChar, const bool bResetVel);
+	void ServerRPCHookShotEnd(UCableComponent* HookCableComp, ARobotStateMachine* RobotChar, const bool bHasATarget);
 
 	/** Run for everyone when hook is fully retracted regardless if it hit Soul or an obstacle */
 	UFUNCTION(NetMulticast, Reliable)
