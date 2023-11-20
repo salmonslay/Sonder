@@ -3,6 +3,7 @@
 #include "CombatManager.h"
 
 #include "CombatTrigger.h"
+#include "CombatTriggeredBase.h"
 #include "EnemyCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Net/UnrealNetwork.h"
@@ -79,6 +80,7 @@ void ACombatManager::RemoveEnemy(AEnemyCharacter* Enemy)
 		bCombatEnded = true;
 		GetWorldTimerManager().ClearTimer(WaveWaitTimerHandle);
 		OnCombatEnd();
+		EndCombatTriggeredActor->TriggeredEvent();
 	}
 }
 
@@ -88,17 +90,20 @@ void ACombatManager::StartCombat()
 	{
 		bCombatStarted = true;
 		OnCombatBegin();
+		StartCombatTriggeredActor->TriggeredEvent();
 	}
 }
 
 void ACombatManager::OnRep_CombatStarted()
 {
 	OnCombatBegin();
+	StartCombatTriggeredActor->TriggeredEvent();
 }
 
 void ACombatManager::OnRep_CombatEnded()
 {
 	OnCombatEnd();
+	EndCombatTriggeredActor->TriggeredEvent();
 }
 
 void ACombatManager::HandleSpawn()
@@ -113,6 +118,8 @@ void ACombatManager::HandleSpawn()
 			Wave.SpawnPoints[i % Wave.SpawnPoints.Num()]->AddEnemyToSpawn(Wave.EnemyClass);
 		}
 	}
+	if(Wave.WaveStartedTriggeredActor)
+		Wave.WaveStartedTriggeredActor->TriggeredEvent();
 	WavesQueue.RemoveAt(0);
 }
 
