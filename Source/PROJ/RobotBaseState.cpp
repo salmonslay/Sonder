@@ -4,6 +4,7 @@
 #include "RobotBaseState.h"
 
 #include "CollisionDebugDrawingPublic.h"
+#include "EnemyCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "RobotHookingState.h"
 #include "PulseObjectComponent.h"
@@ -141,16 +142,10 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 			GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f, false); 
 		}
 
-		if(Actor->ActorHasTag(FName("Soul")))
+		if(Actor->ActorHasTag(FName("Enemy")))
 		{
-			PlayerActor = Cast<ACharacter>(RobotCharacter);
-			UE_LOG(LogTemp, Warning, TEXT("Boost"));
-			RobotCharacter->GetCharacterMovement()->Velocity.Z = 0; 
-			RobotCharacter->JumpMaxCount = 2;
-			RobotCharacter->Jump();
-			
-			FTimerHandle MemberTimerHandle; 
-			GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f, false); 
+			Cast<AEnemyCharacter>(Actor)->Stun(3.0f);
+			UE_LOG(LogTemp, Warning, TEXT("Stun"));
 		}
 	}
 
