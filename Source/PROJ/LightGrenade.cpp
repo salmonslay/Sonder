@@ -8,10 +8,7 @@
 #include "PressurePlateBase.h"
 #include "PROJCharacter.h"
 #include "SoulCharacter.h"
-#include "VisualizeTexture.h"
 #include "Engine/DamageEvents.h"
-#include "GameFramework/GameStateBase.h"
-#include "GameFramework/PlayerState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
@@ -101,6 +98,8 @@ void ALightGrenade::MulticastRPCThrow_Implementation()
 		UE_LOG(LogTemp, Warning, TEXT("Throw Grenade"));
 	
 		EnableGrenade();
+
+		ThrowEvent();
 
 		ExplosionArea->SetWorldLocation(Player->ThrowLoc->GetComponentLocation()); 
 		
