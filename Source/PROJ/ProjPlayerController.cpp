@@ -75,7 +75,7 @@ void AProjPlayerController::OnFinishSeamlessTravel()
 		return;
 	}
 
-	playerSpawnPoint = PlayerStarts[0];
+	playerSpawnPoint = PlayerStarts[0]; // the first checkpoint is a fallback
 
 	APROJGameMode* Gm = Cast<APROJGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
@@ -87,9 +87,29 @@ void AProjPlayerController::OnFinishSeamlessTravel()
 		UClass* RobotClass = Gm->PlayerPawnClasses[0];
 
 		UClass* PickedClass = UGameplayStatics::GetActorOfClass(GetWorld(), RobotClass) ? SoulClass : RobotClass;
+		FName ClassTag = PickedClass == SoulClass ? FName("Soul") : FName("Robot");
 
-		APROJCharacter* Hero = GetWorld()->SpawnActor<APROJCharacter>(PickedClass, playerSpawnPoint->GetTransform(), SpawnParam);
+		// iter through all playerstarts
+		TArray<AActor*> AllPlayerStarts;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), AllPlayerStarts);
+		for (auto& PlayerStart : AllPlayerStarts)
+		{
+			UE_LOG(LogTemp, Warning, TEXT("checking for player start with tag %s"), *ClassTag.ToString());
+			if (PlayerStart->ActorHasTag(ClassTag))
+			{
+				playerSpawnPoint = PlayerStart;
+				UE_LOG(LogTemp, Warning, TEXT("Using player start with tag %s"), *ClassTag.ToString());
+				break;
+			}
+		}
+
+		APROJCharacter* Hero = GetWorld()->SpawnActor<APROJCharacter>(PickedClass, playerSpawnPoint->GetTransform(),
+		                                                              SpawnParam);
 		this->Possess(Hero);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("No PROJGameMode found."));
 	}
 }
 
