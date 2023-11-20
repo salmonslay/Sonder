@@ -2,6 +2,8 @@
 
 
 #include "LightGrenade.h"
+
+#include "EnemyCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "PressurePlateBase.h"
 #include "PROJCharacter.h"
@@ -121,7 +123,7 @@ void ALightGrenade::ActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	if (!HasAuthority()) // Only run on server
 		return;
 	
-		if (OtherActor->ActorHasTag("Enemy"))
+		if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OtherActor))
 		{
 			
 			StartCountdown(ExplodeTimeFast);
