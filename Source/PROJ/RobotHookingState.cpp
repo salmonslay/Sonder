@@ -14,6 +14,7 @@
 #include "HookExplosionActor.h"
 #include "HookShotAttachment.h"
 #include "StaticsHelper.h"
+#include "Engine/DamageEvents.h"
 #include "Net/UnrealNetwork.h"
 
 void URobotHookingState::Enter()
@@ -36,7 +37,7 @@ void URobotHookingState::Enter()
 
 	FailSafeTimer = 0;
 
-	StartLocation = PlayerOwner->GetActorLocation(); 
+	StartLocation = PlayerOwner->GetActorLocation();
 
 	// No blocking objects 
 	if(SetHookTarget())
@@ -49,6 +50,8 @@ void URobotHookingState::Enter()
 		
 		// UE_LOG(LogTemp, Warning, TEXT("Block between player"))
 	}
+
+	PlayerOwner->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &URobotHookingState::ActorOverlap); 
 	
 	ShootHook(); 
 }
@@ -88,8 +91,20 @@ void URobotHookingState::Exit()
 
 	if(!RobotCharacter->InputEnabled())
 		RobotCharacter->EnableInput(RobotCharacter->GetLocalViewingPlayerController());
+
+	PlayerOwner->SetCanBeDamaged(true);
+
+	PlayerOwner->GetCapsuleComponent()->OnComponentBeginOverlap.RemoveDynamic(this, &URobotHookingState::ActorOverlap);
+
+	// Calculate new velocity, defaulting at current velocity 
+	const auto MovementComp = PlayerOwner->GetCharacterMovement();
+	FVector NewVel = MovementComp->Velocity; 
 	
-	ServerRPCHookShotEnd(HookCable, RobotCharacter, bTravellingTowardsTarget);
+	// If targeted a static hook or Soul 
+	if(bTravellingTowardsTarget) // Set velocity to zero if Soul otherwise keep some momentum 
+		NewVel = bHookTargetIsSoul ? FVector::ZeroVector : MovementComp->Velocity / VelocityDivOnReachedHook;
+	
+	ServerRPCHookShotEnd(RobotCharacter, NewVel);
 	
 	bTravellingTowardsTarget = false;
 }
@@ -233,8 +248,9 @@ void URobotHookingState::ServerRPCStartTravel_Implementation()
 {
 	if(!PlayerOwner->HasAuthority())
 		return;
-
-	// MovementComponent->GravityScale = 0;
+	
+	// Invincible during hook shot, needs to be set on server 
+	PlayerOwner->SetCanBeDamaged(false); 
 	
 	MulticastRPCStartTravel(); 
 }
@@ -305,6 +321,21 @@ void URobotHookingState::RetractHook(const float DeltaTime)
 		EndHookShot(); 
 }
 
+void URobotHookingState::ActorOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	// Do not damage players 
+	if(!PlayerOwner->IsLocallyControlled() || Cast<APROJCharacter>(OtherActor))
+		return;
+
+	ServerRPC_DamageActor(OtherActor); 
+}
+
+void URobotHookingState::ServerRPC_DamageActor_Implementation(AActor* ActorToDamage)
+{
+	ActorToDamage->TakeDamage(HookTravelDamageAmount, FDamageEvent(), PlayerOwner->GetInstigatorController(), PlayerOwner); 
+}
+
 void URobotHookingState::MulticastRPC_RetractHook_Implementation(const FVector& NewEndLocation)
 {
 	GetOwner()->FindComponentByClass<UCableComponent>()->EndLocation = NewEndLocation; 
@@ -326,7 +357,7 @@ void URobotHookingState::MulticastRPCHookShotEnd_Implementation(ARobotStateMachi
 	RobotChar->OnHookShotEnd(); 
 }
 
-void URobotHookingState::ServerRPCHookShotEnd_Implementation(UCableComponent* HookCableComp, ARobotStateMachine* RobotChar, const bool bHasATarget)
+void URobotHookingState::ServerRPCHookShotEnd_Implementation(ARobotStateMachine* RobotChar, const FVector& NewVel)
 {
 	if(!PlayerOwner->HasAuthority())
 		return;
@@ -334,10 +365,8 @@ void URobotHookingState::ServerRPCHookShotEnd_Implementation(UCableComponent* Ho
 	const auto MovementComp = PlayerOwner->GetCharacterMovement(); 
 
 	MovementComp->GravityScale = DefaultGravityScale;
-
-	// If targeted a static hook or Soul 
-	if(bHasATarget) // Set velocity to zero if Soul otherwise keep some momentum 
-		MovementComp->Velocity = bHookTargetIsSoul ? FVector::ZeroVector : MovementComp->Velocity / VelocityDivOnReachedHook; 
+	
+	MovementComp->Velocity = NewVel; 
 
 	MulticastRPCHookShotEnd(RobotChar); 
 }

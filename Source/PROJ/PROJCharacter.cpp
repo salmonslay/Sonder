@@ -39,6 +39,8 @@ APROJCharacter::APROJCharacter()
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
+	GetCharacterMovement()->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::X);
+	GetCharacterMovement()->SetPlaneConstraintEnabled(true);
 
 	NewPlayerHealthComponent = CreateDefaultSubobject<UNewPlayerHealthComponent>("NewPlayerHealthComp");
 	//NewPlayerHealthComponent->SetIsReplicated(true);
@@ -54,7 +56,8 @@ void APROJCharacter::SetDepthMovementEnabled(const bool bNewEnable)
 	// Set the correct rotation rate according to if 3D movement is enabled 
 	GetCharacterMovement()->RotationRate = bNewEnable ? FRotator(0.0f, RotationRateIn3DView, 0.0f) : RotationRateIn2DView; 
 	
-	bDepthMovementEnabled = bNewEnable; 
+	bDepthMovementEnabled = bNewEnable;
+	GetCharacterMovement()->SetPlaneConstraintEnabled(!bNewEnable);
 }
 
 void APROJCharacter::CreateComponents()
