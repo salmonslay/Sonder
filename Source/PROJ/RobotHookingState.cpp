@@ -14,6 +14,7 @@
 #include "HookExplosionActor.h"
 #include "HookShotAttachment.h"
 #include "StaticsHelper.h"
+#include "Engine/DamageEvents.h"
 #include "Net/UnrealNetwork.h"
 
 void URobotHookingState::Enter()
@@ -36,7 +37,7 @@ void URobotHookingState::Enter()
 
 	FailSafeTimer = 0;
 
-	StartLocation = PlayerOwner->GetActorLocation(); 
+	StartLocation = PlayerOwner->GetActorLocation();
 
 	// No blocking objects 
 	if(SetHookTarget())
@@ -49,6 +50,8 @@ void URobotHookingState::Enter()
 		
 		// UE_LOG(LogTemp, Warning, TEXT("Block between player"))
 	}
+
+	PlayerOwner->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &URobotHookingState::ActorOverlap); 
 	
 	ShootHook(); 
 }
@@ -88,6 +91,10 @@ void URobotHookingState::Exit()
 
 	if(!RobotCharacter->InputEnabled())
 		RobotCharacter->EnableInput(RobotCharacter->GetLocalViewingPlayerController());
+
+	RobotCharacter->SetCanBeDamaged(true);
+
+	PlayerOwner->GetCapsuleComponent()->OnComponentBeginOverlap.RemoveDynamic(this, &URobotHookingState::ActorOverlap); 
 	
 	ServerRPCHookShotEnd(HookCable, RobotCharacter, bTravellingTowardsTarget);
 	
@@ -233,8 +240,9 @@ void URobotHookingState::ServerRPCStartTravel_Implementation()
 {
 	if(!PlayerOwner->HasAuthority())
 		return;
-
-	// MovementComponent->GravityScale = 0;
+	
+	// Invincible during hook shot, needs to be set on server 
+	RobotCharacter->SetCanBeDamaged(false); 
 	
 	MulticastRPCStartTravel(); 
 }
@@ -303,6 +311,21 @@ void URobotHookingState::RetractHook(const float DeltaTime)
 	// Fully retracted hook, change back to base state 
 	if(HookCable->EndLocation.Equals(HookCable->GetRelativeLocation(), 10.f)) 
 		EndHookShot(); 
+}
+
+void URobotHookingState::ActorOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	// Do not damage players 
+	if(!PlayerOwner->IsLocallyControlled() || Cast<APROJCharacter>(OtherActor))
+		return;
+
+	ServerRPC_DamageActor(OtherActor); 
+}
+
+void URobotHookingState::ServerRPC_DamageActor_Implementation(AActor* ActorToDamage)
+{
+	ActorToDamage->TakeDamage(HookTravelDamageAmount, FDamageEvent(), PlayerOwner->GetInstigatorController(), PlayerOwner); 
 }
 
 void URobotHookingState::MulticastRPC_RetractHook_Implementation(const FVector& NewEndLocation)

@@ -87,7 +87,10 @@ private:
 	float VelocityDivOnReachedHook = 1.2f; 
 
 	/** Returns the HookTarget if there is no available target, ensuring hook is shot forwards */
-	FVector GetTargetOnNothingInFront() const; 
+	FVector GetTargetOnNothingInFront() const;
+
+	UPROPERTY(EditAnywhere)
+	float HookTravelDamageAmount = 3.f; 
 	
 	/** Returns false if there was a block */
 	bool SetHookTarget();
@@ -151,5 +154,11 @@ private:
 	/** Run for everyone when hook is fully retracted regardless if it hit Soul or an obstacle */
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCHookShotEnd(ARobotStateMachine* RobotChar);
+
+	UFUNCTION()
+	void ActorOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult); 
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_DamageActor(AActor* ActorToDamage); 
 	
 };
