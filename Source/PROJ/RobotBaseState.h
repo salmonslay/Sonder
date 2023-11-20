@@ -34,6 +34,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	class UInputAction* PulseInputAction;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UInputAction* AbilityInputAction;
 	
 	bool bHasSetUpInput = false;
 	
@@ -73,5 +76,7 @@ private:
 	void DisablePulseCooldown() { bPulseCoolDownActive = false; }
 
 	void DisableSecondJump() { PlayerActor->JumpMaxCount = 1; }
+
+	void ActivateAbilities();
 	
 };

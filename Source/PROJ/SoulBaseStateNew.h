@@ -32,7 +32,10 @@ private:
 	class UInputAction* DashInputAction;
 
 	UPROPERTY(EditAnywhere)
-	UInputAction* ThrowGrenadeInputAction;
+	class UInputAction* ThrowGrenadeInputAction;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UInputAction* AbilityInputAction;
 
 	/** Run locally and called when player presses the dash-button */ 
 	void Dash();
@@ -52,6 +55,8 @@ private:
 
 	void DisableDashCooldown() { bDashCoolDownActive = false; }
 	
-	bool bHasSetUpInput = false; 
+	bool bHasSetUpInput = false;
+
+	void ActivateAbilities();
 	
 };
