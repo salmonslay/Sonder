@@ -83,7 +83,7 @@ public:
 
 	float GetNodeRadius() const;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite, Replicated)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UBoxComponent* GridBounds;
 
 	bool bHasFoundBothPlayers = false;
@@ -107,7 +107,7 @@ private:
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypeQueries;
 
 
-	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	//void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 
 	UPROPERTY(VisibleAnywhere, Category="A*")
@@ -143,6 +143,8 @@ private:
 	
 	FVector GridBottomLeftLocation = FVector::ZeroVector; 
 
+	FVector GridTopLeftLocation = FVector::ZeroVector; 
+
 
 	friend class Pathfinder;
 	Pathfinder* EnemyPathfinder = nullptr;
@@ -161,7 +163,5 @@ private:
 	TArray<GridNode*> GetNeighbours(GridNode* Node) const;
 
 	int GetIndex(const int IndexX, const int IndexY, const int IndexZ) const; 
-
-	
 
 };
