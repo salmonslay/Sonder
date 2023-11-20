@@ -8,8 +8,12 @@
 
 ASoulCharacter::ASoulCharacter()
 {
-	BaseStateNew = CreateDefaultSubobject<USoulBaseStateNew>(FName(TEXT("New Soul Base State"))); 
 
+	
+	BaseStateNew = CreateDefaultSubobject<USoulBaseStateNew>(FName("Soul Base State"));
+	
+
+	
 	DashingState = CreateDefaultSubobject<USoulDashingState>(FName("Dashing State"));
 
 	ThrowLoc = CreateDefaultSubobject<USphereComponent>(FName("ThrowLoc"));
