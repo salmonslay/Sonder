@@ -4,6 +4,7 @@
 #include "RobotBaseState.h"
 
 #include "CollisionDebugDrawingPublic.h"
+#include "EnemyCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "RobotHookingState.h"
 #include "PulseObjectComponent.h"
@@ -11,6 +12,12 @@
 #include "SoulCharacter.h"
 #include "Chaos/CollisionResolutionUtil.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
+
+URobotBaseState::URobotBaseState()
+{
+	SetIsReplicatedByDefault(true); 
+}
 
 void URobotBaseState::Enter()
 {
@@ -18,6 +25,8 @@ void URobotBaseState::Enter()
 
 	if(!RobotCharacter)
 		RobotCharacter = Cast<ARobotStateMachine>(PlayerOwner);
+
+	DefaultWalkSpeed = PlayerOwner->GetCharacterMovement()->MaxWalkSpeed; 
 }
 
 void URobotBaseState::Update(const float DeltaTime)
@@ -38,6 +47,8 @@ void URobotBaseState::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
 		InputComp->BindAction(HookShotInputAction, ETriggerEvent::Started, this, &URobotBaseState::ShootHook);
 
 		InputComp->BindAction(PulseInputAction, ETriggerEvent::Started, this, &URobotBaseState::Pulse);
+
+		InputComp->BindAction(AbilityInputAction, ETriggerEvent::Started, this, &URobotBaseState::ActivateAbilities);
 		
 		bHasSetUpInput = true; 
 	}
@@ -50,6 +61,56 @@ void URobotBaseState::Exit()
 	
 }
 
+void URobotBaseState::ApplySoulDashBuff()
+{
+	// Clear timer so it resets if there already is an existing buff, then start it again 
+	GetWorld()->GetTimerManager().ClearTimer(BuffTimerHandle);
+	GetWorld()->GetTimerManager().SetTimer(BuffTimerHandle, this, &URobotBaseState::ResetDashBuff, DashBuffLength);
+
+	// TODO: idk if we want to fire event again if buffed while already buffed. the rest does not need to update 
+	if(!bHasDashBuff) 
+		ServerRPC_DashBuffStart(); 
+}
+
+void URobotBaseState::ServerRPC_DashBuffStart_Implementation()
+{
+	if(!PlayerOwner->HasAuthority())
+		return;
+
+	bHasDashBuff = true;
+	
+	MulticastRPC_DashBuffStart(); 
+}
+
+void URobotBaseState::MulticastRPC_DashBuffStart_Implementation()
+{
+	PlayerOwner->GetCharacterMovement()->MaxWalkSpeed = WalkSpeedWhenBuffed;
+	
+	RobotCharacter->OnDashBuffStart(); 
+}
+
+void URobotBaseState::ResetDashBuff()
+{
+	ServerRPC_DashBuffEnd(); 
+}
+
+void URobotBaseState::ServerRPC_DashBuffEnd_Implementation()
+{
+	if(!PlayerOwner->HasAuthority())
+		return;
+	
+	bHasDashBuff = false; 
+
+	MulticastRPC_DashBuffEnd(); 
+}
+
+void URobotBaseState::MulticastRPC_DashBuffEnd_Implementation()
+{
+	PlayerOwner->GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
+	
+	RobotCharacter->OnDashBuffEnd(); 
+}
+
 void URobotBaseState::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
@@ -57,9 +118,16 @@ void URobotBaseState::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	GetWorld()->GetTimerManager().ClearAllTimersForObject(this); 
 }
 
+void URobotBaseState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(URobotBaseState, bHasDashBuff)
+}
+
 void URobotBaseState::ShootHook()
 {
-	if(bHookShotOnCooldown)
+	if(bHookShotOnCooldown || !RobotCharacter->AbilityTwo)
 		return; 
 	
 	// UE_LOG(LogTemp, Warning, TEXT("Fired hook"))
@@ -77,7 +145,7 @@ void URobotBaseState::Pulse()
 {
 	// Ensure player cant spam attack and is locally controlled 
 	// Only run locally 
-	if(bPulseCoolDownActive || !PlayerOwner->IsLocallyControlled())
+	if(bPulseCoolDownActive || !PlayerOwner->IsLocallyControlled() || !RobotCharacter->AbilityOne)
 		return;
 
 	bPulseCoolDownActive = true;
@@ -140,8 +208,21 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 			FTimerHandle MemberTimerHandle; 
 			GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f, false); 
 		}
+
+		if(Actor->ActorHasTag(FName("Enemy")))
+		{
+			Cast<AEnemyCharacter>(Actor)->Stun(3.0f);
+			UE_LOG(LogTemp, Warning, TEXT("Stun"));
+		}
 	}
 
 	RobotCharacter->OnPulse(); 
 }
+
+void URobotBaseState::ActivateAbilities()
+{
+	RobotCharacter->AbilityOne = true;
+	RobotCharacter->AbilityTwo = true;
+}
+
 

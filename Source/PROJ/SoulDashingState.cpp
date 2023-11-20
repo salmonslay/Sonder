@@ -4,11 +4,13 @@
 #include "SoulDashingState.h"
 
 #include "CharacterStateMachine.h"
+#include "RobotBaseState.h"
 #include "RobotHookingState.h"
 #include "RobotStateMachine.h"
 #include "SoulBaseStateNew.h"
 #include "SoulCharacter.h"
 #include "Components/CapsuleComponent.h"
+#include "Engine/DamageEvents.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -16,33 +18,34 @@ void USoulDashingState::Enter()
 {
 	Super::Enter();
 
-	if(PlayerOwner->IsLocallyControlled()) 
-	{
-		PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Ignore); 
+	if(!PlayerOwner->IsLocallyControlled())
+		return;
+	
+	PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Ignore); 
 		
-		// Set dash direction to input vector if player is moving, otherwise the forward vector 
-		FVector DashDir = PlayerOwner->GetLastMovementInputVector().IsNearlyZero() ? PlayerOwner->GetActorForwardVector() : PlayerOwner->GetLastMovementInputVector(); 
+	// Set dash direction to input vector if player is moving, otherwise the forward vector 
+	FVector DashDir = PlayerOwner->GetLastMovementInputVector().IsNearlyZero() ? PlayerOwner->GetActorForwardVector() : PlayerOwner->GetLastMovementInputVector(); 
 
-		DashDir.Z = 0; // Disable dash in Z axis (up/down)
+	DashDir.Z = 0; // Disable dash in Z axis (up/down)
 		
-		if(!PlayerOwner->IsDepthMovementEnabled())
-			DashDir.X = 0; 
+	if(!PlayerOwner->IsDepthMovementEnabled())
+		DashDir.X = 0; 
 
-		// Dash locally 
-		PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Ignore); 
-		PlayerOwner->GetCharacterMovement()->AddImpulse(DashForce * DashDir);
+	// Dash locally 
+	PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Ignore); 
+	PlayerOwner->GetCharacterMovement()->AddImpulse(DashForce * DashDir);
 
-		// Dash on server so it does not override the dash 
-		ServerRPCDash(DashDir.GetSafeNormal());
+	// Dash on server so it does not override the dash 
+	ServerRPCDash(DashDir.GetSafeNormal());
 
-		// disable input for the remainder of the dash 
-		PlayerOwner->DisableInput(PlayerOwner->GetLocalViewingPlayerController());
+	// disable input for the remainder of the dash 
+	PlayerOwner->DisableInput(PlayerOwner->GetLocalViewingPlayerController());
 
-		StartLoc = PlayerOwner->GetActorLocation();
+	StartLoc = PlayerOwner->GetActorLocation();
 
-		CancelHookShot(); 
-	}
+	PlayerOwner->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &USoulDashingState::ActorOverlap); 
 
+	CancelHookShot();
 }
 
 void USoulDashingState::Update(const float DeltaTime)
@@ -63,6 +66,8 @@ void USoulDashingState::Exit()
 	
 	PlayerOwner->EnableInput(PlayerOwner->GetLocalViewingPlayerController());
 
+	PlayerOwner->GetCapsuleComponent()->OnComponentBeginOverlap.RemoveDynamic(this, &USoulDashingState::ActorOverlap); 
+
 	ServerExit(PlayerOwner->GetCharacterMovement()->GetLastInputVector()); 
 }
 
@@ -73,6 +78,37 @@ void USoulDashingState::CancelHookShot()
 		ClientRPC_CancelHookShot();
 	else
 		ServerRPC_CancelHookShot(); 
+}
+
+void USoulDashingState::ActorOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	if(!PlayerOwner->IsLocallyControlled())
+		return;
+
+	// If dashing through Robot, apply buff to Robot 
+	if(const auto Robot = Cast<ARobotStateMachine>(OtherActor))
+	{
+		if(!PlayerOwner->HasAuthority())
+			ServerRPC_RobotBuff(Robot); 
+		else
+			Robot->FindComponentByClass<URobotBaseState>()->ApplySoulDashBuff(); 
+	}
+	else 
+		ServerRPC_DamageActor(OtherActor); // Otherwise deal damage to overlapping object, needs to be applied on server 
+}
+
+void USoulDashingState::ServerRPC_RobotBuff_Implementation(ARobotStateMachine* Robot)
+{
+	if(!PlayerOwner->HasAuthority())
+		return; 
+	
+	Robot->FindComponentByClass<URobotBaseState>()->ApplySoulDashBuff();
+}
+
+void USoulDashingState::ServerRPC_DamageActor_Implementation(AActor* ActorToDamage)
+{
+	ActorToDamage->TakeDamage(DashDamageAmount, FDamageEvent(), PlayerOwner->GetInstigatorController(), PlayerOwner); 
 }
 
 void USoulDashingState::ClientRPC_CancelHookShot_Implementation()
@@ -111,6 +147,8 @@ void USoulDashingState::ServerExit_Implementation(const FVector InputVec)
 	
 	if(!PlayerOwner->IsDepthMovementEnabled())
 		VelDir.X = 0;
+
+	PlayerOwner->SetCanBeDamaged(true); 
 	
 	PlayerOwner->GetCharacterMovement()->Velocity = PlayerOwner->GetCharacterMovement()->MaxWalkSpeed * VelDir.GetSafeNormal();
 
@@ -130,6 +168,8 @@ void USoulDashingState::ServerRPCDash_Implementation(const FVector DashDir)
 {
 	if(!PlayerOwner->HasAuthority())
 		return;
+
+	PlayerOwner->SetCanBeDamaged(false); // Needs to be set on server 
 
 	PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Ignore); 
 	

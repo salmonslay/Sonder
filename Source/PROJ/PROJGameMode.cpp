@@ -13,7 +13,7 @@
 APROJGameMode::APROJGameMode()
 {
 	// This is from UE auto generation 
-	
+
 	// set default pawn class to our Blueprinted character
 	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter"));
 	if (PlayerPawnBPClass.Class != NULL)
@@ -37,19 +37,18 @@ void APROJGameMode::BeginPlay()
 APROJCharacter* APROJGameMode::GetActivePlayer(const int Index) const
 {
 	AGameStateBase* GSB = GetGameState<AGameStateBase>();
-	ensure (GSB != nullptr);
-	
-	APROJCharacter* PlayerToReturn =nullptr;
+	ensure(GSB != nullptr);
+
+	APROJCharacter* PlayerToReturn = nullptr;
 	if (GSB->PlayerArray.Num() <= Index)
 	{
 		return PlayerToReturn;
 	}
 	if (GSB->PlayerArray[Index] != nullptr)
 	{
-		PlayerToReturn =  Cast<APROJCharacter>(GSB->PlayerArray[Index]->GetPawn());
+		PlayerToReturn = Cast<APROJCharacter>(GSB->PlayerArray[Index]->GetPawn());
 	}
 	return PlayerToReturn;
-
 }
 
 
@@ -57,7 +56,7 @@ void APROJGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	PlayerCount = 0; 
+	PlayerCount = 0;
 }
 
 void APROJGameMode::InitGame(const FString& MapName, const FString& Options, FString& ErrorMessage)
@@ -67,32 +66,32 @@ void APROJGameMode::InitGame(const FString& MapName, const FString& Options, FSt
 	// Find and store player starts 
 	TArray<AActor*> TempPlayerStarts;
 
-	UGameplayStatics::GetAllActorsOfClass(this, APlayerStart::StaticClass(), TempPlayerStarts); 
-	
-	for(const auto PlayerStartActor : TempPlayerStarts)
+	UGameplayStatics::GetAllActorsOfClass(this, APlayerStart::StaticClass(), TempPlayerStarts);
+
+	for (const auto PlayerStartActor : TempPlayerStarts)
 	{
-		if(auto PlayerStart = Cast<APlayerStart>(PlayerStartActor))
-			UnusedPlayerStarts.Add(PlayerStart); 
+		if (auto PlayerStart = Cast<APlayerStart>(PlayerStartActor))
+			UnusedPlayerStarts.Add(PlayerStart);
 	}
 }
 
 void APROJGameMode::PreLogin(const FString& Options, const FString& Address, const FUniqueNetIdRepl& UniqueId,
                              FString& ErrorMessage)
 {
-	if(UnusedPlayerStarts.IsEmpty())
+	if (UnusedPlayerStarts.IsEmpty())
 		ErrorMessage = "Server full. No valid player starts, are there 2 in the level?";
 
-	Super::PreLogin(Options, Address, UniqueId, ErrorMessage); 
+	Super::PreLogin(Options, Address, UniqueId, ErrorMessage);
 }
 
 FString APROJGameMode::InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId,
-	const FString& Options, const FString& Portal)
+                                     const FString& Options, const FString& Portal)
 {
 	// No unused player starts, player cannot spawn 
-	if(UnusedPlayerStarts.IsEmpty())
+	if (UnusedPlayerStarts.IsEmpty())
 	{
 		UE_LOG(LogTemp, Error, TEXT("No unused player starts in InitNewPlayer. Are there 2 in the level?"))
-		return FString("No unused player starts. Are there 2 in the level?"); 
+		return FString("No unused player starts. Are there 2 in the level?");
 	}
 
 	// Set the new player's spawn position 
@@ -104,26 +103,73 @@ FString APROJGameMode::InitNewPlayer(APlayerController* NewPlayerController, con
 	DefaultPawnClass = PawnClassToSpawn;
 
 	// Set the pawn used in the player controller 
-	if(const auto PlayerController = Cast<AProjPlayerController>(NewPlayerController))
+	if (const auto PlayerController = Cast<AProjPlayerController>(NewPlayerController))
 	{
-		PlayerController->SetControlledPawnClass(PawnClassToSpawn); 
+		PlayerController->SetControlledPawnClass(PawnClassToSpawn);
 	}
 
-	PlayerCount++; 
-	
+	PlayerCount++;
+
 	return Super::InitNewPlayer(NewPlayerController, UniqueId, Options, Portal);
 }
 
 UClass* APROJGameMode::GetDefaultPawnClassForController_Implementation(AController* InController)
 {
 	/* Override Functionality to get Pawn from PlayerController */
-if (const AProjPlayerController* MyController = Cast<AProjPlayerController>(InController))
-{
+	if (const AProjPlayerController* MyController = Cast<AProjPlayerController>(InController))
+	{
 		return MyController->GetControlledPawnClass();
 	}
 
 	/* If we don't get the right Controller, use the Default Pawn */
 	return DefaultPawnClass;
+}
+
+void APROJGameMode::HandleSeamlessTravelPlayer(AController*& Controller)
+{
+	Super::HandleSeamlessTravelPlayer(Controller);
+
+	// Default behavior is to spawn new controllers and copy data
+	APlayerController* PC = Cast<APlayerController>(Controller);
+	if (PC && PC->Player)
+	{
+		// We need to spawn a new PlayerController to replace the old one
+		APlayerController* NewPC = SpawnPlayerController(PC->IsLocalPlayerController() ? ROLE_SimulatedProxy : ROLE_AutonomousProxy, PC->GetFocalLocation(), PC->GetControlRotation());
+
+		if (NewPC)
+		{
+			PC->SeamlessTravelTo(NewPC);
+			NewPC->SeamlessTravelFrom(PC);
+			SwapPlayerControllers(PC, NewPC);
+			PC = NewPC;
+			Controller = NewPC;
+		}
+		else
+		{
+			UE_LOG(LogGameMode, Warning, TEXT("HandleSeamlessTravelPlayer: Failed to spawn new PlayerController for %s (old class %s)"), *PC->GetHumanReadableName(), *PC->GetClass()->GetName());
+			PC->Destroy();
+			return;
+		}
+	}
+
+	InitSeamlessTravelPlayer(Controller);
+
+	// Initialize hud and other player details, shared with PostLogin
+	GenericPlayerInitialization(Controller);
+
+	if(PC)
+	{
+		AProjPlayerController* ProjPC = Cast<AProjPlayerController>(PC);
+		if(ProjPC)
+		{
+			ProjPC->OnFinishSeamlessTravel();
+		}
+	}
+}
+
+void APROJGameMode::PostSeamlessTravel()
+{
+	Super::PostSeamlessTravel();
 }
 
 void APROJGameMode::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -145,4 +191,9 @@ void APROJGameMode::SetPlayerPointers()
 	{
 		GetWorldTimerManager().ClearTimer(PlayerPointerTimerHandle);
 	}
+}
+
+void APROJGameMode::GetSeamlessTravelActorList(bool bToTransition, TArray<AActor*>& ActorList)
+{
+	Super::GetSeamlessTravelActorList(bToTransition, ActorList);
 }

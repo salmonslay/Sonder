@@ -41,8 +41,16 @@ public:
 
 	/** Run when Robot collides with Soul */
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnHookExplosion(); 
+	void OnHookExplosion();
 
+	/** Run when Robot receives a buff by Soul's dash */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDashBuffStart(); 
+
+	/** Run when Robot's buff by Soul's dash ends */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDashBuffEnd(); 
+	
 private:
 	
 	

@@ -195,22 +195,22 @@ void AGrid::CreateGrid()
 
 	
 
-	FVector GridBottomLeft = GetActorLocation();
-	GridBottomLeft.X -= GridSize.X / 2;
-	GridBottomLeft.Y -= GridSize.Y / 2;
-	GridBottomLeft.Z -= GridSize.Z / 2;
+	//FVector GridBottomLeft = GetActorLocation();
+	//GridBottomLeft.X -= GridSize.X / 2;
+	//GridBottomLeft.Y -= GridSize.Y / 2;
+	//GridBottomLeft.Z -= GridSize.Z / 2;
 
 
 
-	/*
+	
 	FVector GridTopLeft = GetActorLocation();
 	GridTopLeft.X -= GridSize.X / 2;
 	GridTopLeft.Y -= GridSize.Y / 2;
 	GridTopLeft.Z += GridSize.Z / 2;
-	*/
+	
 
-	GridBottomLeftLocation = GridBottomLeft; 
-	//GridBottomLeftLocation = GridTopLeft;
+	//GridBottomLeftLocation = GridBottomLeft; 
+	GridTopLeftLocation = GridTopLeft;
 
 	//AActor* OverlapActor = GetWorld()->SpawnActor<AActor>(OverlapCheckActorClass, GetActorLocation(),FRotator::ZeroRotator); 
 	
@@ -220,12 +220,12 @@ void AGrid::CreateGrid()
 		{
 			for(int z = 0; z < GridLengthZ; z++)
 			{
-				FVector NodePos = GridBottomLeft;
-				//FVector NodePos = GridTopLeft;
+				//FVector NodePos = GridBottomLeft;
+				FVector NodePos = GridTopLeft;
 				NodePos.X += x * NodeDiameter + NodeRadius; 
 				NodePos.Y += y * NodeDiameter + NodeRadius;
-				NodePos.Z += z * NodeDiameter + NodeRadius;
-				//NodePos.Z -= z * NodeDiameter + NodeRadius;
+				//NodePos.Z += z * NodeDiameter + NodeRadius;
+				NodePos.Z -= z * NodeDiameter + NodeRadius;
 
 				TArray<AActor*> ActorsToIgnore;
 				ActorsToIgnore.Add(this);
@@ -295,9 +295,13 @@ int AGrid::GetIndex(const int IndexX, const int IndexY, const int IndexZ) const
 GridNode* AGrid::GetNodeFromWorldLocation(const FVector &NodeWorldLocation) const
 {
 	// position relative to grids bottom left corner 
-	const float GridRelativeX = NodeWorldLocation.X  - GridBottomLeftLocation.X; 
-	const float GridRelativeY = NodeWorldLocation.Y - GridBottomLeftLocation.Y;
-	const float GridRelativeZ = NodeWorldLocation.Z - GridBottomLeftLocation.Z;
+	//const float GridRelativeX = NodeWorldLocation.X  - GridBottomLeftLocation.X; 
+	//const float GridRelativeY = NodeWorldLocation.Y - GridBottomLeftLocation.Y;
+	//const float GridRelativeZ = NodeWorldLocation.Z - GridBottomLeftLocation.Z;
+
+	const float GridRelativeX = NodeWorldLocation.X  - GridTopLeftLocation.X; 
+	const float GridRelativeY = NodeWorldLocation.Y - GridTopLeftLocation.Y;
+	const float GridRelativeZ = GridTopLeftLocation.Z - NodeWorldLocation.Z;
 	
 	// checks how many nodes fit in relative position for array indexes 
 	const int x = FMath::Clamp(FMath::RoundToInt((GridRelativeX - NodeRadius) / NodeDiameter), 0, GridLengthX - 1);
