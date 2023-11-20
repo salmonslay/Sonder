@@ -42,6 +42,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void ExplosionEvent();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void ThrowEvent();
+
 	UPROPERTY()
 	class ASoulCharacter* Player;
 
@@ -57,7 +60,7 @@ public:
 	void Throw();
 
 	/** How long time needs to pass between attacks */
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float ThrowCooldown = 5.0f;
 
 	UPROPERTY()
