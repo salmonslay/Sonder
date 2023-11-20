@@ -9,6 +9,8 @@
 #include "EnemyHealthComponent.h"
 #include "Grid.h"
 #include "PROJCharacter.h"
+#include "RobotBaseState.h"
+#include "RobotStateMachine.h"
 #include "Components/CapsuleComponent.h"
 
 
@@ -152,6 +154,10 @@ void AEnemyCharacter::Idle()
 float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
                                   AActor* DamageCauser)
 {
+	// Increase damage by eventual Robot damage multiplier 
+	if(const auto Robot = Cast<ARobotStateMachine>(DamageCauser))
+		DamageAmount *= Robot->FindComponentByClass<URobotBaseState>()->GetDamageBoostMultiplier();
+	
 	float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	if (EnemyHealthComponent)
