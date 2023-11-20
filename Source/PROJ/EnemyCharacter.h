@@ -113,7 +113,7 @@ public:
 	FTimerHandle AttackTimerHandle;
 
 	UPROPERTY(EditDefaultsOnly)
-	float ChargeAttackDuration = 1.f;
+	float ChargeAttackDuration = 0.7f;
 
 	UPROPERTY(EditDefaultsOnly)
 	float PerformAttackDuration = 0.5f;

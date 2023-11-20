@@ -37,7 +37,7 @@ void UBTService_CalculateAttackPos::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	OwnerLocation = OwnerCharacter->GetActorLocation();
 
 	APROJCharacter* PlayerToAttack;
-	UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("PlayerToAttack");
+	UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("CurrentTargetPlayer");
 
 	if (PlayerObject == nullptr)
 	{
@@ -48,23 +48,17 @@ void UBTService_CalculateAttackPos::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	{
 		PlayerToAttackPosition = PlayerToAttack->GetActorLocation();
 	}
-	
-	//if enemy is in wrong angle/height from player - calculate position. If player is in attack range, no need to calculate a position
-	const float HeightDiff = FMath::Abs(OwnerLocation.Z - PlayerToAttackPosition.Z);
-	if (HeightDiff > OwnerCharacter->MaxAttackHeightDifference)
+	// Generate a random height within the specified bounds around player's Z-coordinate
+	float RandomHeight = FMath::FRandRange(PlayerToAttackPosition.Z - OwnerCharacter->MaxAttackHeightDifference, PlayerToAttackPosition.Z + OwnerCharacter->MaxAttackHeightDifference);
+	//float RandomAngle = FMath::FRandRange(0.0f, 2 * PI);
+        
+	// Calculate rand new position
+	FVector NewPosition = FVector(PlayerToAttackPosition.X + RandomHeight,PlayerToAttackPosition.Y + RandomHeight, OwnerLocation.Z);
+	OwnerComp.GetBlackboardComponent()->SetValueAsVector("StartAttackPosition", NewPosition);
+	if (bDebug)
 	{
-		// Generate a random height within the specified bounds around player's Z-coordinate
-		float RandomHeight = FMath::FRandRange(PlayerToAttackPosition.Z - OwnerCharacter->MaxAttackHeightDifference, PlayerToAttackPosition.Z + OwnerCharacter->MaxAttackHeightDifference);
-		float RandomAngle = FMath::FRandRange(0.0f, 2 * PI);
-            
-		// Calculate rand new position
-		FVector NewPosition = FVector(PlayerToAttackPosition.X + RandomHeight * FMath::Cos(RandomAngle),PlayerToAttackPosition.Y + RandomHeight * FMath::Sin(RandomAngle), OwnerLocation.Z);
-		OwnerComp.GetBlackboardComponent()->SetValueAsVector("StartAttackPosition", NewPosition);
-		if (bDebug)
-		{
-			DrawDebugSphere(GetWorld(), NewPosition, 20.f, 30, FColor::Cyan, false, 0.2f, 0, 5);
-		}
-		OwnerComp.GetBlackboardComponent()->SetValueAsBool("bStartAttackPositionSet", true);
+		DrawDebugSphere(GetWorld(), NewPosition, 20.f, 30, FColor::Cyan, false, 0.2f, 0, 5);
 	}
+	
 }
 

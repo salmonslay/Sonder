@@ -53,12 +53,16 @@ void UBTService_IsInAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 	const float HeightDiff = FMath::Abs(OwnerLocation.Z - PlayerToAttackLocation.Z);
 	if (HeightDiff > OwnerCharacter->MaxAttackHeightDifference)
 	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsBool("bStartAttackPositionSet", false);
+		//OwnerComp.GetBlackboardComponent()->SetValueAsBool("bStartAttackPositionSet", false);
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool("bIsInRangeToAttack", false);
+		OwnerComp.GetBlackboardComponent()->ClearValue("StartAttackPosition");
 	}
 	else
 	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsBool("bStartAttackPositionSet", true);
+		//OwnerComp.GetBlackboardComponent()->SetValueAsBool("bStartAttackPositionSet", true);
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool("bIsInRangeToAttack", true);
 		OwnerComp.GetBlackboardComponent()->SetValueAsVector("StartAttackPosition", OwnerLocation);
+		
 		if (bDebug)
 		{
 			DrawDebugLine(GetWorld(), OwnerLocation, PlayerToAttackLocation, FColor::Cyan, false, 0.2f, 0, 5.f);

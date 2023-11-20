@@ -102,7 +102,8 @@ void UBTTask_FollowPath::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	{
 		DrawDebugLine(GetWorld(), OwnerLocation, (OwnerLocation * DirectionToWaypoint) * 5.f, FColor::Red, false, 0.2, 0, 5.f);
 	}
-	
+
+	OwnerCharacter->GetMovementComponent()->SetActive(true);
 	OwnerCharacter->GetCharacterMovement()->SetMovementMode(MOVE_Flying);
 	OwnerCharacter->GetCharacterMovement()->AddInputVector(DirectionToWaypoint * PathFollowingSpeed);
 	OwnerCharacter->SetActorRotation(DirectionToPlayer.Rotation());
