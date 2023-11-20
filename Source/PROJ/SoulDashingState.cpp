@@ -27,13 +27,16 @@ void USoulDashingState::Enter()
 		
 		if(!PlayerOwner->IsDepthMovementEnabled())
 			DashDir.X = 0; 
-		
+
+		// Dash locally 
+		PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Ignore); 
+		PlayerOwner->GetCharacterMovement()->AddImpulse(DashForce * DashDir);
+
+		// Dash on server so it does not override the dash 
 		ServerRPCDash(DashDir.GetSafeNormal());
 
 		// disable input for the remainder of the dash 
 		PlayerOwner->DisableInput(PlayerOwner->GetLocalViewingPlayerController());
-		
-		// TempTimer = 0;
 
 		StartLoc = PlayerOwner->GetActorLocation();
 
@@ -48,16 +51,7 @@ void USoulDashingState::Update(const float DeltaTime)
 
 	// Change state/stop dash when velocity is 0 (collided) or travelled max distance 
 	if(PlayerOwner->GetCharacterMovement()->Velocity.IsNearlyZero() || FVector::Dist(StartLoc, PlayerOwner->GetActorLocation()) > MaxDashDistance)
-	{
 		PlayerOwner->SwitchState(Cast<ASoulCharacter>(PlayerOwner)->BaseStateNew);
-		return; 
-	} 
-
-	// Failsafe to exit dash mode, probably not necessary but will keep for now 
-	// TempTimer += DeltaTime;
-	//
-	// if(TempTimer > 1.5f)
-	// 	PlayerOwner->SwitchState(Cast<ASoulCharacter>(PlayerOwner)->BaseState); 
 }
 
 void USoulDashingState::Exit()
@@ -68,7 +62,6 @@ void USoulDashingState::Exit()
 		return;
 	
 	PlayerOwner->EnableInput(PlayerOwner->GetLocalViewingPlayerController());
-	PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Block); 
 
 	ServerExit(PlayerOwner->GetCharacterMovement()->GetLastInputVector()); 
 }
@@ -112,18 +105,10 @@ void USoulDashingState::ServerExit_Implementation(const FVector InputVec)
 	if(!PlayerOwner->HasAuthority())
 		return;
 
-	// PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Block);
-
-	// Cancel velocity if no input, set to max vel if there is input 
-	// if(InputVec.IsZero())
-	// 	PlayerOwner->GetCharacterMovement()->Velocity = FVector::ZeroVector;
-	// else
-
-	// TODO: Improve this 
-
+	// Set velocity to max walk speed 
 	FVector VelDir = PlayerOwner->GetCharacterMovement()->Velocity;
 	VelDir.Z = 0;
-
+	
 	if(!PlayerOwner->IsDepthMovementEnabled())
 		VelDir.X = 0;
 	
