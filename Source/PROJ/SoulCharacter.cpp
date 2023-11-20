@@ -8,8 +8,11 @@
 
 ASoulCharacter::ASoulCharacter()
 {
+
 	
 	BaseStateNew = CreateDefaultSubobject<USoulBaseStateNew>(FName("Soul Base State"));
+	
+
 	
 	DashingState = CreateDefaultSubobject<USoulDashingState>(FName("Dashing State"));
 

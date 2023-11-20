@@ -38,6 +38,7 @@ void USoulBaseStateNew::UpdateInputCompOnEnter(UEnhancedInputComponent* InputCom
 		InputComp->BindAction(DashInputAction, ETriggerEvent::Started, this, &USoulBaseStateNew::Dash);
 		InputComp->BindAction(ThrowGrenadeInputAction,ETriggerEvent::Completed,this,&USoulBaseStateNew::ThrowGrenade);
 		InputComp->BindAction(ThrowGrenadeInputAction,ETriggerEvent::Ongoing,this,&USoulBaseStateNew::GetTimeHeld);
+		InputComp->BindAction(AbilityInputAction,ETriggerEvent::Ongoing,this,&USoulBaseStateNew::ActivateAbilities);
 		bHasSetUpInput = true; 
 	}
 }
@@ -132,3 +133,8 @@ void USoulBaseStateNew::MulticastRPCThrowGrenade_Implementation()
 	
 }
 
+void USoulBaseStateNew::ActivateAbilities()
+{
+	SoulCharacter->AbilityOne = true;
+	SoulCharacter->AbilityTwo = true;
+}
