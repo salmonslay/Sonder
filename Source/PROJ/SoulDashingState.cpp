@@ -4,6 +4,7 @@
 #include "SoulDashingState.h"
 
 #include "CharacterStateMachine.h"
+#include "RobotBaseState.h"
 #include "RobotHookingState.h"
 #include "RobotStateMachine.h"
 #include "SoulBaseStateNew.h"
@@ -82,11 +83,27 @@ void USoulDashingState::CancelHookShot()
 void USoulDashingState::ActorOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
-	// Do not damage players 
-	if(!PlayerOwner->IsLocallyControlled() || Cast<APROJCharacter>(OtherActor))
+	if(!PlayerOwner->IsLocallyControlled())
 		return;
 
-	ServerRPC_DamageActor(OtherActor); 
+	// If dashing through Robot, apply buff to Robot 
+	if(const auto Robot = Cast<ARobotStateMachine>(OtherActor))
+	{
+		if(!PlayerOwner->HasAuthority())
+			ServerRPC_RobotBuff(Robot); 
+		else
+			Robot->FindComponentByClass<URobotBaseState>()->ApplySoulDashBuff(); 
+	}
+	else 
+		ServerRPC_DamageActor(OtherActor); // Otherwise deal damage to overlapping object, needs to be applied on server 
+}
+
+void USoulDashingState::ServerRPC_RobotBuff_Implementation(ARobotStateMachine* Robot)
+{
+	if(!PlayerOwner->HasAuthority())
+		return; 
+	
+	Robot->FindComponentByClass<URobotBaseState>()->ApplySoulDashBuff();
 }
 
 void USoulDashingState::ServerRPC_DamageActor_Implementation(AActor* ActorToDamage)
