@@ -16,7 +16,6 @@ class PROJ_API USoulBaseStateNew : public UPlayerCharState
 	GENERATED_BODY()
 
 public:
-
 	virtual void Enter() override;
 
 	virtual void Update(const float DeltaTime) override;
@@ -40,18 +39,18 @@ private:
 	UPROPERTY(EditAnywhere)
 	class UInputAction* AbilityInputAction;
 
-	/** Run locally and called when player presses the dash-button */ 
+	/** Run locally and called when player presses the dash-button */
 	/** Run locally and called when player presses the dash-button */
 	void Dash();
 
 	void GetTimeHeld(const FInputActionInstance& Instance);
-	
+
 	void ThrowGrenade();
 
 	UFUNCTION(Server, Reliable)
-	void ServerRPCThrowGrenade(); 
+	void ServerRPCThrowGrenade();
 
-	
+
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCThrowGrenade();
 
@@ -65,10 +64,10 @@ private:
 	class ASoulCharacter* SoulCharacter;
 
 	UPROPERTY(EditAnywhere)
-	float DashCooldown = 1.f; 
+	float DashCooldown = 1.f;
 
 	void DisableDashCooldown() { bDashCoolDownActive = false; }
-	
+
 	bool bHasSetUpInput = false;
 
 	UPROPERTY(Replicated)
@@ -77,6 +76,4 @@ private:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void ActivateAbilities();
-
-	bool bHasSetUpInput = false;
 };
