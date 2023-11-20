@@ -22,7 +22,7 @@ void ADamageZone::NotifyActorBeginOverlap(AActor* OtherActor)
 		return;
 
 	// A damage zone can only damage the local player. If the player is not locally controlled, we ignore them.
-	if (OtherActor->ActorHasTag("Player"))
+	if (Cast<APROJCharacter>(OtherActor))
 	{
 		PlayerActors.AddUnique(OtherActor);
 	}

@@ -22,18 +22,23 @@ public:
 
 	virtual void Exit() override;
 
+	/** Switches state to the base state, ending the hook shot */
+	void EndHookShot() const; 
+
 private:
 
 	UPROPERTY()
 	AActor* SoulCharacter; 
 	
 	UPROPERTY()
-	FVector CurrentHookTarget;
+	FVector CurrentHookTargetLocation;
 
 	UPROPERTY()
 	class ARobotStateMachine* RobotCharacter;
 
 	bool bTravellingTowardsTarget = false;
+
+	bool bHookTargetIsSoul = false; 
 
 	/** How close the player needs to be for it to be considered as reached target */
 	float ReachedTargetDistTolerance = 50.f;
@@ -53,7 +58,7 @@ private:
 	class UCableComponent* HookCable;
 
 	UPROPERTY(EditAnywhere)
-	float ZTargetOffset = 25.f; 
+	float ZSoulTargetOffset = 25.f; 
 
 	// Fail safe to cancel hook shot after set time 
 	float FailSafeTimer = 0;
@@ -64,15 +69,30 @@ private:
 
 	/** The speed at which the hook cable should retract when it hits a blocking object */
 	UPROPERTY(EditAnywhere)
-	float RetractHookOnMissSpeed = 1000.f; 
+	float RetractHookOnMissSpeed = 1000.f;
 
-	/** Switches state to the base state, ending the hook shot */
-	void EndHookShot() const; 
+	/** How far the hook should shoot out (max distance) when it hits a block or has no valid target */
+	UPROPERTY(EditAnywhere)
+	float MaxHookShotDistanceOnBlock = 1000.f;
+
+	/** Spawns this actor on collision with Soul. The spawned class handles damage */
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AHookExplosionActor> ExplosionClassToSpawnOnCollWithSoul;
+
+	/** Location at the start of the hook shot, used to determine travel length */
+	FVector StartLocation;
+
+	/** Velocity divisor to apply when reaching a static hook */
+	UPROPERTY(EditAnywhere)
+	float VelocityDivOnReachedHook = 1.2f; 
+
+	/** Returns the HookTarget if there is no available target, ensuring hook is shot forwards */
+	FVector GetTargetOnNothingInFront() const; 
 	
 	/** Returns false if there was a block */
 	bool SetHookTarget();
 
-	FHitResult DoLineTrace();
+	AActor* DoLineTrace(FHitResult& HitResultOut);
 
 	/** Shoots out the physical hook, does not move player */
 	void ShootHook();
@@ -126,7 +146,7 @@ private:
 
 	/** Run on server when hook is fully retracted regardless if it hit Soul or an obstacle */
 	UFUNCTION(Server, Reliable)
-	void ServerRPCHookShotEnd(UCableComponent* HookCableComp, ARobotStateMachine* RobotChar, const bool bResetVel);
+	void ServerRPCHookShotEnd(UCableComponent* HookCableComp, ARobotStateMachine* RobotChar, const bool bHasATarget);
 
 	/** Run for everyone when hook is fully retracted regardless if it hit Soul or an obstacle */
 	UFUNCTION(NetMulticast, Reliable)

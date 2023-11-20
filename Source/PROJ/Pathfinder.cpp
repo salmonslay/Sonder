@@ -6,10 +6,10 @@
 #include "PROJCharacter.h"
 
 
-Pathfinder::Pathfinder(APawn* ServerPlayerPawn, APawn* ClientPlayerPawn, AGrid* MapGrid) : ServerPlayerPawn(ServerPlayerPawn), ClientPlayerPawn(ClientPlayerPawn), Grid(MapGrid)
+Pathfinder::Pathfinder(APROJCharacter* ServerPlayer, APROJCharacter* ClientPlayer, AGrid* MapGrid) : Grid(MapGrid)
 {
-	ServerPlayerCharacter = Cast<APROJCharacter>(ServerPlayerPawn);
-	ClientPlayerCharacter = Cast<APROJCharacter>(ClientPlayerPawn);
+	ServerPlayerCharacter = Cast<APROJCharacter>(ServerPlayer);
+	ClientPlayerCharacter = Cast<APROJCharacter>(ClientPlayer);
 	ensure(ServerPlayerCharacter != nullptr);
 	ensure(ClientPlayerCharacter != nullptr);
 
@@ -22,7 +22,6 @@ bool Pathfinder::FindPath(const FVector &Start, const FVector &End)
 	//if (Grid->TargetLocation == FVector::ZeroVector || Grid->StartLocation == FVector::ZeroVector)
 	if (Start == FVector::ZeroVector || End == FVector::ZeroVector)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("locations are 0"));
 		return false;
 	}
 
@@ -35,7 +34,6 @@ bool Pathfinder::FindPath(const FVector &Start, const FVector &End)
 	//If target and entity has not moved, updating path is redundant
 	if(EndNode == OldEndNode && StartNode == OldStartNode)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Didnt need updating path"));
 		bIsOldPathStillValid = true;
 		Grid->OnNoNeedUpdate();
 		return false;
@@ -74,7 +72,6 @@ bool Pathfinder::FindPath(const FVector &Start, const FVector &End)
 	        {
 	        	bPathSuccess = true;
 	        	bIsOldPathStillValid = false;
-	        	UE_LOG(LogTemp, Warning, TEXT("New PathFound"));
 				break;
 	        }
 

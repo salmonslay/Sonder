@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="AudioFile" id="{c764ad00-035d-4750-a57a-771d69527c09}">
 		<property name="assetPath">
-			<value>SFX/PreStep/9.wav</value>
+			<value>SFX/char/PreStep/9.wav</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>96</value>

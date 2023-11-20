@@ -7,6 +7,7 @@
 #include "BTService_IsInCameraFOV.generated.h"
 
 
+class ASonderGameState;
 class AEnemyCharacter;
 /**
  * 
@@ -32,11 +33,12 @@ protected:
 	/** Tick node is called every tick service is in progress*/
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
-	FVector CameraLocation = FVector::ZeroVector;
-	FVector CameraForwardVector =FVector::ZeroVector;
-
 	UPROPERTY(VisibleAnywhere)
 	AEnemyCharacter* OwnerCharacter = nullptr;
+
+	FVector OwnerLocation = FVector::ZeroVector;
+
+	ASonderGameState* SGS;
 	
 	float FieldOfViewAngle = 0.f;
 	

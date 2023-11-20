@@ -9,8 +9,6 @@
 #include "PROJCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
-class APROJCharacter;
-
 UBTTask_FindPathToPlayer::UBTTask_FindPathToPlayer()
 {
 	NodeName = TEXT("FindPathToPlayer");
@@ -23,7 +21,11 @@ void UBTTask_FindPathToPlayer::OnGameplayTaskActivated(UGameplayTask& Task)
 
 EBTNodeResult::Type UBTTask_FindPathToPlayer::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	return Super::ExecuteTask(OwnerComp, NodeMemory);
+	Super::ExecuteTask(OwnerComp, NodeMemory);
+
+	// code below makes it so TickTask is called 
+	bNotifyTick = 1;
+	return EBTNodeResult::InProgress; 
 }
 
 void UBTTask_FindPathToPlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -41,21 +43,25 @@ void UBTTask_FindPathToPlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8
 
 	OwnerGrid = OwnerCharacter->GetGridPointer();
 
-	if (OwnerGrid == nullptr) return;
+	if (OwnerGrid == nullptr)
+	{
+		return;
+	}
 	
 	APROJCharacter* PlayerToAttack;
-	UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("PlayerToAttack");
-	if (PlayerObject)
-	{
-		PlayerToAttack = Cast<APROJCharacter>(PlayerObject);
-		if (PlayerToAttack)
-		{
-			CurrentTargetLocation = PlayerToAttack->GetActorLocation();
-		}
-	}
+	UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("CurrentTargetPlayer");
 
-	Path = OwnerGrid->RequestPath(OwnerLocation, CurrentTargetLocation, bDebug);
+	if (PlayerObject == nullptr)
+	{
+		return;
+	}
+	PlayerToAttack = Cast<APROJCharacter>(PlayerObject);
+	if (PlayerToAttack)
+	{
+		CurrentTargetLocation = PlayerToAttack->GetActorLocation();
+	}
 	
+	Path = OwnerGrid->RequestPath(OwnerLocation, CurrentTargetLocation, bDebug);
 }
 
 

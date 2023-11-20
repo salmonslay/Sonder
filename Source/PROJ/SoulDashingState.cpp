@@ -4,10 +4,13 @@
 #include "SoulDashingState.h"
 
 #include "CharacterStateMachine.h"
+#include "RobotHookingState.h"
+#include "RobotStateMachine.h"
 #include "SoulBaseStateNew.h"
 #include "SoulCharacter.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 void USoulDashingState::Enter()
 {
@@ -24,15 +27,20 @@ void USoulDashingState::Enter()
 		
 		if(!PlayerOwner->IsDepthMovementEnabled())
 			DashDir.X = 0; 
-		
+
+		// Dash locally 
+		PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Ignore); 
+		PlayerOwner->GetCharacterMovement()->AddImpulse(DashForce * DashDir);
+
+		// Dash on server so it does not override the dash 
 		ServerRPCDash(DashDir.GetSafeNormal());
 
 		// disable input for the remainder of the dash 
 		PlayerOwner->DisableInput(PlayerOwner->GetLocalViewingPlayerController());
-		
-		// TempTimer = 0;
 
-		StartLoc = PlayerOwner->GetActorLocation(); 
+		StartLoc = PlayerOwner->GetActorLocation();
+
+		CancelHookShot(); 
 	}
 
 }
@@ -43,16 +51,7 @@ void USoulDashingState::Update(const float DeltaTime)
 
 	// Change state/stop dash when velocity is 0 (collided) or travelled max distance 
 	if(PlayerOwner->GetCharacterMovement()->Velocity.IsNearlyZero() || FVector::Dist(StartLoc, PlayerOwner->GetActorLocation()) > MaxDashDistance)
-	{
 		PlayerOwner->SwitchState(Cast<ASoulCharacter>(PlayerOwner)->BaseStateNew);
-		return; 
-	} 
-
-	// Failsafe to exit dash mode, probably not necessary but will keep for now 
-	// TempTimer += DeltaTime;
-	//
-	// if(TempTimer > 1.5f)
-	// 	PlayerOwner->SwitchState(Cast<ASoulCharacter>(PlayerOwner)->BaseState); 
 }
 
 void USoulDashingState::Exit()
@@ -63,9 +62,35 @@ void USoulDashingState::Exit()
 		return;
 	
 	PlayerOwner->EnableInput(PlayerOwner->GetLocalViewingPlayerController());
-	PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Block); 
 
 	ServerExit(PlayerOwner->GetCharacterMovement()->GetLastInputVector()); 
+}
+
+void USoulDashingState::CancelHookShot()
+{
+	// Cancel Hook shot on client if Soul is played by the server and vice versa 
+	if(PlayerOwner->HasAuthority())
+		ClientRPC_CancelHookShot();
+	else
+		ServerRPC_CancelHookShot(); 
+}
+
+void USoulDashingState::ClientRPC_CancelHookShot_Implementation()
+{
+	if(!HookState)
+		HookState = UGameplayStatics::GetActorOfClass(this, ARobotStateMachine::StaticClass())->FindComponentByClass<URobotHookingState>(); 
+
+	if(HookState)
+		HookState->EndHookShot();
+}
+
+void USoulDashingState::ServerRPC_CancelHookShot_Implementation()
+{
+	if(!HookState)
+		HookState = UGameplayStatics::GetActorOfClass(this, ARobotStateMachine::StaticClass())->FindComponentByClass<URobotHookingState>(); 
+
+	if(HookState)
+		HookState->EndHookShot();
 }
 
 void USoulDashingState::MulticastExit_Implementation()
@@ -80,18 +105,10 @@ void USoulDashingState::ServerExit_Implementation(const FVector InputVec)
 	if(!PlayerOwner->HasAuthority())
 		return;
 
-	// PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Block);
-
-	// Cancel velocity if no input, set to max vel if there is input 
-	// if(InputVec.IsZero())
-	// 	PlayerOwner->GetCharacterMovement()->Velocity = FVector::ZeroVector;
-	// else
-
-	// TODO: Improve this 
-
+	// Set velocity to max walk speed 
 	FVector VelDir = PlayerOwner->GetCharacterMovement()->Velocity;
 	VelDir.Z = 0;
-
+	
 	if(!PlayerOwner->IsDepthMovementEnabled())
 		VelDir.X = 0;
 	

@@ -36,10 +36,11 @@ class APROJCharacter : public ACharacter
 	UInputAction* LookAction;
 
 public:
+	
 	APROJCharacter();
 
 	/** Toggles depth movement */
-	void SetDepthMovementEnabled(const bool bNewEnable) { bDepthMovementEnabled = bNewEnable; }
+	void SetDepthMovementEnabled(const bool bNewEnable); 
 
 	/** Returns true if player can traverse in the depth axis */
 	bool IsDepthMovementEnabled() const { return bDepthMovementEnabled; }
@@ -67,6 +68,14 @@ public:
 	UPROPERTY(EditAnywhere)
 	class UPlayerBasicAttack* BasicAttack;
 
+	/** Overridden to enable notify jump apex */
+	virtual void Jump() override;
+
+	/** Changes gravity scale when at jump peak to fall faster */
+	virtual void NotifyJumpApex() override;
+
+	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode) override;
+
 #pragma region Events 
 	
 	// Components seem to not be able to create events (easily), which is why most events are declared here 
@@ -93,7 +102,9 @@ protected:
 	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	// To add mapping context
-	virtual void BeginPlay();
+	virtual void BeginPlay() override;
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
 	/** Determines if player can move in both axes */
@@ -105,5 +116,36 @@ private:
 	UEnhancedInputComponent* EnhancedInputComp; 
 
 	FTransform SpawnTransform;
+
+	/** Set in BeginPlay. Uses the existing rotation rate variable exposed to BluePrints */
+	FRotator RotationRateIn2DView = FRotator(0, 1000.f, 0); 
+
+	/** How fast the player should rotate in 3D view. Negative value means instant */
+	UPROPERTY(EditAnywhere)
+	float RotationRateIn3DView = 500.f;
+
+	/** Grounded gravity scale and when jumping upwards */
+	UPROPERTY(EditAnywhere)
+	float DefaultGravityScale = 1.75f; 
+	
+	UPROPERTY(EditAnywhere)
+	float GravityScaleWhileFalling = 3.f;
+
+	// If player can Coyote jump (has been in the air short enough time and )
+	bool bCanCoyoteJump = true;
+
+	bool bHasJumped = false;
+
+	UPROPERTY(EditAnywhere)
+	float CoyoteJumpPeriod = 0.1f;
+
+	void DisableCoyoteJump();
+
+	bool bHasCalledTimer = false; 
+	
+	void CoyoteJump();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_CoyoteJump();
 	
 };
