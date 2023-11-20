@@ -10,6 +10,7 @@
 #include "SoulCharacter.h"
 #include "SoulDashingState.h"
 #include "Kismet/GameplayStatics.h"
+#include "Net/UnrealNetwork.h"
 
 void USoulBaseStateNew::Enter()
 {
@@ -35,7 +36,8 @@ void USoulBaseStateNew::UpdateInputCompOnEnter(UEnhancedInputComponent* InputCom
 	if(!bHasSetUpInput)
 	{
 		InputComp->BindAction(DashInputAction, ETriggerEvent::Started, this, &USoulBaseStateNew::Dash);
-		InputComp->BindAction(ThrowGrenadeInputAction,ETriggerEvent::Started,this,&USoulBaseStateNew::ThrowGrenade);
+		InputComp->BindAction(ThrowGrenadeInputAction,ETriggerEvent::Completed,this,&USoulBaseStateNew::ThrowGrenade);
+		InputComp->BindAction(ThrowGrenadeInputAction,ETriggerEvent::Ongoing,this,&USoulBaseStateNew::GetTimeHeld);
 		bHasSetUpInput = true; 
 	}
 }
@@ -69,6 +71,24 @@ void USoulBaseStateNew::Dash()
 	PlayerOwner->SwitchState(SoulCharacter->DashingState); 
 }
 
+void USoulBaseStateNew::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(USoulBaseStateNew,  TimeHeld);
+}
+
+void USoulBaseStateNew::GetTimeHeld(const FInputActionInstance& Instance)
+{
+	if (!PlayerOwner->IsLocallyControlled())
+	{
+		return;	
+	}
+	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "IS Holding " + FString::SanitizeFloat(Instance.GetElapsedTime()));
+	//TimeHeld = Instance.GetElapsedTime();
+	
+}
+
 void USoulBaseStateNew::ThrowGrenade()
 {
 	if (!PlayerOwner->IsLocallyControlled())
@@ -80,6 +100,8 @@ void USoulBaseStateNew::ThrowGrenade()
 	
 }
 
+
+
 void USoulBaseStateNew::ServerRPCThrowGrenade_Implementation()
 {
 	if(!PlayerOwner->HasAuthority())
@@ -87,6 +109,8 @@ void USoulBaseStateNew::ServerRPCThrowGrenade_Implementation()
 
 	
 	//LightGrenade = GetWorld()->SpawnActor<AActor>(LightGrenadeRef,SoulCharacter->FireLoc->GetComponentLocation(),SoulCharacter->FireLoc->GetComponentRotation());
+
+		
 	
 	
 	MulticastRPCThrowGrenade();
@@ -101,6 +125,7 @@ void USoulBaseStateNew::MulticastRPCThrowGrenade_Implementation()
 	if (FoundCharacter[0] != nullptr)
 	{
 		ALightGrenade* Grenade = Cast<ALightGrenade>(FoundCharacter[0]);
+		UE_LOG(LogTemp, Warning, TEXT("Time held %f"), TimeHeld);
 		Grenade->Throw();
 		
 	}

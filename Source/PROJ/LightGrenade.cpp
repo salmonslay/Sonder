@@ -3,6 +3,7 @@
 
 #include "LightGrenade.h"
 #include "EnhancedInputComponent.h"
+#include "PressurePlateBase.h"
 #include "PROJCharacter.h"
 #include "SoulCharacter.h"
 #include "VisualizeTexture.h"
@@ -42,6 +43,7 @@ void ALightGrenade::BeginPlay()
 	
 
 	CollisionArea->OnComponentBeginOverlap.AddDynamic(this,&ALightGrenade::ActorBeginOverlap);
+	CollisionArea->OnComponentEndOverlap.AddDynamic(this,&ALightGrenade::OverlapEnd);
 	
 	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap); 
 	ExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap); 
@@ -104,7 +106,7 @@ void ALightGrenade::MulticastRPCThrow_Implementation()
 
 		//ExplosionArea->AddImpulse(FVector(2000.0f,2000.0f,0));
 	
-		ExplosionArea->SetPhysicsLinearVelocity(LandingLoc*FireSpeed);
+		ExplosionArea->SetPhysicsLinearVelocity(LandingLoc*(FireSpeed * (1 +TimePressed )));
 		
 		bCanThrow = false;
 
@@ -124,18 +126,26 @@ void ALightGrenade::ActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 			
 			StartCountdown(ExplodeTimeFast);
 			
-		}else if (OtherActor || OtherComp || OverlappedComponent)
+		}else if (APressurePlateBase* Plate = Cast<APressurePlateBase>(OtherActor))
+		{
+			Plate->StartMove();		
+		}
+		else if (OtherActor || OtherComp || OverlappedComponent)
 		{
 
 			StartCountdown(ExplodeTimeSlow);
-			if (bIsExploding == false)
-			{
-				
-				
-			}
 			
-		}
+		} 
 	
+}
+
+void ALightGrenade::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
+{
+	if (APressurePlateBase* Plate = Cast<APressurePlateBase>(OtherActor))
+	{
+		Plate->StartReverse();		
+	}
 }
 
 void ALightGrenade::ServerRPCExplosion_Implementation()
@@ -171,6 +181,7 @@ void ALightGrenade::MulticastRPCExplosion_Implementation()
 			
 			OverlapingActor->TakeDamage(Damage, FDamageEvent(), Controller, this);
 		}
+		
 		
 	}
 	
