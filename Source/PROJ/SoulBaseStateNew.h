@@ -6,6 +6,7 @@
 #include "PlayerCharState.h"
 #include "SoulBaseStateNew.generated.h"
 
+struct FInputActionInstance;
 /**
  * This is the base/default state that is used by the soul character, i.e. when running around "normally" 
  */
@@ -37,10 +38,22 @@ private:
 	/** Run locally and called when player presses the dash-button */ 
 	void Dash();
 
+	void GetTimeHeld(const FInputActionInstance& Instance);
+	
 	void ThrowGrenade();
 
+	UFUNCTION(Server, Reliable)
+	void ServerRPCThrowGrenade(); 
+
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCThrowGrenade();
+
 	UPROPERTY()
-	class ALightGrenade* LightGrenade;
+	class AActor* LightGrenade;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> LightGrenadeRef;
 
 	UPROPERTY()
 	class ASoulCharacter* SoulCharacter;
@@ -52,6 +65,11 @@ private:
 
 	void DisableDashCooldown() { bDashCoolDownActive = false; }
 	
-	bool bHasSetUpInput = false; 
+	bool bHasSetUpInput = false;
+
+	UPROPERTY(Replicated)
+	float TimeHeld;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 };

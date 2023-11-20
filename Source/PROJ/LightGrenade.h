@@ -19,6 +19,9 @@ public:
 	UFUNCTION()
 	void ActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
 
+	UFUNCTION()
+	void OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex);
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -33,6 +36,9 @@ public:
 	UPROPERTY(BlueprintReadWrite,EditDefaultsOnly)
 	USphereComponent* ExplosionArea = nullptr;
 
+	UPROPERTY(BlueprintReadWrite,EditDefaultsOnly)
+	USphereComponent* CollisionArea = nullptr;
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void ExplosionEvent();
 
@@ -45,32 +51,46 @@ public:
 	UPROPERTY()
 	AController* Controller;
 
+	UPROPERTY(Replicated)
+	bool bCanThrow = true;
+
 	void Throw();
+
+	/** How long time needs to pass between attacks */
+	UPROPERTY(EditAnywhere)
+	float ThrowCooldown = 5.0f;
+
+	UPROPERTY()
+	float TimePressed;
+
+	UPROPERTY()
+	float MaxTimePressed;
+
 
 private:
 
-	UPROPERTY(EditAnywhere)
-	class UInputAction* AttackInputAction;
+	UPROPERTY()
+	FTimerHandle TimerHandle; 
 	
 	UPROPERTY(EditAnywhere)
 	float Damage = 5.0f;
 
 	UPROPERTY(EditAnywhere)
-	float FireSpeed = 1.0f;
+	float FireSpeed = 8.0f;
 	
-	/** How long time needs to pass between attacks */
-	UPROPERTY(EditAnywhere)
-	float ThrowCooldown = 0.5f;
+	
 
 	UPROPERTY(EditAnywhere)
-	float ExplodeTime = 5.0f;
+	float ExplodeTimeSlow = 5.0f;
 
-	UPROPERTY(Replicated)
-	bool bCanThrow = true;
+	UPROPERTY(EditAnywhere)
+	float ExplodeTimeFast = 0.2f;
+
+	
 
 	bool bCanOverlap = false;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	bool bIsExploding = false;
 
 	void EnableCanThrow();
@@ -79,7 +99,7 @@ private:
 
 	void EnableGrenade();
 
-	void StartCountdown();
+	void StartCountdown(float TimeUntilExplosion);
 
 	
 	
@@ -95,6 +115,13 @@ private:
 	/** Attack function run on each game instance, client and server */
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCExplosion();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPCThrow(); 
+
+	/** Attack function run on each game instance, client and server */
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCThrow();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

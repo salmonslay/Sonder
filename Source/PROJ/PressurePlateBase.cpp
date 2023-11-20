@@ -29,10 +29,3 @@ void APressurePlateBase::BeginPlay()
 	
 }
 
-// Called every frame
-void APressurePlateBase::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
