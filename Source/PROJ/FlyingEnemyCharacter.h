@@ -25,14 +25,22 @@ public:
 	
 	TArray<FVector> CurrentPath = TArray<FVector>();
 
+
+	// ==== laser stuff 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USpotLightComponent* Laser;
 
 	UPROPERTY()
 	USceneComponent* LaserEndComponent;
-
-	FVector LaserPointerDestination = FVector::ZeroVector;
 	
+	/** Laser range*/
+	UPROPERTY(EditAnywhere)
+	float LaserRange = 100.f;
+
+	/** Max difference in height the enemy can be compared to player before being able to attack*/
+	UPROPERTY(EditAnywhere)
+	float MaxAttackHeightDifference = 40.f;
+
 	
 	
 };
