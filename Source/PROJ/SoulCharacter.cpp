@@ -12,6 +12,7 @@ ASoulCharacter::ASoulCharacter()
 
 	DashingState = CreateDefaultSubobject<USoulDashingState>(FName("Dashing State"));
 
-	FireLoc = CreateDefaultSubobject<USphereComponent>(TEXT("GrenadeSpawnPoint"));
+	ThrowLoc = CreateDefaultSubobject<USphereComponent>(FName("ThrowLoc"));
+	ThrowLoc->SetupAttachment(RootComponent);
 
 }
