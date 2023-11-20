@@ -17,20 +17,18 @@ ACharactersCamera::ACharactersCamera()
 {
 	CameraComponent = this->GetCameraComponent();
 	PrimaryActorTick.bCanEverTick = true;
-	
-	
-	bReplicates = true;
 
-	
+
+	bReplicates = true;
 }
 
 void ACharactersCamera::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
 	AssignSpline(DefaultCameraSplineClass);
 	FTimerHandle Handle;
-	GetWorld()->GetTimerManager().SetTimer(Handle,this, &ACharactersCamera::GetPlayers,4.0f);
+	GetWorld()->GetTimerManager().SetTimer(Handle, this, &ACharactersCamera::GetPlayers, 4.0f);
 
 
 	if (WallOne && WallTwo)
@@ -38,23 +36,19 @@ void ACharactersCamera::BeginPlay()
 		WallOne->SetActorEnableCollision(false);
 		WallTwo->SetActorEnableCollision(false);
 	}
-	
+
 	FTimerHandle WallHandle;
-	GetWorld()->GetTimerManager().SetTimer(WallHandle,this, &ACharactersCamera::SetWallCollision,5.0f);
-	
+	GetWorld()->GetTimerManager().SetTimer(WallHandle, this, &ACharactersCamera::SetWallCollision, 5.0f);
 }
 
 ACameraSpline* ACharactersCamera::AssignSpline(ACameraSpline* CameraSplineClass)
 {
 	if (CameraSplineClass)
 	{
-		
 		CameraSpline = CameraSplineClass->CameraSpline;
 		CurrentCameraSplineClass = CameraSplineClass;
-		
+
 		return CurrentCameraSplineClass;
-		
-		
 	}
 	return nullptr;
 }
@@ -68,54 +62,45 @@ void ACharactersCamera::GetPlayers()
 		{
 			PlayerTwo = CurrentGameMode->GetActivePlayer(1);
 		}
-		
+
 		bAllowMovement = true;
 	}
 }
 
 
-
-
 void ACharactersCamera::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	
+
 	MoveCamera();
 
 	RotateCamera();
-	
 }
 
 void ACharactersCamera::RotateCamera()
 {
 	if (CameraSpline)
 	{
-		
 		FRotator Rotate = CurrentCameraSplineClass->CameraRotation->GetComponentRotation();
-		FRotator RotateCorrect = FMath::RInterpTo(CameraComponent->GetComponentRotation(), Rotate,FApp::GetDeltaTime(),InterpSpeedRotation);
+		FRotator RotateCorrect = FMath::RInterpTo(CameraComponent->GetComponentRotation(), Rotate, FApp::GetDeltaTime(), InterpSpeedRotation);
 		if (CameraComponent->GetComponentRotation() != Rotate)
 		{
 			CameraComponent->SetWorldRotation(RotateCorrect);
 		}
-		
-		
-		
 	}
-	
 }
 
 void ACharactersCamera::MoveWalls(FVector MiddlePoint)
 {
 	if (WallOne && WallTwo)
 	{
-		float FOV = CameraComponent->FieldOfView/2;
+		float FOV = CameraComponent->FieldOfView / 2;
 		FVector Camloc = CameraComponent->GetComponentLocation();
-		double Offset = FMath::Tan(FOV) * (FVector::Distance(MiddlePoint,Camloc));
+		double Offset = FMath::Tan(FOV) * (FVector::Distance(MiddlePoint, Camloc));
 
-		WallOne->SetActorLocation(FVector(MiddlePoint.X,(MiddlePoint.Y-Offset/2),MiddlePoint.Z));
-		WallTwo->SetActorLocation(FVector(MiddlePoint.X,MiddlePoint.Y+Offset/2,MiddlePoint.Z));
+		WallOne->SetActorLocation(FVector(MiddlePoint.X, (MiddlePoint.Y - Offset / 2), MiddlePoint.Z));
+		WallTwo->SetActorLocation(FVector(MiddlePoint.X, MiddlePoint.Y + Offset / 2, MiddlePoint.Z));
 	}
-	
 }
 
 void ACharactersCamera::SetWallCollision()
@@ -125,7 +110,6 @@ void ACharactersCamera::SetWallCollision()
 		WallOne->SetActorEnableCollision(true);
 		WallTwo->SetActorEnableCollision(true);
 	}
-	
 }
 
 void ACharactersCamera::MoveCamera()
@@ -134,44 +118,31 @@ void ACharactersCamera::MoveCamera()
 	{
 		if (CameraSpline)
 		{
-			
-			if (PlayerOne != nullptr && PlayerTwo != nullptr)
+			if (PlayerOne != nullptr && PlayerTwo != nullptr) // if both players are in the game
 			{
-				const FVector MiddleLocation = PlayerOne->GetActorLocation()/2 + PlayerTwo->GetActorLocation()/2;
+				const FVector MiddleLocation = PlayerOne->GetActorLocation() / 2 + PlayerTwo->GetActorLocation() / 2;
 				MoveWalls(MiddleLocation);
 				const FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(MiddleLocation, ESplineCoordinateSpace::World);
 				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeedLocation);
 				CameraComponent->SetWorldLocation(TargetLocation);
-				
-				
-			} else if (PlayerTwo == nullptr)
+			}
+			else if (PlayerTwo == nullptr && PlayerOne != nullptr) // if only player one is in the game 
 			{
 				const FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(PlayerOne->GetActorLocation(), ESplineCoordinateSpace::World);
-				
-				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(),
-				                                  InterpSpeedLocation);
+
+				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeedLocation);
 				CameraComponent->SetWorldLocation(TargetLocation);
 			}
-			else if (PlayerOne == nullptr)
+			else if (PlayerOne == nullptr && PlayerTwo != nullptr) // if only player two is in the game
 			{
 				FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(PlayerTwo->GetActorLocation(), ESplineCoordinateSpace::World);
 				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeedLocation);
 				CameraComponent->SetWorldLocation(TargetLocation);
-				
 			}
-			else
+			else // if no players are in the game
 			{
-				
+				UE_LOG(LogTemp, Warning, TEXT("No players in-game"))
 			}
 		}
 	}
-		
-		
-	
-	
 }
-
-
-
-
-
