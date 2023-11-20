@@ -35,6 +35,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	UInputAction* ThrowGrenadeInputAction;
 
+	UPROPERTY(EditAnywhere)
+	class UInputAction* AbilityInputAction;
+
 	/** Run locally and called when player presses the dash-button */ 
 	void Dash();
 
@@ -71,5 +74,6 @@ private:
 	float TimeHeld;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
+
+	void ActivateAbilities();
 };

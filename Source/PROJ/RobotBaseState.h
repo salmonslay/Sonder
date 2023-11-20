@@ -45,6 +45,9 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	class UInputAction* PulseInputAction;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UInputAction* AbilityInputAction;
 	
 	bool bHasSetUpInput = false;
 	
@@ -118,6 +121,8 @@ private:
 	void ServerRPC_DashBuffEnd();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPC_DashBuffEnd(); 
+	void MulticastRPC_DashBuffEnd();
+
+	void ActivateAbilities();
 	
 };

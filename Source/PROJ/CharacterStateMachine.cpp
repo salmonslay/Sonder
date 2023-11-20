@@ -77,4 +77,5 @@ void ACharacterStateMachine::SwitchState(UPlayerCharState* NewState)
 
 	CurrentState->Enter();
 	CurrentState->UpdateInputCompOnEnter(GetInputComponent()); 
-} 
+}
+
