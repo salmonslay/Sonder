@@ -30,6 +30,10 @@ public:
 	virtual FString InitNewPlayer(APlayerController* NewPlayerController, const FUniqueNetIdRepl& UniqueId, const FString& Options, const FString& Portal) override;
 
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
+
+	virtual void HandleSeamlessTravelPlayer(AController*& Controller) override;
+
+	virtual void PostSeamlessTravel() override;
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -40,6 +44,9 @@ public:
 
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	APROJCharacter* ClientPlayer;
+
+	UPROPERTY(EditDefaultsOnly)
+	TArray<TSubclassOf<APROJCharacter>> PlayerPawnClasses; 
 	
 private:
 
@@ -47,11 +54,9 @@ private:
 
 	TArray<class APlayerStart*> UnusedPlayerStarts;
 
-	UPROPERTY(EditDefaultsOnly)
-	TArray<TSubclassOf<APROJCharacter>> PlayerPawnClasses; 
+	inline static int PlayerCount = 0;
 
-	inline static int PlayerCount = 0; 
-	
+	virtual void GetSeamlessTravelActorList(bool bToTransition, TArray<AActor*>& ActorList) override;
 };
 
 
