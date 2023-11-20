@@ -18,13 +18,10 @@ Pathfinder::Pathfinder(APROJCharacter* ServerPlayer, APROJCharacter* ClientPlaye
 
 bool Pathfinder::FindPath(const FVector &Start, const FVector &End)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Calling find path in Pathfinder"));
-
 	TArray<FVector> NewPath;
 	//if (Grid->TargetLocation == FVector::ZeroVector || Grid->StartLocation == FVector::ZeroVector)
 	if (Start == FVector::ZeroVector || End == FVector::ZeroVector)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("locations are 0"));
 		return false;
 	}
 
@@ -37,7 +34,6 @@ bool Pathfinder::FindPath(const FVector &Start, const FVector &End)
 	//If target and entity has not moved, updating path is redundant
 	if(EndNode == OldEndNode && StartNode == OldStartNode)
 	{
-		UE_LOG(LogTemp, Warning, TEXT("Didnt need updating path"));
 		bIsOldPathStillValid = true;
 		Grid->OnNoNeedUpdate();
 		return false;
@@ -76,7 +72,6 @@ bool Pathfinder::FindPath(const FVector &Start, const FVector &End)
 	        {
 	        	bPathSuccess = true;
 	        	bIsOldPathStillValid = false;
-	        	UE_LOG(LogTemp, Warning, TEXT("New PathFound"));
 				break;
 	        }
 
