@@ -140,6 +140,18 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 			FTimerHandle MemberTimerHandle; 
 			GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f, false); 
 		}
+
+		if(Actor->ActorHasTag(FName("Soul")))
+		{
+			PlayerActor = Cast<ACharacter>(RobotCharacter);
+			UE_LOG(LogTemp, Warning, TEXT("Boost"));
+			RobotCharacter->GetCharacterMovement()->Velocity.Z = 0; 
+			RobotCharacter->JumpMaxCount = 2;
+			RobotCharacter->Jump();
+			
+			FTimerHandle MemberTimerHandle; 
+			GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f, false); 
+		}
 	}
 
 	RobotCharacter->OnPulse(); 
