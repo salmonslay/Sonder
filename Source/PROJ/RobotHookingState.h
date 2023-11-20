@@ -149,7 +149,7 @@ private:
 
 	/** Run on server when hook is fully retracted regardless if it hit Soul or an obstacle */
 	UFUNCTION(Server, Reliable)
-	void ServerRPCHookShotEnd(UCableComponent* HookCableComp, ARobotStateMachine* RobotChar, const bool bHasATarget);
+	void ServerRPCHookShotEnd(ARobotStateMachine* RobotChar, const FVector& NewVel);
 
 	/** Run for everyone when hook is fully retracted regardless if it hit Soul or an obstacle */
 	UFUNCTION(NetMulticast, Reliable)

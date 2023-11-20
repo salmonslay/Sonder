@@ -92,11 +92,19 @@ void URobotHookingState::Exit()
 	if(!RobotCharacter->InputEnabled())
 		RobotCharacter->EnableInput(RobotCharacter->GetLocalViewingPlayerController());
 
-	RobotCharacter->SetCanBeDamaged(true);
+	PlayerOwner->SetCanBeDamaged(true);
 
-	PlayerOwner->GetCapsuleComponent()->OnComponentBeginOverlap.RemoveDynamic(this, &URobotHookingState::ActorOverlap); 
+	PlayerOwner->GetCapsuleComponent()->OnComponentBeginOverlap.RemoveDynamic(this, &URobotHookingState::ActorOverlap);
+
+	// Calculate new velocity, defaulting at current velocity 
+	const auto MovementComp = PlayerOwner->GetCharacterMovement();
+	FVector NewVel = MovementComp->Velocity; 
 	
-	ServerRPCHookShotEnd(HookCable, RobotCharacter, bTravellingTowardsTarget);
+	// If targeted a static hook or Soul 
+	if(bTravellingTowardsTarget) // Set velocity to zero if Soul otherwise keep some momentum 
+		NewVel = bHookTargetIsSoul ? FVector::ZeroVector : MovementComp->Velocity / VelocityDivOnReachedHook;
+	
+	ServerRPCHookShotEnd(RobotCharacter, NewVel);
 	
 	bTravellingTowardsTarget = false;
 }
@@ -242,7 +250,7 @@ void URobotHookingState::ServerRPCStartTravel_Implementation()
 		return;
 	
 	// Invincible during hook shot, needs to be set on server 
-	RobotCharacter->SetCanBeDamaged(false); 
+	PlayerOwner->SetCanBeDamaged(false); 
 	
 	MulticastRPCStartTravel(); 
 }
@@ -349,7 +357,7 @@ void URobotHookingState::MulticastRPCHookShotEnd_Implementation(ARobotStateMachi
 	RobotChar->OnHookShotEnd(); 
 }
 
-void URobotHookingState::ServerRPCHookShotEnd_Implementation(UCableComponent* HookCableComp, ARobotStateMachine* RobotChar, const bool bHasATarget)
+void URobotHookingState::ServerRPCHookShotEnd_Implementation(ARobotStateMachine* RobotChar, const FVector& NewVel)
 {
 	if(!PlayerOwner->HasAuthority())
 		return;
@@ -357,10 +365,8 @@ void URobotHookingState::ServerRPCHookShotEnd_Implementation(UCableComponent* Ho
 	const auto MovementComp = PlayerOwner->GetCharacterMovement(); 
 
 	MovementComp->GravityScale = DefaultGravityScale;
-
-	// If targeted a static hook or Soul 
-	if(bHasATarget) // Set velocity to zero if Soul otherwise keep some momentum 
-		MovementComp->Velocity = bHookTargetIsSoul ? FVector::ZeroVector : MovementComp->Velocity / VelocityDivOnReachedHook; 
+	
+	MovementComp->Velocity = NewVel; 
 
 	MulticastRPCHookShotEnd(RobotChar); 
 }
