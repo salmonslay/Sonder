@@ -80,7 +80,8 @@ void ACombatManager::RemoveEnemy(AEnemyCharacter* Enemy)
 		bCombatEnded = true;
 		GetWorldTimerManager().ClearTimer(WaveWaitTimerHandle);
 		OnCombatEnd();
-		EndCombatTriggeredActor->TriggeredEvent();
+		if(EndCombatTriggeredActor)
+			EndCombatTriggeredActor->TriggeredEvent();
 	}
 }
 
@@ -90,20 +91,23 @@ void ACombatManager::StartCombat()
 	{
 		bCombatStarted = true;
 		OnCombatBegin();
-		StartCombatTriggeredActor->TriggeredEvent();
+		if(StartCombatTriggeredActor)
+			StartCombatTriggeredActor->TriggeredEvent();
 	}
 }
 
 void ACombatManager::OnRep_CombatStarted()
 {
 	OnCombatBegin();
-	StartCombatTriggeredActor->TriggeredEvent();
+	if(StartCombatTriggeredActor)
+		StartCombatTriggeredActor->TriggeredEvent();
 }
 
 void ACombatManager::OnRep_CombatEnded()
 {
 	OnCombatEnd();
-	EndCombatTriggeredActor->TriggeredEvent();
+	if(EndCombatTriggeredActor)
+		EndCombatTriggeredActor->TriggeredEvent();
 }
 
 void ACombatManager::HandleSpawn()
