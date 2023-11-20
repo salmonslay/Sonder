@@ -11,6 +11,12 @@
 #include "SoulCharacter.h"
 #include "Chaos/CollisionResolutionUtil.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Net/UnrealNetwork.h"
+
+URobotBaseState::URobotBaseState()
+{
+	SetIsReplicatedByDefault(true); 
+}
 
 void URobotBaseState::Enter()
 {
@@ -18,6 +24,8 @@ void URobotBaseState::Enter()
 
 	if(!RobotCharacter)
 		RobotCharacter = Cast<ARobotStateMachine>(PlayerOwner);
+
+	DefaultWalkSpeed = PlayerOwner->GetCharacterMovement()->MaxWalkSpeed; 
 }
 
 void URobotBaseState::Update(const float DeltaTime)
@@ -50,11 +58,68 @@ void URobotBaseState::Exit()
 	
 }
 
+void URobotBaseState::ApplySoulDashBuff()
+{
+	// Clear timer so it resets if there already is an existing buff, then start it again 
+	GetWorld()->GetTimerManager().ClearTimer(BuffTimerHandle);
+	GetWorld()->GetTimerManager().SetTimer(BuffTimerHandle, this, &URobotBaseState::ResetDashBuff, DashBuffLength);
+
+	// TODO: idk if we want to fire event again if buffed while already buffed. the rest does not need to update 
+	if(!bHasDashBuff) 
+		ServerRPC_DashBuffStart(); 
+}
+
+void URobotBaseState::ServerRPC_DashBuffStart_Implementation()
+{
+	if(!PlayerOwner->HasAuthority())
+		return;
+
+	bHasDashBuff = true;
+	
+	MulticastRPC_DashBuffStart(); 
+}
+
+void URobotBaseState::MulticastRPC_DashBuffStart_Implementation()
+{
+	PlayerOwner->GetCharacterMovement()->MaxWalkSpeed = WalkSpeedWhenBuffed;
+	
+	RobotCharacter->OnDashBuffStart(); 
+}
+
+void URobotBaseState::ResetDashBuff()
+{
+	ServerRPC_DashBuffEnd(); 
+}
+
+void URobotBaseState::ServerRPC_DashBuffEnd_Implementation()
+{
+	if(!PlayerOwner->HasAuthority())
+		return;
+	
+	bHasDashBuff = false; 
+
+	MulticastRPC_DashBuffEnd(); 
+}
+
+void URobotBaseState::MulticastRPC_DashBuffEnd_Implementation()
+{
+	PlayerOwner->GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
+	
+	RobotCharacter->OnDashBuffEnd(); 
+}
+
 void URobotBaseState::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
 	GetWorld()->GetTimerManager().ClearAllTimersForObject(this); 
+}
+
+void URobotBaseState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(URobotBaseState, bHasDashBuff)
 }
 
 void URobotBaseState::ShootHook()
