@@ -4,6 +4,7 @@
 #include "RobotBaseState.h"
 
 #include "CollisionDebugDrawingPublic.h"
+#include "EnemyCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "RobotHookingState.h"
 #include "PulseObjectComponent.h"
@@ -46,6 +47,8 @@ void URobotBaseState::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
 		InputComp->BindAction(HookShotInputAction, ETriggerEvent::Started, this, &URobotBaseState::ShootHook);
 
 		InputComp->BindAction(PulseInputAction, ETriggerEvent::Started, this, &URobotBaseState::Pulse);
+
+		InputComp->BindAction(AbilityInputAction, ETriggerEvent::Started, this, &URobotBaseState::ActivateAbilities);
 		
 		bHasSetUpInput = true; 
 	}
@@ -124,7 +127,7 @@ void URobotBaseState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 
 void URobotBaseState::ShootHook()
 {
-	if(bHookShotOnCooldown)
+	if(bHookShotOnCooldown || !RobotCharacter->AbilityTwo)
 		return; 
 	
 	// UE_LOG(LogTemp, Warning, TEXT("Fired hook"))
@@ -142,7 +145,7 @@ void URobotBaseState::Pulse()
 {
 	// Ensure player cant spam attack and is locally controlled 
 	// Only run locally 
-	if(bPulseCoolDownActive || !PlayerOwner->IsLocallyControlled())
+	if(bPulseCoolDownActive || !PlayerOwner->IsLocallyControlled() || !RobotCharacter->AbilityOne)
 		return;
 
 	bPulseCoolDownActive = true;
@@ -205,8 +208,21 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 			FTimerHandle MemberTimerHandle; 
 			GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f, false); 
 		}
+
+		if(Actor->ActorHasTag(FName("Enemy")))
+		{
+			Cast<AEnemyCharacter>(Actor)->Stun(3.0f);
+			UE_LOG(LogTemp, Warning, TEXT("Stun"));
+		}
 	}
 
 	RobotCharacter->OnPulse(); 
 }
+
+void URobotBaseState::ActivateAbilities()
+{
+	RobotCharacter->AbilityOne = true;
+	RobotCharacter->AbilityTwo = true;
+}
+
 

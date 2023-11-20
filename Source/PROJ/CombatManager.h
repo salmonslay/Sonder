@@ -8,6 +8,7 @@
 #include "CombatManager.generated.h"
 
 
+class ACombatTriggeredBase;
 class ACombatTrigger;
 class AEnemyCharacter;
 class UBoxComponent;
@@ -37,6 +38,9 @@ struct FEnemyWave
 	//Time to spawn once the threshold has been met
 	UPROPERTY(EditAnywhere, Category="Enemy Spawn Wave")
 	int TimeToWaveAfterEnemiesKilled;
+
+	UPROPERTY(EditAnywhere, Category="Enemy Spawn Wave")
+	ACombatTriggeredBase* WaveStartedTriggeredActor;
 };
 
 UCLASS()
@@ -72,6 +76,12 @@ public:
 	//Used instead Enemies.Num() because it needs to be increased as the spawns are queued and not when they are instanced
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemies")
 	int NumActiveEnemies = 0;
+
+	UPROPERTY(EditAnywhere, Category="TriggeredActors")
+	ACombatTriggeredBase* StartCombatTriggeredActor;
+
+	UPROPERTY(EditAnywhere, Category="TriggeredActors")
+	ACombatTriggeredBase* EndCombatTriggeredActor;
 
 	//Array of all the waves to spawn, set in editor
 	UPROPERTY(EditAnywhere, Category="Spawn")

@@ -3,6 +3,7 @@
 #include "CombatManager.h"
 
 #include "CombatTrigger.h"
+#include "CombatTriggeredBase.h"
 #include "EnemyCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Net/UnrealNetwork.h"
@@ -79,6 +80,8 @@ void ACombatManager::RemoveEnemy(AEnemyCharacter* Enemy)
 		bCombatEnded = true;
 		GetWorldTimerManager().ClearTimer(WaveWaitTimerHandle);
 		OnCombatEnd();
+		if(EndCombatTriggeredActor)
+			EndCombatTriggeredActor->TriggeredEvent();
 	}
 }
 
@@ -88,28 +91,39 @@ void ACombatManager::StartCombat()
 	{
 		bCombatStarted = true;
 		OnCombatBegin();
+		if(StartCombatTriggeredActor)
+			StartCombatTriggeredActor->TriggeredEvent();
 	}
 }
 
 void ACombatManager::OnRep_CombatStarted()
 {
 	OnCombatBegin();
+	if(StartCombatTriggeredActor)
+		StartCombatTriggeredActor->TriggeredEvent();
 }
 
 void ACombatManager::OnRep_CombatEnded()
 {
 	OnCombatEnd();
+	if(EndCombatTriggeredActor)
+		EndCombatTriggeredActor->TriggeredEvent();
 }
 
 void ACombatManager::HandleSpawn()
 {
 	bWaitingForWave = false;
 	const FEnemyWave Wave = WavesQueue[0];
-	NumActiveEnemies += Wave.NumEnemies;
-	for(int i = 0; i < Wave.NumEnemies; i++)
+	if(Wave.SpawnPoints.Num() > 0)
 	{
-		Wave.SpawnPoints[i % Wave.SpawnPoints.Num()]->AddEnemyToSpawn(Wave.EnemyClass);
+		NumActiveEnemies += Wave.NumEnemies;
+		for(int i = 0; i < Wave.NumEnemies; i++)
+		{
+			Wave.SpawnPoints[i % Wave.SpawnPoints.Num()]->AddEnemyToSpawn(Wave.EnemyClass);
+		}
 	}
+	if(Wave.WaveStartedTriggeredActor)
+		Wave.WaveStartedTriggeredActor->TriggeredEvent();
 	WavesQueue.RemoveAt(0);
 }
 
