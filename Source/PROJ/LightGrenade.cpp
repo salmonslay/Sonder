@@ -22,6 +22,9 @@ ALightGrenade::ALightGrenade()
 	GrenadeMesh = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("GrenadeMesh"));
 	GrenadeMesh->SetupAttachment(ExplosionArea);
 
+	CollisionArea = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionArea"));
+	CollisionArea->SetupAttachment(ExplosionArea);
+	
 	
 	
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
@@ -36,11 +39,11 @@ void ALightGrenade::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	UE_LOG(LogTemp, Warning, TEXT("Begin"));
-
-	ExplosionArea->OnComponentBeginOverlap.AddDynamic(this,&ALightGrenade::ActorBeginOverlap);
 	
 
+	CollisionArea->OnComponentBeginOverlap.AddDynamic(this,&ALightGrenade::ActorBeginOverlap);
+	
+	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap); 
 	ExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap); 
 	
 }
@@ -59,6 +62,8 @@ void ALightGrenade::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(ALightGrenade,  bCanThrow);
+
+	DOREPLIFETIME(ALightGrenade,  bIsExploding);
 }
 
 
@@ -94,8 +99,6 @@ void ALightGrenade::MulticastRPCThrow_Implementation()
 		EnableGrenade();
 
 		ExplosionArea->SetWorldLocation(Player->ThrowLoc->GetComponentLocation()); 
-
-		
 		
 		FVector LandingLoc = ExplosionArea->GetComponentLocation() + (Player->GetActorForwardVector()) - Player->GetActorLocation();
 
@@ -103,7 +106,6 @@ void ALightGrenade::MulticastRPCThrow_Implementation()
 	
 		ExplosionArea->SetPhysicsLinearVelocity(LandingLoc*FireSpeed);
 		
-
 		bCanThrow = false;
 
 		StartCountdown(10.0f);
@@ -121,11 +123,15 @@ void ALightGrenade::ActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 		{
 			
 			StartCountdown(ExplodeTimeFast);
-		}else if (OtherActor)
+			
+		}else if (OtherActor || OtherComp || OverlappedComponent)
 		{
-			if (!bIsExploding)
+
+			StartCountdown(ExplodeTimeSlow);
+			if (bIsExploding == false)
 			{
-				StartCountdown(ExplodeTimeSlow);
+				
+				
 			}
 			
 		}
@@ -140,7 +146,7 @@ void ALightGrenade::ServerRPCExplosion_Implementation()
 	if(!this->HasAuthority())
 		return; 
 	
-
+	UE_LOG(LogTemp, Warning, TEXT("Server Explode"));
 	bIsExploding = true;
 	MulticastRPCExplosion();
 }
@@ -154,13 +160,14 @@ void ALightGrenade::MulticastRPCExplosion_Implementation()
 	ExplosionArea->GetOverlappingActors(OverlapingActors,AActor::StaticClass());
 	
 	DisableGrenade();
-
+	
+	bIsExploding = false;
 
 	for (AActor* OverlapingActor : OverlapingActors)
 	{
 		if(!OverlapingActor->ActorHasTag("Player"))
 		{
-			UE_LOG(LogTemp, Warning, TEXT("did damage"));
+			UE_LOG(LogClass, Log, TEXT("did dmg"));
 			
 			OverlapingActor->TakeDamage(Damage, FDamageEvent(), Controller, this);
 		}
@@ -177,10 +184,10 @@ void ALightGrenade::EnableCanThrow()
 
 void ALightGrenade::DisableGrenade()
 {
-	//this->SetHidden(true);
-	ExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	
+	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	GrenadeMesh->SetVisibility(false);
-	bIsExploding = false;
+	
 	
 	
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::EnableCanThrow, ThrowCooldown);
@@ -189,9 +196,10 @@ void ALightGrenade::DisableGrenade()
 
 void ALightGrenade::EnableGrenade()
 {
-	ExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	GrenadeMesh->SetVisibility(true);
-	//this->SetHidden(false);
+	
+	
 	
 	
 }
@@ -199,7 +207,7 @@ void ALightGrenade::EnableGrenade()
 void ALightGrenade::StartCountdown(float TimeUntilExplosion)
 {
 	bIsExploding = true;
-	 
+	UE_LOG(LogTemp, Warning, TEXT("Countdown Started"));
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::ServerRPCExplosion, TimeUntilExplosion);
 }
 

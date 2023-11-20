@@ -33,6 +33,9 @@ public:
 	UPROPERTY(BlueprintReadWrite,EditDefaultsOnly)
 	USphereComponent* ExplosionArea = nullptr;
 
+	UPROPERTY(BlueprintReadWrite,EditDefaultsOnly)
+	USphereComponent* CollisionArea = nullptr;
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void ExplosionEvent();
 
@@ -53,6 +56,12 @@ public:
 	/** How long time needs to pass between attacks */
 	UPROPERTY(EditAnywhere)
 	float ThrowCooldown = 5.0f;
+
+	UPROPERTY()
+	float TimePressed;
+
+	UPROPERTY()
+	float MaxTimePressed;
 
 
 private:
@@ -78,7 +87,7 @@ private:
 
 	bool bCanOverlap = false;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	bool bIsExploding = false;
 
 	void EnableCanThrow();
