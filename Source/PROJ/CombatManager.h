@@ -111,7 +111,7 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StartCombat();
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(BlueprintReadOnly, Replicated)
 	int CurrentWave = 0;
 
 	UFUNCTION(BlueprintPure)
