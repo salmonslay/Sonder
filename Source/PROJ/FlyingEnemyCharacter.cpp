@@ -3,9 +3,6 @@
 
 #include "FlyingEnemyCharacter.h"
 
-#include "Components/SpotLightComponent.h"
-
-
 void AFlyingEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
