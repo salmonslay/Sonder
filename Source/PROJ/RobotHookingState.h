@@ -31,12 +31,14 @@ private:
 	AActor* SoulCharacter; 
 	
 	UPROPERTY()
-	FVector CurrentHookTarget;
+	FVector CurrentHookTargetLocation;
 
 	UPROPERTY()
 	class ARobotStateMachine* RobotCharacter;
 
 	bool bTravellingTowardsTarget = false;
+
+	bool bHookTargetIsSoul = false; 
 
 	/** How close the player needs to be for it to be considered as reached target */
 	float ReachedTargetDistTolerance = 50.f;
@@ -71,10 +73,24 @@ private:
 
 	/** How far the hook should shoot out (max distance) when it hits a block or has no valid target */
 	UPROPERTY(EditAnywhere)
-	float MaxHookShotDistanceOnBlock = 1000.f; 
+	float MaxHookShotDistanceOnBlock = 1000.f;
+
+	/** Spawns this actor on collision with Soul. The spawned class handles damage */
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<class AHookExplosionActor> ExplosionClassToSpawnOnCollWithSoul;
+
+	/** Location at the start of the hook shot, used to determine travel length */
+	FVector StartLocation;
+
+	/** Velocity divisor to apply when reaching a static hook */
+	UPROPERTY(EditAnywhere)
+	float VelocityDivOnReachedHook = 1.2f; 
 
 	/** Returns the HookTarget if there is no available target, ensuring hook is shot forwards */
-	FVector GetTargetOnNothingInFront() const; 
+	FVector GetTargetOnNothingInFront() const;
+
+	UPROPERTY(EditAnywhere)
+	float HookTravelDamageAmount = 3.f; 
 	
 	/** Returns false if there was a block */
 	bool SetHookTarget();
@@ -133,10 +149,16 @@ private:
 
 	/** Run on server when hook is fully retracted regardless if it hit Soul or an obstacle */
 	UFUNCTION(Server, Reliable)
-	void ServerRPCHookShotEnd(UCableComponent* HookCableComp, ARobotStateMachine* RobotChar, const bool bResetVel);
+	void ServerRPCHookShotEnd(ARobotStateMachine* RobotChar, const FVector& NewVel);
 
 	/** Run for everyone when hook is fully retracted regardless if it hit Soul or an obstacle */
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCHookShotEnd(ARobotStateMachine* RobotChar);
+
+	UFUNCTION()
+	void ActorOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult); 
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_DamageActor(AActor* ActorToDamage); 
 	
 };

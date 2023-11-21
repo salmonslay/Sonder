@@ -69,11 +69,13 @@ void AProjPlayerController::OnFinishSeamlessTravel()
 	TArray<AActor*> PlayerStarts;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), PlayerStarts);
 
-	if (PlayerStarts.Num() < 2)
+	if (PlayerStarts.Num() == 0)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Not enough player starts found (%d)"), PlayerStarts.Num());
+		UE_LOG(LogTemp, Error, TEXT("No player starts found"));
 		return;
 	}
+
+	playerSpawnPoint = PlayerStarts[0]; // the first checkpoint is a fallback
 
 	APROJGameMode* Gm = Cast<APROJGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
@@ -81,15 +83,32 @@ void AProjPlayerController::OnFinishSeamlessTravel()
 	{
 		FActorSpawnParameters SpawnParam;
 		SpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-
-		UClass* RobotClass = Gm->PlayerPawnClasses[0];
 		UClass* SoulClass = Gm->PlayerPawnClasses[1];
+		UClass* RobotClass = Gm->PlayerPawnClasses[0];
 
 		UClass* PickedClass = UGameplayStatics::GetActorOfClass(GetWorld(), RobotClass) ? SoulClass : RobotClass;
-		const AActor* StartPoint = PickedClass == RobotClass ? PlayerStarts[0] : PlayerStarts[1];
+		FName ClassTag = PickedClass == SoulClass ? FName("Soul") : FName("Robot");
 
-		APROJCharacter* Hero = GetWorld()->SpawnActor<APROJCharacter>(PickedClass, StartPoint->GetTransform(), SpawnParam);
+		// iter through all playerstarts
+		TArray<AActor*> AllPlayerStarts;
+		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), AllPlayerStarts);
+		for (auto& PlayerStart : AllPlayerStarts)
+		{
+			if (PlayerStart->ActorHasTag(ClassTag))
+			{
+				playerSpawnPoint = PlayerStart;
+				UE_LOG(LogTemp, Warning, TEXT("Using player start override with tag %s"), *ClassTag.ToString());
+				break;
+			}
+		}
+
+		APROJCharacter* Hero = GetWorld()->SpawnActor<APROJCharacter>(PickedClass, playerSpawnPoint->GetTransform(),
+		                                                              SpawnParam);
 		this->Possess(Hero);
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("No PROJGameMode found."));
 	}
 }
 

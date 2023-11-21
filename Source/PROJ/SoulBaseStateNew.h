@@ -6,6 +6,7 @@
 #include "PlayerCharState.h"
 #include "SoulBaseStateNew.generated.h"
 
+struct FInputActionInstance;
 /**
  * This is the base/default state that is used by the soul character, i.e. when running around "normally" 
  */
@@ -15,7 +16,6 @@ class PROJ_API USoulBaseStateNew : public UPlayerCharState
 	GENERATED_BODY()
 
 public:
-
 	virtual void Enter() override;
 
 	virtual void Update(const float DeltaTime) override;
@@ -26,32 +26,54 @@ public:
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-private:
+	UPROPERTY(BlueprintReadOnly)
+	bool bDashCoolDownActive = false;
 
+private:
 	UPROPERTY(EditAnywhere)
 	class UInputAction* DashInputAction;
 
 	UPROPERTY(EditAnywhere)
 	UInputAction* ThrowGrenadeInputAction;
 
-	/** Run locally and called when player presses the dash-button */ 
+	UPROPERTY(EditAnywhere)
+	class UInputAction* AbilityInputAction;
+
+	/** Run locally and called when player presses the dash-button */
+	/** Run locally and called when player presses the dash-button */
 	void Dash();
+
+	void GetTimeHeld(const FInputActionInstance& Instance);
 
 	void ThrowGrenade();
 
+	UFUNCTION(Server, Reliable)
+	void ServerRPCThrowGrenade();
+
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCThrowGrenade();
+
 	UPROPERTY()
-	class ALightGrenade* LightGrenade;
+	class AActor* LightGrenade;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> LightGrenadeRef;
 
 	UPROPERTY()
 	class ASoulCharacter* SoulCharacter;
 
 	UPROPERTY(EditAnywhere)
-	float DashCooldown = 1.f; 
-
-	bool bDashCoolDownActive = false;
+	float DashCooldown = 1.f;
 
 	void DisableDashCooldown() { bDashCoolDownActive = false; }
-	
-	bool bHasSetUpInput = false; 
-	
+
+	bool bHasSetUpInput = false;
+
+	UPROPERTY(Replicated)
+	float TimeHeld;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	void ActivateAbilities();
 };

@@ -13,7 +13,8 @@ AHookShotAttachment::AHookShotAttachment()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false; // Note Tick is turned off. TODO: We might want Tick for ev. signifiers 
 
-	HookMesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("Hook Mesh")); 
+	HookMesh = CreateDefaultSubobject<UStaticMeshComponent>(FName("Hook Mesh"));
+	HookMesh->SetupAttachment(RootComponent); 
 }
 
 // Called when the game starts or when spawned

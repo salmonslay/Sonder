@@ -11,8 +11,10 @@
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 #include "CableComponent.h"
+#include "HookExplosionActor.h"
 #include "HookShotAttachment.h"
 #include "StaticsHelper.h"
+#include "Engine/DamageEvents.h"
 #include "Net/UnrealNetwork.h"
 
 void URobotHookingState::Enter()
@@ -33,7 +35,9 @@ void URobotHookingState::Enter()
 
 	DefaultGravityScale = MovementComponent->GravityScale;
 
-	FailSafeTimer = 0; 
+	FailSafeTimer = 0;
+
+	StartLocation = PlayerOwner->GetActorLocation();
 
 	// No blocking objects 
 	if(SetHookTarget())
@@ -46,6 +50,8 @@ void URobotHookingState::Enter()
 		
 		// UE_LOG(LogTemp, Warning, TEXT("Block between player"))
 	}
+
+	PlayerOwner->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &URobotHookingState::ActorOverlap); 
 	
 	ShootHook(); 
 }
@@ -85,8 +91,20 @@ void URobotHookingState::Exit()
 
 	if(!RobotCharacter->InputEnabled())
 		RobotCharacter->EnableInput(RobotCharacter->GetLocalViewingPlayerController());
+
+	PlayerOwner->SetCanBeDamaged(true);
+
+	PlayerOwner->GetCapsuleComponent()->OnComponentBeginOverlap.RemoveDynamic(this, &URobotHookingState::ActorOverlap);
+
+	// Calculate new velocity, defaulting at current velocity 
+	const auto MovementComp = PlayerOwner->GetCharacterMovement();
+	FVector NewVel = MovementComp->Velocity; 
 	
-	ServerRPCHookShotEnd(HookCable, RobotCharacter, bTravellingTowardsTarget);
+	// If targeted a static hook or Soul 
+	if(bTravellingTowardsTarget) // Set velocity to zero if Soul otherwise keep some momentum 
+		NewVel = bHookTargetIsSoul ? FVector::ZeroVector : MovementComp->Velocity / VelocityDivOnReachedHook;
+	
+	ServerRPCHookShotEnd(RobotCharacter, NewVel);
 	
 	bTravellingTowardsTarget = false;
 }
@@ -106,20 +124,24 @@ bool URobotHookingState::SetHookTarget()
 	if(!SoulCharacter)
 	{
 		UE_LOG(LogTemp, Error, TEXT("No soul in SetHookTarget"))
-		CurrentHookTarget = PlayerOwner->GetActorLocation(); 
+		CurrentHookTargetLocation = PlayerOwner->GetActorLocation(); 
 		return false;
 	}
 	
-	CurrentHookTarget = HitActorTarget ? HitActorTarget->GetActorLocation() : HitResult.Location;
+	CurrentHookTargetLocation = HitActorTarget ? HitActorTarget->GetActorLocation() : HitResult.Location;
 
 	// Offset target location if targeting Soul 
 	if(HitActorTarget == SoulCharacter)
-		CurrentHookTarget += FVector::UpVector * ZSoulTargetOffset;
+	{
+		CurrentHookTargetLocation += FVector::UpVector * ZSoulTargetOffset;
+		bHookTargetIsSoul = true; 
+	} else
+		bHookTargetIsSoul = false; 
 
-	if(!StaticsHelper::ActorIsInFront(RobotCharacter, CurrentHookTarget))
+	if(!StaticsHelper::ActorIsInFront(RobotCharacter, CurrentHookTargetLocation))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Target not in front of player"))
-		CurrentHookTarget = GetTargetOnNothingInFront(); 
+		CurrentHookTargetLocation = GetTargetOnNothingInFront(); 
 		return false; 
 	}
 
@@ -152,21 +174,18 @@ AActor* URobotHookingState::DoLineTrace(FHitResult& HitResultOut)
 	}
 
 	const FVector StartLoc = PlayerOwner->GetActorLocation();
-	FVector EndLoc = CurrentHookTarget;
+	FVector EndLoc = CurrentHookTargetLocation;
 
 	AHookShotAttachment* HookTarget = nullptr;
 	bool bTargetingSoul = true; 
 
-	// Set new end location if player is not actively travelling towards target 
+	// Set new end loc if player does not already have a target 
 	if(!bTravellingTowardsTarget)
 	{
 		EndLoc = SoulCharacter->GetActorLocation(); // Default target is Soul
 
-		const FVector DirToSoul = EndLoc - RobotCharacter->GetActorLocation();
-		const bool bSoulInFrontRobot = FVector::DotProduct(RobotCharacter->GetActorForwardVector(), DirToSoul) >= 0;
-
 		// If Soul is NOT in front of Robot, only then check if there is a possible hook point to target 
-		if(!bSoulInFrontRobot)
+		if(!StaticsHelper::ActorIsInFront(RobotCharacter, EndLoc))
 		{
 			// Set EndLoc to Hook location of there is an eligible hook target 
 			HookTarget = AHookShotAttachment::GetHookToTarget(RobotCharacter); 
@@ -176,7 +195,8 @@ AActor* URobotHookingState::DoLineTrace(FHitResult& HitResultOut)
 				bTargetingSoul = false; 
 			}
 		}
-	}
+	} else if(bHookTargetIsSoul) // Update target loc if target is Soul, Soul could've moved 
+		CurrentHookTargetLocation = SoulCharacter->GetActorLocation(); 
 	
 	// GetWorld()->LineTraceSingleByChannel(HitResult, StartLoc, EndLoc, ECC_Pawn, Params);
 
@@ -212,7 +232,7 @@ void URobotHookingState::ShootHook()
 {
 	// Shoots the hook outwards
 
-	ServerRPCHookShotStart(HookCable, CurrentHookTarget, RobotCharacter); 
+	ServerRPCHookShotStart(HookCable, CurrentHookTargetLocation, RobotCharacter); 
 }
 
 void URobotHookingState::StartTravelToTarget()
@@ -228,8 +248,9 @@ void URobotHookingState::ServerRPCStartTravel_Implementation()
 {
 	if(!PlayerOwner->HasAuthority())
 		return;
-
-	// MovementComponent->GravityScale = 0;
+	
+	// Invincible during hook shot, needs to be set on server 
+	PlayerOwner->SetCanBeDamaged(false); 
 	
 	MulticastRPCStartTravel(); 
 }
@@ -244,14 +265,17 @@ void URobotHookingState::TravelTowardsTarget(const float DeltaTime)
 {
 	// UE_LOG(LogTemp, Warning, TEXT("Travelling towards player"))
 
-	if(FVector::Dist(PlayerOwner->GetActorLocation(), CurrentHookTarget) < ReachedTargetDistTolerance)
+	if(FVector::Dist(PlayerOwner->GetActorLocation(), CurrentHookTargetLocation) < ReachedTargetDistTolerance)
 	{
-		CollidedWithSoul(); // TODO: Check if Robot is travelling towards Soul or Hook 
+		// Check if Soul and trigger explosion event 
+		if(bHookTargetIsSoul)
+			CollidedWithSoul();
+		
 		EndHookShot();
 		return; 
 	}
 
-	const FVector Direction = (CurrentHookTarget - PlayerOwner->GetActorLocation()).GetSafeNormal();
+	const FVector Direction = (CurrentHookTargetLocation - PlayerOwner->GetActorLocation()).GetSafeNormal();
 
 	ServerTravelTowardsTarget(DeltaTime, Direction); 
 }
@@ -279,15 +303,15 @@ void URobotHookingState::RetractHook(const float DeltaTime)
 	// Shooting towards Soul 
 	if(bTravellingTowardsTarget)
 	{
-		const FVector EndLocRelToOwner = PlayerOwner->GetTransform().InverseTransformPosition(CurrentHookTarget);
+		const FVector EndLocRelToOwner = PlayerOwner->GetTransform().InverseTransformPosition(CurrentHookTargetLocation);
 		ServerRPC_RetractHook(EndLocRelToOwner); 
 	} else // Hit a blocking object 
 	{
-		const FVector DirToPlayer = (PlayerOwner->GetActorLocation() - CurrentHookTarget).GetSafeNormal();
-		CurrentHookTarget += DirToPlayer * DeltaTime * RetractHookOnMissSpeed; // Move current target closer to player 
+		const FVector DirToPlayer = (PlayerOwner->GetActorLocation() - CurrentHookTargetLocation).GetSafeNormal();
+		CurrentHookTargetLocation += DirToPlayer * DeltaTime * RetractHookOnMissSpeed; // Move current target closer to player 
 
 		// Set new end loc for the cable 
-		const FVector EndLocRelToOwner = PlayerOwner->GetTransform().InverseTransformPosition(CurrentHookTarget);
+		const FVector EndLocRelToOwner = PlayerOwner->GetTransform().InverseTransformPosition(CurrentHookTargetLocation);
 
 		ServerRPC_RetractHook(EndLocRelToOwner); 
 	}
@@ -295,6 +319,21 @@ void URobotHookingState::RetractHook(const float DeltaTime)
 	// Fully retracted hook, change back to base state 
 	if(HookCable->EndLocation.Equals(HookCable->GetRelativeLocation(), 10.f)) 
 		EndHookShot(); 
+}
+
+void URobotHookingState::ActorOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
+	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+{
+	// Do not damage players 
+	if(!PlayerOwner->IsLocallyControlled() || Cast<APROJCharacter>(OtherActor))
+		return;
+
+	ServerRPC_DamageActor(OtherActor); 
+}
+
+void URobotHookingState::ServerRPC_DamageActor_Implementation(AActor* ActorToDamage)
+{
+	ActorToDamage->TakeDamage(HookTravelDamageAmount, FDamageEvent(), PlayerOwner->GetInstigatorController(), PlayerOwner); 
 }
 
 void URobotHookingState::MulticastRPC_RetractHook_Implementation(const FVector& NewEndLocation)
@@ -318,7 +357,7 @@ void URobotHookingState::MulticastRPCHookShotEnd_Implementation(ARobotStateMachi
 	RobotChar->OnHookShotEnd(); 
 }
 
-void URobotHookingState::ServerRPCHookShotEnd_Implementation(UCableComponent* HookCableComp, ARobotStateMachine* RobotChar, const bool bResetVel)
+void URobotHookingState::ServerRPCHookShotEnd_Implementation(ARobotStateMachine* RobotChar, const FVector& NewVel)
 {
 	if(!PlayerOwner->HasAuthority())
 		return;
@@ -326,9 +365,8 @@ void URobotHookingState::ServerRPCHookShotEnd_Implementation(UCableComponent* Ho
 	const auto MovementComp = PlayerOwner->GetCharacterMovement(); 
 
 	MovementComp->GravityScale = DefaultGravityScale;
-
-	if(bResetVel)
-		MovementComp->Velocity = FVector::ZeroVector;
+	
+	MovementComp->Velocity = NewVel; 
 
 	MulticastRPCHookShotEnd(RobotChar); 
 }
@@ -379,5 +417,23 @@ void URobotHookingState::ServerRPCHookCollision_Implementation()
 
 void URobotHookingState::MulticastRPCHookCollision_Implementation()
 {
+	/**
+	 * Note: according to what I can gather, spawning on server should spawn on clients but does not seem to be the
+	 * case here? So I'm spawning the explosion actor for all players instead.
+	 * TODO: Object pooling? Different actor overkill? Just do damage etc. here directly instead? 
+	 */
+	
+	// Source to spawn "with construct parameters": https://forums.unrealengine.com/t/spawning-an-actor-with-parameters/329151/6
+
+	// Spawns the explosion actor and passes the relevant information 
+	const FTransform SpawnTransform(FRotator::ZeroRotator, PlayerOwner->GetActorLocation());
+	if (const auto ExplosionActor = Cast<AHookExplosionActor>(UGameplayStatics::BeginDeferredActorSpawnFromClass(this, ExplosionClassToSpawnOnCollWithSoul, SpawnTransform)))
+	{
+		const float TravelDistance = FVector::Dist(StartLocation, PlayerOwner->GetActorLocation()); 
+		ExplosionActor->Initialize(TravelDistance, PlayerOwner); 
+
+		UGameplayStatics::FinishSpawningActor(ExplosionActor, SpawnTransform);
+	}
+	
 	Cast<ARobotStateMachine>(PlayerOwner)->OnHookExplosion(); 
 }

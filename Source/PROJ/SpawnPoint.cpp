@@ -65,3 +65,8 @@ void ASpawnPoint::TrySpawnNext()
 	}
 }
 
+void ASpawnPoint::DoSpawnEvent_Implementation()
+{
+	OnSpawnEnemy();
+}
+

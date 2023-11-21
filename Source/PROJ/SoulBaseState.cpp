@@ -61,7 +61,7 @@ void USoulBaseState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 void USoulBaseState::Dash()
 {
 	// Only run locally 
-	if(bDashCoolDownActive || !PlayerOwner->IsLocallyControlled())
+	if(bDashCoolDownActive || !PlayerOwner->IsLocallyControlled() || !SoulCharacter->AbilityOne)
 		return;
 
 	PlayerOwner->SwitchState(SoulCharacter->DashingState); 

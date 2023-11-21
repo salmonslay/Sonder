@@ -38,7 +38,10 @@ private:
 	FVector StartLoc;
 
 	UPROPERTY()
-	class URobotHookingState* HookState; 
+	class URobotHookingState* HookState;
+
+	UPROPERTY(EditAnywhere)
+	float DashDamageAmount = 3.f; 
 	
 	/** The impulse/force need to be applied on the server */
 	UFUNCTION(Server, Reliable)
@@ -61,5 +64,14 @@ private:
 
 	UFUNCTION(Client, Reliable)
 	void ClientRPC_CancelHookShot();
+
+	UFUNCTION()
+	void ActorOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult); 
+	
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_DamageActor(AActor* ActorToDamage);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_RobotBuff(class ARobotStateMachine* Robot);
 	
 };
