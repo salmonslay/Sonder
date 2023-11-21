@@ -58,6 +58,7 @@ void UBTService_CanAttackPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 			if (PlayerToAttack && IsValid(PlayerToAttack))
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject("PlayerToAttack", PlayerToAttack);
+				OwnerComp.GetBlackboardComponent()->SetValueAsObject("CurrentTargetPlayer", PlayerToAttack);
 				
 				if (bDebug)
 				{
@@ -67,8 +68,8 @@ void UBTService_CanAttackPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 				
 				OwnerComp.GetBlackboardComponent()->SetValueAsBool("bFoundPlayerWithinAttackRadius", true);
 				break;
-
 			}
+			//OwnerComp.GetBlackboardComponent()->SetValueAsBool("bFoundPlayerWithinAttackRadius", false);
 		}
 	}
 }

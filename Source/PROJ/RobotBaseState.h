@@ -16,8 +16,7 @@ class PROJ_API URobotBaseState : public UPlayerCharState
 	GENERATED_BODY()
 
 public:
-
-	URobotBaseState(); 
+	URobotBaseState();
 
 	virtual void Enter() override;
 
@@ -31,15 +30,13 @@ public:
 
 	/** Returns the multiplier to increase damage with if buffed, will return 1 if not buffed */
 	float GetDamageBoostMultiplier() const { return bHasDashBuff ? BuffedDamageMultiplier : 1; }
-	
+
 protected:
-	
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
-private:
 
+private:
 	UPROPERTY(EditDefaultsOnly)
 	class UInputAction* HookShotInputAction;
 
@@ -48,9 +45,10 @@ private:
 
 	UPROPERTY(EditDefaultsOnly)
 	class UInputAction* AbilityInputAction;
-	
+
+
 	bool bHasSetUpInput = false;
-	
+
 	bool bCanPulse = true;
 
 	ACharacter* PlayerActor;
@@ -60,22 +58,33 @@ private:
 
 	/** Time needed between hook shots */
 	UPROPERTY(EditAnywhere)
-	float HookShotCooldownDelay = 2.f; 
+	float HookShotCooldownDelay = 2.f;
 
 	bool bHookShotOnCooldown = false;
-	
+
+public:
+	UFUNCTION(BlueprintPure)
+	bool IsCanPulse() const { return bCanPulse; }
+
+	UFUNCTION(BlueprintPure)
+	bool IsHookShotOnCooldown() const { return bHookShotOnCooldown; }
+
+	UFUNCTION(BlueprintPure)
+	bool IsPulseCoolDownActive() const { return bPulseCoolDownActive; }
+
+private:
 	UPROPERTY(EditAnywhere)
-	float PulseCooldown = 1.f; 
+	float PulseCooldown = 1.f;
 
 	/** Pulse Cooldown */
 	bool bPulseCoolDownActive = false;
-	
+
 	/** How fast to make Robot upon receiving the Soul dash buff */
 	UPROPERTY(EditAnywhere)
 	float WalkSpeedWhenBuffed = 750.f;
 
 	/** Used to reset walk speed when buff ends, is set in BeginPlay */
-	float DefaultWalkSpeed = 500.f; 
+	float DefaultWalkSpeed = 500.f;
 
 	/** How long the buff should last in seconds */
 	UPROPERTY(EditAnywhere, meta=(Units="seconds"))
@@ -89,21 +98,21 @@ private:
 
 	/** Multiplier to damage when Robot has been buffed by Soul's dash */
 	UPROPERTY(EditAnywhere)
-	float BuffedDamageMultiplier = 2.f; 
-	
+	float BuffedDamageMultiplier = 2.f;
+
 	/** Function firing when player presses button to request hook shot */
 	void ShootHook();
 
 	void Pulse();
 
 	UFUNCTION(Server, Reliable)
-	void ServerRPCPulse(); 
+	void ServerRPCPulse();
 
 	/** Pulse function run on each game instance, client and server */
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCPulse();
 
-	void DisableHookShotCooldown() { bHookShotOnCooldown = false; }; 
+	void DisableHookShotCooldown() { bHookShotOnCooldown = false; };
 
 	void DisablePulseCooldown() { bPulseCoolDownActive = false; }
 
@@ -124,5 +133,4 @@ private:
 	void MulticastRPC_DashBuffEnd();
 
 	void ActivateAbilities();
-	
 };

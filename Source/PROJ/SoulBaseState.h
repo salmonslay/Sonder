@@ -17,7 +17,6 @@ class PROJ_API USoulBaseState : public UPlayerCharState
 	GENERATED_BODY()
 
 public:
-
 	virtual void Enter() override;
 
 	virtual void Update(const float DeltaTime) override;
@@ -29,24 +28,23 @@ public:
 	// Should not be needed but sometimes only works with it (why!?) 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-private:
+	UPROPERTY(BlueprintReadOnly)
+	bool bDashCoolDownActive = false;
 
+private:
 	UPROPERTY(EditAnywhere)
 	class UInputAction* DashInputAction;
 
-	/** Run locally and called when player presses the dash-button */ 
+	/** Run locally and called when player presses the dash-button */
 	void Dash();
 
 	UPROPERTY()
 	class ASoulCharacter* SoulCharacter;
 
 	UPROPERTY(Replicated, EditAnywhere)
-	float DashCooldown = 1.f; 
-
-	bool bDashCoolDownActive = false;
+	float DashCooldown = 1.f;
 
 	void DisableDashCooldown() { bDashCoolDownActive = false; }
-	
-	bool bHasSetUpInput = false; 
-	
+
+	bool bHasSetUpInput = false;
 };
