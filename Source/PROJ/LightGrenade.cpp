@@ -25,7 +25,8 @@ ALightGrenade::ALightGrenade()
 	CollisionArea = CreateDefaultSubobject<USphereComponent>(TEXT("CollisionArea"));
 	CollisionArea->SetupAttachment(ExplosionArea);
 	
-	
+	PulseExplosionArea = CreateDefaultSubobject<USphereComponent>(TEXT("PulseExplosionArea"));
+	PulseExplosionArea->SetupAttachment(ExplosionArea);
 	
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
@@ -45,7 +46,8 @@ void ALightGrenade::BeginPlay()
 	CollisionArea->OnComponentEndOverlap.AddDynamic(this,&ALightGrenade::OverlapEnd);
 	
 	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap); 
-	ExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap); 
+	ExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+	PulseExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap); 
 	
 }
 
@@ -71,7 +73,11 @@ void ALightGrenade::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 void ALightGrenade::Throw(const float TimeHeld)
 {
 	if(bCanThrow)
+	{
+		Damage = 5.0f;
+		PulseExplosionArea->Deactivate();
 		ServerRPCThrow(TimeHeld);
+	}
 	
 	
 }
@@ -118,7 +124,7 @@ void ALightGrenade::MulticastRPCThrow_Implementation(const float TimeHeld)
 		
 		bCanThrow = false;
 
-		StartCountdown(10.0f);
+		StartCountdown(ExplodeTimeSlow);
 	}
 }
 
@@ -217,10 +223,6 @@ void ALightGrenade::EnableGrenade()
 {
 	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	GrenadeMesh->SetVisibility(true);
-	
-	
-	
-	
 }
 
 void ALightGrenade::StartCountdown(float TimeUntilExplosion)
@@ -230,4 +232,9 @@ void ALightGrenade::StartCountdown(float TimeUntilExplosion)
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::ServerRPCExplosion, TimeUntilExplosion);
 }
 
+void ALightGrenade::PulseExplosion()
+{
+	Damage = 10.0f;
+	PulseExplosionArea->Activate();
+}
 
