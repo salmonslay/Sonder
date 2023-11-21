@@ -16,34 +16,30 @@ class PROJ_API ASoulCharacter : public ACharacterStateMachine
 	GENERATED_BODY()
 
 public:
-
 	ASoulCharacter();
 
 	// states are public so switch state can be called with the appropriate state easily 
-	
-	UPROPERTY(EditAnywhere)
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USoulBaseStateNew* BaseStateNew;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	class USoulDashingState* DashingState;
-
-	UPROPERTY(EditAnywhere)
-	USphereComponent* FireLoc;
+	
+	UPROPERTY(EditAnywhere,BlueprintReadWrite)
+	USphereComponent* ThrowLoc;
 
 
 #pragma region Events
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnDash(); 
-	
+	void OnDash();
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDashEnd();
 
 
-#pragma endregion 
-	
-private:
+#pragma endregion
 
-	
-	
+private:
 };

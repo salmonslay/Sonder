@@ -23,13 +23,18 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UBoxComponent* TriggerArea = nullptr;
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* PressurePlateMesh = nullptr;
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void StartMove();
+
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void StartReverse();
+	
 	
 };
