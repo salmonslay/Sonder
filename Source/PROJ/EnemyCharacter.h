@@ -116,6 +116,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	float PerformAttackDuration = 0.5f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float UnlockRotationAfterAttackDuration = 0.5f;
 	
 	UFUNCTION()
 	void OnRep_Stunned();
