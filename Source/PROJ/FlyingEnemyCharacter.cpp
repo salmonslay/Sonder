@@ -3,15 +3,12 @@
 
 #include "FlyingEnemyCharacter.h"
 
-#include "Components/SpotLightComponent.h"
-
-
 void AFlyingEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
 	
-	
+	CheckIfOverlappingWithGrid();
 }
 
 void AFlyingEnemyCharacter::SetPointerToPath(const TArray<FVector>* PathPointer)
