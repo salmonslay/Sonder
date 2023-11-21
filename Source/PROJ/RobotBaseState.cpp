@@ -220,6 +220,7 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 		
 		if (Actor->ActorHasTag(FName("Grenade")))
 		{
+			Cast<ALightGrenade>(Actor)->PulseExplosion();
 			Cast<ALightGrenade>(Actor)->ServerRPCExplosion();
 			UE_LOG(LogTemp, Warning, TEXT("Explode"));
 		}
