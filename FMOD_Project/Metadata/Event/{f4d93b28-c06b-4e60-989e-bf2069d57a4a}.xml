@@ -615,6 +615,7 @@
 			<destination>{daeaf09d-03e8-4079-b72b-8703c9bcf395}</destination>
 			<destination>{423ec8c5-26d0-42a3-94bb-99c68705d0da}</destination>
 			<destination>{714c7d28-e4d1-44fc-be19-7f41fb415c15}</destination>
+			<destination>{3ee3683c-0f20-454a-83c9-df356250a9a5}</destination>
 		</relationship>
 	</object>
 	<object class="AutomationCurve" id="{c5ec8d66-0c37-4c1e-9878-89bcfa029c1b}">
@@ -628,6 +629,9 @@
 	</object>
 	<object class="MixerBusFader" id="{7ea3e789-704c-407f-83db-d0e161fdf5bc}" />
 	<object class="SpatialiserEffect" id="{e8c4e6a8-55f0-46cb-b543-cac2b36609a1}">
+		<property name="bypass">
+			<value>true</value>
+		</property>
 		<property name="distanceRolloffType">
 			<value>1</value>
 		</property>
@@ -692,7 +696,7 @@
 			<value>0.60000000000000009</value>
 		</property>
 		<property name="value">
-			<value>-12</value>
+			<value>-6</value>
 		</property>
 		<property name="curveShape">
 			<value>-0.613223612</value>
@@ -715,6 +719,14 @@
 		</property>
 		<property name="curveShape">
 			<value>-1</value>
+		</property>
+	</object>
+	<object class="AutomationPoint" id="{3ee3683c-0f20-454a-83c9-df356250a9a5}">
+		<property name="position">
+			<value>0.050000000000000003</value>
+		</property>
+		<property name="value">
+			<value>-6</value>
 		</property>
 	</object>
 	<object class="AutomationPoint" id="{4bb3d1a5-5047-478c-bce5-95d8f852d678}">
