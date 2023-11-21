@@ -118,7 +118,7 @@ void ALightGrenade::MulticastRPCThrow_Implementation(const float TimeHeld)
 		
 		bCanThrow = false;
 
-		StartCountdown(10.0f);
+		StartCountdown(ExplodeTimeSlow);
 	}
 }
 
