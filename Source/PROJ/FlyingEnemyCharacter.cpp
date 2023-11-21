@@ -8,7 +8,7 @@ void AFlyingEnemyCharacter::BeginPlay()
 	Super::BeginPlay();
 
 	
-	
+	CheckIfOverlappingWithGrid();
 }
 
 void AFlyingEnemyCharacter::SetPointerToPath(const TArray<FVector>* PathPointer)
