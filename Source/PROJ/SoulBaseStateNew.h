@@ -16,7 +16,9 @@ class PROJ_API USoulBaseStateNew : public UPlayerCharState
 	GENERATED_BODY()
 
 public:
-
+	
+	USoulBaseStateNew();
+	
 	virtual void Enter() override;
 
 	virtual void Update(const float DeltaTime) override;
@@ -27,30 +29,18 @@ public:
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-private:
+	UPROPERTY(Replicated, BlueprintReadOnly)
+	bool bDashCoolDownActive = false;
 
+private:
 	UPROPERTY(EditAnywhere)
 	class UInputAction* DashInputAction;
 
 	UPROPERTY(EditAnywhere)
-	UInputAction* ThrowGrenadeInputAction;
+	class UInputAction* ThrowGrenadeInputAction;
 
 	UPROPERTY(EditAnywhere)
 	class UInputAction* AbilityInputAction;
-
-	/** Run locally and called when player presses the dash-button */ 
-	void Dash();
-
-	void GetTimeHeld(const FInputActionInstance& Instance);
-	
-	void ThrowGrenade();
-
-	UFUNCTION(Server, Reliable)
-	void ServerRPCThrowGrenade(); 
-
-	
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCThrowGrenade();
 
 	UPROPERTY()
 	class AActor* LightGrenade;
@@ -64,16 +54,36 @@ private:
 	UPROPERTY(EditAnywhere)
 	float DashCooldown = 1.f; 
 
-	bool bDashCoolDownActive = false;
-
-	void DisableDashCooldown() { bDashCoolDownActive = false; }
-	
 	bool bHasSetUpInput = false;
 
 	UPROPERTY(Replicated)
 	float TimeHeld;
 
+	// float 
+
+	/** Run locally and called when player presses the dash-button */
+	void Dash();
+
+	void GetTimeHeld(const FInputActionInstance& Instance);
+
+	void ThrowGrenade();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPCThrowGrenade(const float TimeHeldGrenade);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCThrowGrenade(const float TimeHeldGrenade);
+	
+	/** Enables dash cooldown on server, bool is replicated to client */
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_EnableDashCooldown();
+
+	/** Disables dash cooldown on server, bool is replicated to client */
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_DisableDashCooldown(); 
+
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void ActivateAbilities();
+	
 };

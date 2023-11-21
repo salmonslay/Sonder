@@ -57,17 +57,21 @@ public:
 	UPROPERTY(Replicated)
 	bool bCanThrow = true;
 
-	void Throw();
+	void Throw(const float TimeHeld);
 
 	/** How long time needs to pass between attacks */
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float ThrowCooldown = 5.0f;
 
 	UPROPERTY()
-	float TimePressed;
-
-	UPROPERTY()
 	float MaxTimePressed;
+
+	/**
+ * Function executed on server ONLY when client attacks, called from client. This function will probably only call
+ * the multicast function unless we will have some functionality that should only be run on the server 
+ */ 
+	UFUNCTION(Server, Reliable)
+	void ServerRPCExplosion(); 
 
 
 private:
@@ -78,18 +82,23 @@ private:
 	UPROPERTY(EditAnywhere)
 	float Damage = 5.0f;
 
+	/** How much a second of hold time should add to the throw velocity */
 	UPROPERTY(EditAnywhere)
-	float FireSpeed = 8.0f;
-	
-	
+	float FireSpeedPerSecondHeld = 300000.0f;
+
+	/** Min throw velocity, will start at this and then add up with FireSpeed */
+	UPROPERTY(EditAnywhere)
+	float StartThrowImpulse = 100000.f;
+
+	/** Max throw velocity */
+	UPROPERTY(EditAnywhere)
+	float MaxThrowImpulse = 500000.f; 
 
 	UPROPERTY(EditAnywhere)
 	float ExplodeTimeSlow = 5.0f;
 
 	UPROPERTY(EditAnywhere)
 	float ExplodeTimeFast = 0.2f;
-
-	
 
 	bool bCanOverlap = false;
 
@@ -108,23 +117,17 @@ private:
 	
 	
 	
-	/**
-	 * Function executed on server ONLY when client attacks, called from client. This function will probably only call
-	 * the multicast function unless we will have some functionality that should only be run on the server 
-	 */ 
-	UFUNCTION(Server, Reliable)
-	void ServerRPCExplosion(); 
 
 	/** Attack function run on each game instance, client and server */
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCExplosion();
 
 	UFUNCTION(Server, Reliable)
-	void ServerRPCThrow(); 
+	void ServerRPCThrow(const float TimeHeld); 
 
 	/** Attack function run on each game instance, client and server */
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCThrow();
+	void MulticastRPCThrow(const float TimeHeld);
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 

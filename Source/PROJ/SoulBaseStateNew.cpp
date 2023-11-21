@@ -12,6 +12,11 @@
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
+USoulBaseStateNew::USoulBaseStateNew()
+{
+	SetIsReplicatedByDefault(true); 
+}
+
 void USoulBaseStateNew::Enter()
 {
 	Super::Enter();
@@ -38,7 +43,7 @@ void USoulBaseStateNew::UpdateInputCompOnEnter(UEnhancedInputComponent* InputCom
 		InputComp->BindAction(DashInputAction, ETriggerEvent::Started, this, &USoulBaseStateNew::Dash);
 		InputComp->BindAction(ThrowGrenadeInputAction,ETriggerEvent::Completed,this,&USoulBaseStateNew::ThrowGrenade);
 		InputComp->BindAction(ThrowGrenadeInputAction,ETriggerEvent::Ongoing,this,&USoulBaseStateNew::GetTimeHeld);
-		InputComp->BindAction(AbilityInputAction,ETriggerEvent::Ongoing,this,&USoulBaseStateNew::ActivateAbilities);
+		InputComp->BindAction(AbilityInputAction,ETriggerEvent::Started,this,&USoulBaseStateNew::ActivateAbilities);
 		bHasSetUpInput = true; 
 	}
 }
@@ -48,9 +53,10 @@ void USoulBaseStateNew::Exit()
 	Super::Exit();
 
 	bDashCoolDownActive = true;
+	ServerRPC_EnableDashCooldown(); 
 
 	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &USoulBaseStateNew::DisableDashCooldown, 1); 
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &USoulBaseStateNew::ServerRPC_DisableDashCooldown, DashCooldown); 
 
 	// Removing the action binding would require changing the action mapping 
 	// PlayerInputComponent->RemoveActionBinding(DashInputAction, ETriggerEvent::Started); 
@@ -66,59 +72,67 @@ void USoulBaseStateNew::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void USoulBaseStateNew::Dash()
 {
 	// Only run locally 
-	if(bDashCoolDownActive || !PlayerOwner->IsLocallyControlled())
+	if(bDashCoolDownActive || !PlayerOwner->IsLocallyControlled() || !SoulCharacter->AbilityOne)
 		return;
 
 	PlayerOwner->SwitchState(SoulCharacter->DashingState); 
+}
+
+void USoulBaseStateNew::ServerRPC_EnableDashCooldown_Implementation()
+{
+	bDashCoolDownActive = true; 
+}
+
+void USoulBaseStateNew::ServerRPC_DisableDashCooldown_Implementation()
+{
+	bDashCoolDownActive = false; 
 }
 
 void USoulBaseStateNew::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(USoulBaseStateNew,  TimeHeld);
+	DOREPLIFETIME(USoulBaseStateNew, TimeHeld);
+	DOREPLIFETIME(USoulBaseStateNew, bDashCoolDownActive);
 }
 
 void USoulBaseStateNew::GetTimeHeld(const FInputActionInstance& Instance)
 {
-	if (!PlayerOwner->IsLocallyControlled())
+	if (!PlayerOwner->IsLocallyControlled() || !SoulCharacter->AbilityTwo)
 	{
 		return;	
 	}
-	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "IS Holding " + FString::SanitizeFloat(Instance.GetElapsedTime()));
-	//TimeHeld = Instance.GetElapsedTime();
+
+	// UE_LOG(LogTemp, Warning, TEXT("TimeHeld() local - OnGoing IA: Time: %f"), Instance.GetElapsedTime())
+
+	// GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "IS Holding " + FString::SanitizeFloat(Instance.GetElapsedTime()));
+	TimeHeld = Instance.GetElapsedTime();
 	
 }
 
 void USoulBaseStateNew::ThrowGrenade()
 {
-	if (!PlayerOwner->IsLocallyControlled())
+	if (!PlayerOwner->IsLocallyControlled() || !SoulCharacter->AbilityTwo)
 	{
 		return;	
 	}
-	
-	ServerRPCThrowGrenade();
+
+	ServerRPCThrowGrenade(TimeHeld);
 	
 }
 
-
-
-void USoulBaseStateNew::ServerRPCThrowGrenade_Implementation()
+void USoulBaseStateNew::ServerRPCThrowGrenade_Implementation(const float TimeHeldGrenade)
 {
 	if(!PlayerOwner->HasAuthority())
 		return;
-
 	
 	//LightGrenade = GetWorld()->SpawnActor<AActor>(LightGrenadeRef,SoulCharacter->FireLoc->GetComponentLocation(),SoulCharacter->FireLoc->GetComponentRotation());
 
-		
-	
-	
-	MulticastRPCThrowGrenade();
+	MulticastRPCThrowGrenade(TimeHeldGrenade);
 }
 
 
-void USoulBaseStateNew::MulticastRPCThrowGrenade_Implementation()
+void USoulBaseStateNew::MulticastRPCThrowGrenade_Implementation(const float TimeHeldGrenade)
 {
 	TArray<AActor*> FoundCharacter;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALightGrenade::StaticClass(), FoundCharacter);
@@ -126,8 +140,8 @@ void USoulBaseStateNew::MulticastRPCThrowGrenade_Implementation()
 	if (FoundCharacter[0] != nullptr)
 	{
 		ALightGrenade* Grenade = Cast<ALightGrenade>(FoundCharacter[0]);
-		UE_LOG(LogTemp, Warning, TEXT("Time held %f"), TimeHeld);
-		Grenade->Throw();
+		UE_LOG(LogTemp, Warning, TEXT("Time held %f"), TimeHeldGrenade);
+		Grenade->Throw(TimeHeldGrenade); 
 		
 	}
 	

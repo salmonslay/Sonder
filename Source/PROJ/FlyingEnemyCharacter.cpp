@@ -3,13 +3,12 @@
 
 #include "FlyingEnemyCharacter.h"
 
-#include "Components/SpotLightComponent.h"
-
 void AFlyingEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
 
-	Laser = Cast<USpotLightComponent>(GetComponentByClass(USpotLightComponent::StaticClass()));
+	
+	CheckIfOverlappingWithGrid();
 }
 
 void AFlyingEnemyCharacter::SetPointerToPath(const TArray<FVector>* PathPointer)
@@ -23,4 +22,17 @@ void AFlyingEnemyCharacter::SetPointerToPath(const TArray<FVector>* PathPointer)
 bool AFlyingEnemyCharacter::IsPathValid() const
 {
 	return !CurrentPath.IsEmpty();
+}
+
+void AFlyingEnemyCharacter::Tick(float DeltaSeconds)
+{
+	Super::Tick(DeltaSeconds);
+
+	if (bSetFocusToPlayer)
+	{
+		if (CurrentTargetPlayer)
+		{
+			SetActorRotation((CurrentTargetPlayer->GetActorLocation() - GetActorLocation()).Rotation());
+		}
+	}
 }

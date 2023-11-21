@@ -12,6 +12,8 @@
 #include "RobotBaseState.h"
 #include "RobotStateMachine.h"
 #include "Components/CapsuleComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+#include "GameFramework/MovementComponent.h"
 
 
 // Sets default values
@@ -21,7 +23,9 @@ AEnemyCharacter::AEnemyCharacter()
 	PrimaryActorTick.bCanEverTick = true;
 
 	EnemyHealthComponent = CreateDefaultSubobject<UEnemyHealthComponent>(TEXT("EnemyHealthComponent"));
-	
+
+	GetCharacterMovement()->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::X);
+	GetCharacterMovement()->SetPlaneConstraintEnabled(true);
 }
 
 
@@ -107,7 +111,7 @@ void AEnemyCharacter::Stun(const float Duration)
 		bIsAttacking = false;
 		bIsIdle = false;
 		OnStunnedEvent();
-		GetWorldTimerManager().SetTimer(StunnedTimerHandle, this, &AEnemyCharacter::Idle, Duration, false, -1.f);
+		//GetWorldTimerManager().SetTimer(StunnedTimerHandle, this, &AEnemyCharacter::Idle, Duration, false, -1.f);
 	}
 }
 
@@ -120,7 +124,7 @@ void AEnemyCharacter::ChargeAttack()
 		bIsStunned = false;
 		bIsIdle = false;
 		OnChargingAttackEvent(ChargeAttackDuration);
-		GetWorldTimerManager().SetTimer(ChargeAttackTimerHandle, this, &AEnemyCharacter::Attack, ChargeAttackDuration, false, -1.f);
+		//GetWorldTimerManager().SetTimer(ChargeAttackTimerHandle, this, &AEnemyCharacter::Attack, ChargeAttackDuration, false, -1.f);
 	}
 }
 
@@ -133,8 +137,8 @@ void AEnemyCharacter::Attack()
 		bIsStunned = false;
 		bIsIdle = false;
 		OnPerformAttackEvent(PerformAttackDuration);
-		GetWorldTimerManager().ClearTimer(ChargeAttackTimerHandle);
-		GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &AEnemyCharacter::Idle, PerformAttackDuration, false, -1.f);
+		//GetWorldTimerManager().ClearTimer(ChargeAttackTimerHandle);
+		//GetWorldTimerManager().SetTimer(AttackTimerHandle, this, &AEnemyCharacter::Idle, PerformAttackDuration, false, -1.f);
 	}
 }
 
@@ -146,8 +150,8 @@ void AEnemyCharacter::Idle()
 		bIsAttacking = false;
 		bIsChargingAttack = false;
 		bIsIdle = true;
-		GetWorldTimerManager().ClearTimer(AttackTimerHandle);
-		GetWorldTimerManager().ClearTimer(StunnedTimerHandle);
+		//GetWorldTimerManager().ClearTimer(AttackTimerHandle);
+		//GetWorldTimerManager().ClearTimer(StunnedTimerHandle);
 	}
 }
 
@@ -227,7 +231,7 @@ bool AEnemyCharacter::GetHasBeenAttacked() const
 void AEnemyCharacter::CheckIfOverlappingWithGrid()
 {
 	TArray<AActor*> OverlappingActors;
-	GetCapsuleComponent()->GetOverlappingActors(OverlappingActors, AEnemyCharacter::StaticClass());
+	GetCapsuleComponent()->GetOverlappingActors(OverlappingActors, AGrid::StaticClass());
 	
 	if (!OverlappingActors.IsEmpty())
 	{
