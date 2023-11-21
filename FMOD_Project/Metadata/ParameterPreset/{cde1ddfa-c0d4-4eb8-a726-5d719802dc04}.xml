@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="ParameterPreset" id="{cde1ddfa-c0d4-4eb8-a726-5d719802dc04}">
+		<property name="name">
+			<value>GrenadeState</value>
+		</property>
+		<relationship name="folder">
+			<destination>{fc4a5593-8a49-4f06-a150-12dbe6800661}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{4a27a57b-9954-42db-9970-6bb01b39d0a1}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{4a27a57b-9954-42db-9970-6bb01b39d0a1}">
+		<property name="parameterType">
+			<value>1</value>
+		</property>
+		<property name="maximum">
+			<value>2</value>
+		</property>
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>

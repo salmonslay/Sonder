@@ -65,6 +65,7 @@ void ACombatManager::Tick(float DeltaTime)
 void ACombatManager::AddEnemy(AEnemyCharacter* Enemy)
 {
 	Enemies.Emplace(Enemy);
+	Enemy->SetGridPointer(Grid);
 }
 
 void ACombatManager::RemoveEnemy(AEnemyCharacter* Enemy)
@@ -125,6 +126,7 @@ void ACombatManager::HandleSpawn()
 	if(Wave.WaveStartedTriggeredActor)
 		Wave.WaveStartedTriggeredActor->TriggeredEvent();
 	WavesQueue.RemoveAt(0);
+	CurrentWave++;
 }
 
 void ACombatManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
