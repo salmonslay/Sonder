@@ -42,21 +42,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	class UInputAction* AbilityInputAction;
 
-	/** Run locally and called when player presses the dash-button */
-	/** Run locally and called when player presses the dash-button */
-	void Dash();
-
-	void GetTimeHeld(const FInputActionInstance& Instance);
-
-	void ThrowGrenade();
-
-	UFUNCTION(Server, Reliable)
-	void ServerRPCThrowGrenade();
-
-
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCThrowGrenade();
-
 	UPROPERTY()
 	class AActor* LightGrenade;
 
@@ -69,6 +54,26 @@ private:
 	UPROPERTY(EditAnywhere)
 	float DashCooldown = 1.f; 
 
+	bool bHasSetUpInput = false;
+
+	UPROPERTY(Replicated)
+	float TimeHeld;
+
+	// float 
+
+	/** Run locally and called when player presses the dash-button */
+	void Dash();
+
+	void GetTimeHeld(const FInputActionInstance& Instance);
+
+	void ThrowGrenade();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPCThrowGrenade(const float TimeHeldGrenade);
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCThrowGrenade(const float TimeHeldGrenade);
+	
 	/** Enables dash cooldown on server, bool is replicated to client */
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_EnableDashCooldown();
@@ -76,13 +81,9 @@ private:
 	/** Disables dash cooldown on server, bool is replicated to client */
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_DisableDashCooldown(); 
-	
-	bool bHasSetUpInput = false;
-
-	UPROPERTY(Replicated)
-	float TimeHeld;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void ActivateAbilities();
+	
 };

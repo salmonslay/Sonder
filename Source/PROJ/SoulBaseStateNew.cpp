@@ -102,8 +102,11 @@ void USoulBaseStateNew::GetTimeHeld(const FInputActionInstance& Instance)
 	{
 		return;	
 	}
-	GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "IS Holding " + FString::SanitizeFloat(Instance.GetElapsedTime()));
-	//TimeHeld = Instance.GetElapsedTime();
+
+	// UE_LOG(LogTemp, Warning, TEXT("TimeHeld() local - OnGoing IA: Time: %f"), Instance.GetElapsedTime())
+
+	// GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "IS Holding " + FString::SanitizeFloat(Instance.GetElapsedTime()));
+	TimeHeld = Instance.GetElapsedTime();
 	
 }
 
@@ -113,29 +116,23 @@ void USoulBaseStateNew::ThrowGrenade()
 	{
 		return;	
 	}
-	
-	ServerRPCThrowGrenade();
+
+	ServerRPCThrowGrenade(TimeHeld);
 	
 }
 
-
-
-void USoulBaseStateNew::ServerRPCThrowGrenade_Implementation()
+void USoulBaseStateNew::ServerRPCThrowGrenade_Implementation(const float TimeHeldGrenade)
 {
 	if(!PlayerOwner->HasAuthority())
 		return;
-
 	
 	//LightGrenade = GetWorld()->SpawnActor<AActor>(LightGrenadeRef,SoulCharacter->FireLoc->GetComponentLocation(),SoulCharacter->FireLoc->GetComponentRotation());
 
-		
-	
-	
-	MulticastRPCThrowGrenade();
+	MulticastRPCThrowGrenade(TimeHeldGrenade);
 }
 
 
-void USoulBaseStateNew::MulticastRPCThrowGrenade_Implementation()
+void USoulBaseStateNew::MulticastRPCThrowGrenade_Implementation(const float TimeHeldGrenade)
 {
 	TArray<AActor*> FoundCharacter;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALightGrenade::StaticClass(), FoundCharacter);
@@ -143,8 +140,8 @@ void USoulBaseStateNew::MulticastRPCThrowGrenade_Implementation()
 	if (FoundCharacter[0] != nullptr)
 	{
 		ALightGrenade* Grenade = Cast<ALightGrenade>(FoundCharacter[0]);
-		UE_LOG(LogTemp, Warning, TEXT("Time held %f"), TimeHeld);
-		Grenade->Throw();
+		UE_LOG(LogTemp, Warning, TEXT("Time held %f"), TimeHeldGrenade);
+		Grenade->Throw(TimeHeldGrenade); 
 		
 	}
 	
