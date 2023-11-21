@@ -38,7 +38,7 @@ void USoulBaseStateNew::UpdateInputCompOnEnter(UEnhancedInputComponent* InputCom
 		InputComp->BindAction(DashInputAction, ETriggerEvent::Started, this, &USoulBaseStateNew::Dash);
 		InputComp->BindAction(ThrowGrenadeInputAction,ETriggerEvent::Completed,this,&USoulBaseStateNew::ThrowGrenade);
 		InputComp->BindAction(ThrowGrenadeInputAction,ETriggerEvent::Ongoing,this,&USoulBaseStateNew::GetTimeHeld);
-		InputComp->BindAction(AbilityInputAction,ETriggerEvent::Ongoing,this,&USoulBaseStateNew::ActivateAbilities);
+		InputComp->BindAction(AbilityInputAction,ETriggerEvent::Started,this,&USoulBaseStateNew::ActivateAbilities);
 		bHasSetUpInput = true; 
 	}
 }
@@ -66,7 +66,7 @@ void USoulBaseStateNew::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void USoulBaseStateNew::Dash()
 {
 	// Only run locally 
-	if(bDashCoolDownActive || !PlayerOwner->IsLocallyControlled())
+	if(bDashCoolDownActive || !PlayerOwner->IsLocallyControlled() || !SoulCharacter->AbilityOne)
 		return;
 
 	PlayerOwner->SwitchState(SoulCharacter->DashingState); 
@@ -92,7 +92,7 @@ void USoulBaseStateNew::GetTimeHeld(const FInputActionInstance& Instance)
 
 void USoulBaseStateNew::ThrowGrenade()
 {
-	if (!PlayerOwner->IsLocallyControlled())
+	if (!PlayerOwner->IsLocallyControlled() || !SoulCharacter->AbilityTwo)
 	{
 		return;	
 	}

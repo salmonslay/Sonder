@@ -34,7 +34,7 @@ private:
 	class UInputAction* DashInputAction;
 
 	UPROPERTY(EditAnywhere)
-	UInputAction* ThrowGrenadeInputAction;
+	class UInputAction* ThrowGrenadeInputAction;
 
 	UPROPERTY(EditAnywhere)
 	class UInputAction* AbilityInputAction;
