@@ -65,6 +65,7 @@ void ACombatManager::Tick(float DeltaTime)
 void ACombatManager::AddEnemy(AEnemyCharacter* Enemy)
 {
 	Enemies.Emplace(Enemy);
+	Enemy->SetGridPointer(Grid);
 }
 
 void ACombatManager::RemoveEnemy(AEnemyCharacter* Enemy)

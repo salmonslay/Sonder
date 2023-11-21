@@ -231,7 +231,7 @@ bool AEnemyCharacter::GetHasBeenAttacked() const
 void AEnemyCharacter::CheckIfOverlappingWithGrid()
 {
 	TArray<AActor*> OverlappingActors;
-	GetCapsuleComponent()->GetOverlappingActors(OverlappingActors, AEnemyCharacter::StaticClass());
+	GetCapsuleComponent()->GetOverlappingActors(OverlappingActors, AGrid::StaticClass());
 	
 	if (!OverlappingActors.IsEmpty())
 	{

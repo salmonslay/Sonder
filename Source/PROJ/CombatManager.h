@@ -8,6 +8,7 @@
 #include "CombatManager.generated.h"
 
 
+class AGrid;
 class ACombatTriggeredBase;
 class ACombatTrigger;
 class AEnemyCharacter;
@@ -82,6 +83,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="TriggeredActors")
 	ACombatTriggeredBase* EndCombatTriggeredActor;
+
+	UPROPERTY(EditAnywhere, Category="Grid")
+	AGrid* Grid;
 
 	//Array of all the waves to spawn, set in editor
 	UPROPERTY(EditAnywhere, Category="Spawn", BlueprintReadOnly)
