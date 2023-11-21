@@ -13,6 +13,7 @@
 #include "SoulCharacter.h"
 #include "Chaos/CollisionResolutionUtil.h"
 #include "GameFramework/CharacterMovementComponent.h"
+#include "Engine/DamageEvents.h"
 #include "Net/UnrealNetwork.h"
 
 URobotBaseState::URobotBaseState()
@@ -215,6 +216,7 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 		if (Actor->ActorHasTag(FName("Enemy")))
 		{
 			Cast<AEnemyCharacter>(Actor)->Stun(3.0f);
+			Actor->TakeDamage(Damage, FDamageEvent(), Controller, RobotCharacter);
 			UE_LOG(LogTemp, Warning, TEXT("Stun"));
 		}
 		
