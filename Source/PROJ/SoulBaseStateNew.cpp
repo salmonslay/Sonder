@@ -98,7 +98,7 @@ void USoulBaseStateNew::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 
 void USoulBaseStateNew::GetTimeHeld(const FInputActionInstance& Instance)
 {
-	if (!PlayerOwner->IsLocallyControlled())
+	if (!PlayerOwner->IsLocallyControlled() || !SoulCharacter->AbilityTwo)
 	{
 		return;	
 	}
