@@ -6,7 +6,6 @@
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "BTTask_ChargeLaserAttack.generated.h"
 
-class AEnemyCharacter;
 /**
  * 
  */
@@ -29,11 +28,18 @@ public:
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 	UPROPERTY()
-	AEnemyCharacter* OwnerCharacter;
+	class AFlyingEnemyCharacter* OwnerCharacter;
 
 	FVector OwnerLocation;
 
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;
+
+
+	FTimerHandle EnableMovementTimerHandle;
+
+	bool bIsCharging = false;
+
+	void EnableMovement();
 	
 };

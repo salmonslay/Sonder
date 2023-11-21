@@ -7,7 +7,12 @@
 #include "FlyingEnemyCharacter.h"
 #include "PROJCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Engine/DamageEvents.h"
+#include "GameFramework/CharacterMovementComponent.h"
 #include "GameFramework/PawnMovementComponent.h"
+#include "Kismet/KismetStringLibrary.h"
+#include "Kismet/KismetSystemLibrary.h"
+#include "Particles/ParticleSystemComponent.h"
 
 UBTTask_DoLaserAttack::UBTTask_DoLaserAttack()
 {
@@ -24,41 +29,62 @@ EBTNodeResult::Type UBTTask_DoLaserAttack::ExecuteTask(UBehaviorTreeComponent& O
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	bNotifyTick = 1;
-	return EBTNodeResult::InProgress; 
-}
 
-void UBTTask_DoLaserAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
-{
-	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
-
-	if (OwnerComp.GetAIOwner() == nullptr) return;
+	if (OwnerComp.GetAIOwner() == nullptr) 	return EBTNodeResult::Failed; 
 
 	OwnerCharacter = Cast<AFlyingEnemyCharacter>(OwnerComp.GetAIOwner()->GetCharacter());
 
-	if (OwnerCharacter == nullptr) return;
+	if (OwnerCharacter == nullptr) return EBTNodeResult::Failed;
 
 	OwnerLocation = OwnerCharacter->GetActorLocation();
 
+	UE_LOG(LogTemp, Error, TEXT("All pointers set correctly."));
+
+	/*
 	APROJCharacter* PlayerToAttack;
 	UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("PlayerToAttack");
 
 	if (PlayerObject == nullptr)
 	{
-		return;
+		return EBTNodeResult::Failed;
 	}
+	
 	PlayerToAttack = Cast<APROJCharacter>(PlayerObject);
 	
 	if (PlayerToAttack)
 	{
-		PlayerToAttackLocation = PlayerToAttack->GetActorLocation();
-	}
-	if (bDebug)
-	{
-		GEngine->AddOnScreenDebugMessage(-1, 1.0f, FColor::Yellow, TEXT("Attacking!"));
-		DrawDebugLine(GetWorld(), OwnerLocation, PlayerToAttackLocation, FColor::Orange, false, 0.3, 0, 2.f);
-	}
+	*/
+		OwnerCharacter->Attack();
+		TArray<AActor*> ActorsToIgnore;
+		ActorsToIgnore.Add(OwnerCharacter);
 
-	OwnerCharacter->Attack();
-	OwnerCharacter->GetMovementComponent()->SetActive(true);
+		FHitResult Hit;
+		bool bHit;
+
+		if (bDebug)
+		{
+			bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), OwnerLocation, OwnerCharacter->GetActorForwardVector() * LaserDistance, ObjectTypeQueries, true, ActorsToIgnore, EDrawDebugTrace::ForDuration, Hit, true, FLinearColor::Blue, FLinearColor::Green, OwnerCharacter->PerformAttackDuration );
+		}
+		else
+		{
+			bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), OwnerLocation, OwnerCharacter->GetActorForwardVector() * LaserDistance, ObjectTypeQueries, true, ActorsToIgnore, EDrawDebugTrace::None, Hit, true, FLinearColor::Blue, FLinearColor::Green, OwnerCharacter->PerformAttackDuration );
+		}
+
+		if (bHit)
+		{
+
+			// cast to player 
+			FDamageEvent DamageEvent;
+			Hit.GetActor()->TakeDamage(OwnerCharacter->DamageToPlayer, DamageEvent, OwnerComp.GetAIOwner(), OwnerCharacter );
+		}
+		OwnerCharacter->bSetFocusToPlayer = true;
+		return EBTNodeResult::Succeeded;
+	//}
+	//return EBTNodeResult::Failed;
+}
+
+void UBTTask_DoLaserAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+{
+	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 	
 }

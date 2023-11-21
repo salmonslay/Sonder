@@ -41,6 +41,12 @@ public:
 	UPROPERTY(EditAnywhere)
 	float MaxAttackHeightDifference = 40.f;
 
-	
-	
+	virtual void Tick(float DeltaSeconds) override;
+
+	bool bSetFocusToPlayer = true;
+
+	ACharacter* CurrentTargetPlayer;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	UParticleSystemComponent* LaserBeam;
 };

@@ -41,6 +41,8 @@ void UBTTask_FollowPath::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 
 	if (OwnerCharacter == nullptr) return;
 
+	OwnerCharacter->Idle();
+	
 	OwnerLocation = OwnerCharacter->GetActorLocation();
 
 	if (!OwnerCharacter->IsPathValid())
@@ -74,10 +76,9 @@ void UBTTask_FollowPath::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	PlayerToAttack = Cast<APROJCharacter>(PlayerObject);
 	if (PlayerToAttack)
 	{
-		CurrentTargetLocation = PlayerToAttack->GetActorLocation();
+		
+		OwnerCharacter->CurrentTargetPlayer = PlayerToAttack;
 	}
-
-	FVector DirectionToPlayer = CurrentTargetLocation - OwnerLocation;
 	
 	// Entity has reached the current waypoint
 	if (DistanceToWaypoint > 1.f)
@@ -106,6 +107,4 @@ void UBTTask_FollowPath::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	OwnerCharacter->GetMovementComponent()->SetActive(true);
 	OwnerCharacter->GetCharacterMovement()->SetMovementMode(MOVE_Flying);
 	OwnerCharacter->GetCharacterMovement()->AddInputVector(DirectionToWaypoint * PathFollowingSpeed);
-	OwnerCharacter->SetActorRotation(DirectionToPlayer.Rotation());
-
 }

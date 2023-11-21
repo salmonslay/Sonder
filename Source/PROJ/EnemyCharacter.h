@@ -129,11 +129,11 @@ public:
 	
 	void Stun(const float Duration);
 
-	void ChargeAttack();
+	virtual void ChargeAttack();
 
 	virtual void Attack();
 
-	void Idle();
+	virtual void Idle();
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 

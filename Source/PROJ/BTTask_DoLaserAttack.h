@@ -36,7 +36,12 @@ public:
 
 	FVector OwnerLocation;
 
+	float LaserDistance = 300.f;
+
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;
+
+	UPROPERTY(EditAnywhere)
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypeQueries;
 	
 };
