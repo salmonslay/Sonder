@@ -59,7 +59,6 @@ void UBTService_CanAttackPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject("PlayerToAttack", PlayerToAttack);
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject("CurrentTargetPlayer", PlayerToAttack);
-
 				
 				if (bDebug)
 				{
