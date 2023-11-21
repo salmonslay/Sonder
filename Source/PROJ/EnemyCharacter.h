@@ -61,11 +61,8 @@ private:
 
 	UPROPERTY()
 	AGrid* PathfindingGrid;
-
-	void CheckIfOverlappingWithGrid();
-
 	
-public:	
+public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
@@ -75,6 +72,8 @@ public:
 	UPROPERTY(VisibleAnywhere, Category=Health, Replicated)
 	UEnemyHealthComponent* EnemyHealthComponent = nullptr;
 
+	void CheckIfOverlappingWithGrid();
+	
 	/** Event called when enemy has taken damage*/
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnTakenDamageEvent(float DamageTaken);
