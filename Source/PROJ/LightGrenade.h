@@ -39,6 +39,9 @@ public:
 	UPROPERTY(BlueprintReadWrite,EditDefaultsOnly)
 	USphereComponent* CollisionArea = nullptr;
 
+	UPROPERTY(BlueprintReadWrite,EditDefaultsOnly)
+	USphereComponent* PulseExplosionArea = nullptr;
+
 	UFUNCTION(BlueprintImplementableEvent)
 	void ExplosionEvent();
 
@@ -66,21 +69,23 @@ public:
 	UPROPERTY()
 	float MaxTimePressed;
 
+	UPROPERTY(EditAnywhere)
+	float Damage = 5.0f;
+
 	/**
  * Function executed on server ONLY when client attacks, called from client. This function will probably only call
  * the multicast function unless we will have some functionality that should only be run on the server 
  */ 
 	UFUNCTION(Server, Reliable)
-	void ServerRPCExplosion(); 
+	void ServerRPCExplosion();
+
+	void PulseExplosion();
 
 
 private:
 
 	UPROPERTY()
 	FTimerHandle TimerHandle; 
-	
-	UPROPERTY(EditAnywhere)
-	float Damage = 5.0f;
 
 	/** How much a second of hold time should add to the throw velocity */
 	UPROPERTY(EditAnywhere)
