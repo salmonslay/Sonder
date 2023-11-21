@@ -25,6 +25,7 @@ void ADamageZone::NotifyActorBeginOverlap(AActor* OtherActor)
 	if (Cast<APROJCharacter>(OtherActor))
 	{
 		PlayerActors.AddUnique(OtherActor);
+		UE_LOG(LogTemp, Warning, TEXT("Added %s to %s"), *OtherActor->GetName(), *GetName())
 	}
 }
 
@@ -38,6 +39,7 @@ void ADamageZone::NotifyActorEndOverlap(AActor* OtherActor)
 	if (OtherActor->ActorHasTag("Player"))
 	{
 		PlayerActors.Remove(OtherActor);
+		UE_LOG(LogTemp, Warning, TEXT("Removed %s from %s"), *OtherActor->GetName(), *GetName())
 
 		PlayersDamagedThisOverlap.Remove(OtherActor);
 	}
@@ -65,7 +67,7 @@ void ADamageZone::Tick(float DeltaSeconds)
 					UE_LOG(LogTemp, Warning, TEXT("Killing %s from %s"), *Player->GetName(), *GetName())
 
 					// Player->KillPlayer(); // TODO: implement real killing
-					
+
 					// teleport to its checkpoint TODO: remove this when we have real killing
 					PPlayer->SetActorLocation(PPlayer->GetSpawnTransform().GetLocation());
 					PPlayer->SetActorRotation(PPlayer->GetSpawnTransform().GetRotation());
