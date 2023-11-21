@@ -16,6 +16,9 @@ class PROJ_API USoulBaseStateNew : public UPlayerCharState
 	GENERATED_BODY()
 
 public:
+	
+	USoulBaseStateNew();
+	
 	virtual void Enter() override;
 
 	virtual void Update(const float DeltaTime) override;
@@ -26,7 +29,7 @@ public:
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(Replicated, BlueprintReadOnly)
 	bool bDashCoolDownActive = false;
 
 private:
@@ -34,7 +37,7 @@ private:
 	class UInputAction* DashInputAction;
 
 	UPROPERTY(EditAnywhere)
-	UInputAction* ThrowGrenadeInputAction;
+	class UInputAction* ThrowGrenadeInputAction;
 
 	UPROPERTY(EditAnywhere)
 	class UInputAction* AbilityInputAction;
@@ -64,10 +67,16 @@ private:
 	class ASoulCharacter* SoulCharacter;
 
 	UPROPERTY(EditAnywhere)
-	float DashCooldown = 1.f;
+	float DashCooldown = 1.f; 
 
-	void DisableDashCooldown() { bDashCoolDownActive = false; }
+	/** Enables dash cooldown on server, bool is replicated to client */
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_EnableDashCooldown();
 
+	/** Disables dash cooldown on server, bool is replicated to client */
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_DisableDashCooldown(); 
+	
 	bool bHasSetUpInput = false;
 
 	UPROPERTY(Replicated)
