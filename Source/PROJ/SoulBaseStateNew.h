@@ -29,7 +29,7 @@ public:
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-	UPROPERTY(BlueprintReadOnly)
+	UPROPERTY(Replicated, BlueprintReadOnly)
 	bool bDashCoolDownActive = false;
 
 private:
@@ -68,9 +68,6 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float DashCooldown = 1.f; 
-
-	UPROPERTY(Replicated)
-	bool bDashCoolDownActive = false;
 
 	/** Enables dash cooldown on server, bool is replicated to client */
 	UFUNCTION(Server, Reliable)
