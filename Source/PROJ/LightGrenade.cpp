@@ -223,10 +223,6 @@ void ALightGrenade::EnableGrenade()
 {
 	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	GrenadeMesh->SetVisibility(true);
-	
-	
-	
-	
 }
 
 void ALightGrenade::StartCountdown(float TimeUntilExplosion)
