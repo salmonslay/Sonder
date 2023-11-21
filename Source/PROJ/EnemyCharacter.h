@@ -113,7 +113,7 @@ public:
 	FTimerHandle AttackTimerHandle;
 
 	UPROPERTY(EditDefaultsOnly)
-	float ChargeAttackDuration = 1.f;
+	float ChargeAttackDuration = 0.7f;
 
 	UPROPERTY(EditDefaultsOnly)
 	float PerformAttackDuration = 0.5f;
@@ -129,11 +129,11 @@ public:
 	
 	void Stun(const float Duration);
 
-	void ChargeAttack();
+	virtual void ChargeAttack();
 
 	virtual void Attack();
 
-	void Idle();
+	virtual void Idle();
 
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 

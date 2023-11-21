@@ -8,7 +8,7 @@
 
 ARobotStateMachine::ARobotStateMachine()
 {
-	RobotBaseState = CreateDefaultSubobject<URobotBaseState>(FName("RobotBaseState"));
+	RobotBaseState = CreateDefaultSubobject<URobotBaseState>(FName("BaseState"));
 	
-	HookState = CreateDefaultSubobject<URobotHookingState>(FName("Hooking State"));
+	HookState = CreateDefaultSubobject<URobotHookingState>(FName("HookState"));
 }
