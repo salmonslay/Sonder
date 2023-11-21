@@ -3,6 +3,7 @@
 
 #include "EnemyAIController.h"
 
+#include "EnemyCharacter.h"
 #include "PROJCharacter.h"
 #include "PROJGameMode.h"
 #include "BehaviorTree/BehaviorTree.h"
@@ -18,8 +19,11 @@ void AEnemyAIController::Initialize()
 		UE_LOG(LogTemp, Warning, TEXT("BehaviourTReetorun %s"), *BT->GetName());
 		RunBehaviorTree(BT);
 	}
-	
-	//GetBlackboardComponent()->SetValueAsObject(TEXT("PlayerOne"), UGameplayStatics::GetPlayerCharacter(this, 0));
+
+	if (Cast<AEnemyCharacter>(GetOwner()))
+	{
+		GetBlackboardComponent()->SetValueAsFloat(TEXT("ChargingTime"),Cast<AEnemyCharacter>(GetOwner())->ChargeAttackDuration);
+	}
 
 	APROJGameMode* CurrentGameMode = Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this));
 	if (CurrentGameMode != nullptr)

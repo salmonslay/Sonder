@@ -69,7 +69,7 @@ void UBTService_FindPathToTargetPlayer::TickNode(UBehaviorTreeComponent& OwnerCo
 		{
 			UE_LOG(LogTemp, Warning, TEXT("Path is empty"));
 		}
-		OwnerComp.GetBlackboardComponent()->SetValueAsBool("bHasFoundPathToTargetPlayer", false);
+		//OwnerComp.GetBlackboardComponent()->SetValueAsBool("bHasFoundPathToTargetPlayer", false);
 	}
 	else
 	{

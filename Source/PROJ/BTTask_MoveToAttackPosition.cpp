@@ -1,37 +1,33 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "BTTask_FollowPath.h"
+#include "BTTask_MoveToAttackPosition.h"
 
 #include "AIController.h"
-#include "EnemyCharacter.h"
 #include "FlyingEnemyCharacter.h"
 #include "PROJCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/PawnMovementComponent.h"
 
-UBTTask_FollowPath::UBTTask_FollowPath()
+UBTTask_MoveToAttackPosition::UBTTask_MoveToAttackPosition()
 {
-
-	NodeName = TEXT("FollowPath");
+	NodeName = TEXT("MoveToAttackPosition");
 }
 
-void UBTTask_FollowPath::OnGameplayTaskActivated(UGameplayTask& Task)
+void UBTTask_MoveToAttackPosition::OnGameplayTaskActivated(UGameplayTask& Task)
 {
 	Super::OnGameplayTaskActivated(Task);
 }
 
-EBTNodeResult::Type UBTTask_FollowPath::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
+EBTNodeResult::Type UBTTask_MoveToAttackPosition::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	// code below makes it so TickTask is called 
 	bNotifyTick = 1;
 	return EBTNodeResult::InProgress; 
 }
 
-void UBTTask_FollowPath::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
+void UBTTask_MoveToAttackPosition::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
@@ -42,7 +38,7 @@ void UBTTask_FollowPath::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	if (OwnerCharacter == nullptr) return;
 
 	OwnerCharacter->Idle();
-	
+
 	OwnerLocation = OwnerCharacter->GetActorLocation();
 
 	if (!OwnerCharacter->IsPathValid())
@@ -64,20 +60,13 @@ void UBTTask_FollowPath::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	}
 	FVector DirectionToWaypoint = (CurrentWaypoint - OwnerLocation).GetSafeNormal();
 	const float DistanceToWaypoint = DirectionToWaypoint.Length();
+	
 
-
-	APROJCharacter* PlayerToAttack;
-	UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("CurrentTargetPlayer");
-
-	if (PlayerObject == nullptr)
+	// move to attack position
+	ACharacter* CurrentTarget = Cast<ACharacter>(OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("PlayerToAttack"));
+	if (CurrentTarget)
 	{
-		return;
-	}
-	PlayerToAttack = Cast<APROJCharacter>(PlayerObject);
-	if (PlayerToAttack)
-	{
-		
-		OwnerCharacter->CurrentTargetPlayer = PlayerToAttack;
+		OwnerCharacter->CurrentTargetPlayer = CurrentTarget;
 	}
 	
 	// Entity has reached the current waypoint
