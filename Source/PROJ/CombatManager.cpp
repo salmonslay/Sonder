@@ -66,6 +66,8 @@ void ACombatManager::AddEnemy(AEnemyCharacter* Enemy)
 {
 	Enemies.Emplace(Enemy);
 	Enemy->SetGridPointer(Grid);
+	if(!Enemy->Manager)
+		Enemy->Manager = this;
 }
 
 void ACombatManager::RemoveEnemy(AEnemyCharacter* Enemy)
@@ -135,4 +137,5 @@ void ACombatManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 
 	DOREPLIFETIME(ACombatManager, bCombatStarted);
 	DOREPLIFETIME(ACombatManager, bCombatEnded);
+	DOREPLIFETIME(ACombatManager, CurrentWave);
 }
