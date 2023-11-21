@@ -35,7 +35,7 @@ public:
 	
 	/** Laser range*/
 	UPROPERTY(EditAnywhere)
-	float LaserRange = 100.f;
+	float LaserRange = 600.f;
 
 	/** Max difference in height the enemy can be compared to player before being able to attack*/
 	UPROPERTY(EditAnywhere)
