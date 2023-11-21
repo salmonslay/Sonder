@@ -6,6 +6,7 @@
 #include "CollisionDebugDrawingPublic.h"
 #include "EnemyCharacter.h"
 #include "EnhancedInputComponent.h"
+#include "LightGrenade.h"
 #include "RobotHookingState.h"
 #include "PulseObjectComponent.h"
 #include "RobotStateMachine.h"
@@ -215,6 +216,12 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 		{
 			Cast<AEnemyCharacter>(Actor)->Stun(3.0f);
 			UE_LOG(LogTemp, Warning, TEXT("Stun"));
+		}
+		
+		if (Actor->ActorHasTag(FName("Grenade")))
+		{
+			Cast<ALightGrenade>(Actor)->ServerRPCExplosion();
+			UE_LOG(LogTemp, Warning, TEXT("Explode"));
 		}
 	}
 
