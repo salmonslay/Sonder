@@ -84,7 +84,7 @@ public:
 	ACombatTriggeredBase* EndCombatTriggeredActor;
 
 	//Array of all the waves to spawn, set in editor
-	UPROPERTY(EditAnywhere, Category="Spawn")
+	UPROPERTY(EditAnywhere, Category="Spawn", BlueprintReadOnly)
 	TArray<FEnemyWave> Waves;
 
 	//Array of all the spawn points used by the manager, needed for hooking the spawn points to the manager
@@ -107,10 +107,20 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StartCombat();
 
+	UPROPERTY(BlueprintReadOnly)
+	int CurrentWave = 0;
+
+	UFUNCTION(BlueprintPure)
+	bool IsCombatStarted() const { return bCombatStarted; }
+
+	UFUNCTION(BlueprintPure)
+	bool IsCombatEnded() const { return bCombatEnded; }
+
 private:
 	//Used for networking the start and end events and for checking whether to spawn enemies 
 	UPROPERTY(ReplicatedUsing=OnRep_CombatStarted)
 	bool bCombatStarted = false;
+
 	UPROPERTY(ReplicatedUsing=OnRep_CombatEnded)
 	bool bCombatEnded = false;
 
@@ -142,5 +152,4 @@ private:
 	//Now the code fails to compile if this isn't included
 	//DO NOT REMOVE
 	void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
 };

@@ -125,6 +125,7 @@ void ACombatManager::HandleSpawn()
 	if(Wave.WaveStartedTriggeredActor)
 		Wave.WaveStartedTriggeredActor->TriggeredEvent();
 	WavesQueue.RemoveAt(0);
+	CurrentWave++;
 }
 
 void ACombatManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
