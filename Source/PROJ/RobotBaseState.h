@@ -72,6 +72,12 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool IsPulseCoolDownActive() const { return bPulseCoolDownActive; }
 
+	UPROPERTY()
+	AController* Controller;
+
+	UPROPERTY(EditAnywhere)
+	float Damage = 5.0f;
+
 private:
 	UPROPERTY(EditAnywhere)
 	float PulseCooldown = 1.f;
