@@ -16,9 +16,9 @@ class PROJ_API USoulBaseStateNew : public UPlayerCharState
 	GENERATED_BODY()
 
 public:
-
-	USoulBaseStateNew(); 
-
+	
+	USoulBaseStateNew();
+	
 	virtual void Enter() override;
 
 	virtual void Update(const float DeltaTime) override;
@@ -29,8 +29,10 @@ public:
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
-private:
+	UPROPERTY(BlueprintReadOnly)
+	bool bDashCoolDownActive = false;
 
+private:
 	UPROPERTY(EditAnywhere)
 	class UInputAction* DashInputAction;
 
@@ -40,17 +42,18 @@ private:
 	UPROPERTY(EditAnywhere)
 	class UInputAction* AbilityInputAction;
 
-	/** Run locally and called when player presses the dash-button */ 
+	/** Run locally and called when player presses the dash-button */
+	/** Run locally and called when player presses the dash-button */
 	void Dash();
 
 	void GetTimeHeld(const FInputActionInstance& Instance);
-	
+
 	void ThrowGrenade();
 
 	UFUNCTION(Server, Reliable)
-	void ServerRPCThrowGrenade(); 
+	void ServerRPCThrowGrenade();
 
-	
+
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCThrowGrenade();
 

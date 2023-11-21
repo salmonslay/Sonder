@@ -94,11 +94,10 @@ void AProjPlayerController::OnFinishSeamlessTravel()
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), AllPlayerStarts);
 		for (auto& PlayerStart : AllPlayerStarts)
 		{
-			UE_LOG(LogTemp, Warning, TEXT("checking for player start with tag %s"), *ClassTag.ToString());
 			if (PlayerStart->ActorHasTag(ClassTag))
 			{
 				playerSpawnPoint = PlayerStart;
-				UE_LOG(LogTemp, Warning, TEXT("Using player start with tag %s"), *ClassTag.ToString());
+				UE_LOG(LogTemp, Warning, TEXT("Using player start override with tag %s"), *ClassTag.ToString());
 				break;
 			}
 		}
