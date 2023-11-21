@@ -68,21 +68,22 @@ void ALightGrenade::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 }
 
 
-void ALightGrenade::Throw()
+void ALightGrenade::Throw(const float TimeHeld)
 {
-	ServerRPCThrow();
+	if(bCanThrow)
+		ServerRPCThrow(TimeHeld);
 	
 	
 }
-void ALightGrenade::ServerRPCThrow_Implementation()
+void ALightGrenade::ServerRPCThrow_Implementation(const float TimeHeld)
 {
 	if(!this->HasAuthority())
 		return;
 
-	MulticastRPCThrow();
+	MulticastRPCThrow(TimeHeld);
 }
 
-void ALightGrenade::MulticastRPCThrow_Implementation()
+void ALightGrenade::MulticastRPCThrow_Implementation(const float TimeHeld)
 {
 	if(bCanThrow)
 	{
@@ -102,12 +103,18 @@ void ALightGrenade::MulticastRPCThrow_Implementation()
 		ThrowEvent();
 
 		ExplosionArea->SetWorldLocation(Player->ThrowLoc->GetComponentLocation()); 
-		
-		FVector LandingLoc = ExplosionArea->GetComponentLocation() + (Player->GetActorForwardVector()) - Player->GetActorLocation();
 
-		//ExplosionArea->AddImpulse(FVector(2000.0f,2000.0f,0));
+		// Get the direction to throw the grenade in, check if depth movement is enabled 
+		FVector ThrowDir = Player->ThrowLoc->GetComponentLocation() - Player->GetActorLocation();
+		if(!Player->IsDepthMovementEnabled())
+			ThrowDir.X = 0; 
+		
+		// Calculate the force and clamp it to ensure it is between set bounds 
+		const FVector ThrowImpulse = ThrowDir.GetSafeNormal() * StartThrowImpulse + ThrowDir.GetSafeNormal() * TimeHeld * FireSpeedPerSecondHeld;
+		ExplosionArea->AddImpulse(ThrowImpulse.GetClampedToMaxSize(MaxThrowImpulse));
 	
-		ExplosionArea->SetPhysicsLinearVelocity(LandingLoc*(FireSpeed * (1 +TimePressed )));
+		// FVector LandingLoc = ExplosionArea->GetComponentLocation() + (Player->GetActorForwardVector()) - Player->GetActorLocation();
+		// ExplosionArea->SetPhysicsLinearVelocity(LandingLoc*(FireSpeed * (1 +TimeHeld )));
 		
 		bCanThrow = false;
 
