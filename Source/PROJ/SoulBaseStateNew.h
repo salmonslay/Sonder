@@ -17,6 +17,8 @@ class PROJ_API USoulBaseStateNew : public UPlayerCharState
 
 public:
 
+	USoulBaseStateNew(); 
+
 	virtual void Enter() override;
 
 	virtual void Update(const float DeltaTime) override;
@@ -64,9 +66,16 @@ private:
 	UPROPERTY(EditAnywhere)
 	float DashCooldown = 1.f; 
 
+	UPROPERTY(Replicated)
 	bool bDashCoolDownActive = false;
 
-	void DisableDashCooldown() { bDashCoolDownActive = false; }
+	/** Enables dash cooldown on server, bool is replicated to client */
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_EnableDashCooldown();
+
+	/** Disables dash cooldown on server, bool is replicated to client */
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_DisableDashCooldown(); 
 	
 	bool bHasSetUpInput = false;
 

@@ -12,6 +12,11 @@
 #include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
+USoulBaseStateNew::USoulBaseStateNew()
+{
+	SetIsReplicatedByDefault(true); 
+}
+
 void USoulBaseStateNew::Enter()
 {
 	Super::Enter();
@@ -48,9 +53,10 @@ void USoulBaseStateNew::Exit()
 	Super::Exit();
 
 	bDashCoolDownActive = true;
+	ServerRPC_EnableDashCooldown(); 
 
 	FTimerHandle TimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &USoulBaseStateNew::DisableDashCooldown, 1); 
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &USoulBaseStateNew::ServerRPC_DisableDashCooldown, DashCooldown); 
 
 	// Removing the action binding would require changing the action mapping 
 	// PlayerInputComponent->RemoveActionBinding(DashInputAction, ETriggerEvent::Started); 
@@ -72,11 +78,22 @@ void USoulBaseStateNew::Dash()
 	PlayerOwner->SwitchState(SoulCharacter->DashingState); 
 }
 
+void USoulBaseStateNew::ServerRPC_EnableDashCooldown_Implementation()
+{
+	bDashCoolDownActive = true; 
+}
+
+void USoulBaseStateNew::ServerRPC_DisableDashCooldown_Implementation()
+{
+	bDashCoolDownActive = false; 
+}
+
 void USoulBaseStateNew::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(USoulBaseStateNew,  TimeHeld);
+	DOREPLIFETIME(USoulBaseStateNew, TimeHeld);
+	DOREPLIFETIME(USoulBaseStateNew, bDashCoolDownActive);
 }
 
 void USoulBaseStateNew::GetTimeHeld(const FInputActionInstance& Instance)
