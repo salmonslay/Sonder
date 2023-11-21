@@ -28,6 +28,7 @@ void UBTService_CanAttackPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
 
+	OwnerComp.GetBlackboardComponent()->SetValueAsBool("bFoundPlayerWithinAttackRadius", false);
 	OwnerCharacter = Cast<AEnemyCharacter>(OwnerComp.GetAIOwner()->GetCharacter());
 
 	if (OwnerCharacter == nullptr) return;
@@ -69,7 +70,6 @@ void UBTService_CanAttackPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 				OwnerComp.GetBlackboardComponent()->SetValueAsBool("bFoundPlayerWithinAttackRadius", true);
 				break;
 			}
-			//OwnerComp.GetBlackboardComponent()->SetValueAsBool("bFoundPlayerWithinAttackRadius", false);
 		}
 	}
 }
