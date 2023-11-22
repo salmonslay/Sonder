@@ -63,6 +63,9 @@
 		<property name="maximumDistance">
 			<value>40</value>
 		</property>
+		<property name="triggerCooldown">
+			<value>100</value>
+		</property>
 	</object>
 	<object class="MarkerTrack" id="{0cfe1b46-fe8e-44f1-9d62-901e66ccaf8f}" />
 	<object class="Timeline" id="{97705b64-44b2-4358-8487-4b48a267c438}">
