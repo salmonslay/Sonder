@@ -106,14 +106,6 @@ void AEnemyCharacter::Stun(const float Duration)
 {
 	if (GetLocalRole() == ROLE_Authority)
 	{
-		if(bIsStunned)
-		{
-			if(Duration > StunnedDuration)
-			{
-				StunnedDuration = Duration;
-			}
-		}
-		StunnedDuration = Duration;
 		bIsStunned = true;
 		bIsChargingAttack = false;
 		bIsAttacking = false;
@@ -125,7 +117,7 @@ void AEnemyCharacter::Stun(const float Duration)
 
 void AEnemyCharacter::ChargeAttack()
 {
-	if (GetLocalRole() == ROLE_Authority && !bIsChargingAttack)
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		bIsChargingAttack = true;
 		bIsAttacking = false;
@@ -138,7 +130,7 @@ void AEnemyCharacter::ChargeAttack()
 
 void AEnemyCharacter::Attack()
 {
-	if (GetLocalRole() == ROLE_Authority && !bIsAttacking)
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		bIsAttacking = true;
 		bIsChargingAttack = false;
@@ -152,7 +144,7 @@ void AEnemyCharacter::Attack()
 
 void AEnemyCharacter::Idle()
 {
-	if (GetLocalRole() == ROLE_Authority && !bIsIdle)
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		bIsStunned = false;
 		bIsAttacking = false;

@@ -7,7 +7,6 @@
 #include "FlyingEnemyCharacter.h"
 #include "PROJCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "Kismet/KismetSystemLibrary.h"
 
 class APROJCharacter;
 
@@ -54,43 +53,19 @@ void UBTService_IsInAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 	const float HeightDiff = FMath::Abs(OwnerLocation.Z - PlayerToAttackLocation.Z);
 	if (HeightDiff > OwnerCharacter->MaxAttackHeightDifference)
 	{
+		//OwnerComp.GetBlackboardComponent()->SetValueAsBool("bStartAttackPositionSet", false);
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool("bIsInRangeToAttack", false);
+		//OwnerComp.GetBlackboardComponent()->ClearValue("StartAttackPosition");
 	}
 	else
 	{
-		OwnerCharacter->Attack();
-		TArray<AActor*> ActorsToIgnore;
-		ActorsToIgnore.Add(OwnerCharacter);
-
-		FHitResult Hit;
-		bool bHit;
-
+		//OwnerComp.GetBlackboardComponent()->SetValueAsBool("bStartAttackPositionSet", true);
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool("bIsInRangeToAttack", true);
+		OwnerComp.GetBlackboardComponent()->SetValueAsVector("StartAttackPosition", OwnerLocation);
+		
 		if (bDebug)
 		{
-			bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), OwnerLocation, OwnerLocation + OwnerCharacter->GetActorForwardVector() * OwnerCharacter->LaserRange, ObjectTypeQueries, true, ActorsToIgnore, EDrawDebugTrace::ForDuration, Hit, true, FLinearColor::Blue, FLinearColor::Green, OwnerCharacter->PerformAttackDuration );
-		}
-		else
-		{
-			bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), OwnerLocation, OwnerLocation +OwnerCharacter->GetActorForwardVector() * OwnerCharacter->LaserRange, ObjectTypeQueries, true, ActorsToIgnore, EDrawDebugTrace::None, Hit, true, FLinearColor::Blue, FLinearColor::Green, OwnerCharacter->PerformAttackDuration );
-		}
-
-		if (bHit)
-		{
-			APROJCharacter* PlayerHit = Cast<APROJCharacter>(Hit.GetActor());
-			if (PlayerHit)
-			{
-				OwnerComp.GetBlackboardComponent()->SetValueAsBool("bIsInRangeToAttack", true);
-				OwnerComp.GetBlackboardComponent()->SetValueAsVector("StartAttackPosition", OwnerLocation);
-			}
-			else
-			{
-				OwnerComp.GetBlackboardComponent()->SetValueAsBool("bIsInRangeToAttack", false);
-			}
-		}
-		else
-		{
-			OwnerComp.GetBlackboardComponent()->SetValueAsBool("bIsInRangeToAttack", true);
-			OwnerComp.GetBlackboardComponent()->SetValueAsVector("StartAttackPosition", OwnerLocation);
+			DrawDebugLine(GetWorld(), OwnerLocation, PlayerToAttackLocation, FColor::Cyan, false, 0.2f, 0, 5.f);
 		}
 	}
 }

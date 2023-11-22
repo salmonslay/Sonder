@@ -39,7 +39,4 @@ protected:
 
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;
-	
-	UPROPERTY(EditAnywhere)
-	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypeQueries;
 };

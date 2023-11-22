@@ -41,11 +41,14 @@ EBTNodeResult::Type UBTTask_ChargeLaserAttack::ExecuteTask(UBehaviorTreeComponen
 	if (bDebug)
 	{
 		GEngine->AddOnScreenDebugMessage(-1, 15.0f, FColor::Yellow, TEXT("Charging attack!"));
+		//DrawDebugSphere(GetWorld(), OwnerLocation, 40, 40, FColor::Orange, false, 0.3, 0, 2.f);
 	}
-
+	//OwnerCharacter->GetCharacterMovement()->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::X);
 	OwnerCharacter->GetCharacterMovement()->CurrentRootMotion.Clear();
 	OwnerCharacter->GetCharacterMovement()->Velocity= FVector::ZeroVector;
-	
+
+	//OwnerCharacter->GetCharacterMovement()->SetPlaneConstraintEnabled(true);
+		//GetWorld()->GetTimerManager().SetTimer(EnableMovementTimerHandle, this, &UBTTask_ChargeLaserAttack::EnableMovement, OwnerCharacter->ChargeAttackDuration, false, -1.f);
 	return EBTNodeResult::Succeeded;
 }
 

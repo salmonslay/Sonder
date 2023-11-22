@@ -33,7 +33,7 @@ private:
 
 	// The amount of damage the player(s) takes each time
 	UPROPERTY(EditAnywhere)
-	float DamageAmount = 1;
+	uint8 DamageAmount = 1;
 
 	// Whether or not the player dies instantly when entering the zone
 	UPROPERTY(EditAnywhere)

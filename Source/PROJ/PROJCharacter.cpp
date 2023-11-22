@@ -39,6 +39,8 @@ APROJCharacter::APROJCharacter()
 	GetCharacterMovement()->MinAnalogWalkSpeed = 20.f;
 	GetCharacterMovement()->BrakingDecelerationWalking = 2000.f;
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
+	GetCharacterMovement()->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::X);
+	GetCharacterMovement()->SetPlaneConstraintEnabled(true);
 
 	NewPlayerHealthComponent = CreateDefaultSubobject<UNewPlayerHealthComponent>("NewPlayerHealthComp");
 	//NewPlayerHealthComponent->SetIsReplicated(true);
@@ -221,14 +223,6 @@ void APROJCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8
 			bHasCalledTimer = true; 
 		}
 	}
-}
-
-void APROJCharacter::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-
-	GetCharacterMovement()->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::X);
-	GetCharacterMovement()->SetPlaneConstraintEnabled(!bDepthMovementEnabled);
 }
 
 void APROJCharacter::Move(const FInputActionValue& Value)

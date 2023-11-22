@@ -38,35 +38,51 @@ EBTNodeResult::Type UBTTask_DoLaserAttack::ExecuteTask(UBehaviorTreeComponent& O
 
 	OwnerLocation = OwnerCharacter->GetActorLocation();
 
-	OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsFloat("PerformAttackTime", OwnerCharacter->PerformAttackDuration);
+	UE_LOG(LogTemp, Error, TEXT("All pointers set correctly."));
 
-	OwnerCharacter->Attack();
-	TArray<AActor*> ActorsToIgnore;
-	ActorsToIgnore.Add(OwnerCharacter);
+	/*
+	APROJCharacter* PlayerToAttack;
+	UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("PlayerToAttack");
 
-	FHitResult Hit;
-	bool bHit;
-
-	if (bDebug)
+	if (PlayerObject == nullptr)
 	{
-		bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), OwnerLocation, OwnerLocation + OwnerCharacter->GetActorForwardVector() * OwnerCharacter->LaserRange, ObjectTypeQueries, true, ActorsToIgnore, EDrawDebugTrace::ForDuration, Hit, true, FLinearColor::Blue, FLinearColor::Green, OwnerCharacter->PerformAttackDuration );
+		return EBTNodeResult::Failed;
 	}
-	else
-	{
-		bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), OwnerLocation, OwnerLocation +OwnerCharacter->GetActorForwardVector() * OwnerCharacter->LaserRange, ObjectTypeQueries, true, ActorsToIgnore, EDrawDebugTrace::None, Hit, true, FLinearColor::Blue, FLinearColor::Green, OwnerCharacter->PerformAttackDuration );
-	}
-
-	if (bHit)
-	{
-		APROJCharacter* PlayerHit = Cast<APROJCharacter>(Hit.GetActor());
-		if (PlayerHit)
-		{
-			FDamageEvent DamageEvent;
-			PlayerHit->TakeDamage(OwnerCharacter->DamageToPlayer, DamageEvent, OwnerComp.GetAIOwner(), OwnerCharacter);
-		}
-	}
-	return EBTNodeResult::Succeeded;
 	
+	PlayerToAttack = Cast<APROJCharacter>(PlayerObject);
+	
+	if (PlayerToAttack)
+	{
+	*/
+		OwnerCharacter->Attack();
+		TArray<AActor*> ActorsToIgnore;
+		ActorsToIgnore.Add(OwnerCharacter);
+
+		FHitResult Hit;
+		bool bHit;
+
+		if (bDebug)
+		{
+			bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), OwnerLocation, OwnerLocation + OwnerCharacter->GetActorForwardVector() * OwnerCharacter->LaserRange, ObjectTypeQueries, true, ActorsToIgnore, EDrawDebugTrace::ForDuration, Hit, true, FLinearColor::Blue, FLinearColor::Green, OwnerCharacter->PerformAttackDuration );
+		}
+		else
+		{
+			bHit = UKismetSystemLibrary::LineTraceSingleForObjects(GetWorld(), OwnerLocation, OwnerLocation +OwnerCharacter->GetActorForwardVector() * OwnerCharacter->LaserRange, ObjectTypeQueries, true, ActorsToIgnore, EDrawDebugTrace::None, Hit, true, FLinearColor::Blue, FLinearColor::Green, OwnerCharacter->PerformAttackDuration );
+		}
+
+		if (bHit)
+		{
+			APROJCharacter* PlayerHit = Cast<APROJCharacter>(Hit.GetActor());
+			if (PlayerHit)
+			{
+				FDamageEvent DamageEvent;
+				PlayerHit->TakeDamage(OwnerCharacter->DamageToPlayer, DamageEvent, OwnerComp.GetAIOwner(), OwnerCharacter);
+			}
+		}
+		OwnerCharacter->bSetFocusToPlayer = true;
+		return EBTNodeResult::Succeeded;
+	//}
+	//return EBTNodeResult::Failed;
 }
 
 void UBTTask_DoLaserAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)

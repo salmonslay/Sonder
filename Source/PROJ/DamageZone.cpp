@@ -2,9 +2,7 @@
 
 #include "DamageZone.h"
 
-#include "NewPlayerHealthComponent.h"
 #include "PROJCharacter.h"
-#include "Engine/DamageEvents.h"
 
 ADamageZone::ADamageZone()
 {
@@ -24,7 +22,7 @@ void ADamageZone::NotifyActorBeginOverlap(AActor* OtherActor)
 		return;
 
 	// A damage zone can only damage the local player. If the player is not locally controlled, we ignore them.
-	if (OtherActor->ActorHasTag("Player"))
+	if (Cast<APROJCharacter>(OtherActor))
 	{
 		PlayerActors.AddUnique(OtherActor);
 		UE_LOG(LogTemp, Warning, TEXT("Added %s to %s"), *OtherActor->GetName(), *GetName())
@@ -55,38 +53,36 @@ void ADamageZone::Tick(float DeltaSeconds)
 	if (!HasAuthority() || PlayerActors.IsEmpty())
 		return;
 
-	for (AActor* PlayerActor : PlayerActors)
+	for (AActor* Player : PlayerActors)
 	{
-		APROJCharacter* Character = Cast<APROJCharacter>(PlayerActor);
-		if (!Character)
-			continue;
-
+		APROJCharacter* PPlayer = Cast<APROJCharacter>(Player);
 		if (GetWorld()->GetTimeSeconds() - LastDamageTime > TimeUntilFirstDamage)
 		{
 			// Handle instant kill
 			if (bInstantKill)
 			{
-				if (!PlayersDamagedThisOverlap.Contains(PlayerActor))
+				if (!PlayersDamagedThisOverlap.Contains(Player))
 				{
-					PlayersDamagedThisOverlap.Add(PlayerActor);
-					UE_LOG(LogTemp, Warning, TEXT("Killing %s from %s"), *PlayerActor->GetName(), *GetName())
+					PlayersDamagedThisOverlap.Add(Player);
+					UE_LOG(LogTemp, Warning, TEXT("Killing %s from %s"), *Player->GetName(), *GetName())
 
-					Character->TakeDamage(TNumericLimits<float>::Max(), FDamageEvent(), nullptr, this);
-					PlayerActors.Remove(PlayerActor);
-					PlayersDamagedThisOverlap.Remove(PlayerActor);
+					// Player->KillPlayer(); // TODO: implement real killing
+
+					// teleport to its checkpoint TODO: remove this when we have real killing
+					PPlayer->SetActorLocation(PPlayer->GetSpawnTransform().GetLocation());
+					PPlayer->SetActorRotation(PPlayer->GetSpawnTransform().GetRotation());
 				}
 				return;
 			}
 
 			// Early return if we've already been damaged and don't want to do it again
-			if (bOnlyDamageOnce && PlayersDamagedThisOverlap.Contains(PlayerActor))
+			if (bOnlyDamageOnce && PlayersDamagedThisOverlap.Contains(Player))
 				return;
 
-			UE_LOG(LogTemp, Warning, TEXT("Damaging %s from %s"), *PlayerActor->GetName(), *GetName())
-			Character->TakeDamage(DamageAmount, FDamageEvent(), nullptr, this);
-
+			UE_LOG(LogTemp, Warning, TEXT("Damaging %s from %s"), *Player->GetName(), *GetName())
+			// PlayerState->TakeDamage(DamageAmount, FDamageEvent(), nullptr, nullptr); // TODO: implement dealing damage
 			LastDamageTime = GetWorld()->GetTimeSeconds();
-			PlayersDamagedThisOverlap.Add(PlayerActor);
+			PlayersDamagedThisOverlap.Add(Player);
 		}
 	}
 }

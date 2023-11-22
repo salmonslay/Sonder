@@ -74,13 +74,7 @@ public:
 	/** Changes gravity scale when at jump peak to fall faster */
 	virtual void NotifyJumpApex() override;
 
-	// Checks if it is a Arena to set Death Mode. Will be deprecated when respawn system is reworked
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
-	bool bIsArena = false;
-
 	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode) override;
-
-	virtual void Tick(float DeltaSeconds) override;
 
 #pragma region Events 
 	
@@ -147,7 +141,7 @@ private:
 
 	void DisableCoyoteJump();
 
-	bool bHasCalledTimer = false;
+	bool bHasCalledTimer = false; 
 	
 	void CoyoteJump();
 
