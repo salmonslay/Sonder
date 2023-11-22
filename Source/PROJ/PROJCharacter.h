@@ -80,7 +80,14 @@ public:
 
 	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode) override;
 
-	virtual void Tick(float DeltaSeconds) override;
+	virtual void Tick(float DeltaSeconds) override; 
+
+	// Bools controlling players ability to use abilities
+	UPROPERTY(BlueprintReadWrite)
+	bool AbilityOne = false;
+	
+	UPROPERTY(BlueprintReadWrite)
+	bool AbilityTwo = false;
 
 #pragma region Events 
 	

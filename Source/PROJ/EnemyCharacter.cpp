@@ -113,7 +113,10 @@ void AEnemyCharacter::Stun(const float Duration)
 				StunnedDuration = Duration;
 			}
 		}
-		StunnedDuration = Duration;
+		else
+		{
+			StunnedDuration = Duration;
+		}
 		bIsStunned = true;
 		bIsChargingAttack = false;
 		bIsAttacking = false;
@@ -125,11 +128,11 @@ void AEnemyCharacter::Stun(const float Duration)
 
 void AEnemyCharacter::ChargeAttack()
 {
-	if (GetLocalRole() == ROLE_Authority && !bIsChargingAttack)
+	if (GetLocalRole() == ROLE_Authority && !bIsChargingAttack && !bIsStunned)
 	{
 		bIsChargingAttack = true;
 		bIsAttacking = false;
-		bIsStunned = false;
+		//bIsStunned = false;
 		bIsIdle = false;
 		OnChargingAttackEvent(ChargeAttackDuration);
 		//GetWorldTimerManager().SetTimer(ChargeAttackTimerHandle, this, &AEnemyCharacter::Attack, ChargeAttackDuration, false, -1.f);
@@ -138,11 +141,11 @@ void AEnemyCharacter::ChargeAttack()
 
 void AEnemyCharacter::Attack()
 {
-	if (GetLocalRole() == ROLE_Authority && !bIsAttacking)
+	if (GetLocalRole() == ROLE_Authority && !bIsAttacking && !bIsStunned)
 	{
 		bIsAttacking = true;
 		bIsChargingAttack = false;
-		bIsStunned = false;
+		//bIsStunned = false;
 		bIsIdle = false;
 		OnPerformAttackEvent(PerformAttackDuration);
 		//GetWorldTimerManager().ClearTimer(ChargeAttackTimerHandle);
@@ -152,9 +155,9 @@ void AEnemyCharacter::Attack()
 
 void AEnemyCharacter::Idle()
 {
-	if (GetLocalRole() == ROLE_Authority && !bIsIdle)
+	if (GetLocalRole() == ROLE_Authority && !bIsIdle && !bIsStunned)
 	{
-		bIsStunned = false;
+		//bIsStunned = false;
 		bIsAttacking = false;
 		bIsChargingAttack = false;
 		bIsIdle = true;
@@ -175,6 +178,11 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 	if (EnemyHealthComponent)
 	{
 		DamageApplied = EnemyHealthComponent->TakeDamage(DamageApplied);
+
+		if(DamageAmount >= StaggeredThreshold)
+		{
+			Stun(StaggeredDuration);	
+		}
 
 		if (DamageCauser && IsValid(DamageCauser))
 		{

@@ -95,16 +95,16 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnUnstunnedEvent();
 	
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Stunned)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, ReplicatedUsing=OnRep_Stunned)
 	bool bIsStunned = false;
 
-	UPROPERTY(ReplicatedUsing=OnRep_ChargingAttack)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, ReplicatedUsing=OnRep_ChargingAttack)
 	bool bIsChargingAttack = false;
 
-	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Attack)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, ReplicatedUsing=OnRep_Attack)
 	bool bIsAttacking = false;
 
-	UPROPERTY(BlueprintReadOnly, Replicated)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated)
 	bool bIsIdle = false;
 	
 	FTimerHandle StunnedTimerHandle;
@@ -113,19 +113,19 @@ public:
 
 	FTimerHandle AttackTimerHandle;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float ChargeAttackDuration = 0.7f;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float PerformAttackDuration = 0.5f;
 
 	UPROPERTY(EditDefaultsOnly)
 	float UnlockRotationAfterAttackDuration = 0.5f;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float StunnedDuration = 0.5f;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float StaggeredDuration = 0.3f;
 
 	UPROPERTY(EditDefaultsOnly)

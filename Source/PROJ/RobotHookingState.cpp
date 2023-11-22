@@ -15,6 +15,7 @@
 #include "HookShotAttachment.h"
 #include "StaticsHelper.h"
 #include "Engine/DamageEvents.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 void URobotHookingState::Enter()
@@ -39,48 +40,44 @@ void URobotHookingState::Enter()
 
 	StartLocation = PlayerOwner->GetActorLocation();
 
-	// No blocking objects 
-	if(SetHookTarget())
-	{
-		StartTravelToTarget(); 
-		// UE_LOG(LogTemp, Warning, TEXT("Shooting towards target"))
-	} else // Something blocked 
-	{
-		// Do we want to do something here? Event? 
-		
-		// UE_LOG(LogTemp, Warning, TEXT("Block between player"))
-	}
+	CurrentTargetActor = nullptr; 
 
-	PlayerOwner->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &URobotHookingState::ActorOverlap); 
+	SetHookTarget(); 
 	
-	ShootHook(); 
+	StartShootHook(); 
 }
 
 void URobotHookingState::Update(const float DeltaTime)
 {
 	Super::Update(DeltaTime);
 
+	// Fail safe to ensure player does not get stuck while using hook shot. Can prob be removed 
+	if((FailSafeTimer += DeltaTime) >= FailSafeLength)
+		EndHookShot();
+
+	// Shooting the hook towards its target, does not need to do anything else 
+	if(bShootingHookOutwards)
+	{
+		ShootHook(DeltaTime);
+		return; 
+	}
+
 	if(bTravellingTowardsTarget)
 	{
 		FHitResult HitResult; 
-		DoLineTrace(HitResult);
+		GetActorToTarget(HitResult);
 	
 		// Perform line trace while travelling towards target to see if something is now blocking (for whatever reason)
 		if(HitResult.IsValidBlockingHit())
 		{
-			UE_LOG(LogTemp, Warning, TEXT("Ended in update"))
 			EndHookShot();
 			return; 
 		}
 		
 		TravelTowardsTarget(DeltaTime);
 	}
-	
-	RetractHook(DeltaTime);
 
-	// Fail safe to ensure player does not get stuck while using hook shot 
-	if((FailSafeTimer += DeltaTime) >= FailSafeLength)
-		EndHookShot();
+	RetractHook(DeltaTime); 
 }
 
 void URobotHookingState::Exit()
@@ -119,7 +116,7 @@ void URobotHookingState::EndHookShot() const
 bool URobotHookingState::SetHookTarget()
 {
 	FHitResult HitResult;
-	const AActor* HitActorTarget = DoLineTrace(HitResult);
+	CurrentTargetActor = GetActorToTarget(HitResult);
 
 	if(!SoulCharacter)
 	{
@@ -128,22 +125,22 @@ bool URobotHookingState::SetHookTarget()
 		return false;
 	}
 	
-	CurrentHookTargetLocation = HitActorTarget ? HitActorTarget->GetActorLocation() : HitResult.Location;
+	CurrentHookTargetLocation = CurrentTargetActor ? CurrentTargetActor->GetActorLocation() : HitResult.Location;
 
 	// Offset target location if targeting Soul 
-	if(HitActorTarget == SoulCharacter)
+	if(CurrentTargetActor == SoulCharacter)
 	{
 		CurrentHookTargetLocation += FVector::UpVector * ZSoulTargetOffset;
 		bHookTargetIsSoul = true; 
 	} else
 		bHookTargetIsSoul = false; 
 
-	if(!StaticsHelper::ActorIsInFront(RobotCharacter, CurrentHookTargetLocation))
+	if(!CurrentTargetActor || !StaticsHelper::ActorIsInFront(RobotCharacter, CurrentHookTargetLocation))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Target not in front of player"))
 		CurrentHookTargetLocation = GetTargetOnNothingInFront(); 
 		return false; 
-	}
+	} 
 
 	return !HitResult.IsValidBlockingHit(); 
 }
@@ -162,7 +159,7 @@ FVector URobotHookingState::GetTargetOnNothingInFront() const
 	return HitResult.IsValidBlockingHit() ? HitResult.Location : EndLoc; 
 }
 
-AActor* URobotHookingState::DoLineTrace(FHitResult& HitResultOut)
+AActor* URobotHookingState::GetActorToTarget(FHitResult& HitResultOut)
 {
 	if(!SoulCharacter)
 		SoulCharacter = UGameplayStatics::GetActorOfClass(this, ASoulCharacter::StaticClass()); 
@@ -220,26 +217,108 @@ AActor* URobotHookingState::DoLineTrace(FHitResult& HitResultOut)
 		HookTarget = AHookShotAttachment::GetHookToTarget(RobotCharacter);
 		if(HookTarget) // If there is a valid HookTarget, update the hit result with line trace towards hook instead of towards Soul 
 			GetWorld()->SweepSingleByChannel(HitResultOut, StartLoc, HookTarget->GetActorLocation(), FQuat::Identity, ECC_Pawn, CollShape, Params);
-		
-		return HookTarget; 
+
+		// Return hook target if there is a clear path to it, otherwise return nullptr - no valid target 
+		return HitResultOut.IsValidBlockingHit() ? nullptr : HookTarget; 
 	}
 
 	// No valid target 
 	return nullptr; 
 }
 
-void URobotHookingState::ShootHook() 
+// Run once when hook shoots out 
+void URobotHookingState::StartShootHook()
+{
+	// Disable input if there is a valid target 
+	if(CurrentTargetActor)
+		RobotCharacter->DisableInput(RobotCharacter->GetLocalViewingPlayerController());
+	
+	bShootingHookOutwards = true;
+	
+	ServerRPCHookShotStart(HookCable, CurrentHookTargetLocation, RobotCharacter); 
+}
+
+void URobotHookingState::ServerRPCHookShotStart_Implementation(UCableComponent* HookCableComp, const FVector& HookTarget, ARobotStateMachine* RobotChar)
+{
+	if(!PlayerOwner->HasAuthority())
+		return;
+
+	MulticastRPCHookShotStart(HookTarget, RobotChar); 
+}
+
+void URobotHookingState::MulticastRPCHookShotStart_Implementation(const FVector& HookTarget, ARobotStateMachine* RobotChar)
+{
+	if(!GetOwner())
+	{
+		UE_LOG(LogTemp, Error, TEXT("Owner is null"))
+		return; 
+	}
+	
+	const auto CableComp = GetOwner()->FindComponentByClass<UCableComponent>(); 
+
+	if(!CableComp)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Cable comp is null"))
+		return; 
+	}
+	
+	CableComp->SetVisibility(true);
+	CableComp->bAttachEnd = true;
+	
+	if(CurrentTargetActor) // If there is a valid target 
+	{
+		PlayerOwner->GetCharacterMovement()->GravityScale = 0;
+		PlayerOwner->GetCharacterMovement()->Velocity = FVector::ZeroVector; 
+		PlayerOwner->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying); 
+	}
+
+	RobotChar->OnHookShotStart(); 
+}
+
+// Run each Tick 
+void URobotHookingState::ShootHook(const float DeltaTime) 
 {
 	// Shoots the hook outwards
 
-	ServerRPCHookShotStart(HookCable, CurrentHookTargetLocation, RobotCharacter); 
+	// Cable comp's end loc is relative to its owner 
+	const FVector EndLocRelToOwner = GetOwner()->GetTransform().InverseTransformPosition(CurrentHookTargetLocation);
+
+	// Lerp towards the target 
+	const FVector NewEndLoc = UKismetMathLibrary::VInterpTo_Constant(HookCable->EndLocation, EndLocRelToOwner, DeltaTime, OutwardsHookShotSpeed); 
+	
+	ServerRPC_ShootHook(NewEndLoc);
+
+	// Hook has reached its target, start moving towards it 
+	if(NewEndLoc.Equals(EndLocRelToOwner))
+	{
+		bShootingHookOutwards = false;
+
+		// Start travelling towards the target if there is a valid target (did not hit a wall)
+		if(CurrentTargetActor)
+			StartTravelToTarget(); 
+	}
+}
+
+void URobotHookingState::ServerRPC_ShootHook_Implementation(const FVector& NewHookEndLoc)
+{
+	if(!PlayerOwner->HasAuthority())
+		return;
+
+	MulticastRPC_ShootHook(NewHookEndLoc); 
+}
+
+void URobotHookingState::MulticastRPC_ShootHook_Implementation(const FVector& NewHookEndLoc) 
+{
+	if(UCableComponent* CableComp = PlayerOwner->FindComponentByClass<UCableComponent>())
+		CableComp->EndLocation = NewHookEndLoc;
 }
 
 void URobotHookingState::StartTravelToTarget()
 {
-	bTravellingTowardsTarget = true;
-
-	RobotCharacter->DisableInput(RobotCharacter->GetLocalViewingPlayerController());
+	bTravellingTowardsTarget = true; 
+	
+	// Bind function to notify overlaps so damage can be dealt to enemies that are travelled over 
+	PlayerOwner->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &URobotHookingState::ActorOverlap);
 
 	ServerRPCStartTravel(); 
 }
@@ -248,7 +327,7 @@ void URobotHookingState::ServerRPCStartTravel_Implementation()
 {
 	if(!PlayerOwner->HasAuthority())
 		return;
-	
+
 	// Invincible during hook shot, needs to be set on server 
 	PlayerOwner->SetCanBeDamaged(false); 
 	
@@ -257,8 +336,7 @@ void URobotHookingState::ServerRPCStartTravel_Implementation()
 
 void URobotHookingState::MulticastRPCStartTravel_Implementation()
 {
-	PlayerOwner->GetCharacterMovement()->GravityScale = 0;
-	PlayerOwner->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+	Cast<ARobotStateMachine>(PlayerOwner)->OnHookShotTravelStart(); 
 }
 
 void URobotHookingState::TravelTowardsTarget(const float DeltaTime)
@@ -283,10 +361,9 @@ void URobotHookingState::TravelTowardsTarget(const float DeltaTime)
 void URobotHookingState::ServerTravelTowardsTarget_Implementation(const float DeltaTime, const FVector Direction)
 {
 	if(!PlayerOwner->HasAuthority())
-		return; 
-
+		return;
+	
 	PlayerOwner->GetCharacterMovement()->Velocity = Direction * HookShotTravelSpeed;
-
 }
 
 void URobotHookingState::CollidedWithSoul()
@@ -304,25 +381,23 @@ void URobotHookingState::RetractHook(const float DeltaTime)
 	if(bTravellingTowardsTarget)
 	{
 		const FVector EndLocRelToOwner = PlayerOwner->GetTransform().InverseTransformPosition(CurrentHookTargetLocation);
-		ServerRPC_RetractHook(EndLocRelToOwner); 
+		ServerRPC_RetractHook(EndLocRelToOwner);
+		
 	} else // Hit a blocking object 
 	{
-		const FVector DirToPlayer = (PlayerOwner->GetActorLocation() - CurrentHookTargetLocation).GetSafeNormal();
-		CurrentHookTargetLocation += DirToPlayer * DeltaTime * RetractHookOnMissSpeed; // Move current target closer to player 
+		// Lerp hook cable's end location back towards itself 
+		const FVector NewEndLoc = UKismetMathLibrary::VInterpTo_Constant(HookCable->EndLocation, HookCable->GetRelativeLocation(), DeltaTime, RetractHookOnMissSpeed); 
 
-		// Set new end loc for the cable 
-		const FVector EndLocRelToOwner = PlayerOwner->GetTransform().InverseTransformPosition(CurrentHookTargetLocation);
+		ServerRPC_RetractHook(NewEndLoc);
 
-		ServerRPC_RetractHook(EndLocRelToOwner); 
+		// Fully retracted hook, change back to base state 
+		if(HookCable->EndLocation.Equals(HookCable->GetRelativeLocation())) 
+			EndHookShot(); 
 	}
-
-	// Fully retracted hook, change back to base state 
-	if(HookCable->EndLocation.Equals(HookCable->GetRelativeLocation(), 10.f)) 
-		EndHookShot(); 
 }
 
 void URobotHookingState::ActorOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                      UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	// Do not damage players 
 	if(!PlayerOwner->IsLocallyControlled() || Cast<APROJCharacter>(OtherActor))
@@ -338,7 +413,7 @@ void URobotHookingState::ServerRPC_DamageActor_Implementation(AActor* ActorToDam
 
 void URobotHookingState::MulticastRPC_RetractHook_Implementation(const FVector& NewEndLocation)
 {
-	GetOwner()->FindComponentByClass<UCableComponent>()->EndLocation = NewEndLocation; 
+	PlayerOwner->FindComponentByClass<UCableComponent>()->EndLocation = NewEndLocation; 
 }
 
 void URobotHookingState::ServerRPC_RetractHook_Implementation(const FVector& NewEndLocation)
@@ -369,42 +444,6 @@ void URobotHookingState::ServerRPCHookShotEnd_Implementation(ARobotStateMachine*
 	MovementComp->Velocity = NewVel; 
 
 	MulticastRPCHookShotEnd(RobotChar); 
-}
-
-void URobotHookingState::MulticastRPCHookShotStart_Implementation(const FVector& HookTarget, ARobotStateMachine* RobotChar)
-{
-	if(!GetOwner())
-	{
-		UE_LOG(LogTemp, Error, TEXT("Owner is null"))
-		return; 
-	}
-	
-	const auto CableComp = GetOwner()->FindComponentByClass<UCableComponent>(); 
-
-	if(!CableComp)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Cable comp is null"))
-		return; 
-	}
-	
-	CableComp->SetVisibility(true);
-	CableComp->bAttachEnd = true;
-
-	// End location is relative to owner
-	const FVector EndLocRelToOwner = GetOwner()->GetTransform().InverseTransformPosition(HookTarget);
-	
-	// TODO: lerp this? Needs to be called in Update if so 
-	CableComp->EndLocation = EndLocRelToOwner;
-
-	RobotChar->OnHookShotStart(); 
-}
-
-void URobotHookingState::ServerRPCHookShotStart_Implementation(UCableComponent* HookCableComp, const FVector& HookTarget, ARobotStateMachine* RobotChar)
-{
-	if(!PlayerOwner->HasAuthority())
-		return;
-
-	MulticastRPCHookShotStart(HookTarget, RobotChar); 
 }
 
 void URobotHookingState::ServerRPCHookCollision_Implementation()

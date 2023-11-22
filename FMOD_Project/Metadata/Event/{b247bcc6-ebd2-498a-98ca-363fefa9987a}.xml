@@ -485,6 +485,7 @@
 		<relationship name="effects">
 			<destination>{00d17bb0-4465-415f-a312-af8b6dc039fd}</destination>
 			<destination>{a28d013e-f297-4bd0-996e-1d33911e3fe9}</destination>
+			<destination>{ff28bc8f-11b3-4e70-94e8-9cfbe5f85ffe}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{b3fd0dc8-20ea-4552-bba1-e0576414f48d}" />
@@ -839,6 +840,11 @@
 	<object class="SpatialiserEffect" id="{a28d013e-f297-4bd0-996e-1d33911e3fe9}">
 		<property name="distanceRolloffType">
 			<value>1</value>
+		</property>
+	</object>
+	<object class="GainEffect" id="{ff28bc8f-11b3-4e70-94e8-9cfbe5f85ffe}">
+		<property name="gain">
+			<value>2.5</value>
 		</property>
 	</object>
 	<object class="AutomationPoint" id="{1c25e53f-094f-4005-841e-c0f0a55e2c24}">

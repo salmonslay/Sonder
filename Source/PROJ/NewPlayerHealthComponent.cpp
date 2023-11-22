@@ -11,6 +11,15 @@ UNewPlayerHealthComponent::UNewPlayerHealthComponent()
 	PrimaryComponentTick.bCanEverTick = false; // Note: Tick is turned off 
 }
 
+float UNewPlayerHealthComponent::TakeDamage(float DamageAmount)
+{
+	const float DamageTaken = Super::TakeDamage(DamageAmount);
+
+	ServerRPCDamageTaken(DamageAmount); 
+
+	return DamageTaken; 
+}
+
 void UNewPlayerHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
@@ -18,33 +27,11 @@ void UNewPlayerHealthComponent::BeginPlay()
 	Player = Cast<APROJCharacter>(GetOwner()); 
 }
 
-/*
-float UNewPlayerHealthComponent::TakeDamage(const float DamageAmount)
-{
-	// Run only on the local player 
-	if(!Player->IsLocallyControlled())
-		return Super::TakeDamage(DamageAmount);
-
-	const float DamageTaken = Super::TakeDamage(DamageAmount);
-
-	ServerRPCDamageTaken(DamageTaken); 
-
-	return DamageTaken; 
-}
-*/
-
 void UNewPlayerHealthComponent::ServerRPCDamageTaken_Implementation(const float DamageTaken)
 {
 	// Run only on server 
 	if(!Player->HasAuthority())
 		return;
-	
-	CurrentHealth -= DamageTaken;
-	if (CurrentHealth <= 0)
-	{
-		IDied();
-		CurrentHealth = MaxHealth;
-	}
 
 	MulticastRPCDamageTaken(DamageTaken); 
 }
@@ -63,7 +50,7 @@ void UNewPlayerHealthComponent::IDied()
 	UE_LOG(LogTemp, Error, TEXT("Dies On Server before super"));
 
 	//if(!Player->IsLocallyControlled())
-	{
+	{ // <- TODO: Cursed brackets why is this allowed 
 		//UE_LOG(LogTemp, Error, TEXT("Dies On Server"));
 		ServerRPCPlayerDied(); 
 	}

@@ -3,6 +3,11 @@
 
 #include "BTTask_DoStun.h"
 
+#include "AIController.h"
+#include "FlyingEnemyCharacter.h"
+#include "BehaviorTree/BlackboardComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
+
 UBTTask_DoStun::UBTTask_DoStun()
 {
 	NodeName = TEXT("DoStun");
@@ -18,30 +23,39 @@ void UBTTask_DoStun::OnGameplayTaskActivated(UGameplayTask& Task)
 EBTNodeResult::Type UBTTask_DoStun::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
+	
+	if (OwnerComp.GetAIOwner() == nullptr) 	return EBTNodeResult::Failed; 
 
-	bNotifyTick = 1;
+	OwnerCharacter = Cast<AFlyingEnemyCharacter>(OwnerComp.GetAIOwner()->GetCharacter());
 
-	return EBTNodeResult::InProgress; 
+	if (OwnerCharacter == nullptr) return EBTNodeResult::Failed;
+
+	StunDuration = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsFloat("StunnedDuration");
+
+	if (Timer < StunDuration)
+	{
+		bNotifyTick = 1;
+		OwnerCharacter->bSetFocusToPlayer = false;
+		return EBTNodeResult::InProgress;
+	}
+	return EBTNodeResult::Succeeded;
 }
 
 void UBTTask_DoStun::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
-
-
-/*
 	
-	if (OwnerComp.GetAIOwner() == nullptr) 	return; 
-
-	OwnerCharacter = Cast<AFlyingEnemyCharacter>(OwnerComp.GetAIOwner()->GetCharacter());
-
-	if (OwnerCharacter == nullptr) return;
 	Timer += DeltaSeconds;
-	if (Timer > OwnerComp.GetAIOwner->Get)
-	*/
+
+	StunDuration = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsFloat("StunnedDuration");
+	if (Timer > StunDuration)
+	{
+		OwnerCharacter->bSetFocusToPlayer = true;
+		OwnerCharacter->bIsStunned = false;
+		//OwnerCharacter->Idle();
+		OwnerCharacter->GetCharacterMovement()->CurrentRootMotion.Clear();
+		OwnerCharacter->GetCharacterMovement()->Velocity = FVector::ZeroVector;
+		Timer = 0.f;
+		FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded);
+	}
 }
-
-
-// Stunned task: in progress, in tick count up timer, when timer = stunned duration = taskstatus completed
-
-// Stunned task activated - reset timer. Tick the timer in tick, timer can max be stunned duration.

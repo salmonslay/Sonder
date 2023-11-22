@@ -153,11 +153,6 @@ void URobotBaseState::Pulse()
 	GetWorld()->GetTimerManager().SetTimer(PulseTimerHandle, this, &URobotBaseState::DisablePulseCooldown,
 	                                       PulseCooldown);
 
-	// Code here is run only locally
-	TArray<AActor*> OverlappingActors;
-	RobotCharacter->GetOverlappingActors(OverlappingActors, AActor::StaticClass());
-	// TODO: Replace the class filter with eventual better class (if it exists)
-
 	ServerRPCPulse();
 }
 
@@ -178,52 +173,53 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 {
 	// Code here is run on each player (client and server)
 	TArray<AActor*> OverlappingActors;
-	RobotCharacter->GetOverlappingActors(OverlappingActors, AActor::StaticClass());
-	// TODO: Replace the class filter with eventual better class (if it exists)
+	RobotCharacter->GetOverlappingActors(OverlappingActors, AActor::StaticClass()); 
 
-	// calls take damage on every overlapping actor except itself
-	// TODO: When the attack animation in in place, we prob want to delay this so it times with when the animation hits 
 	for (const auto Actor : OverlappingActors)
 	{
-		if (Actor->ActorHasTag(FName("Soul")) && Actor->GetActorLocation().Z > RobotCharacter->GetActorLocation().Z + 5)
+		if(const auto Soul = Cast<ASoulCharacter>(Actor))
 		{
-			ASoulCharacter* Soul = Cast<ASoulCharacter>(Actor);
-			PlayerActor = Cast<ACharacter>(Soul);
-			UE_LOG(LogTemp, Warning, TEXT("Boost"));
-			Soul->GetCharacterMovement()->Velocity.Z = 0;
-			Soul->JumpMaxCount = 2;
-			Soul->Jump();
+			// See if there is line of sight to Soul, if there isn't then do nothing with Soul 
+			FHitResult HitResult; 
+			if(GetWorld()->LineTraceSingleByChannel(HitResult, RobotCharacter->GetActorLocation(), Soul->GetActorLocation(), ECC_Pawn))
+				continue; 
+			
+			if (Actor->GetActorLocation().Z > RobotCharacter->GetActorLocation().Z + 5)
+			{
+				PlayerActor = Soul;
+				UE_LOG(LogTemp, Warning, TEXT("Boost"));
+				Soul->GetCharacterMovement()->Velocity.Z = 0;
+				Soul->JumpMaxCount = 2;
+				Soul->Jump();
 
-			FTimerHandle MemberTimerHandle;
-			GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f,
-			                                       false);
+				FTimerHandle MemberTimerHandle;
+				GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f);
+			}
+
+			else if (Actor->GetActorLocation().Z + 20 < RobotCharacter->GetActorLocation().Z)
+			{
+				PlayerActor = RobotCharacter; 
+				UE_LOG(LogTemp, Warning, TEXT("Boost"));
+				RobotCharacter->GetCharacterMovement()->Velocity.Z = 0;
+				RobotCharacter->JumpMaxCount = 2;
+				RobotCharacter->Jump();
+
+				FTimerHandle MemberTimerHandle;
+				GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f);
+			}
 		}
 
-		if (Actor->ActorHasTag(FName("Soul")) && Actor->GetActorLocation().Z + 20 < RobotCharacter->GetActorLocation().
-			Z)
+		else if (const auto Enemy = Cast<AEnemyCharacter>(Actor))
 		{
-			PlayerActor = Cast<ACharacter>(RobotCharacter);
-			UE_LOG(LogTemp, Warning, TEXT("Boost"));
-			RobotCharacter->GetCharacterMovement()->Velocity.Z = 0;
-			RobotCharacter->JumpMaxCount = 2;
-			RobotCharacter->Jump();
-
-			FTimerHandle MemberTimerHandle;
-			GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f,
-			                                       false);
-		}
-
-		if (Actor->ActorHasTag(FName("Enemy")))
-		{
-			Cast<AEnemyCharacter>(Actor)->Stun(3.0f);
-			Actor->TakeDamage(Damage, FDamageEvent(), Controller, RobotCharacter);
+			Enemy->Stun(3.0f);
+			Enemy->TakeDamage(Damage, FDamageEvent(), Controller, RobotCharacter);
 			UE_LOG(LogTemp, Warning, TEXT("Stun"));
 		}
 		
-		if (Actor->ActorHasTag(FName("Grenade")))
+		else if (const auto Grenade = Cast<ALightGrenade>(Actor))
 		{
-			Cast<ALightGrenade>(Actor)->PulseExplosion();
-			Cast<ALightGrenade>(Actor)->ServerRPCExplosion();
+			Grenade->PulseExplosion();
+			Grenade->ServerRPCExplosion();
 			UE_LOG(LogTemp, Warning, TEXT("Explode"));
 		}
 	}
