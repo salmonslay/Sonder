@@ -154,9 +154,6 @@
 		<relationship name="automators">
 			<destination>{7aef330c-bdff-4c32-838e-86b30c712e4e}</destination>
 		</relationship>
-		<relationship name="modulators">
-			<destination>{3ddbe5d0-9715-4b22-9e24-4416633b99c7}</destination>
-		</relationship>
 		<relationship name="triggerConditions">
 			<destination>{01934b40-9314-4d0d-94d2-cd0a075a1866}</destination>
 		</relationship>
@@ -343,14 +340,6 @@
 		<relationship name="automationCurves">
 			<destination>{0b7021d6-bf65-4fd3-8cb0-2fba46b2c1b5}</destination>
 		</relationship>
-	</object>
-	<object class="RandomizerModulator" id="{3ddbe5d0-9715-4b22-9e24-4416633b99c7}">
-		<property name="nameOfPropertyBeingModulated">
-			<value>pitch</value>
-		</property>
-		<property name="amount">
-			<value>10</value>
-		</property>
 	</object>
 	<object class="ParameterCondition" id="{01934b40-9314-4d0d-94d2-cd0a075a1866}">
 		<property name="minimum">
@@ -629,9 +618,6 @@
 	</object>
 	<object class="MixerBusFader" id="{7ea3e789-704c-407f-83db-d0e161fdf5bc}" />
 	<object class="SpatialiserEffect" id="{e8c4e6a8-55f0-46cb-b543-cac2b36609a1}">
-		<property name="bypass">
-			<value>true</value>
-		</property>
 		<property name="distanceRolloffType">
 			<value>1</value>
 		</property>
@@ -688,7 +674,7 @@
 			<value>1</value>
 		</property>
 		<property name="value">
-			<value>0</value>
+			<value>-3.29917717</value>
 		</property>
 	</object>
 	<object class="AutomationPoint" id="{daeaf09d-03e8-4079-b72b-8703c9bcf395}">
@@ -696,7 +682,7 @@
 			<value>0.60000000000000009</value>
 		</property>
 		<property name="value">
-			<value>-6</value>
+			<value>-9.29917717</value>
 		</property>
 		<property name="curveShape">
 			<value>-0.613223612</value>
@@ -726,7 +712,7 @@
 			<value>0.050000000000000003</value>
 		</property>
 		<property name="value">
-			<value>-6</value>
+			<value>-9.29917717</value>
 		</property>
 	</object>
 	<object class="AutomationPoint" id="{4bb3d1a5-5047-478c-bce5-95d8f852d678}">
@@ -758,7 +744,7 @@
 			<value>0</value>
 		</property>
 		<property name="value">
-			<value>18</value>
+			<value>8</value>
 		</property>
 	</object>
 	<object class="AutomationPoint" id="{2c54dd81-e451-4916-86c8-997eff9255f9}">

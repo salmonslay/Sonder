@@ -65,17 +65,16 @@
 		</property>
 	</object>
 	<object class="MarkerTrack" id="{e99ae241-d7a2-4cfd-a469-fd1c5672f568}" />
-	<object class="Timeline" id="{6d8ba434-b086-4ead-9164-ae83ab7b2c77}">
-		<property name="isProxyEnabled">
-			<value>false</value>
-		</property>
-	</object>
+	<object class="Timeline" id="{6d8ba434-b086-4ead-9164-ae83ab7b2c77}" />
 	<object class="ActionSheet" id="{3f72b57c-e532-453e-ba25-7fb35a1854fd}">
 		<relationship name="modules">
 			<destination>{fa701c67-3b0b-4149-b9c1-a0ceaa35f093}</destination>
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{a5c6c96e-76c5-48d4-ac24-9e64f8bbfe8f}">
+		<property name="volume">
+			<value>-5</value>
+		</property>
 		<property name="pitch">
 			<value>10</value>
 		</property>
