@@ -175,6 +175,7 @@ float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& Damage
 	if (EnemyHealthComponent)
 	{
 		DamageApplied = EnemyHealthComponent->TakeDamage(DamageApplied);
+		bIsStunned = true;
 
 		if (DamageCauser && IsValid(DamageCauser))
 		{
