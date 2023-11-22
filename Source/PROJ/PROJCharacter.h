@@ -80,6 +80,8 @@ public:
 
 	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode) override;
 
+	virtual void Tick(float DeltaSeconds) override;
+
 #pragma region Events 
 	
 	// Components seem to not be able to create events (easily), which is why most events are declared here 
