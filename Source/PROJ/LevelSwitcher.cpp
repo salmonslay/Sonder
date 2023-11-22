@@ -2,9 +2,11 @@
 
 
 #include "LevelSwitcher.h"
-
+#include "FMODBlueprintStatics.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
+
+
 
 void ALevelSwitcher::NotifyActorBeginOverlap(AActor* OtherActor)
 {
@@ -25,6 +27,9 @@ void ALevelSwitcher::NotifyActorBeginOverlap(AActor* OtherActor)
 
 			UE_LOG(LogTemp, Display, TEXT("Changing level to %s"), *LevelName.ToString());
 			GetWorld()->ServerTravel(LevelName.ToString());
+			
+			UFMODBlueprintStatics::PlayEvent2D(GetWorld(), snapshotEvent, false);
+			
 		}
 	}
 }

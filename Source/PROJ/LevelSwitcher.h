@@ -4,6 +4,8 @@
 
 #include "CoreMinimal.h"
 #include "Engine/TriggerBox.h"
+#include "FMODEvent.h"
+#include "FMODBlueprintStatics.h"
 #include "LevelSwitcher.generated.h"
 
 /**
@@ -28,4 +30,10 @@ private:
 	// The name (path) of the level to switch to
 	UPROPERTY(EditAnywhere)
 	FName LevelName = "/Game/Maps/TestMaps/SofiaTestMap";
+
+	UPROPERTY(EditAnywhere, Category = "FMOD")
+	class UFMODEvent* snapshotEvent;
+
+	FFMODEventInstance InstanceManager;
+
 };
