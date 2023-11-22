@@ -8,11 +8,7 @@
 #include "PROJCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Engine/DamageEvents.h"
-#include "GameFramework/CharacterMovementComponent.h"
-#include "GameFramework/PawnMovementComponent.h"
-#include "Kismet/KismetStringLibrary.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Particles/ParticleSystemComponent.h"
 
 UBTTask_DoLaserAttack::UBTTask_DoLaserAttack()
 {
