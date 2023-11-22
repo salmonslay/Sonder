@@ -4,11 +4,9 @@
 #include "BTTask_ChargeLaserAttack.h"
 
 #include "AIController.h"
-#include "EditorReimportHandler.h"
 #include "FlyingEnemyCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
-#include "Misc/LowLevelTestAdapter.h"
 
 UBTTask_ChargeLaserAttack::UBTTask_ChargeLaserAttack()
 {
