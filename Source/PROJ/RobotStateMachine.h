@@ -31,9 +31,13 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnPulse();
 
-	/** Run when hook is shot out, regardless if it hit Soul or an obstacle */
+	/** Run when hook is shot out, regardless if it hit Soul or an obstacle, BEFORE starting the travel towards it */
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnHookShotStart();
+
+	/** Run if there is a valid target and Robot starts moving towards it AFTER shooting out the hook */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHookShotTravelStart(); 
 
 	/** Run when hook is fully retracted, regardless if it hit Soul or an obstacle */
 	UFUNCTION(BlueprintImplementableEvent)
@@ -50,9 +54,5 @@ public:
 	/** Run when Robot's buff by Soul's dash ends */
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDashBuffEnd(); 
-	
-private:
-	
-	
 	
 };
