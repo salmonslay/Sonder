@@ -34,7 +34,7 @@ public:
 	USceneComponent* LaserEndComponent;
 	
 	/** Laser range*/
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float LaserRange = 600.f;
 
 	/** Max difference in height the enemy can be compared to player before being able to attack*/
