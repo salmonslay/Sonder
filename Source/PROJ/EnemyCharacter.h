@@ -37,8 +37,7 @@ public:
 
 	APROJCharacter* GetLatestDamageCauser();
 
-	UPROPERTY(EditDefaultsOnly)
-	float StaggeredThreshold = 0.f;
+	
 
 	void KillMe();
 	
@@ -83,6 +82,9 @@ public:
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnPerformAttackEvent(const float AttackDuration);
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnStopAttackEvent(const float StopAttackDuration);
 	
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDeathEvent();
@@ -93,16 +95,16 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnUnstunnedEvent();
 	
-	UPROPERTY(ReplicatedUsing=OnRep_Stunned)
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Stunned)
 	bool bIsStunned = false;
 
 	UPROPERTY(ReplicatedUsing=OnRep_ChargingAttack)
 	bool bIsChargingAttack = false;
 
-	UPROPERTY(ReplicatedUsing=OnRep_Attack)
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Attack)
 	bool bIsAttacking = false;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(BlueprintReadOnly, Replicated)
 	bool bIsIdle = false;
 	
 	FTimerHandle StunnedTimerHandle;
@@ -116,6 +118,18 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	float PerformAttackDuration = 0.5f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float UnlockRotationAfterAttackDuration = 0.5f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float StunnedDuration = 0.5f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float StaggeredDuration = 0.3f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float StaggeredThreshold = 0.f;
 	
 	UFUNCTION()
 	void OnRep_Stunned();
