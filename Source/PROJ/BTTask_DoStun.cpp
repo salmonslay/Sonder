@@ -34,13 +34,11 @@ EBTNodeResult::Type UBTTask_DoStun::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 
 	if (Timer < StunDuration)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Yellow, TEXT("NotStun"));	
-		OwnerCharacter->bSetFocusToPlayer = true;
-		OwnerCharacter->Idle();
 		bNotifyTick = 1;
+		OwnerCharacter->bSetFocusToPlayer = false;
 		return EBTNodeResult::InProgress;
 	}
-	return EBTNodeResult::Failed;
+	return EBTNodeResult::Succeeded;
 }
 
 void UBTTask_DoStun::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -52,8 +50,9 @@ void UBTTask_DoStun::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 	StunDuration = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsFloat("StunnedDuration");
 	if (Timer > StunDuration)
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Yellow, TEXT("Stun"));	
-		OwnerCharacter->Stun(StunDuration);
+		OwnerCharacter->bSetFocusToPlayer = true;
+		OwnerCharacter->bIsStunned = false;
+		//OwnerCharacter->Idle();
 		OwnerCharacter->GetCharacterMovement()->CurrentRootMotion.Clear();
 		OwnerCharacter->GetCharacterMovement()->Velocity = FVector::ZeroVector;
 		Timer = 0.f;
