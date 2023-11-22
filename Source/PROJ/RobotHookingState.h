@@ -95,7 +95,8 @@ private:
 	/** Returns false if there was a block */
 	bool SetHookTarget();
 
-	AActor* DoLineTrace(FHitResult& HitResultOut);
+	/** Returns the actor to target, either Soul or a hook point. Returns null if no valid target */
+	AActor* GetActorToTarget(FHitResult& HitResultOut);
 
 	/** Shoots out the physical hook, does not move player */
 	void ShootHook();

@@ -63,7 +63,7 @@ void URobotHookingState::Update(const float DeltaTime)
 	if(bTravellingTowardsTarget)
 	{
 		FHitResult HitResult; 
-		DoLineTrace(HitResult);
+		GetActorToTarget(HitResult);
 	
 		// Perform line trace while travelling towards target to see if something is now blocking (for whatever reason)
 		if(HitResult.IsValidBlockingHit())
@@ -119,7 +119,7 @@ void URobotHookingState::EndHookShot() const
 bool URobotHookingState::SetHookTarget()
 {
 	FHitResult HitResult;
-	const AActor* HitActorTarget = DoLineTrace(HitResult);
+	const AActor* HitActorTarget = GetActorToTarget(HitResult);
 
 	if(!SoulCharacter)
 	{
@@ -138,12 +138,12 @@ bool URobotHookingState::SetHookTarget()
 	} else
 		bHookTargetIsSoul = false; 
 
-	if(!StaticsHelper::ActorIsInFront(RobotCharacter, CurrentHookTargetLocation))
+	if(!HitActorTarget || !StaticsHelper::ActorIsInFront(RobotCharacter, CurrentHookTargetLocation))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Target not in front of player"))
 		CurrentHookTargetLocation = GetTargetOnNothingInFront(); 
 		return false; 
-	}
+	} 
 
 	return !HitResult.IsValidBlockingHit(); 
 }
@@ -162,7 +162,7 @@ FVector URobotHookingState::GetTargetOnNothingInFront() const
 	return HitResult.IsValidBlockingHit() ? HitResult.Location : EndLoc; 
 }
 
-AActor* URobotHookingState::DoLineTrace(FHitResult& HitResultOut)
+AActor* URobotHookingState::GetActorToTarget(FHitResult& HitResultOut)
 {
 	if(!SoulCharacter)
 		SoulCharacter = UGameplayStatics::GetActorOfClass(this, ASoulCharacter::StaticClass()); 
@@ -220,8 +220,9 @@ AActor* URobotHookingState::DoLineTrace(FHitResult& HitResultOut)
 		HookTarget = AHookShotAttachment::GetHookToTarget(RobotCharacter);
 		if(HookTarget) // If there is a valid HookTarget, update the hit result with line trace towards hook instead of towards Soul 
 			GetWorld()->SweepSingleByChannel(HitResultOut, StartLoc, HookTarget->GetActorLocation(), FQuat::Identity, ECC_Pawn, CollShape, Params);
-		
-		return HookTarget; 
+
+		// Return hook target if there is a clear path to it, otherwise return nullptr - no valid target 
+		return HitResultOut.IsValidBlockingHit() ? nullptr : HookTarget; 
 	}
 
 	// No valid target 
