@@ -72,6 +72,8 @@ void ADamageZone::Tick(float DeltaSeconds)
 					UE_LOG(LogTemp, Warning, TEXT("Killing %s from %s"), *PlayerActor->GetName(), *GetName())
 
 					Character->TakeDamage(TNumericLimits<float>::Max(), FDamageEvent(), nullptr, this);
+					PlayerActors.Remove(PlayerActor);
+					PlayersDamagedThisOverlap.Remove(PlayerActor);
 				}
 				return;
 			}
