@@ -65,7 +65,6 @@ EBTNodeResult::Type UBTTask_DoLaserAttack::ExecuteTask(UBehaviorTreeComponent& O
 			PlayerHit->TakeDamage(OwnerCharacter->DamageToPlayer, DamageEvent, OwnerComp.GetAIOwner(), OwnerCharacter);
 		}
 	}
-	OwnerCharacter->bSetFocusToPlayer = true;
 	return EBTNodeResult::Succeeded;
 	
 }

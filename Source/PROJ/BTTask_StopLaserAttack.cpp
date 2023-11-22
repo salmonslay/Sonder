@@ -34,5 +34,7 @@ EBTNodeResult::Type UBTTask_StopLaserAttack::ExecuteTask(UBehaviorTreeComponent&
 	OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsFloat("StopAttackTime", OwnerCharacter->UnlockRotationAfterAttackDuration);
 
 	OwnerCharacter->bSetFocusToPlayer = true;
+	OwnerCharacter->OnStopAttackEvent(OwnerCharacter->UnlockRotationAfterAttackDuration);
+	OwnerCharacter->Idle();
 	return EBTNodeResult::Succeeded;
 }
