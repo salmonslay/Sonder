@@ -85,3 +85,6 @@ DerivedDataCache/*
 
 # riderlink is local
 Plugins/Developer/RiderLink/
+
+# FMOD stuff (dear god)
+Plugins/FMODStudio/Binaries/*
