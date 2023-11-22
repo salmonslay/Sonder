@@ -19,10 +19,5 @@ public class PROJ : ModuleRules
 			"Niagara"
 		});
 		
-		PrivateDependencyModuleNames.AddRange(new string[]
-		{
-			"FMODStudio"
-		});
-		
 	}
 }
