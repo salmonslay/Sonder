@@ -33,4 +33,6 @@ class PROJ_API UBTTask_DoStun : public UBTTask_BlackboardBase
 
 
 	float Timer = 0.f;
+
+	float StunDuration = 0.f;
 };
