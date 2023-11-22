@@ -137,11 +137,15 @@ void USoulBaseStateNew::MulticastRPCThrowGrenade_Implementation(const float Time
 	TArray<AActor*> FoundCharacter;
 	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALightGrenade::StaticClass(), FoundCharacter);
 
-	if (FoundCharacter[0] != nullptr)
+	if (!FoundCharacter.IsEmpty())
 	{
 		ALightGrenade* Grenade = Cast<ALightGrenade>(FoundCharacter[0]);
+		if(Grenade)
+		{
 		UE_LOG(LogTemp, Warning, TEXT("Time held %f"), TimeHeldGrenade);
-		Grenade->Throw(TimeHeldGrenade); 
+		Grenade->Throw(TimeHeldGrenade);
+		}
+		
 		
 	}
 	
