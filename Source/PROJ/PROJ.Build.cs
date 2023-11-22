@@ -18,5 +18,11 @@ public class PROJ : ModuleRules
 			"CableComponent",
 			"Niagara"
 		});
+		
+		PrivateDependencyModuleNames.AddRange(new string[]
+		{
+			"FMODStudio"
+		});
+		
 	}
 }
