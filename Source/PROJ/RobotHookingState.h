@@ -38,7 +38,11 @@ private:
 
 	bool bTravellingTowardsTarget = false;
 
-	bool bHookTargetIsSoul = false; 
+	bool bHookTargetIsSoul = false;
+
+	/** What actor is currently targeted (Soul or a hook point), or nullptr if none */
+	UPROPERTY()
+	AActor* CurrentTargetActor; 
 
 	/** How close the player needs to be for it to be considered as reached target */
 	float ReachedTargetDistTolerance = 50.f;
@@ -52,6 +56,7 @@ private:
 	UPROPERTY()
 	class UCharacterMovementComponent* MovementComponent;
 
+	/** In process of shooting the hook towards the target (blocked or valid) */
 	bool bShootingHookOutwards = false;
 	
 	UPROPERTY()
@@ -86,11 +91,15 @@ private:
 	UPROPERTY(EditAnywhere)
 	float VelocityDivOnReachedHook = 1.2f; 
 
+	UPROPERTY(EditAnywhere)
+	float HookTravelDamageAmount = 3.f;
+
+	/** The speed at which to move the hook cable when moving outwards */
+	UPROPERTY(EditAnywhere)
+	float OutwardsHookShotSpeed = 4000.f; 
+	
 	/** Returns the HookTarget if there is no available target, ensuring hook is shot forwards */
 	FVector GetTargetOnNothingInFront() const;
-
-	UPROPERTY(EditAnywhere)
-	float HookTravelDamageAmount = 3.f; 
 	
 	/** Returns false if there was a block */
 	bool SetHookTarget();
@@ -98,8 +107,16 @@ private:
 	/** Returns the actor to target, either Soul or a hook point. Returns null if no valid target */
 	AActor* GetActorToTarget(FHitResult& HitResultOut);
 
-	/** Shoots out the physical hook, does not move player */
-	void ShootHook();
+	/** Shoots out the physical hook, does not move player. Run each Tick */
+	void ShootHook(const float DeltaTime);
+
+	/** Shoots out the physical hook on Server, does not move player. Called each Tick */
+	UFUNCTION(Server, Unreliable)
+	void ServerRPC_ShootHook(const FVector& HookTarget);
+
+	/** Shoots out the physical hook for everyone, does not move player. Called each Tick */
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPC_ShootHook(const FVector& HookTarget); 
 
 	void StartTravelToTarget();
 
@@ -108,7 +125,7 @@ private:
 	void ServerRPCStartTravel();
 
 	/** Called on all players when starting travel towards Soul (nothing blocking) */
-	UFUNCTION(Server, Reliable)
+	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCStartTravel(); 
 
 	/** Travels the player towards the set target locally */
@@ -140,6 +157,9 @@ private:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPC_RetractHook(const FVector& NewEndLocation); 
 
+	/** Run once when starting to shoot the hook outwards towards the target */
+	void StartShootHook(); 
+	
 	/** Run on server when hook is shot regardless if it hits Soul or an obstacle */
 	UFUNCTION(Server, Reliable)
 	void ServerRPCHookShotStart(UCableComponent* HookCableComp, const FVector& HookTarget, ARobotStateMachine* RobotChar);
