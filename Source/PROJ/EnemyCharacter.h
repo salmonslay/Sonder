@@ -95,16 +95,16 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnUnstunnedEvent();
 	
-	UPROPERTY(ReplicatedUsing=OnRep_Stunned)
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Stunned)
 	bool bIsStunned = false;
 
 	UPROPERTY(ReplicatedUsing=OnRep_ChargingAttack)
 	bool bIsChargingAttack = false;
 
-	UPROPERTY(ReplicatedUsing=OnRep_Attack)
+	UPROPERTY(BlueprintReadOnly, ReplicatedUsing=OnRep_Attack)
 	bool bIsAttacking = false;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(BlueprintReadOnly, Replicated)
 	bool bIsIdle = false;
 	
 	FTimerHandle StunnedTimerHandle;

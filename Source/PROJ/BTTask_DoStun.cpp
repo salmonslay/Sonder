@@ -29,14 +29,15 @@ void UBTTask_DoStun::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
 
-	/*
-	if (OwnerComp.GetAIOwner() == nullptr) 	return EBTNodeResult::Failed; 
+/*
+	
+	if (OwnerComp.GetAIOwner() == nullptr) 	return; 
 
 	OwnerCharacter = Cast<AFlyingEnemyCharacter>(OwnerComp.GetAIOwner()->GetCharacter());
 
-	if (OwnerCharacter == nullptr) return EBTNodeResult::Failed;
+	if (OwnerCharacter == nullptr) return;
 	Timer += DeltaSeconds;
-	if (Timer > )
+	if (Timer > OwnerComp.GetAIOwner->Get)
 	*/
 }
 
