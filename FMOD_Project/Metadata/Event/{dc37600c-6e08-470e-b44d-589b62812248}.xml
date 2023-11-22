@@ -61,7 +61,7 @@
 	</object>
 	<object class="EventAutomatableProperties" id="{2514d7f5-dd71-45ef-b6b2-8cddddd68d59}">
 		<property name="maximumDistance">
-			<value>40</value>
+			<value>50</value>
 		</property>
 		<property name="triggerCooldown">
 			<value>100</value>
@@ -79,6 +79,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{85344e7e-4c83-44ea-b8a5-7e23bf8ea618}">
+		<property name="volume">
+			<value>7</value>
+		</property>
 		<relationship name="effectChain">
 			<destination>{1538761d-38e6-4f0e-85da-b27abee3e0bb}</destination>
 		</relationship>
