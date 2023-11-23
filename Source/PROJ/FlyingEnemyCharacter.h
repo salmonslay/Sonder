@@ -25,6 +25,7 @@ public:
 	
 	TArray<FVector> CurrentPath = TArray<FVector>();
 
+	AFlyingEnemyCharacter();
 
 	// ==== laser stuff 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
