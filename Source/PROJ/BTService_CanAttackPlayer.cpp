@@ -27,6 +27,8 @@ void UBTService_CanAttackPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
+	OwnerComp.GetBlackboardComponent()->ClearValue("PlayerToAttack");
+	OwnerComp.GetBlackboardComponent()->ClearValue("CurrentTargetPlayer");
 
 	OwnerComp.GetBlackboardComponent()->SetValueAsBool("bFoundPlayerWithinAttackRadius", false);
 	OwnerCharacter = Cast<AEnemyCharacter>(OwnerComp.GetAIOwner()->GetCharacter());
@@ -56,7 +58,7 @@ void UBTService_CanAttackPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 		{
 			APROJCharacter* PlayerToAttack = Cast<APROJCharacter>(Overlap.GetActor());
 			// if overlap is found, set values in bb and break
-			if (PlayerToAttack && IsValid(PlayerToAttack))
+			if (PlayerToAttack && IsValid(PlayerToAttack) && PlayerToAttack->IsAlive())
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject("PlayerToAttack", PlayerToAttack);
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject("CurrentTargetPlayer", PlayerToAttack);
