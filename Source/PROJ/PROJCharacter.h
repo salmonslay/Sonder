@@ -80,8 +80,17 @@ public:
 
 	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode) override;
 
-	virtual void Tick(float DeltaSeconds) override;
+	virtual void Tick(float DeltaSeconds) override; 
 
+	// Bools controlling players ability to use abilities
+	UPROPERTY(BlueprintReadWrite)
+	bool AbilityOne = false;
+	
+	UPROPERTY(BlueprintReadWrite)
+	bool AbilityTwo = false;
+
+	UFUNCTION(BlueprintPure)
+	bool IsAlive();
 #pragma region Events 
 	
 	// Components seem to not be able to create events (easily), which is why most events are declared here 

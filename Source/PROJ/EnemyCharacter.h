@@ -113,19 +113,19 @@ public:
 
 	FTimerHandle AttackTimerHandle;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float ChargeAttackDuration = 0.7f;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float PerformAttackDuration = 0.5f;
 
 	UPROPERTY(EditDefaultsOnly)
 	float UnlockRotationAfterAttackDuration = 0.5f;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float StunnedDuration = 0.5f;
 
-	UPROPERTY(EditDefaultsOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float StaggeredDuration = 0.3f;
 
 	UPROPERTY(EditDefaultsOnly)
