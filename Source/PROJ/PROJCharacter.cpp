@@ -164,8 +164,8 @@ void APROJCharacter::NotifyJumpApex()
 
 void APROJCharacter::DisableCoyoteJump()
 {
-	bCanCoyoteJump = false;
-	bHasCalledTimer = false; 
+	if(GetCharacterMovement()->MovementMode != EMovementMode::MOVE_Walking)
+		bCanCoyoteJump = false;
 }
 
 void APROJCharacter::CoyoteJump()
@@ -180,10 +180,10 @@ void APROJCharacter::CoyoteJump()
 		if(!HasAuthority()) // If player is client, also jump locally to prevent stuttering 
 		{
 			GetCharacterMovement()->SetMovementMode(MOVE_Walking); 
+			GetCharacterMovement()->Velocity.Z = 0; 
 			Jump();
-			UE_LOG(LogTemp, Warning, TEXT("Local jump"))
 		}
-	}
+	} 
 }
 
 void APROJCharacter::ServerRPC_CoyoteJump_Implementation()
@@ -191,8 +191,8 @@ void APROJCharacter::ServerRPC_CoyoteJump_Implementation()
 	if(!HasAuthority())
 		return; 
 
-	UE_LOG(LogTemp, Warning, TEXT("Server jump"))
 	GetCharacterMovement()->SetMovementMode(MOVE_Walking); 
+	GetCharacterMovement()->Velocity.Z = 0; 
 	Jump();
 }
 
@@ -206,7 +206,7 @@ void APROJCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8
 	if(CurrentMovementMode == MOVE_Walking)
 	{
 		bHasJumped = false;
-		bCanCoyoteJump = true; 
+		bCanCoyoteJump = true;
 		GetCharacterMovement()->GravityScale = DefaultGravityScale;
 	}
 	else if(CurrentMovementMode == MOVE_Falling && !bHasJumped)
@@ -214,19 +214,15 @@ void APROJCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8
 		// Started falling without jumping 
 		GetCharacterMovement()->GravityScale = GravityScaleWhileFalling;
 
-		if(!bHasCalledTimer)
-		{
-			FTimerHandle TimerHandle;
-			GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &APROJCharacter::DisableCoyoteJump, CoyoteJumpPeriod);
-			bHasCalledTimer = true; 
-		}
+		GetWorld()->GetTimerManager().ClearTimer(CoyoteJumpTimer); 
+		GetWorld()->GetTimerManager().SetTimer(CoyoteJumpTimer, this, &APROJCharacter::DisableCoyoteJump, CoyoteJumpPeriod);
 	}
 }
 
 void APROJCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-
+	
 	GetCharacterMovement()->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::X);
 	GetCharacterMovement()->SetPlaneConstraintEnabled(!bDepthMovementEnabled);
 }
