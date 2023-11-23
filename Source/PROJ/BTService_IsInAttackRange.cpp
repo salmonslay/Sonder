@@ -58,7 +58,6 @@ void UBTService_IsInAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 	}
 	else
 	{
-		OwnerCharacter->Attack();
 		TArray<AActor*> ActorsToIgnore;
 		ActorsToIgnore.Add(OwnerCharacter);
 
