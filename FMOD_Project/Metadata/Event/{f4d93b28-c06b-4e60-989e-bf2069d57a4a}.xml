@@ -65,6 +65,9 @@
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{5b77b126-3dce-4fa8-83df-c37c2f7691b7}">
+		<property name="maxVoices">
+			<value>1</value>
+		</property>
 		<property name="maximumDistance">
 			<value>50</value>
 		</property>
@@ -151,11 +154,17 @@
 		</relationship>
 	</object>
 	<object class="MultiSound" id="{9a618526-36c3-4591-889c-e5239adb4e41}">
+		<property name="pitch">
+			<value>2.4000001</value>
+		</property>
 		<property name="playCount">
 			<value>1</value>
 		</property>
 		<relationship name="automators">
 			<destination>{7aef330c-bdff-4c32-838e-86b30c712e4e}</destination>
+		</relationship>
+		<relationship name="modulators">
+			<destination>{3306d8b2-41c3-49a4-be59-ec29c9d45ed9}</destination>
 		</relationship>
 		<relationship name="triggerConditions">
 			<destination>{01934b40-9314-4d0d-94d2-cd0a075a1866}</destination>
@@ -170,6 +179,12 @@
 		<property name="start">
 			<value>1</value>
 		</property>
+		<property name="pitch">
+			<value>2.4000001</value>
+		</property>
+		<relationship name="modulators">
+			<destination>{9e7ed739-1f64-43aa-a35d-1f6789f07e58}</destination>
+		</relationship>
 		<relationship name="triggerConditions">
 			<destination>{643e78aa-f789-4908-9786-e3f91aac5273}</destination>
 		</relationship>
@@ -181,6 +196,12 @@
 		<property name="start">
 			<value>2</value>
 		</property>
+		<property name="pitch">
+			<value>2.4000001</value>
+		</property>
+		<relationship name="modulators">
+			<destination>{fee957e2-7956-4e91-9d54-2d4d7182dacc}</destination>
+		</relationship>
 		<relationship name="triggerConditions">
 			<destination>{49edfeff-0981-4adf-8665-5a62437a4752}</destination>
 		</relationship>
@@ -192,6 +213,12 @@
 		<property name="start">
 			<value>3</value>
 		</property>
+		<property name="pitch">
+			<value>2.4000001</value>
+		</property>
+		<relationship name="modulators">
+			<destination>{49963476-738b-4553-b73f-607fe32b24ca}</destination>
+		</relationship>
 		<relationship name="triggerConditions">
 			<destination>{982343be-c7ce-46fa-a310-bde41ea0aaed}</destination>
 		</relationship>
@@ -214,6 +241,9 @@
 		</relationship>
 	</object>
 	<object class="MultiSound" id="{1ca54929-8aad-4fa9-bc5f-2fa7ac34ca25}">
+		<property name="pitch">
+			<value>2.4000001</value>
+		</property>
 		<property name="playCount">
 			<value>1</value>
 		</property>
@@ -235,6 +265,9 @@
 	<object class="MultiSound" id="{4b718a42-e8cf-402d-8f3f-70d3c1c41333}">
 		<property name="start">
 			<value>1</value>
+		</property>
+		<property name="pitch">
+			<value>2.4000001</value>
 		</property>
 		<property name="playCount">
 			<value>1</value>
@@ -258,6 +291,9 @@
 		<property name="start">
 			<value>2</value>
 		</property>
+		<property name="pitch">
+			<value>2.4000001</value>
+		</property>
 		<property name="playCount">
 			<value>1</value>
 		</property>
@@ -279,6 +315,9 @@
 	<object class="MultiSound" id="{23d9056e-8330-4315-92c4-9200d34cca47}">
 		<property name="start">
 			<value>3</value>
+		</property>
+		<property name="pitch">
+			<value>2.4000001</value>
 		</property>
 		<property name="playCount">
 			<value>1</value>
@@ -344,6 +383,14 @@
 			<destination>{0b7021d6-bf65-4fd3-8cb0-2fba46b2c1b5}</destination>
 		</relationship>
 	</object>
+	<object class="RandomizerModulator" id="{3306d8b2-41c3-49a4-be59-ec29c9d45ed9}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>pitch</value>
+		</property>
+		<property name="amount">
+			<value>3</value>
+		</property>
+	</object>
 	<object class="ParameterCondition" id="{01934b40-9314-4d0d-94d2-cd0a075a1866}">
 		<property name="minimum">
 			<value>0</value>
@@ -370,6 +417,14 @@
 			<destination>{c824dd4b-d253-4d19-ba32-df548b676431}</destination>
 		</relationship>
 	</object>
+	<object class="RandomizerModulator" id="{9e7ed739-1f64-43aa-a35d-1f6789f07e58}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>pitch</value>
+		</property>
+		<property name="amount">
+			<value>3</value>
+		</property>
+	</object>
 	<object class="ParameterCondition" id="{643e78aa-f789-4908-9786-e3f91aac5273}">
 		<property name="minimum">
 			<value>0</value>
@@ -386,6 +441,14 @@
 			<destination>{b3639862-e381-484c-b20d-230442d1a71c}</destination>
 		</relationship>
 	</object>
+	<object class="RandomizerModulator" id="{fee957e2-7956-4e91-9d54-2d4d7182dacc}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>pitch</value>
+		</property>
+		<property name="amount">
+			<value>3</value>
+		</property>
+	</object>
 	<object class="ParameterCondition" id="{49edfeff-0981-4adf-8665-5a62437a4752}">
 		<property name="minimum">
 			<value>0</value>
@@ -401,6 +464,14 @@
 		<relationship name="audioFile">
 			<destination>{b3639862-e381-484c-b20d-230442d1a71c}</destination>
 		</relationship>
+	</object>
+	<object class="RandomizerModulator" id="{49963476-738b-4553-b73f-607fe32b24ca}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>pitch</value>
+		</property>
+		<property name="amount">
+			<value>3</value>
+		</property>
 	</object>
 	<object class="ParameterCondition" id="{982343be-c7ce-46fa-a310-bde41ea0aaed}">
 		<property name="minimum">

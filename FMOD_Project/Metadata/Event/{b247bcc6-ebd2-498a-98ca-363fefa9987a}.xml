@@ -68,6 +68,9 @@
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{ab5c9db7-a637-4d79-9d3a-e519915466d1}">
+		<property name="isPersistent">
+			<value>true</value>
+		</property>
 		<property name="maximumDistance">
 			<value>40</value>
 		</property>
@@ -844,7 +847,7 @@
 	</object>
 	<object class="GainEffect" id="{ff28bc8f-11b3-4e70-94e8-9cfbe5f85ffe}">
 		<property name="gain">
-			<value>2.5</value>
+			<value>1</value>
 		</property>
 	</object>
 	<object class="AutomationPoint" id="{1c25e53f-094f-4005-841e-c0f0a55e2c24}">
