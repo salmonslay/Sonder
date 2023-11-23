@@ -2,8 +2,8 @@
 
 
 #include "EnemyHealthComponent.h"
-
 #include "EnemyCharacter.h"
+
 UEnemyHealthComponent::UEnemyHealthComponent()
 {
 	PrimaryComponentTick.bCanEverTick = false; // Note: Tick is turned off 
@@ -16,34 +16,12 @@ void UEnemyHealthComponent::BeginPlay()
 	EnemyCharacter = Cast<AEnemyCharacter>(GetOwner());
 }
 
-/*
-
-float UEnemyHealthComponent::TakeDamage(const float DamageAmount)
-{
-	// Run only on the local player 
-	if(!EnemyCharacter->IsLocallyControlled())
-		return Super::TakeDamage(DamageAmount);
-
-	const float DamageTaken = Super::TakeDamage(DamageAmount);
-	
-	ServerRPCDamageTaken(DamageTaken); 
-
-	return DamageTaken; 
-}
-*/
-
 void UEnemyHealthComponent::ServerRPCDamageTaken_Implementation(const float DamageTaken)
 {
 	// Run only on server 
 	if(!EnemyCharacter->HasAuthority())
-		return; 
-
-	CurrentHealth -= DamageTaken;
-	if (CurrentHealth <= 0)
-	{
-		IDied();
-	}
-
+		return;
+	
 	MulticastRPCDamageTaken(DamageTaken); 
 }
 
@@ -61,6 +39,15 @@ void UEnemyHealthComponent::IDied()
 		return; 
 	
 	ServerRPCPlayerDied(); 
+}
+
+float UEnemyHealthComponent::TakeDamage(float DamageAmount)
+{
+	const float DamageTaken = Super::TakeDamage(DamageAmount);
+
+	ServerRPCDamageTaken(DamageTaken);
+
+	return DamageTaken; 
 }
 
 void UEnemyHealthComponent::ServerRPCPlayerDied_Implementation()
