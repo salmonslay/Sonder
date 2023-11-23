@@ -25,14 +25,7 @@ public:
 	void SwitchState(UPlayerCharState* NewState);
 
 	UFUNCTION(BlueprintPure)
-	UPlayerCharState* GetCurrentState() const { return CurrentState; };
-
-	//Bools controlling players ability to use abilities
-	UPROPERTY(BlueprintReadWrite)
-	bool AbilityOne = false;
-	
-	UPROPERTY(BlueprintReadWrite)
-	bool AbilityTwo = false;
+	UPlayerCharState* GetCurrentState() const { return CurrentState; } 
 
 protected:
 

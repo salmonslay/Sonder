@@ -29,14 +29,16 @@ void USoulDashingState::Enter()
 	DashDir.Z = 0; // Disable dash in Z axis (up/down)
 		
 	if(!PlayerOwner->IsDepthMovementEnabled())
-		DashDir.X = 0; 
+		DashDir.X = 0;
+
+	DashDir.Normalize(); 
 
 	// Dash locally 
 	PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Ignore); 
 	PlayerOwner->GetCharacterMovement()->AddImpulse(DashForce * DashDir);
 
 	// Dash on server so it does not override the dash 
-	ServerRPCDash(DashDir.GetSafeNormal());
+	ServerRPCDash(DashDir);
 
 	// disable input for the remainder of the dash 
 	PlayerOwner->DisableInput(PlayerOwner->GetLocalViewingPlayerController());
