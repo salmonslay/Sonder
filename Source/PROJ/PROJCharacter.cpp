@@ -231,6 +231,11 @@ void APROJCharacter::Tick(float DeltaSeconds)
 	GetCharacterMovement()->SetPlaneConstraintEnabled(!bDepthMovementEnabled);
 }
 
+bool APROJCharacter::IsAlive()
+{
+	return GetMesh()->GetRelativeScale3D().GetMax() > 0.5f;
+}
+
 void APROJCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
