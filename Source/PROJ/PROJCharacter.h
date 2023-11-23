@@ -89,6 +89,8 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool AbilityTwo = false;
 
+	UFUNCTION(BlueprintPure)
+	bool IsAlive();
 #pragma region Events 
 	
 	// Components seem to not be able to create events (easily), which is why most events are declared here 
