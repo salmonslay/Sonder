@@ -55,16 +55,29 @@ ACameraSpline* ACharactersCamera::AssignSpline(ACameraSpline* CameraSplineClass)
 
 void ACharactersCamera::GetPlayers()
 {
-	if (APROJGameMode* CurrentGameMode = Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this)); CurrentGameMode != nullptr)
-	{
-		PlayerOne = CurrentGameMode->GetActivePlayer(0);
-		if (const AGameStateBase* Gsb = UGameplayStatics::GetGameState(this); Gsb->PlayerArray.Num() > 1)
-		{
-			PlayerTwo = CurrentGameMode->GetActivePlayer(1);
-		}
+	TArray<AActor*> Players; 
+	UGameplayStatics::GetAllActorsOfClass(this, APROJCharacter::StaticClass(), Players);
 
-		bAllowMovement = true;
+	if(!Players.IsEmpty())
+	{
+		PlayerOne = Cast<APROJCharacter>(Players[0]);
+
+		if(Players.Num() > 1)
+			PlayerTwo = Cast<APROJCharacter>(Players[1]);
+
+		bAllowMovement = true; 
 	}
+	
+	// if (APROJGameMode* CurrentGameMode = Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this)); CurrentGameMode != nullptr)
+	// {
+	// 	PlayerOne = CurrentGameMode->GetActivePlayer(0);
+	// 	if (const AGameStateBase* Gsb = UGameplayStatics::GetGameState(this); Gsb->PlayerArray.Num() > 1)
+	// 	{
+	// 		PlayerTwo = CurrentGameMode->GetActivePlayer(1);
+	// 	}
+	//
+	// 	bAllowMovement = true;
+	// }
 }
 
 
@@ -92,6 +105,9 @@ void ACharactersCamera::RotateCamera()
 
 void ACharactersCamera::MoveWalls(FVector MiddlePoint)
 {
+	if(!HasAuthority())
+		return; 
+	
 	if (WallOne && WallTwo)
 	{
 		float FOV = CameraComponent->FieldOfView / 2;
