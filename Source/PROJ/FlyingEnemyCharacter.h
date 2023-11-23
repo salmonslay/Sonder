@@ -25,7 +25,6 @@ public:
 	
 	TArray<FVector> CurrentPath = TArray<FVector>();
 
-
 	// ==== laser stuff 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	USpotLightComponent* Laser;
