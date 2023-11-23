@@ -24,6 +24,8 @@ public:
 
 	virtual void IDied() override;
 
+	virtual float TakeDamage(float DamageAmount) override;
+
 protected:
 
 	virtual void BeginPlay() override;
