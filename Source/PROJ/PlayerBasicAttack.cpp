@@ -74,6 +74,9 @@ void UPlayerBasicAttack::ServerRPCAttack_Implementation()
 
 void UPlayerBasicAttack::MulticastRPCAttack_Implementation()
 {
+	// Sometimes attack is fired before player is set when loading new level, ensure player is set 
+	if(!Player)
+		return;
 	
 	// Code here is run on each player (client and server)
 	TArray<AActor*> OverlappingActors; 
@@ -89,10 +92,8 @@ void UPlayerBasicAttack::MulticastRPCAttack_Implementation()
 	}
 
 	bCanAttack = false; 
-	
-	// UE_LOG(LogTemp, Warning, TEXT("Multicast attack"))
 
-	Player->OnBasicAttack(); 
+	Player->OnBasicAttack();
 }
 
 void UPlayerBasicAttack::EnableCanAttack()
