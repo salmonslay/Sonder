@@ -24,6 +24,11 @@ bool AFlyingEnemyCharacter::IsPathValid() const
 	return !CurrentPath.IsEmpty();
 }
 
+AFlyingEnemyCharacter::AFlyingEnemyCharacter()
+{
+	TArray<UMaterialInterface*> Materials GetMesh()->GetMaterials()
+}
+
 void AFlyingEnemyCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
