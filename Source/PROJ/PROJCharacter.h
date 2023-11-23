@@ -40,6 +40,7 @@ public:
 	APROJCharacter();
 
 	/** Toggles depth movement */
+	UFUNCTION(BlueprintCallable)
 	void SetDepthMovementEnabled(const bool bNewEnable); 
 
 	/** Returns true if player can traverse in the depth axis */
@@ -156,7 +157,7 @@ private:
 
 	void DisableCoyoteJump();
 
-	bool bHasCalledTimer = false;
+	FTimerHandle CoyoteJumpTimer; 
 	
 	void CoyoteJump();
 

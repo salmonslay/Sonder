@@ -74,13 +74,10 @@
 	</object>
 	<object class="EventAutomatableProperties" id="{9a692e1f-b290-4b6c-b837-3baddff0f0cb}">
 		<property name="maxVoices">
-			<value>4</value>
+			<value>1</value>
 		</property>
 		<property name="maximumDistance">
 			<value>40</value>
-		</property>
-		<property name="triggerCooldown">
-			<value>100</value>
 		</property>
 	</object>
 	<object class="MarkerTrack" id="{3508c96d-675d-48a6-a38f-3e8ae2a679af}" />
@@ -297,6 +294,9 @@
 		<property name="pitch">
 			<value>-3</value>
 		</property>
+		<relationship name="modulators">
+			<destination>{fccdc8de-0732-4b78-bae4-a08d1b1df428}</destination>
+		</relationship>
 		<relationship name="triggerConditions">
 			<destination>{074f4f66-4b6a-4e8c-a5d6-94b9519a7646}</destination>
 		</relationship>
@@ -305,6 +305,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerGroup" id="{fdd28df0-f36b-46f4-88a9-b9a42e7e90f1}">
+		<property name="volume">
+			<value>-7</value>
+		</property>
 		<property name="name">
 			<value>0. BeginSound</value>
 		</property>
@@ -648,6 +651,14 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{8c72310c-5d90-44eb-9309-86c8022a7c4d}" />
+	<object class="RandomizerModulator" id="{fccdc8de-0732-4b78-bae4-a08d1b1df428}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>pitch</value>
+		</property>
+		<property name="amount">
+			<value>7.5</value>
+		</property>
+	</object>
 	<object class="ParameterCondition" id="{074f4f66-4b6a-4e8c-a5d6-94b9519a7646}">
 		<property name="minimum">
 			<value>0</value>
