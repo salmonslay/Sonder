@@ -156,7 +156,7 @@ private:
 
 	void DisableCoyoteJump();
 
-	bool bHasCalledTimer = false;
+	FTimerHandle CoyoteJumpTimer; 
 	
 	void CoyoteJump();
 
