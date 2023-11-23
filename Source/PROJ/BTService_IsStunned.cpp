@@ -33,5 +33,16 @@ void UBTService_IsStunned::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 	if (OwnerCharacter == nullptr) return;
 
 	OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsStunned", OwnerCharacter->bIsStunned);
-	OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsFloat("StunnedDuration", OwnerCharacter->StunnedDuration);	
+	OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsFloat("StunnedDuration", OwnerCharacter->StunnedDuration);
+
+
+	if (OwnerCharacter->bIsStunned)
+	{
+		GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Yellow, TEXT("Is stunned"));	
+	}
+	else
+	{
+		//GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Yellow, TEXT(" NOT stunned"));	
+
+	}
 }
