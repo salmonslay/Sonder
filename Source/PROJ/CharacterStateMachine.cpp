@@ -6,12 +6,20 @@
 #include "PlayerCharState.h"
 #include "RobotBaseState.h"
 #include "SoulBaseStateNew.h"
+#include "Net/UnrealNetwork.h"
 
 ACharacterStateMachine::ACharacterStateMachine()
 {
 	// Create the states 
 	DummyState = CreateDefaultSubobject<UDummyPlayerState>(TEXT("DummyStateNew"));
 
+}
+
+void ACharacterStateMachine::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(ACharacterStateMachine, CurrentState) 
 }
 
 void ACharacterStateMachine::BeginPlay()
@@ -28,6 +36,9 @@ void ACharacterStateMachine::UpdateStateInputComp()
 {
 	// UE_LOG(LogTemp, Warning, TEXT("Updating input comp new, %s"), *GetActorNameOrLabel())
 
+	if(!IsLocallyControlled())
+		return; 
+
 	if(CurrentState)
 		CurrentState->UpdateInputCompOnEnter(GetInputComponent());
 	else
@@ -41,6 +52,9 @@ void ACharacterStateMachine::UpdateStateInputComp()
 void ACharacterStateMachine::Tick(const float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
+
+	if(!IsLocallyControlled())
+		return; 
 
 	if(CurrentState)
 		CurrentState->Update(DeltaSeconds);
@@ -65,6 +79,14 @@ void ACharacterStateMachine::SetupPlayerInputComponent(UInputComponent* PlayerIn
 	UpdateStateInputComp(); 
 }
 
+void ACharacterStateMachine::ServerRPC_SwitchState_Implementation(UPlayerCharState* NewState)
+{
+	if(!HasAuthority())
+		return;
+
+	CurrentState = NewState; 
+}
+
 void ACharacterStateMachine::SwitchState(UPlayerCharState* NewState)
 {
 	if(CurrentState == NewState)
@@ -73,6 +95,7 @@ void ACharacterStateMachine::SwitchState(UPlayerCharState* NewState)
 	if(CurrentState)
 		CurrentState->Exit();
 
+	ServerRPC_SwitchState(NewState); 
 	CurrentState = NewState;
 
 	CurrentState->Enter();
