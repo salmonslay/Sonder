@@ -71,7 +71,13 @@ void ADamageZone::Tick(float DeltaSeconds)
 					PlayersDamagedThisOverlap.Add(PlayerActor);
 					UE_LOG(LogTemp, Warning, TEXT("Killing %s from %s"), *PlayerActor->GetName(), *GetName())
 
-					Character->TakeDamage(TNumericLimits<float>::Max(), FDamageEvent(), nullptr, this);
+					// Damage is not dealt if players cannot be damaged 
+					// Character->TakeDamage(TNumericLimits<float>::Max(), FDamageEvent(), nullptr, this);
+
+					// Calls IDied directly instead 
+					if(const auto HealthComp = Character->FindComponentByClass<UNewPlayerHealthComponent>())
+						HealthComp->IDied(); 
+					
 					PlayerActors.Remove(PlayerActor);
 					PlayersDamagedThisOverlap.Remove(PlayerActor);
 				}
