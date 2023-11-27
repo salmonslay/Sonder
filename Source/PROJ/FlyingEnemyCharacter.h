@@ -40,6 +40,9 @@ public:
 	UPROPERTY(EditAnywhere)
 	float MaxAttackHeightDifference = 40.f;
 
+	UPROPERTY(EditAnywhere)
+	float MaxAttackAngle = 30.f;
+
 	virtual void Tick(float DeltaSeconds) override;
 
 	bool bSetFocusToPlayer = true;

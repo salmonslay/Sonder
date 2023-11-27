@@ -52,9 +52,19 @@ void UBTService_IsInAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 	}
 	
 	const float HeightDiff = FMath::Abs(OwnerLocation.Z - PlayerToAttackLocation.Z);
-	if (HeightDiff > OwnerCharacter->MaxAttackHeightDifference)
+	FVector DirectionToPlayer = PlayerToAttackLocation -OwnerLocation;
+	DirectionToPlayer.Normalize();
+    
+	
+    float DotProduct = FVector::DotProduct(FVector(0, 1, 0), DirectionToPlayer);
+	
+    float Angle = FMath::Acos(FMath::Abs(DotProduct)) * (180.0f / PI);
+
+    // Check if the angle is within the specified range
+	if (HeightDiff > OwnerCharacter->MaxAttackHeightDifference && Angle > OwnerCharacter->MaxAttackAngle)
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool("bIsInRangeToAttack", false);
+		//OwnerComp.GetBlackboardComponent()->SetValueAsVector("StartAttackPosition", GenerateNewStartAttackPoint());
 	}
 	else
 	{
@@ -84,6 +94,7 @@ void UBTService_IsInAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 			else
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsBool("bIsInRangeToAttack", false);
+				//OwnerComp.GetBlackboardComponent()->SetValueAsVector("StartAttackPosition", GenerateNewStartAttackPoint());
 			}
 		}
 		else
@@ -92,4 +103,46 @@ void UBTService_IsInAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 			OwnerComp.GetBlackboardComponent()->SetValueAsVector("StartAttackPosition", OwnerLocation);
 		}
 	}
+}
+
+bool UBTService_IsInAttackRange::StartAttackPointValid(const FVector& PointToCheck)
+{
+	const float HeightDiff = FMath::Abs(OwnerLocation.Z - PlayerToAttackLocation.Z);
+	FVector DirectionToPlayer = PlayerToAttackLocation -OwnerLocation;
+	DirectionToPlayer.Normalize();
+    
+	
+	float DotProduct = FVector::DotProduct(FVector(0, 1, 0), DirectionToPlayer);
+	
+	float Angle = FMath::Acos(FMath::Abs(DotProduct)) * (180.0f / PI);
+
+	// Check if the angle is within the specified range
+	if (HeightDiff > OwnerCharacter->MaxAttackHeightDifference && Angle > OwnerCharacter->MaxAttackAngle)
+	{
+		return false;
+	}
+	return true;
+}
+
+FVector UBTService_IsInAttackRange::GenerateNewStartAttackPoint()
+{
+	// Generate a random height 
+	const float RandomHeight = FMath::FRandRange(PlayerToAttackLocation.Z - OwnerCharacter->MaxAttackHeightDifference, PlayerToAttackLocation.Z + OwnerCharacter->MaxAttackHeightDifference);
+	const float RandomAngle = FMath::FRandRange(0.0f, FMath::DegreesToRadians(OwnerCharacter->MaxAttackAngle));
+	
+	const float HorizontalDistance = FMath::Sqrt(FMath::Square(PlayerToAttackLocation.X - OwnerLocation.X) + FMath::Square(PlayerToAttackLocation.Y - OwnerLocation.Y));
+	const float HorizontalOffset = HorizontalDistance * FMath::Tan(RandomAngle);
+	
+	const float NewX = PlayerToAttackLocation.X + HorizontalOffset;
+	const float NewY = PlayerToAttackLocation.Y + HorizontalOffset;
+
+	// Calculate rand new position
+	FVector NewPosition = FVector(NewX, NewY, PlayerToAttackLocation.Z + RandomHeight);
+	//FVector NewPosition = FVector(PlayerToAttackPosition.X, PlayerToAttackPosition.Y , OwnerLocation.Z +RandomHeight);
+
+	if (bDebug)
+	{
+		DrawDebugSphere(GetWorld(), NewPosition, 20.f, 30, FColor::Cyan, false, 0.2f, 0, 5);
+	}
+	return NewPosition;
 }

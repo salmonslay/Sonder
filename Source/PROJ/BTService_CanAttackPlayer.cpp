@@ -37,12 +37,12 @@ void UBTService_CanAttackPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 
 	// Make a sphere from cats location as large as defined radius
 	const FVector MyLocation = OwnerCharacter->GetActorLocation();
-	const FCollisionShape CheckSphereShape = FCollisionShape::MakeSphere(RadiusToDamagePlayer); 
+	const FCollisionShape CheckSphereShape = FCollisionShape::MakeSphere(RadiusToMoveTowardsAttackingPlayer); 
 	FCollisionObjectQueryParams Params = FCollisionObjectQueryParams();
 	Params.AddObjectTypesToQuery(ECC_Pawn);
 	TArray<FOverlapResult> OverlapResults;
 
-	if (bDebug) DrawDebugSphere(GetWorld(), MyLocation, RadiusToDamagePlayer, 24, FColor::Black, false, .5f);
+	if (bDebug) DrawDebugSphere(GetWorld(), MyLocation, RadiusToMoveTowardsAttackingPlayer, 24, FColor::Black, false, .5f);
 
 	// check if sphere overlaps with any rats
 	bool bOverlaps = GetWorld()->OverlapMultiByObjectType(
