@@ -182,34 +182,37 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 			// See if there is line of sight to Soul, if there isn't then do nothing with Soul 
 			FHitResult HitResult; 
 			if(GetWorld()->LineTraceSingleByChannel(HitResult, RobotCharacter->GetActorLocation(), Soul->GetActorLocation(), ECC_Pawn))
-				continue; 
+				continue;
 			
-			if (Actor->GetActorLocation().Z > RobotCharacter->GetActorLocation().Z + 5)
+			if(RobotCharacter->GetActorLocation().Y - 100 < Actor->GetActorLocation().Y && Actor->GetActorLocation().Y < RobotCharacter->GetActorLocation().Y + 100)
 			{
-				PlayerActor = Soul;
-				UE_LOG(LogTemp, Warning, TEXT("Boost"));
-
-				if(Soul->GetCharacterMovement()->IsMovingOnGround() == false)
+				if (Actor->GetActorLocation().Z > RobotCharacter->GetActorLocation().Z + 5)
 				{
-					Soul->GetCharacterMovement()->Velocity.Z = 0;
-					Soul->JumpMaxCount = 2;
-					Soul->Jump();
+					PlayerActor = Soul;
+					UE_LOG(LogTemp, Warning, TEXT("Boost"));
+
+					if(Soul->GetCharacterMovement()->IsMovingOnGround() == false)
+					{
+						Soul->GetCharacterMovement()->Velocity.Z = 0;
+						Soul->JumpMaxCount = 2;
+						Soul->Jump();
+					}
+
+					FTimerHandle MemberTimerHandle;
+					GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f);
 				}
 
-				FTimerHandle MemberTimerHandle;
-				GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f);
-			}
+				else if (Actor->GetActorLocation().Z + 20 < RobotCharacter->GetActorLocation().Z && RobotCharacter->GetCharacterMovement()->IsMovingOnGround() == false)
+				{
+					PlayerActor = RobotCharacter; 
 
-			else if (Actor->GetActorLocation().Z + 20 < RobotCharacter->GetActorLocation().Z && RobotCharacter->GetCharacterMovement()->IsMovingOnGround() == false)
-			{
-				PlayerActor = RobotCharacter; 
+					RobotCharacter->GetCharacterMovement()->Velocity.Z = 0;
+					RobotCharacter->JumpMaxCount = 2;
+					RobotCharacter->Jump();
 
-				RobotCharacter->GetCharacterMovement()->Velocity.Z = 0;
-				RobotCharacter->JumpMaxCount = 2;
-				RobotCharacter->Jump();
-
-				FTimerHandle MemberTimerHandle;
-				GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f);
+					FTimerHandle MemberTimerHandle;
+					GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f);
+				}
 			}
 		}
 
