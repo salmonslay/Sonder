@@ -173,7 +173,7 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 {
 	// Code here is run on each player (client and server)
 	TArray<AActor*> OverlappingActors;
-	RobotCharacter->GetOverlappingActors(OverlappingActors, AActor::StaticClass()); 
+	RobotCharacter->GetOverlappingActors(OverlappingActors, AActor::StaticClass());
 
 	for (const auto Actor : OverlappingActors)
 	{
@@ -182,30 +182,37 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 			// See if there is line of sight to Soul, if there isn't then do nothing with Soul 
 			FHitResult HitResult; 
 			if(GetWorld()->LineTraceSingleByChannel(HitResult, RobotCharacter->GetActorLocation(), Soul->GetActorLocation(), ECC_Pawn))
-				continue; 
+				continue;
 			
-			if (Actor->GetActorLocation().Z > RobotCharacter->GetActorLocation().Z + 5)
+			if(RobotCharacter->GetActorLocation().Y - 100 < Actor->GetActorLocation().Y && Actor->GetActorLocation().Y < RobotCharacter->GetActorLocation().Y + 100)
 			{
-				PlayerActor = Soul;
-				UE_LOG(LogTemp, Warning, TEXT("Boost"));
-				Soul->GetCharacterMovement()->Velocity.Z = 0;
-				Soul->JumpMaxCount = 2;
-				Soul->Jump();
+				if (Actor->GetActorLocation().Z > RobotCharacter->GetActorLocation().Z + 5)
+				{
+					PlayerActor = Soul;
+					UE_LOG(LogTemp, Warning, TEXT("Boost"));
 
-				FTimerHandle MemberTimerHandle;
-				GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f);
-			}
+					if(Soul->GetCharacterMovement()->IsMovingOnGround() == false)
+					{
+						Soul->GetCharacterMovement()->Velocity.Z = 0;
+						Soul->JumpMaxCount = 2;
+						Soul->Jump();
+					}
 
-			else if (Actor->GetActorLocation().Z + 20 < RobotCharacter->GetActorLocation().Z)
-			{
-				PlayerActor = RobotCharacter; 
-				UE_LOG(LogTemp, Warning, TEXT("Boost"));
-				RobotCharacter->GetCharacterMovement()->Velocity.Z = 0;
-				RobotCharacter->JumpMaxCount = 2;
-				RobotCharacter->Jump();
+					FTimerHandle MemberTimerHandle;
+					GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f);
+				}
 
-				FTimerHandle MemberTimerHandle;
-				GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f);
+				else if (Actor->GetActorLocation().Z + 20 < RobotCharacter->GetActorLocation().Z && RobotCharacter->GetCharacterMovement()->IsMovingOnGround() == false)
+				{
+					PlayerActor = RobotCharacter; 
+
+					RobotCharacter->GetCharacterMovement()->Velocity.Z = 0;
+					RobotCharacter->JumpMaxCount = 2;
+					RobotCharacter->Jump();
+
+					FTimerHandle MemberTimerHandle;
+					GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f);
+				}
 			}
 		}
 
