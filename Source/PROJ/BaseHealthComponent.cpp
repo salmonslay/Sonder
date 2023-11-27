@@ -8,7 +8,9 @@
 // Sets default values for this component's properties
 UBaseHealthComponent::UBaseHealthComponent()
 {
-	PrimaryComponentTick.bCanEverTick = false; // Note: Tick is turned off 
+	PrimaryComponentTick.bCanEverTick = false; // Note: Tick is turned off
+
+	SetIsReplicatedByDefault(true); 
 
 }
 
@@ -36,6 +38,13 @@ float UBaseHealthComponent::TakeDamage(float DamageAmount)
 	UE_LOG(LogTemp, Warning, TEXT("Damage applied to %s: %f"), *GetOwner()->GetActorNameOrLabel(), DamageAmount)
 
 	return DamageAmount; 
+}
+
+void UBaseHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(UBaseHealthComponent, CurrentHealth);
 }
 
 void UBaseHealthComponent::IDied()
@@ -67,14 +76,6 @@ void UBaseHealthComponent::SetMaxHealth(const float NewMaxHealth)
 void UBaseHealthComponent::RefillHealth()
 {
 	CurrentHealth = MaxHealth;
-}
-
-void UBaseHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(UBaseHealthComponent,  CurrentHealth);
-
 }
 
 void UBaseHealthComponent::OnRep_HealthChange()
