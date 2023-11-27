@@ -16,6 +16,8 @@ class PROJ_API URobotHookingState : public UPlayerCharState
 
 public:
 
+	URobotHookingState(); 
+
 	virtual void Enter() override;
 
 	virtual void Update(const float DeltaTime) override;
@@ -23,14 +25,27 @@ public:
 	virtual void Exit() override;
 
 	/** Switches state to the base state, ending the hook shot */
-	void EndHookShot() const; 
+	void EndHookShot() const;
+
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+
+	/** Returns true if the player is currently hook shotting */
+	UFUNCTION(BlueprintPure)
+	bool IsHookShotting() const { return bHookShotActive; } 
+
+	/** Returns the location at which to move the hook arm during hook shots */
+	UFUNCTION(BlueprintPure)
+	FVector GetCurrentHookArmLocation() const { return HookArmLocation; } 
 
 private:
+	
+	UPROPERTY(Replicated)
+	FVector HookArmLocation;  
 
 	UPROPERTY()
 	AActor* SoulCharacter; 
 	
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	FVector CurrentHookTargetLocation;
 
 	UPROPERTY()
@@ -96,13 +111,20 @@ private:
 
 	/** The speed at which to move the hook cable when moving outwards */
 	UPROPERTY(EditAnywhere)
-	float OutwardsHookShotSpeed = 4000.f; 
+	float OutwardsHookShotSpeed = 4000.f;
+	
+	UPROPERTY(Replicated)
+	bool bHookShotActive = false; 
 	
 	/** Returns the HookTarget if there is no available target, ensuring hook is shot forwards */
 	FVector GetTargetOnNothingInFront() const;
 	
 	/** Returns false if there was a block */
 	bool SetHookTarget();
+
+	/** Simply sets the target location on the server so it replicates to clients */
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_SetHookTarget(const FVector& NewTarget); 
 
 	/** Returns the actor to target, either Soul or a hook point. Returns null if no valid target */
 	AActor* GetActorToTarget(FHitResult& HitResultOut);

@@ -18,6 +18,11 @@
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
+URobotHookingState::URobotHookingState()
+{
+	SetIsReplicatedByDefault(true); 
+}
+
 void URobotHookingState::Enter()
 {
 	Super::Enter();
@@ -104,6 +109,7 @@ void URobotHookingState::Exit()
 	ServerRPCHookShotEnd(RobotCharacter, NewVel);
 	
 	bTravellingTowardsTarget = false;
+	bHookShotActive = false; 
 }
 
 void URobotHookingState::EndHookShot() const
@@ -111,6 +117,15 @@ void URobotHookingState::EndHookShot() const
 	// Change state if this state is active 
 	if(Cast<ARobotStateMachine>(GetOwner())->GetCurrentState() == this)
 		PlayerOwner->SwitchState(RobotCharacter->RobotBaseState);
+}
+
+void URobotHookingState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
+{
+	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
+
+	DOREPLIFETIME(URobotHookingState, CurrentHookTargetLocation)
+	DOREPLIFETIME(URobotHookingState, bHookShotActive)
+	DOREPLIFETIME(URobotHookingState, HookArmLocation)
 }
 
 bool URobotHookingState::SetHookTarget()
@@ -138,11 +153,18 @@ bool URobotHookingState::SetHookTarget()
 	if(!CurrentTargetActor || !StaticsHelper::ActorIsInFront(RobotCharacter, CurrentHookTargetLocation))
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Target not in front of player"))
-		CurrentHookTargetLocation = GetTargetOnNothingInFront(); 
+		CurrentHookTargetLocation = GetTargetOnNothingInFront();
+		ServerRPC_SetHookTarget(CurrentHookTargetLocation); 
 		return false; 
 	} 
 
+	ServerRPC_SetHookTarget(CurrentHookTargetLocation); 
 	return !HitResult.IsValidBlockingHit(); 
+}
+
+void URobotHookingState::ServerRPC_SetHookTarget_Implementation(const FVector& NewTarget)
+{
+	CurrentHookTargetLocation = NewTarget; 
 }
 
 FVector URobotHookingState::GetTargetOnNothingInFront() const
@@ -234,6 +256,7 @@ void URobotHookingState::StartShootHook()
 		RobotCharacter->DisableInput(RobotCharacter->GetLocalViewingPlayerController());
 	
 	bShootingHookOutwards = true;
+	bHookShotActive = true; 
 	
 	ServerRPCHookShotStart(HookCable, CurrentHookTargetLocation, RobotCharacter); 
 }
@@ -242,6 +265,10 @@ void URobotHookingState::ServerRPCHookShotStart_Implementation(UCableComponent* 
 {
 	if(!PlayerOwner->HasAuthority())
 		return;
+
+	HookArmLocation = PlayerOwner->GetActorLocation(); 
+
+	bHookShotActive = true; 
 
 	MulticastRPCHookShotStart(HookTarget, RobotChar); 
 }
@@ -262,7 +289,7 @@ void URobotHookingState::MulticastRPCHookShotStart_Implementation(const FVector&
 		return; 
 	}
 	
-	CableComp->SetVisibility(true);
+	// CableComp->SetVisibility(true);
 	CableComp->bAttachEnd = true;
 	
 	if(CurrentTargetActor) // If there is a valid target 
@@ -303,6 +330,8 @@ void URobotHookingState::ServerRPC_ShootHook_Implementation(const FVector& NewHo
 {
 	if(!PlayerOwner->HasAuthority())
 		return;
+
+	HookArmLocation = UKismetMathLibrary::VInterpTo_Constant(HookArmLocation, CurrentHookTargetLocation, UGameplayStatics::GetWorldDeltaSeconds(this), OutwardsHookShotSpeed); 
 
 	MulticastRPC_ShootHook(NewHookEndLoc); 
 }
@@ -421,6 +450,8 @@ void URobotHookingState::ServerRPC_RetractHook_Implementation(const FVector& New
 	if(!PlayerOwner->HasAuthority())
 		return;
 
+	// HookArmLocation = NewEndLocation; // TODO: Update end loc, it is now relative for cable comp 
+
 	MulticastRPC_RetractHook(NewEndLocation); 
 }
 
@@ -441,7 +472,9 @@ void URobotHookingState::ServerRPCHookShotEnd_Implementation(ARobotStateMachine*
 
 	MovementComp->GravityScale = DefaultGravityScale;
 	
-	MovementComp->Velocity = NewVel; 
+	MovementComp->Velocity = NewVel;
+
+	bHookShotActive = false; 
 
 	MulticastRPCHookShotEnd(RobotChar); 
 }
