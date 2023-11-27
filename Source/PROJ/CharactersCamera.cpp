@@ -28,7 +28,7 @@ void ACharactersCamera::BeginPlay()
 
 	AssignSpline(DefaultCameraSplineClass);
 	FTimerHandle Handle;
-	GetWorld()->GetTimerManager().SetTimer(Handle, this, &ACharactersCamera::GetPlayers, 4.0f);
+	GetWorld()->GetTimerManager().SetTimer(Handle, this, &ACharactersCamera::GetPlayers, 2.0f);
 
 
 	if (WallOne && WallTwo)
@@ -114,8 +114,8 @@ void ACharactersCamera::MoveWalls(FVector MiddlePoint)
 		FVector Camloc = CameraComponent->GetComponentLocation();
 		double Offset = FMath::Tan(FOV) * (FVector::Distance(MiddlePoint, Camloc));
 
-		WallOne->SetActorLocation(FVector(MiddlePoint.X, (MiddlePoint.Y - Offset / 2), MiddlePoint.Z));
-		WallTwo->SetActorLocation(FVector(MiddlePoint.X, MiddlePoint.Y + Offset / 2, MiddlePoint.Z));
+		WallOne->SetActorLocation(FVector(MiddlePoint.X, (MiddlePoint.Y - (Offset * 1.5) / 2), MiddlePoint.Z));
+		WallTwo->SetActorLocation(FVector(MiddlePoint.X, MiddlePoint.Y + (Offset * 1.5) / 2, MiddlePoint.Z));
 	}
 }
 
