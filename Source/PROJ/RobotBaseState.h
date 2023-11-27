@@ -5,7 +5,6 @@
 #include "CoreMinimal.h"
 #include "PlayerCharState.h"
 #include "SoulCharacter.h"
-#include "GameFramework/CharacterMovementComponent.h"
 #include "RobotBaseState.generated.h"
 
 /**

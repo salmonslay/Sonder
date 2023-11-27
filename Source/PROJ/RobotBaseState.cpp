@@ -173,7 +173,7 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 {
 	// Code here is run on each player (client and server)
 	TArray<AActor*> OverlappingActors;
-	RobotCharacter->GetOverlappingActors(OverlappingActors, AActor::StaticClass());
+	RobotCharacter->GetOverlappingActors(OverlappingActors, AActor::StaticClass()); 
 
 	for (const auto Actor : OverlappingActors)
 	{
@@ -188,22 +188,18 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 			{
 				PlayerActor = Soul;
 				UE_LOG(LogTemp, Warning, TEXT("Boost"));
-
-				if(Soul->GetCharacterMovement()->IsMovingOnGround() == false)
-				{
-					Soul->GetCharacterMovement()->Velocity.Z = 0;
-					Soul->JumpMaxCount = 2;
-					Soul->Jump();
-				}
+				Soul->GetCharacterMovement()->Velocity.Z = 0;
+				Soul->JumpMaxCount = 2;
+				Soul->Jump();
 
 				FTimerHandle MemberTimerHandle;
 				GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f);
 			}
 
-			else if (Actor->GetActorLocation().Z + 20 < RobotCharacter->GetActorLocation().Z && RobotCharacter->GetCharacterMovement()->IsMovingOnGround() == false)
+			else if (Actor->GetActorLocation().Z + 20 < RobotCharacter->GetActorLocation().Z)
 			{
 				PlayerActor = RobotCharacter; 
-
+				UE_LOG(LogTemp, Warning, TEXT("Boost"));
 				RobotCharacter->GetCharacterMovement()->Velocity.Z = 0;
 				RobotCharacter->JumpMaxCount = 2;
 				RobotCharacter->Jump();
