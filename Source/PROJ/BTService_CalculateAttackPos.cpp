@@ -43,22 +43,32 @@ void UBTService_CalculateAttackPos::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	{
 		return;
 	}
+
+	// should only be calculated if needed, if the point is still valid
+	
+	//OwnerComp.GetBlackboardComponent()->GetValueAsBool("StartAttackPosition")
 	PlayerToAttack = Cast<APROJCharacter>(PlayerObject);
 	if (PlayerToAttack)
 	{
 		PlayerToAttackPosition = PlayerToAttack->GetActorLocation();
 	}
-	// Generate a random height within the specified bounds around player's Z-coordinate
-	float RandomHeight = FMath::FRandRange(PlayerToAttackPosition.Z - OwnerCharacter->MaxAttackHeightDifference, PlayerToAttackPosition.Z + OwnerCharacter->MaxAttackHeightDifference);
-	//float RandomAngle = FMath::FRandRange(0.0f, 2 * PI);
-        
+	// Generate a random height 
+	const float RandomHeight = FMath::FRandRange(PlayerToAttackPosition.Z - OwnerCharacter->MaxAttackHeightDifference, PlayerToAttackPosition.Z + OwnerCharacter->MaxAttackHeightDifference);
+	const float RandomAngle = FMath::FRandRange(0.0f, FMath::DegreesToRadians(OwnerCharacter->MaxAttackAngle));
+	
+	const float HorizontalDistance = FMath::Sqrt(FMath::Square(PlayerToAttackPosition.X - OwnerLocation.X) + FMath::Square(PlayerToAttackPosition.Y - OwnerLocation.Y));
+	const float HorizontalOffset = HorizontalDistance * FMath::Tan(RandomAngle);
+	
+	const float NewX = PlayerToAttackPosition.X + HorizontalOffset;
+	const float NewY = PlayerToAttackPosition.Y + HorizontalOffset;
+
 	// Calculate rand new position
-	FVector NewPosition = FVector(PlayerToAttackPosition.X, PlayerToAttackPosition.Y , OwnerLocation.Z +RandomHeight);
+	const FVector NewPosition = FVector(NewX, NewY, PlayerToAttackPosition.Z + RandomHeight);
+	//FVector NewPosition = FVector(PlayerToAttackPosition.X, PlayerToAttackPosition.Y , OwnerLocation.Z +RandomHeight);
 	OwnerComp.GetBlackboardComponent()->SetValueAsVector("StartAttackPosition", NewPosition);
 	if (bDebug)
 	{
 		DrawDebugSphere(GetWorld(), NewPosition, 20.f, 30, FColor::Cyan, false, 0.2f, 0, 5);
 	}
-	
 }
 
