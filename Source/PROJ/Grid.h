@@ -57,6 +57,8 @@ public:
 	 * @return pointer to Node in location
 	 */
 	GridNode* GetNodeFromWorldLocation(const FVector &NodeWorldLocation) const;
+	
+	void CalculateMovingActor(const AActor* OtherActor);
 
 	/** Does what the method is called*/
 	FVector GetGridBottomLeftLocation() const { return GridBottomLeftLocation; }
@@ -162,6 +164,8 @@ private:
 
 	TArray<GridNode*> GetNeighbours(GridNode* Node) const;
 
-	int GetIndex(const int IndexX, const int IndexY, const int IndexZ) const; 
+	int GetIndex(const int IndexX, const int IndexY, const int IndexZ) const;
+
+	TMap<FName, TArray<GridNode*>> MovingActorNodes = TMap<FName, TArray<GridNode*>>();
 
 };

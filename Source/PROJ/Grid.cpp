@@ -195,10 +195,10 @@ void AGrid::CreateGrid()
 
 	
 
-	//FVector GridBottomLeft = GetActorLocation();
-	//GridBottomLeft.X -= GridSize.X / 2;
-	//GridBottomLeft.Y -= GridSize.Y / 2;
-	//GridBottomLeft.Z -= GridSize.Z / 2;
+	FVector GridBottomLeft = GetActorLocation();
+	GridBottomLeft.X -= GridSize.X / 2;
+	GridBottomLeft.Y -= GridSize.Y / 2;
+	GridBottomLeft.Z -= GridSize.Z / 2;
 
 
 
@@ -309,6 +309,47 @@ GridNode* AGrid::GetNodeFromWorldLocation(const FVector &NodeWorldLocation) cons
 	const int z = FMath::Clamp(FMath::RoundToInt((GridRelativeZ - NodeRadius) / NodeDiameter), 0, GridLengthZ- 1);
 	
 	return GetNodeFromGrid(x, y, z);
+}
+
+void AGrid::CalculateMovingActor(const AActor* OtherActor)
+{
+	TArray<GridNode*> OverlappingNodes = TArray<GridNode*>();
+
+	FVector Origin;
+	FVector Extent;
+	OtherActor->GetActorBounds(false, Origin, Extent);
+
+	int XStart = FMath::Max(Origin.X - Extent.X, GridBottomLeftLocation.X);
+	int XEnd = FMath::Min(Origin.X + Extent.X, GridBottomLeftLocation.X + GridLengthX);
+	int YStart = FMath::Max(Origin.Y - Extent.Y, GridBottomLeftLocation.Y);
+	int YEnd = FMath::Min(Origin.Y + Extent.Y, GridBottomLeftLocation.Y + GridLengthY);
+	int ZStart = FMath::Max(Origin.Z - Extent.Z, GridBottomLeftLocation.Z);
+	int ZEnd = FMath::Min(Origin.Z + Extent.Z, GridBottomLeftLocation.Z + GridLengthZ);
+	
+	for (int x = XStart; x < XEnd; x += NodeDiameter)
+	{
+		for (int y = YStart; y < YEnd; y += NodeDiameter)
+		{
+			for (int z = ZStart; z < ZEnd; z += NodeDiameter)
+			{
+				GridNode* Node = GetNodeFromWorldLocation(FVector(x, y, z));
+				if(Node->bWalkable)
+				{
+					OverlappingNodes.Add(Node);	
+				}
+			}
+		}
+	}
+	if (!MovingActorNodes.Contains(OtherActor->GetFName()))
+	{
+		MovingActorNodes.Add(OtherActor->GetFName());
+		MovingActorNodes[OtherActor->GetFName()] = OverlappingNodes;
+	}
+	else
+	{
+		//Remove old nodes no longer overlapping and set walkable
+		//Add new overlapping nodes and set unwalkable
+	}
 }
 
 void AGrid::CheckGridBoundOverlappingActors()
