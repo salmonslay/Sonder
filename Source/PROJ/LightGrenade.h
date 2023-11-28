@@ -120,7 +120,18 @@ private:
 
 	/** Needed an offset to get the indicator to match the grenades position */
 	UPROPERTY(EditAnywhere)
-	float IndicatorOffsetDivisor = 250.f; 
+	float IndicatorOffsetDivisor = 250.f;
+
+	/** How long to be at max throw force before resetting to min */
+	UPROPERTY(EditAnywhere)
+	float TimeAtMaxThrowForce = 0.5f;
+
+	/** How many times the player has looped with the max throw force */
+	int MaxThrowIterations = 0;
+
+	FTimerHandle ThrowIterTimerHandle; 
+
+	void IncreaseMaxThrowIterations() { if(bCanThrow) MaxThrowIterations++; } 
 
 	FVector GetLaunchForce(const float TimeHeld); 
 

@@ -37,7 +37,7 @@ void UBTService_CalculateAttackPos::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	OwnerLocation = OwnerCharacter->GetActorLocation();
 
 	APROJCharacter* PlayerToAttack;
-	UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("PlayerToAttack");
+	UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("CurrentTargetPlayer");
 
 	if (PlayerObject == nullptr)
 	{
@@ -53,7 +53,7 @@ void UBTService_CalculateAttackPos::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	//float RandomAngle = FMath::FRandRange(0.0f, 2 * PI);
         
 	// Calculate rand new position
-	FVector NewPosition = FVector(PlayerToAttackPosition.X, PlayerToAttackPosition.Y , OwnerLocation.Z +RandomHeight);
+	FVector NewPosition = FVector(PlayerToAttackPosition.X, OwnerLocation.Y , PlayerToAttackPosition.Z +RandomHeight);
 	OwnerComp.GetBlackboardComponent()->SetValueAsVector("StartAttackPosition", NewPosition);
 	if (bDebug)
 	{

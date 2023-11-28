@@ -80,7 +80,9 @@ void ALightGrenade::Throw(const float TimeHeld)
 		PulseExplosionArea->Deactivate();
 		ServerRPCThrow(TimeHeld);
 
-		Indicator->SetActorHiddenInGame(true); 
+		Indicator->SetActorHiddenInGame(true);
+		MaxThrowIterations = 0;
+		GetWorld()->GetTimerManager().ClearTimer(ThrowIterTimerHandle); 
 	}
 }
 
@@ -203,7 +205,14 @@ FVector ALightGrenade::GetLaunchForce(const float TimeHeld)
 		ThrowDir.X = 0; 
 		
 	// Calculate the force and clamp it to ensure it is between set bounds 
-	const FVector ThrowImpulse = ThrowDir.GetSafeNormal() * StartThrowImpulse + ThrowDir.GetSafeNormal() * TimeHeld * FireSpeedPerSecondHeld;
+	FVector ThrowImpulse = ThrowDir.GetSafeNormal() * StartThrowImpulse + ThrowDir.GetSafeNormal() * TimeHeld * FireSpeedPerSecondHeld;
+
+	// Adjust to looping max throw force 
+	ThrowImpulse -= ThrowImpulse.GetSafeNormal() * MaxThrowImpulse * MaxThrowIterations;
+
+	if(ThrowImpulse.Size() >= MaxThrowImpulse && !GetWorld()->GetTimerManager().IsTimerActive(ThrowIterTimerHandle))
+		GetWorld()->GetTimerManager().SetTimer(ThrowIterTimerHandle, this, &ALightGrenade::IncreaseMaxThrowIterations, TimeAtMaxThrowForce); 
+	
 	return ThrowImpulse.GetClampedToMaxSize(MaxThrowImpulse); 
 }
 
