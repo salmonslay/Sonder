@@ -28,6 +28,8 @@ void UBTService_IsStunned::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 	
 	if (OwnerComp.GetAIOwner() == nullptr) return;
 
+	TreeComponent = &OwnerComp;
+
 	OwnerCharacter = Cast<AFlyingEnemyCharacter>(OwnerComp.GetAIOwner()->GetCharacter());
 
 	if (OwnerCharacter == nullptr) return;
@@ -35,14 +37,22 @@ void UBTService_IsStunned::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 	OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsStunned", OwnerCharacter->bIsStunned);
 	OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsFloat("StunnedDuration", OwnerCharacter->StunnedDuration);
 
-
-	if (OwnerCharacter->bIsStunned)
+	/*
+	if (OwnerCharacter->bIsStunned && OwnerCharacter->StunnedDuration > OwnerCharacter->StaggeredDuration &&
+		!OwnerComp.GetBlackboardComponent()->GetValueAsBool("bIsRepositioning"))
 	{
-		GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Yellow, TEXT("Is stunned"));	
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool("bIsRepositioning", true);
+		GetWorld()->GetTimerManager().SetTimer(StopRepositioningTimerHandle, this, &UBTService_IsStunned::StopRepositioning,
+			OwnerCharacter->RepositioningDuration + OwnerCharacter->StunnedDuration, false);
 	}
-	else
-	{
-		//GEngine->AddOnScreenDebugMessage(-1, 0.5f, FColor::Yellow, TEXT(" NOT stunned"));	
+	*/
+}
 
-	}
+void UBTService_IsStunned::StopRepositioning()
+{
+
+	TreeComponent->GetBlackboardComponent()->SetValueAsBool("bIsRepositioning", false);
+	TreeComponent->GetBlackboardComponent()->ClearValue("bIsRepositioning");
+
+	GetWorld()->GetTimerManager().ClearTimer(StopRepositioningTimerHandle);
 }

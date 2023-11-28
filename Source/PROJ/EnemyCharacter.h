@@ -130,6 +130,9 @@ public:
 
 	UPROPERTY(EditDefaultsOnly)
 	float StaggeredThreshold = 0.f;
+
+	UPROPERTY(EditDefaultsOnly)
+	float RepositioningDuration = 1.f;
 	
 	UFUNCTION()
 	void OnRep_Stunned();

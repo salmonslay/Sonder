@@ -45,6 +45,7 @@ void UBTService_FindPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 
 	if(OwnerComp.GetBlackboardComponent()->GetValueAsBool("bIsRepositioning"))
 	{
+		OwnerComp.GetBlackboardComponent()->SetValueAsVector(TEXT("SpawnPosition"), OwnerCharacter->SpawnPosition);
 		Path = OwnerGrid->RequestPath(OwnerLocation, OwnerComp.GetBlackboardComponent()->GetValueAsVector("SpawnPosition"), bDebug);
 		
 	}
