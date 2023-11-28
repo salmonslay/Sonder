@@ -253,17 +253,15 @@ void ALightGrenade::IsChargingGrenade(const float TimeHeld)
 	
 	const bool bHit = UGameplayStatics::Blueprint_PredictProjectilePath_ByTraceChannel
 	(this, HitResult,
-		PathLocs, OutLastTraceDestination , Player->ThrowLoc->GetComponentLocation(), GetLaunchForce(TimeHeld),
-		true, CollisionArea->GetScaledSphereRadius(), ECC_Pawn, false,
+		PathLocs, OutLastTraceDestination , Player->ThrowLoc->GetComponentLocation(), GetLaunchForce(TimeHeld) / IndicatorOffsetDivisor,
+		true, CollisionArea->GetScaledSphereRadius() / 2, ECC_Pawn, false,
 		ActorsToIgnore, EDrawDebugTrace::None, -1);
 
 	if(!bHit)
-		return;
-
-	// UE_LOG(LogTemp, Warning, TEXT("Launch force: %f - time held: %f"), GetLaunchForce(TimeHeld).Size(), TimeHeld)
+		return; 
 
 	// Set indicator to last location in path 
 	Indicator->SetActorHiddenInGame(false); 
-	Indicator->SetActorLocation(PathLocs.Last());
+	Indicator->SetActorLocation(HitResult.ImpactPoint);
 }
 

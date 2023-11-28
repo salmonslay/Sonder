@@ -118,6 +118,10 @@ private:
 	UPROPERTY()
 	AActor* Indicator;
 
+	/** Needed an offset to get the indicator to match the grenades position */
+	UPROPERTY(EditAnywhere)
+	float IndicatorOffsetDivisor = 250.f; 
+
 	FVector GetLaunchForce(const float TimeHeld); 
 
 	void EnableCanThrow();
