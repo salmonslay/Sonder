@@ -258,7 +258,9 @@ void ALightGrenade::IsChargingGrenade(const float TimeHeld)
 		ActorsToIgnore, EDrawDebugTrace::None, -1);
 
 	if(!bHit)
-		return; 
+		return;
+
+	// UE_LOG(LogTemp, Warning, TEXT("Launch force: %f - time held: %f"), GetLaunchForce(TimeHeld).Size(), TimeHeld)
 
 	// Set indicator to last location in path 
 	Indicator->SetActorHiddenInGame(false); 

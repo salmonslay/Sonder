@@ -103,7 +103,7 @@ void USoulBaseStateNew::GetTimeHeld(const FInputActionInstance& Instance)
 		return;	
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("TimeHeld() local - OnGoing IA: Time: %f"), Instance.GetElapsedTime())
+	// UE_LOG(LogTemp, Warning, TEXT("TimeHeld() local - OnGoing IA: Time: %f"), Instance.GetElapsedTime())
 
 	LightGrenade->IsChargingGrenade(Instance.GetElapsedTime()); 
 
