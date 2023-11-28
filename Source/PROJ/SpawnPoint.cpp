@@ -52,9 +52,9 @@ void ASpawnPoint::TrySpawnNext()
 			EnemiesToSpawn.Pop();
 			if (!SpawnedEnemy->bIsControllerInitialized)
 			{
-				SpawnedEnemy->InitializeControllerFromManager();
-
 				SpawnedEnemy->Manager = Manager;
+				SpawnedEnemy->SpawnPosition = GetActorLocation();
+				SpawnedEnemy->InitializeControllerFromManager();
 			}
 			Manager->AddEnemy(SpawnedEnemy);
 		}

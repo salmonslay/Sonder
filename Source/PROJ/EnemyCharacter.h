@@ -156,4 +156,7 @@ public:
 	UPROPERTY(BlueprintReadOnly)
 	ACombatManager* Manager;
 
+	UPROPERTY(BlueprintReadOnly)
+	FVector SpawnPosition = FVector::ZeroVector;
+
 };

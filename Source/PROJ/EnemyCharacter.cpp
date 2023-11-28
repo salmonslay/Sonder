@@ -43,6 +43,8 @@ void AEnemyCharacter::BeginPlay()
 	GetWorldTimerManager().SetTimer(InitializerTimerHandle, this, &AEnemyCharacter::InitializeController, 2, false, 2);
 
 	CheckIfOverlappingWithGrid();
+
+	SpawnPosition = GetActorLocation();
 }
 
 void AEnemyCharacter::InitializeController()

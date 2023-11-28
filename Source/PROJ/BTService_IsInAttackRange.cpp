@@ -79,7 +79,7 @@ void UBTService_IsInAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 			if (PlayerHit)
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsBool("bIsInRangeToAttack", true);
-				OwnerComp.GetBlackboardComponent()->SetValueAsVector("StartAttackPosition", OwnerLocation);
+				//OwnerComp.GetBlackboardComponent()->SetValueAsVector("StartAttackPosition", OwnerLocation);
 			}
 			else
 			{
@@ -89,7 +89,7 @@ void UBTService_IsInAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 		else
 		{
 			OwnerComp.GetBlackboardComponent()->SetValueAsBool("bIsInRangeToAttack", true);
-			OwnerComp.GetBlackboardComponent()->SetValueAsVector("StartAttackPosition", OwnerLocation);
+			//OwnerComp.GetBlackboardComponent()->SetValueAsVector("StartAttackPosition", OwnerLocation);
 		}
 	}
 }
