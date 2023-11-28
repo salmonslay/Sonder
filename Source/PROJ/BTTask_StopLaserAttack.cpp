@@ -21,20 +21,30 @@ EBTNodeResult::Type UBTTask_StopLaserAttack::ExecuteTask(UBehaviorTreeComponent&
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	bNotifyTick = 1;
+	if (OwnerComp.GetAIOwner() == nullptr) 	return EBTNodeResult::Failed;
 
-	if (OwnerComp.GetAIOwner() == nullptr) 	return EBTNodeResult::Failed; 
+	TreeComponent = &OwnerComp;
 
 	OwnerCharacter = Cast<AFlyingEnemyCharacter>(OwnerComp.GetAIOwner()->GetCharacter());
 
 	if (OwnerCharacter == nullptr) return EBTNodeResult::Failed;
 
 	OwnerLocation = OwnerCharacter->GetActorLocation();
-
-	OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsFloat("StopAttackTime", OwnerCharacter->UnlockRotationAfterAttackDuration);
-
+	
+	OwnerComp.GetBlackboardComponent()->SetValueAsFloat("StopAttackTime", OwnerCharacter->UnlockRotationAfterAttackDuration);
+	/*
+	OwnerComp.GetBlackboardComponent()->SetValueAsBool("bIsRepositioning", true);
+	GetWorld()->GetTimerManager().SetTimer(StopRepositioningTimerHandle, this, &UBTTask_StopLaserAttack::StopRepositioning, OwnerCharacter->RepositioningDuration, false);
+	*/
 	OwnerCharacter->bSetFocusToPlayer = true;
 	OwnerCharacter->OnStopAttackEvent(OwnerCharacter->UnlockRotationAfterAttackDuration);
 	OwnerCharacter->Idle();
 	return EBTNodeResult::Succeeded;
+}
+
+void UBTTask_StopLaserAttack::StopRepositioning()
+{
+	TreeComponent->GetBlackboardComponent()->SetValueAsBool("bIsRepositioning", false);
+	TreeComponent->GetBlackboardComponent()->ClearValue("bIsRepositioning");
+	GetWorld()->GetTimerManager().ClearTimer(StopRepositioningTimerHandle);
 }
