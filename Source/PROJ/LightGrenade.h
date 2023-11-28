@@ -80,7 +80,8 @@ public:
 	void ServerRPCExplosion();
 
 	void PulseExplosion();
-
+	
+	void IsChargingGrenade(const float TimeHeld); 
 
 private:
 
@@ -109,6 +110,19 @@ private:
 
 	UPROPERTY(Replicated)
 	bool bIsExploding = false;
+	
+	/** The indicator class for the grenade */
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AActor> IndicatorActorClass;
+
+	UPROPERTY()
+	AActor* Indicator;
+
+	/** Needed an offset to get the indicator to match the grenades position */
+	UPROPERTY(EditAnywhere)
+	float IndicatorOffsetDivisor = 250.f; 
+
+	FVector GetLaunchForce(const float TimeHeld); 
 
 	void EnableCanThrow();
 
@@ -117,12 +131,7 @@ private:
 	void EnableGrenade();
 
 	void StartCountdown(float TimeUntilExplosion);
-
 	
-	
-	
-	
-
 	/** Attack function run on each game instance, client and server */
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCExplosion();
@@ -136,7 +145,8 @@ private:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	
+	/** Sets the indicator's location */
+	void GetIndicatorLocation(); 
 
 	
 };

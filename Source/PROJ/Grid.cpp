@@ -7,9 +7,7 @@
 #include "Pathfinder.h"
 #include "SonderGameState.h"
 #include "Components/BoxComponent.h"
-#include "GameFramework/GameStateBase.h"
 #include "Kismet/KismetSystemLibrary.h"
-#include "Net/UnrealNetwork.h"
 
 
 
@@ -37,12 +35,12 @@ void AGrid::BeginPlay()
 	
 	if(bDebug)
 	{
-		GetWorldTimerManager().SetTimer(DebugDrawTimerHandle, this, &AGrid::OnDebugDraw, 0.2f, false, -1);
+		GetWorldTimerManager().SetTimer(DebugDrawTimerHandle, this, &AGrid::OnDebugDraw, 0.2f, true, -1);
 	}
 
 	//GetWorldTimerManager().SetTimer(StartPathfindingTimerHandle, this, &AGrid::OnStartPathfinding, 0.1f, false, 0.1f);
 	GetWorldTimerManager().SetTimer(CheckOverlappingEnemiesTimerHandle, this, &AGrid::CheckGridBoundOverlappingActors, CheckOverlappingEnemiesDelay, false, -1 );
-	GetWorldTimerManager().SetTimer(CheckForPlayersTimerHandle, this, &AGrid::CheckForPlayers, CheckForPlayersLoopDelay, true, 0.1f); 
+	GetWorldTimerManager().SetTimer(CheckForPlayersTimerHandle, this, &AGrid::CheckForPlayers, CheckForPlayersLoopDelay, true, 0.1f);
 }
 
 void AGrid::CreatePathfinder()
@@ -195,13 +193,11 @@ void AGrid::CreateGrid()
 
 	
 
-	//FVector GridBottomLeft = GetActorLocation();
-	//GridBottomLeft.X -= GridSize.X / 2;
-	//GridBottomLeft.Y -= GridSize.Y / 2;
-	//GridBottomLeft.Z -= GridSize.Z / 2;
-
-
-
+	FVector GridBottomLeft = GetActorLocation();
+	GridBottomLeft.X -= GridSize.X / 2;
+	GridBottomLeft.Y -= GridSize.Y / 2;
+	GridBottomLeft.Z -= GridSize.Z / 2;
+	
 	
 	FVector GridTopLeft = GetActorLocation();
 	GridTopLeft.X -= GridSize.X / 2;
@@ -292,6 +288,7 @@ int AGrid::GetIndex(const int IndexX, const int IndexY, const int IndexZ) const
 }
 
 
+
 GridNode* AGrid::GetNodeFromWorldLocation(const FVector &NodeWorldLocation) const
 {
 	// position relative to grids bottom left corner 
@@ -309,6 +306,71 @@ GridNode* AGrid::GetNodeFromWorldLocation(const FVector &NodeWorldLocation) cons
 	const int z = FMath::Clamp(FMath::RoundToInt((GridRelativeZ - NodeRadius) / NodeDiameter), 0, GridLengthZ- 1);
 	
 	return GetNodeFromGrid(x, y, z);
+}
+
+void AGrid::CalculateMovingActor(const AActor* OtherActor)
+{
+	if(!OtherActor || !IsValid(OtherActor)){ return; }
+	
+	TArray<GridNode*> OverlappingNodes = TArray<GridNode*>();
+
+	FVector Origin;
+	FVector Extent;
+	OtherActor->GetActorBounds(true, Origin, Extent);
+
+	int XStart = FMath::Max(Origin.X - Extent.X, GridTopLeftLocation.X);
+	int XEnd = FMath::Min(Origin.X + Extent.X, GridTopLeftLocation.X + GridSize.X);
+	int YStart = FMath::Max(Origin.Y - Extent.Y, GridTopLeftLocation.Y);
+	int YEnd = FMath::Min(Origin.Y + Extent.Y, GridTopLeftLocation.Y + GridSize.Y);
+	int ZStart = FMath::Min(Origin.Z + Extent.Z, GridTopLeftLocation.Z);
+	int ZEnd = FMath::Max(Origin.Z - Extent.Z, GridTopLeftLocation.Z - GridSize.Z);
+	
+	for (int x = XStart; x < XEnd; x += NodeDiameter)
+	{
+		for (int y = YStart; y < YEnd; y += NodeDiameter)
+		{
+			for (int z = ZStart; z > ZEnd; z -= NodeDiameter)
+			{
+				GridNode* Node = GetNodeFromWorldLocation(FVector(x, y, z));
+				OverlappingNodes.Add(Node);
+				Node->bWalkable = false;
+			}
+		}
+	}
+	if (!MovingActorNodes.Contains(OtherActor->GetFName()))
+	{
+		MovingActorNodes.Add(OtherActor->GetFName());
+		MovingActorNodes[OtherActor->GetFName()].Append(OverlappingNodes);
+	}
+	else
+	{
+		//Remove old nodes no longer overlapping and set walkable
+		TArray<GridNode*> NodesToRemove = TArray<GridNode*>();
+		for (GridNode* NodeToRemove : MovingActorNodes[OtherActor->GetFName()])
+		{
+			if (NodeToRemove)
+			{
+				if (!OverlappingNodes.Contains(NodeToRemove))
+				{
+					NodeToRemove->bWalkable = true;
+					NodesToRemove.Add(NodeToRemove);
+				}
+			}
+		}
+		for (GridNode* NodeToRemove : NodesToRemove)
+		{
+			MovingActorNodes[OtherActor->GetFName()].Remove(NodeToRemove);
+		}
+		//Add new overlapping nodes and set unwalkable
+		for (GridNode* NodeToAdd : OverlappingNodes)
+		{
+			if (NodeToAdd)
+			{
+				NodeToAdd->bWalkable = false;
+				MovingActorNodes[OtherActor->GetFName()].Add(NodeToAdd);
+			}
+		}
+	}
 }
 
 void AGrid::CheckGridBoundOverlappingActors()
@@ -336,7 +398,7 @@ void AGrid::CheckGridBoundOverlappingActors()
 void AGrid::OnDebugDraw() const
 {
 	// Draw border of grid 
-	DrawDebugBox(GetWorld(), GetActorLocation(), FVector(GridSize.X / 2, GridSize.Y / 2, GridSize.Z / 2), FColor::Red, true);
+	DrawDebugBox(GetWorld(), GetActorLocation(), FVector(GridSize.X / 2, GridSize.Y / 2, GridSize.Z / 2), FColor::Red, false, 0.2f);
 
 	// draw each node where unwalkable nodes are red and walkable green
 	for(int x = 0; x < GridLengthX; x++)
@@ -350,7 +412,7 @@ void AGrid::OnDebugDraw() const
 
 				if (!Node->IsWalkable())
 				{
-					DrawDebugBox(GetWorld(), Node->GetWorldCoordinate(), FVector(NodeRadius, NodeRadius, NodeRadius), FColor::Red, true);
+					DrawDebugBox(GetWorld(), Node->GetWorldCoordinate(), FVector(NodeRadius, NodeRadius, NodeRadius), FColor::Red, false, 0.2f);
 				}
 			}
 		}

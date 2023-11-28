@@ -41,7 +41,7 @@ struct FEnemyWave
 	int TimeToWaveAfterEnemiesKilled;
 
 	UPROPERTY(EditAnywhere, Category="Enemy Spawn Wave")
-	ACombatTriggeredBase* WaveStartedTriggeredActor;
+	TArray<ACombatTriggeredBase*> WaveStartedTriggeredActors;
 };
 
 UCLASS()
@@ -79,10 +79,10 @@ public:
 	int NumActiveEnemies = 0;
 
 	UPROPERTY(EditAnywhere, Category="TriggeredActors")
-	ACombatTriggeredBase* StartCombatTriggeredActor;
+	TArray<ACombatTriggeredBase*> StartCombatTriggeredActors;
 
 	UPROPERTY(EditAnywhere, Category="TriggeredActors")
-	ACombatTriggeredBase* EndCombatTriggeredActor;
+	TArray<ACombatTriggeredBase*> EndCombatTriggeredActors;
 
 	UPROPERTY(EditAnywhere, Category="Grid")
 	AGrid* Grid;

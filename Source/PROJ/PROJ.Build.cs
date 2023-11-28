@@ -6,6 +6,7 @@ public class PROJ : ModuleRules
 {
 	public PROJ(ReadOnlyTargetRules Target) : base(Target)
 	{
+		PrivateDependencyModuleNames.AddRange(new string[] {"AdvancedSessions"});
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicDependencyModuleNames.AddRange(new string[] { 
@@ -16,7 +17,9 @@ public class PROJ : ModuleRules
 			"EnhancedInput", 
 			"Sockets", 
 			"CableComponent",
-			"Niagara"
+			"Niagara", 
+			"LevelSequence", 
+			"MovieScene" 
 		});
 		
 	}

@@ -60,7 +60,7 @@ bool AHookShotAttachment::HookCanBeUsed(const AHookShotAttachment* Hook, const A
 	if(!Hook) // No hook 
 		return false;
 
-	if(!StaticsHelper::ActorIsInFront(Robot, Hook)) 
+	if(!UStaticsHelper::ActorIsInFront(Robot, Hook)) 
 		return false; 
 
 	if(!HookIsOnScreen(Hook, Robot))
