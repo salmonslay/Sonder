@@ -57,7 +57,8 @@ public:
 	 * @return pointer to Node in location
 	 */
 	GridNode* GetNodeFromWorldLocation(const FVector &NodeWorldLocation) const;
-	
+
+	UFUNCTION(BlueprintCallable)
 	void CalculateMovingActor(const AActor* OtherActor);
 
 	/** Does what the method is called*/
@@ -167,5 +168,6 @@ private:
 	int GetIndex(const int IndexX, const int IndexY, const int IndexZ) const;
 
 	TMap<FName, TArray<GridNode*>> MovingActorNodes = TMap<FName, TArray<GridNode*>>();
+
 
 };
