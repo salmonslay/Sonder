@@ -33,22 +33,26 @@ ALightGrenade::ALightGrenade()
 
 }
 
-
-
 // Called when the game starts or when spawned
 void ALightGrenade::BeginPlay()
 {
 	Super::BeginPlay();
-	
-	
 
 	CollisionArea->OnComponentBeginOverlap.AddDynamic(this,&ALightGrenade::ActorBeginOverlap);
 	CollisionArea->OnComponentEndOverlap.AddDynamic(this,&ALightGrenade::OverlapEnd);
 	
 	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap); 
 	ExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
-	PulseExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap); 
-	
+	PulseExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+
+	Player = Cast<ASoulCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ASoulCharacter::StaticClass()));
+
+	// Create the grenade indicator if not already created 
+	if(!Indicator)
+	{
+		Indicator = GetWorld()->SpawnActor<AActor>(IndicatorActorClass, FVector::ZeroVector, FRotator::ZeroRotator);
+		Indicator->SetActorHiddenInGame(true); // Not shown as default 
+	}
 }
 
 void ALightGrenade::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -57,8 +61,6 @@ void ALightGrenade::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	
 	GetWorld()->GetTimerManager().ClearAllTimersForObject(this); 
 }
-
-
 
 void ALightGrenade::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -77,10 +79,11 @@ void ALightGrenade::Throw(const float TimeHeld)
 		Damage = 5.0f;
 		PulseExplosionArea->Deactivate();
 		ServerRPCThrow(TimeHeld);
+
+		Indicator->SetActorHiddenInGame(true); 
 	}
-	
-	
 }
+
 void ALightGrenade::ServerRPCThrow_Implementation(const float TimeHeld)
 {
 	if(!this->HasAuthority())
@@ -93,10 +96,7 @@ void ALightGrenade::MulticastRPCThrow_Implementation(const float TimeHeld)
 {
 	if(bCanThrow)
 	{
-		TArray<AActor*> FoundCharacter;
-		UGameplayStatics::GetAllActorsOfClass(GetWorld(), ASoulCharacter::StaticClass(), FoundCharacter);
-
-		Player = Cast<ASoulCharacter>(FoundCharacter[0]);
+		Player = Cast<ASoulCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ASoulCharacter::StaticClass()));
 
 		PlayerBase = Cast<APROJCharacter>(Player);
 
@@ -109,15 +109,8 @@ void ALightGrenade::MulticastRPCThrow_Implementation(const float TimeHeld)
 		ThrowEvent();
 
 		ExplosionArea->SetWorldLocation(Player->ThrowLoc->GetComponentLocation()); 
-
-		// Get the direction to throw the grenade in, check if depth movement is enabled 
-		FVector ThrowDir = Player->ThrowLoc->GetComponentLocation() - Player->GetActorLocation();
-		if(!Player->IsDepthMovementEnabled())
-			ThrowDir.X = 0; 
 		
-		// Calculate the force and clamp it to ensure it is between set bounds 
-		const FVector ThrowImpulse = ThrowDir.GetSafeNormal() * StartThrowImpulse + ThrowDir.GetSafeNormal() * TimeHeld * FireSpeedPerSecondHeld;
-		ExplosionArea->AddImpulse(ThrowImpulse.GetClampedToMaxSize(MaxThrowImpulse));
+		ExplosionArea->AddImpulse(GetLaunchForce(TimeHeld));
 	
 		// FVector LandingLoc = ExplosionArea->GetComponentLocation() + (Player->GetActorForwardVector()) - Player->GetActorLocation();
 		// ExplosionArea->SetPhysicsLinearVelocity(LandingLoc*(FireSpeed * (1 +TimeHeld )));
@@ -202,6 +195,18 @@ void ALightGrenade::MulticastRPCExplosion_Implementation()
 	
 }
 
+FVector ALightGrenade::GetLaunchForce(const float TimeHeld)
+{
+	// Get the direction to throw the grenade in, check if depth movement is enabled 
+	FVector ThrowDir = Player->ThrowLoc->GetComponentLocation() - Player->GetActorLocation();
+	if(!Player->IsDepthMovementEnabled())
+		ThrowDir.X = 0; 
+		
+	// Calculate the force and clamp it to ensure it is between set bounds 
+	const FVector ThrowImpulse = ThrowDir.GetSafeNormal() * StartThrowImpulse + ThrowDir.GetSafeNormal() * TimeHeld * FireSpeedPerSecondHeld;
+	return ThrowImpulse.GetClampedToMaxSize(MaxThrowImpulse); 
+}
+
 void ALightGrenade::EnableCanThrow()
 {
 	bCanThrow = true;
@@ -212,8 +217,6 @@ void ALightGrenade::DisableGrenade()
 	
 	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	GrenadeMesh->SetVisibility(false);
-	
-	
 	
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::EnableCanThrow, ThrowCooldown);
 	
@@ -236,5 +239,31 @@ void ALightGrenade::PulseExplosion()
 {
 	Damage = 10.0f;
 	PulseExplosionArea->Activate();
+}
+
+void ALightGrenade::IsChargingGrenade(const float TimeHeld)
+{
+	if(!bCanThrow)
+		return; 
+	
+	FHitResult HitResult;
+	FVector OutLastTraceDestination;
+	TArray<FVector> PathLocs;
+	const TArray<AActor*> ActorsToIgnore { Player, this, Indicator }; 
+	
+	const bool bHit = UGameplayStatics::Blueprint_PredictProjectilePath_ByTraceChannel
+	(this, HitResult,
+		PathLocs, OutLastTraceDestination , Player->ThrowLoc->GetComponentLocation(), GetLaunchForce(TimeHeld),
+		true, CollisionArea->GetScaledSphereRadius(), ECC_Pawn, false,
+		ActorsToIgnore, EDrawDebugTrace::None, -1);
+
+	if(!bHit)
+		return;
+
+	// UE_LOG(LogTemp, Warning, TEXT("Launch force: %f - time held: %f"), GetLaunchForce(TimeHeld).Size(), TimeHeld)
+
+	// Set indicator to last location in path 
+	Indicator->SetActorHiddenInGame(false); 
+	Indicator->SetActorLocation(PathLocs.Last());
 }
 

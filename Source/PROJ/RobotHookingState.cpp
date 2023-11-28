@@ -76,9 +76,8 @@ void URobotHookingState::Update(const float DeltaTime)
 		}
 		
 		TravelTowardsTarget(DeltaTime);
-	}
-
-	RetractHook(DeltaTime); 
+	} else // Hit an object, retract hook 
+		RetractHook(DeltaTime); 
 }
 
 void URobotHookingState::Exit()
@@ -108,8 +107,12 @@ void URobotHookingState::Exit()
 	bHookShotActive = false; 
 }
 
-void URobotHookingState::EndHookShot() const
+void URobotHookingState::EndHookShot(const bool bEndFromDash) const
 {
+	// Dont end if called from dash and target is NOT Soul 
+	if(bEndFromDash && !bHookTargetIsSoul)
+		return; 
+	
 	// Change state if this state is active 
 	if(Cast<ARobotStateMachine>(GetOwner())->GetCurrentState() == this)
 		PlayerOwner->SwitchState(RobotCharacter->RobotBaseState);
@@ -377,6 +380,7 @@ void URobotHookingState::CollidedWithSoul()
 
 void URobotHookingState::RetractHook(const float DeltaTime) 
 {
+	// Should only retract the hook if the player hit an obstacle, otherwise it "retracts" with the player moving to target 
 	if(bTravellingTowardsTarget)
 		return; 
 	

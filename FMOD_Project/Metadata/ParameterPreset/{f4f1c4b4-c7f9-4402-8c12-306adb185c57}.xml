@@ -23,10 +23,18 @@
 			<value>Charge</value>
 			<value>Death</value>
 			<value>Spawn</value>
-			<value>Moving</value>
+			<value>Hurt</value>
 		</property>
 		<property name="initialValue">
 			<value>0</value>
+		</property>
+		<relationship name="automators">
+			<destination>{1b312dfa-7f59-409c-9cac-7f3005b2fc51}</destination>
+		</relationship>
+	</object>
+	<object class="Automator" id="{1b312dfa-7f59-409c-9cac-7f3005b2fc51}">
+		<property name="nameOfPropertyBeingAutomated">
+			<value>cursorPosition</value>
 		</property>
 	</object>
 </objects>
