@@ -23,6 +23,7 @@ void AEnemyAIController::Initialize()
 	if (Cast<AEnemyCharacter>(GetOwner()))
 	{
 		GetBlackboardComponent()->SetValueAsFloat(TEXT("ChargingTime"),Cast<AEnemyCharacter>(GetOwner())->ChargeAttackDuration);
+		GetBlackboardComponent()->SetValueAsVector(TEXT("SpawnPosition"), Cast<AEnemyCharacter>(GetOwner())->SpawnPosition);
 	}
 
 	APROJGameMode* CurrentGameMode = Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this));

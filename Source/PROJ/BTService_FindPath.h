@@ -4,19 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
-#include "BTService_IsStunned.generated.h"
+#include "BTService_FindPath.generated.h"
 
 class AFlyingEnemyCharacter;
+class AGrid;
 /**
  * 
  */
 UCLASS()
-class PROJ_API UBTService_IsStunned : public UBTService_BlackboardBase
+class PROJ_API UBTService_FindPath : public UBTService_BlackboardBase
 {
 	GENERATED_BODY()
+
 public:
-	
-	UBTService_IsStunned();
+
+	UBTService_FindPath();
 	
 	/** I have no idea when this is called but it is needed */
 	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;
@@ -28,15 +30,19 @@ protected:
 	/** Tick node is called every tick service is in progress*/
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
-	UPROPERTY(VisibleAnywhere)
-	AFlyingEnemyCharacter* OwnerCharacter = nullptr;
+
+	UPROPERTY()
+	AFlyingEnemyCharacter* OwnerCharacter;
+
+	FVector OwnerLocation;
+
+	UPROPERTY()
+	AGrid* OwnerGrid = nullptr;
 
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;
 
-	void StopRepositioning();
+	FVector CurrentTargetLocation = FVector::ZeroVector;
 
-	UBehaviorTreeComponent* TreeComponent;
-	FTimerHandle StopRepositioningTimerHandle;
-	
+	TArray<FVector> Path = TArray<FVector>();
 };
