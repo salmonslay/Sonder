@@ -83,8 +83,10 @@ void ACombatManager::RemoveEnemy(AEnemyCharacter* Enemy)
 		bCombatEnded = true;
 		GetWorldTimerManager().ClearTimer(WaveWaitTimerHandle);
 		OnCombatEnd();
-		if(EndCombatTriggeredActor)
-			EndCombatTriggeredActor->TriggeredEvent();
+		for(ACombatTriggeredBase* Triggered : EndCombatTriggeredActors)
+		{
+			Triggered->TriggeredEvent();
+		}
 	}
 }
 
@@ -94,23 +96,29 @@ void ACombatManager::StartCombat()
 	{
 		bCombatStarted = true;
 		OnCombatBegin();
-		if(StartCombatTriggeredActor)
-			StartCombatTriggeredActor->TriggeredEvent();
+		for(ACombatTriggeredBase* Triggered : StartCombatTriggeredActors)
+		{
+			Triggered->TriggeredEvent();
+		}
 	}
 }
 
 void ACombatManager::OnRep_CombatStarted()
 {
 	OnCombatBegin();
-	if(StartCombatTriggeredActor)
-		StartCombatTriggeredActor->TriggeredEvent();
+	for(ACombatTriggeredBase* Triggered : StartCombatTriggeredActors)
+	{
+		Triggered->TriggeredEvent();
+	}
 }
 
 void ACombatManager::OnRep_CombatEnded()
 {
 	OnCombatEnd();
-	if(EndCombatTriggeredActor)
-		EndCombatTriggeredActor->TriggeredEvent();
+	for(ACombatTriggeredBase* Triggered : EndCombatTriggeredActors)
+	{
+		Triggered->TriggeredEvent();
+	}
 }
 
 void ACombatManager::HandleSpawn()
@@ -125,8 +133,10 @@ void ACombatManager::HandleSpawn()
 			Wave.SpawnPoints[i % Wave.SpawnPoints.Num()]->AddEnemyToSpawn(Wave.EnemyClass);
 		}
 	}
-	if(Wave.WaveStartedTriggeredActor)
-		Wave.WaveStartedTriggeredActor->TriggeredEvent();
+	for(ACombatTriggeredBase* Triggered : Wave.WaveStartedTriggeredActors)
+	{
+		Triggered->TriggeredEvent();
+	}
 	WavesQueue.RemoveAt(0);
 	CurrentWave++;
 }
