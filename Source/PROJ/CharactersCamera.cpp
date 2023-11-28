@@ -27,6 +27,9 @@ void ACharactersCamera::BeginPlay()
 	Super::BeginPlay();
 
 	AssignSpline(DefaultCameraSplineClass);
+	
+	DefaultInterpSpeed = InterpSpeedLocation;
+	
 	FTimerHandle Handle;
 	GetWorld()->GetTimerManager().SetTimer(Handle, this, &ACharactersCamera::GetPlayers, 2.0f);
 
@@ -79,6 +82,7 @@ void ACharactersCamera::GetPlayers()
 	// 	bAllowMovement = true;
 	// }
 }
+
 
 
 void ACharactersCamera::Tick(float DeltaSeconds)
@@ -162,3 +166,15 @@ void ACharactersCamera::MoveCamera()
 		}
 	}
 }
+
+
+void ACharactersCamera::SetInterpSpeed(double SwapInterpSpeed)
+{
+	InterpSpeedLocation = SwapInterpSpeed;
+}
+
+void ACharactersCamera::ResetInterpSpeed()
+{
+	InterpSpeedLocation = DefaultInterpSpeed;
+}
+
