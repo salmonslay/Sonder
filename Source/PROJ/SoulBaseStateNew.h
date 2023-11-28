@@ -43,7 +43,7 @@ private:
 	class UInputAction* AbilityInputAction;
 
 	UPROPERTY()
-	class AActor* LightGrenade;
+	class ALightGrenade* LightGrenade;
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AActor> LightGrenadeRef;
@@ -58,8 +58,6 @@ private:
 
 	UPROPERTY(Replicated)
 	float TimeHeld;
-
-	// float 
 
 	/** Run locally and called when player presses the dash-button */
 	void Dash();
