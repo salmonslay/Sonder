@@ -6,6 +6,8 @@
 #include "GameFramework/Actor.h"
 #include "MovingPlatform.generated.h"
 
+class AGrid;
+
 UCLASS()
 class PROJ_API AMovingPlatform : public AActor
 {
@@ -35,4 +37,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* PlatformMesh;
 
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	AGrid* CurrentGrid;
 };
