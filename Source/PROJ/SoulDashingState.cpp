@@ -119,7 +119,7 @@ void USoulDashingState::ClientRPC_CancelHookShot_Implementation()
 		HookState = UGameplayStatics::GetActorOfClass(this, ARobotStateMachine::StaticClass())->FindComponentByClass<URobotHookingState>(); 
 
 	if(HookState)
-		HookState->EndHookShot();
+		HookState->EndHookShot(true);
 }
 
 void USoulDashingState::ServerRPC_CancelHookShot_Implementation()
@@ -128,7 +128,7 @@ void USoulDashingState::ServerRPC_CancelHookShot_Implementation()
 		HookState = UGameplayStatics::GetActorOfClass(this, ARobotStateMachine::StaticClass())->FindComponentByClass<URobotHookingState>(); 
 
 	if(HookState)
-		HookState->EndHookShot();
+		HookState->EndHookShot(true);
 }
 
 void USoulDashingState::MulticastExit_Implementation()
