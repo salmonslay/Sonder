@@ -42,8 +42,4 @@ protected:
 	
 	UPROPERTY(EditAnywhere)
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypeQueries;
-
-	bool StartAttackPointValid(const FVector& PointToCheck);
-
-	FVector GenerateNewStartAttackPoint();
 };
