@@ -3,6 +3,7 @@
 
 #include "ProjPlayerController.h"
 
+#include "CutsceneManager.h"
 #include "PROJCharacter.h"
 #include "PROJGameMode.h"
 #include "SoulCharacter.h"
@@ -32,7 +33,7 @@ void AProjPlayerController::Tick(float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	// TODO: Figure out why the player camera changes automatically after a few seconds so this can be removed 
-	if (GetViewTarget() != MainCam)
+	if (!ACutsceneManager::IsCutscenePlaying() && GetViewTarget() != MainCam)
 		SetViewTarget(MainCam);
 }
 
@@ -118,5 +119,8 @@ void AProjPlayerController::SetCamera()
 		MainCam = Cast<ACameraActor>(UGameplayStatics::GetActorOfClass(this, ACameraActor::StaticClass()));
 
 	if (IsValid(MainCam))
+	{
 		SetViewTarget(MainCam);
+		bHasSetCamera = true; 
+	}
 }

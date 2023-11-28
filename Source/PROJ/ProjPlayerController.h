@@ -42,7 +42,9 @@ private:
 	void SetCamera();
 
 	UPROPERTY()
-	ACameraActor* MainCam; 
+	ACameraActor* MainCam;
+
+	bool bHasSetCamera = false; 
 
 	inline static int PlayerCount = 0; 
 

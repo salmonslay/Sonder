@@ -17,7 +17,9 @@ public class PROJ : ModuleRules
 			"EnhancedInput", 
 			"Sockets", 
 			"CableComponent",
-			"Niagara"
+			"Niagara", 
+			"LevelSequence", 
+			"MovieScene" 
 		});
 		
 	}
