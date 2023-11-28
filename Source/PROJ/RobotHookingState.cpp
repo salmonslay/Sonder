@@ -149,7 +149,7 @@ bool URobotHookingState::SetHookTarget()
 	} else
 		bHookTargetIsSoul = false; 
 
-	if(!CurrentTargetActor || !StaticsHelper::ActorIsInFront(RobotCharacter, CurrentHookTargetLocation))
+	if(!CurrentTargetActor || !UStaticsHelper::ActorIsInFront(RobotCharacter, CurrentHookTargetLocation))
 	{
 		CurrentHookTargetLocation = GetTargetOnNothingInFront();
 		ServerRPC_SetHookTarget(CurrentHookTargetLocation); 
@@ -202,7 +202,7 @@ AActor* URobotHookingState::GetActorToTarget(FHitResult& HitResultOut)
 		EndLoc = SoulCharacter->GetActorLocation(); // Default target is Soul
 
 		// If Soul is NOT in front of Robot, only then check if there is a possible hook point to target 
-		if(!StaticsHelper::ActorIsInFront(RobotCharacter, EndLoc))
+		if(!UStaticsHelper::ActorIsInFront(RobotCharacter, EndLoc))
 		{
 			// Set EndLoc to Hook location of there is an eligible hook target 
 			HookTarget = AHookShotAttachment::GetHookToTarget(RobotCharacter); 

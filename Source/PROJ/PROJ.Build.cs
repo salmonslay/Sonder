@@ -6,6 +6,7 @@ public class PROJ : ModuleRules
 {
 	public PROJ(ReadOnlyTargetRules Target) : base(Target)
 	{
+		PrivateDependencyModuleNames.AddRange(new string[] {"AdvancedSessions"});
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicDependencyModuleNames.AddRange(new string[] { 
