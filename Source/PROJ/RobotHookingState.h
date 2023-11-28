@@ -39,6 +39,7 @@ public:
 
 private:
 	
+	/** The location for the arm, used to animate the Robot */
 	UPROPERTY(Replicated)
 	FVector HookArmLocation;  
 
@@ -73,9 +74,6 @@ private:
 
 	/** In process of shooting the hook towards the target (blocked or valid) */
 	bool bShootingHookOutwards = false;
-	
-	UPROPERTY()
-	class UCableComponent* HookCable;
 
 	UPROPERTY(EditAnywhere)
 	float ZSoulTargetOffset = 25.f; 
@@ -112,7 +110,8 @@ private:
 	/** The speed at which to move the hook cable when moving outwards */
 	UPROPERTY(EditAnywhere)
 	float OutwardsHookShotSpeed = 4000.f;
-	
+
+	/** Currently shooting a hook - true/false */
 	UPROPERTY(Replicated)
 	bool bHookShotActive = false; 
 	
@@ -135,10 +134,6 @@ private:
 	/** Shoots out the physical hook on Server, does not move player. Called each Tick */
 	UFUNCTION(Server, Unreliable)
 	void ServerRPC_ShootHook(const FVector& HookTarget);
-
-	/** Shoots out the physical hook for everyone, does not move player. Called each Tick */
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPC_ShootHook(const FVector& HookTarget); 
 
 	void StartTravelToTarget();
 
@@ -175,16 +170,12 @@ private:
 	UFUNCTION(Server, Unreliable)
 	void ServerRPC_RetractHook(const FVector& NewEndLocation);
 
-	// Reliable because seem to be never called otherwise. Since it's called by an unreliable func it should be fine(?) 
-	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPC_RetractHook(const FVector& NewEndLocation); 
-
 	/** Run once when starting to shoot the hook outwards towards the target */
 	void StartShootHook(); 
 	
 	/** Run on server when hook is shot regardless if it hits Soul or an obstacle */
 	UFUNCTION(Server, Reliable)
-	void ServerRPCHookShotStart(UCableComponent* HookCableComp, const FVector& HookTarget, ARobotStateMachine* RobotChar);
+	void ServerRPCHookShotStart(const FVector& HookTarget, ARobotStateMachine* RobotChar);
 
 	/** Run for everyone when hook is shot regardless if it hits Soul or an obstacle */
 	UFUNCTION(NetMulticast, Reliable)
