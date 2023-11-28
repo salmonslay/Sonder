@@ -43,7 +43,10 @@ public:
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	UBoxComponent* TriggerZone;
 
+private:
 
+	UPROPERTY(EditAnywhere)
+	double TransitionSpeed;
 	
 	
 
