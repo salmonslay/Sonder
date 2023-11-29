@@ -30,8 +30,8 @@ void ACharactersCamera::BeginPlay()
 	
 	DefaultInterpSpeed = InterpSpeedLocation;
 	
-	FTimerHandle Handle;
-	GetWorld()->GetTimerManager().SetTimer(Handle, this, &ACharactersCamera::GetPlayers, 2.0f);
+	//FTimerHandle Handle;
+	//GetWorld()->GetTimerManager().SetTimer(Handle, this, &ACharactersCamera::GetPlayers, 2.0f);
 
 
 	if (WallOne && WallTwo)
