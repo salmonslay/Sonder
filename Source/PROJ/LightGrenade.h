@@ -57,7 +57,7 @@ public:
 	UPROPERTY()
 	AController* Controller;
 
-	UPROPERTY(Replicated)
+	UPROPERTY(Replicated, BlueprintReadOnly)
 	bool bCanThrow = true;
 
 	void Throw(const float TimeHeld);
