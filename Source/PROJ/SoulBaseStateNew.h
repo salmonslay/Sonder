@@ -6,6 +6,7 @@
 #include "PlayerCharState.h"
 #include "SoulBaseStateNew.generated.h"
 
+class ALightGrenade;
 struct FInputActionInstance;
 /**
  * This is the base/default state that is used by the soul character, i.e. when running around "normally" 
@@ -16,9 +17,8 @@ class PROJ_API USoulBaseStateNew : public UPlayerCharState
 	GENERATED_BODY()
 
 public:
-	
 	USoulBaseStateNew();
-	
+
 	virtual void Enter() override;
 
 	virtual void Update(const float DeltaTime) override;
@@ -31,6 +31,9 @@ public:
 
 	UPROPERTY(Replicated, BlueprintReadOnly)
 	bool bDashCoolDownActive = false;
+
+	UFUNCTION(BlueprintPure)
+	ALightGrenade* GetLightGrenade() const { return LightGrenade; }
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -52,7 +55,7 @@ private:
 	class ASoulCharacter* SoulCharacter;
 
 	UPROPERTY(EditAnywhere)
-	float DashCooldown = 1.f; 
+	float DashCooldown = 1.f;
 
 	bool bHasSetUpInput = false;
 
@@ -71,17 +74,16 @@ private:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCThrowGrenade(const float TimeHeldGrenade);
-	
+
 	/** Enables dash cooldown on server, bool is replicated to client */
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_EnableDashCooldown();
 
 	/** Disables dash cooldown on server, bool is replicated to client */
 	UFUNCTION(Server, Reliable)
-	void ServerRPC_DisableDashCooldown(); 
+	void ServerRPC_DisableDashCooldown();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void ActivateAbilities();
-	
 };
