@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "PROJCharacter.generated.h"
 
+class ACharactersCamera;
 class AProjPlayerController;
 class UInputMappingContext;
 class UInputAction;
@@ -162,4 +163,7 @@ private:
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_CoyoteJump();
+
+	UPROPERTY()
+	ACharactersCamera* Camera;
 };

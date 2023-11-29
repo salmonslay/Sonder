@@ -2,6 +2,7 @@
 
 #include "PROJCharacter.h"
 
+#include "CharactersCamera.h"
 #include "Engine/LocalPlayer.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -13,6 +14,7 @@
 #include "PlayerBasicAttack.h"
 #include "PlayerHealthComponent.h"
 #include "ProjPlayerController.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -75,6 +77,11 @@ void APROJCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+
+	if(!Camera)
+		Camera = Cast<ACharactersCamera>(UGameplayStatics::GetActorOfClass(this, ACharactersCamera::StaticClass()));
+
+	Camera->GetPlayers();
 
 	//Add Input Mapping Context
 
