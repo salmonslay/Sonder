@@ -78,6 +78,12 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemies")
 	int NumActiveEnemies = 0;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemies")
+	int KilledEnemies = 0;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemies")
+	int TotalEnemies = 0;
+	
 	UPROPERTY(EditAnywhere, Category="TriggeredActors")
 	TArray<ACombatTriggeredBase*> StartCombatTriggeredActors;
 
