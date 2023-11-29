@@ -2,6 +2,7 @@
 
 #include "PROJCharacter.h"
 
+#include "CharactersCamera.h"
 #include "Engine/LocalPlayer.h"
 #include "Components/CapsuleComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -13,6 +14,7 @@
 #include "PlayerBasicAttack.h"
 #include "PlayerHealthComponent.h"
 #include "ProjPlayerController.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -47,13 +49,15 @@ APROJCharacter::APROJCharacter()
 	BasicAttack->SetupAttachment(RootComponent);
 	BasicAttack->SetCollisionProfileName("Enemy");
 	//CreateComponents(); // tried not doing this, healthicomponents is not initiated correctly
+
+	bReplicates = true;
 }
 
 void APROJCharacter::SetDepthMovementEnabled(const bool bNewEnable)
 {
 	// Set the correct rotation rate according to if 3D movement is enabled 
-	GetCharacterMovement()->RotationRate = bNewEnable ? FRotator(0.0f, RotationRateIn3DView, 0.0f) : RotationRateIn2DView; 
-	
+	GetCharacterMovement()->RotationRate = bNewEnable ? FRotator(0.0f, RotationRateIn3DView, 0.0f) : RotationRateIn2DView;
+
 	bDepthMovementEnabled = bNewEnable;
 	GetCharacterMovement()->SetPlaneConstraintEnabled(!bNewEnable);
 }
@@ -73,6 +77,11 @@ void APROJCharacter::BeginPlay()
 {
 	// Call the base class  
 	Super::BeginPlay();
+
+	if(!Camera)
+		Camera = Cast<ACharactersCamera>(UGameplayStatics::GetActorOfClass(this, ACharactersCamera::StaticClass()));
+
+	Camera->GetPlayers();
 
 	//Add Input Mapping Context
 
@@ -97,16 +106,16 @@ void APROJCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	GetWorld()->GetTimerManager().ClearAllTimersForObject(this); 
+	GetWorld()->GetTimerManager().ClearAllTimersForObject(this);
 }
 
 void APROJCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
 {
 	// Set up action bindings
-	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent)) {
-
+	if (UEnhancedInputComponent* EnhancedInputComponent = Cast<UEnhancedInputComponent>(PlayerInputComponent))
+	{
 		EnhancedInputComp = EnhancedInputComponent;
-		
+
 		// Jumping
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &ACharacter::Jump);
 		EnhancedInputComponent->BindAction(JumpAction, ETriggerEvent::Started, this, &APROJCharacter::CoyoteJump);
@@ -131,13 +140,14 @@ void APROJCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(APROJCharacter, NewPlayerHealthComponent) // Ex. of how variables are added 
+	DOREPLIFETIME(APROJCharacter, NewPlayerHealthComponent) // Ex. of how variables are added
+	DOREPLIFETIME(APROJCharacter, AbilityOne)
+	DOREPLIFETIME(APROJCharacter, AbilityTwo)
 }
 
 void APROJCharacter::PossessedBy(AController* NewController)
 {
 	Super::PossessedBy(NewController);
-	
 }
 
 void APROJCharacter::Jump()
@@ -159,40 +169,40 @@ void APROJCharacter::NotifyJumpApex()
 	Super::NotifyJumpApex();
 
 	// Increase gravity when reaching jump apex for a "Super Mario Jump" 
-	GetCharacterMovement()->GravityScale = GravityScaleWhileFalling; 
+	GetCharacterMovement()->GravityScale = GravityScaleWhileFalling;
 }
 
 void APROJCharacter::DisableCoyoteJump()
 {
-	if(GetCharacterMovement()->MovementMode != EMovementMode::MOVE_Walking)
+	if (GetCharacterMovement()->MovementMode != EMovementMode::MOVE_Walking)
 		bCanCoyoteJump = false;
 }
 
 void APROJCharacter::CoyoteJump()
 {
-	if(!IsLocallyControlled())
+	if (!IsLocallyControlled())
 		return;
-	
-	if(bCanCoyoteJump && !bHasJumped && GetCharacterMovement()->MovementMode == MOVE_Falling)
+
+	if (bCanCoyoteJump && !bHasJumped && GetCharacterMovement()->MovementMode == MOVE_Falling)
 	{
 		ServerRPC_CoyoteJump();
-		
-		if(!HasAuthority()) // If player is client, also jump locally to prevent stuttering 
+
+		if (!HasAuthority()) // If player is client, also jump locally to prevent stuttering 
 		{
-			GetCharacterMovement()->SetMovementMode(MOVE_Walking); 
-			GetCharacterMovement()->Velocity.Z = 0; 
+			GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+			GetCharacterMovement()->Velocity.Z = 0;
 			Jump();
 		}
-	} 
+	}
 }
 
 void APROJCharacter::ServerRPC_CoyoteJump_Implementation()
 {
-	if(!HasAuthority())
-		return; 
+	if (!HasAuthority())
+		return;
 
-	GetCharacterMovement()->SetMovementMode(MOVE_Walking); 
-	GetCharacterMovement()->Velocity.Z = 0; 
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	GetCharacterMovement()->Velocity.Z = 0;
 	Jump();
 }
 
@@ -203,18 +213,18 @@ void APROJCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8
 	const EMovementMode CurrentMovementMode = GetCharacterMovement()->MovementMode;
 
 	// Reset gravity scale when player becomes grounded 
-	if(CurrentMovementMode == MOVE_Walking)
+	if (CurrentMovementMode == MOVE_Walking)
 	{
 		bHasJumped = false;
 		bCanCoyoteJump = true;
 		GetCharacterMovement()->GravityScale = DefaultGravityScale;
 	}
-	else if(CurrentMovementMode == MOVE_Falling && !bHasJumped)
+	else if (CurrentMovementMode == MOVE_Falling && !bHasJumped)
 	{
 		// Started falling without jumping 
 		GetCharacterMovement()->GravityScale = GravityScaleWhileFalling;
 
-		GetWorld()->GetTimerManager().ClearTimer(CoyoteJumpTimer); 
+		GetWorld()->GetTimerManager().ClearTimer(CoyoteJumpTimer);
 		GetWorld()->GetTimerManager().SetTimer(CoyoteJumpTimer, this, &APROJCharacter::DisableCoyoteJump, CoyoteJumpPeriod);
 	}
 }
@@ -222,7 +232,7 @@ void APROJCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8
 void APROJCharacter::Tick(float DeltaSeconds)
 {
 	Super::Tick(DeltaSeconds);
-	
+
 	GetCharacterMovement()->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::X);
 	GetCharacterMovement()->SetPlaneConstraintEnabled(!bDepthMovementEnabled);
 }
@@ -260,7 +270,7 @@ void APROJCharacter::Move(const FInputActionValue& Value)
 float APROJCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
                                  AActor* DamageCauser)
 {
-	float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser); 
+	float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	//ensure (HealthComponent != nullptr);
 	if (NewPlayerHealthComponent != nullptr)

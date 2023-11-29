@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "PROJCharacter.generated.h"
 
+class ACharactersCamera;
 class AProjPlayerController;
 class UInputMappingContext;
 class UInputAction;
@@ -36,12 +37,11 @@ class APROJCharacter : public ACharacter
 	UInputAction* LookAction;
 
 public:
-	
 	APROJCharacter();
 
 	/** Toggles depth movement */
 	UFUNCTION(BlueprintCallable)
-	void SetDepthMovementEnabled(const bool bNewEnable); 
+	void SetDepthMovementEnabled(const bool bNewEnable);
 
 	/** Returns true if player can traverse in the depth axis */
 	bool IsDepthMovementEnabled() const { return bDepthMovementEnabled; }
@@ -53,17 +53,17 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DamageToPlayer = 0.f;
 
-	UEnhancedInputComponent* GetInputComponent() const { return EnhancedInputComp; } 
+	UEnhancedInputComponent* GetInputComponent() const { return EnhancedInputComp; }
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Health, Replicated)
 	class UNewPlayerHealthComponent* NewPlayerHealthComponent = nullptr;
-	
+
 	UFUNCTION(BlueprintPure, BlueprintCallable)
 	FTransform GetSpawnTransform() const { return SpawnTransform; }
 
 	UFUNCTION(BlueprintCallable)
 	void SetSpawnTransform(const FTransform& NewTransform) { SpawnTransform = NewTransform; }
-	
+
 	virtual void PossessedBy(AController* NewController) override;
 
 	UPROPERTY(EditAnywhere)
@@ -81,21 +81,21 @@ public:
 
 	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode) override;
 
-	virtual void Tick(float DeltaSeconds) override; 
+	virtual void Tick(float DeltaSeconds) override;
 
 	// Bools controlling players ability to use abilities
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Replicated)
 	bool AbilityOne = false;
-	
-	UPROPERTY(BlueprintReadWrite)
+
+	UPROPERTY(BlueprintReadWrite, Replicated)
 	bool AbilityTwo = false;
 
 	UFUNCTION(BlueprintPure)
 	bool IsAlive();
-#pragma region Events 
-	
+#pragma region Events
+
 	// Components seem to not be able to create events (easily), which is why most events are declared here 
-	
+
 	/** Event called when player performs a basic attack */
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnBasicAttack();
@@ -125,16 +125,16 @@ protected:
 private:
 	/** Determines if player can move in both axes */
 	bool bDepthMovementEnabled = false;
-	
+
 	void CreateComponents();
 
 	UPROPERTY()
-	UEnhancedInputComponent* EnhancedInputComp; 
+	UEnhancedInputComponent* EnhancedInputComp;
 
 	FTransform SpawnTransform;
 
 	/** Set in BeginPlay. Uses the existing rotation rate variable exposed to BluePrints */
-	FRotator RotationRateIn2DView = FRotator(0, 1000.f, 0); 
+	FRotator RotationRateIn2DView = FRotator(0, 1000.f, 0);
 
 	/** How fast the player should rotate in 3D view. Negative value means instant */
 	UPROPERTY(EditAnywhere)
@@ -142,8 +142,8 @@ private:
 
 	/** Grounded gravity scale and when jumping upwards */
 	UPROPERTY(EditAnywhere)
-	float DefaultGravityScale = 1.75f; 
-	
+	float DefaultGravityScale = 1.75f;
+
 	UPROPERTY(EditAnywhere)
 	float GravityScaleWhileFalling = 3.f;
 
@@ -157,11 +157,13 @@ private:
 
 	void DisableCoyoteJump();
 
-	FTimerHandle CoyoteJumpTimer; 
-	
+	FTimerHandle CoyoteJumpTimer;
+
 	void CoyoteJump();
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_CoyoteJump();
-	
+
+	UPROPERTY()
+	ACharactersCamera* Camera;
 };
