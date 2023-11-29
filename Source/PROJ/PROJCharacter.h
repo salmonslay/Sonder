@@ -63,8 +63,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SetSpawnTransform(const FTransform& NewTransform) { SpawnTransform = NewTransform; }
-	
-	virtual void PossessedBy(AController* NewController) override;
 
 	UPROPERTY(EditAnywhere)
 	class UPlayerBasicAttack* BasicAttack;
@@ -90,8 +88,10 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool AbilityTwo = false;
 
+	// TODO: This should be removed. Health is handled by the health component. This was temporary for playtesting arena 
 	UFUNCTION(BlueprintPure)
 	bool IsAlive();
+
 #pragma region Events 
 	
 	// Components seem to not be able to create events (easily), which is why most events are declared here 
@@ -125,8 +125,6 @@ protected:
 private:
 	/** Determines if player can move in both axes */
 	bool bDepthMovementEnabled = false;
-	
-	void CreateComponents();
 
 	UPROPERTY()
 	UEnhancedInputComponent* EnhancedInputComp; 

@@ -11,7 +11,6 @@
 #include "InputActionValue.h"
 #include "NewPlayerHealthComponent.h"
 #include "PlayerBasicAttack.h"
-#include "PlayerHealthComponent.h"
 #include "ProjPlayerController.h"
 #include "Net/UnrealNetwork.h"
 
@@ -46,7 +45,6 @@ APROJCharacter::APROJCharacter()
 	BasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(FName("Basic Attack"));
 	BasicAttack->SetupAttachment(RootComponent);
 	BasicAttack->SetCollisionProfileName("Enemy");
-	//CreateComponents(); // tried not doing this, healthicomponents is not initiated correctly
 }
 
 void APROJCharacter::SetDepthMovementEnabled(const bool bNewEnable)
@@ -56,17 +54,6 @@ void APROJCharacter::SetDepthMovementEnabled(const bool bNewEnable)
 	
 	bDepthMovementEnabled = bNewEnable;
 	GetCharacterMovement()->SetPlaneConstraintEnabled(!bNewEnable);
-}
-
-void APROJCharacter::CreateComponents()
-{
-	// NOTE: This function is not called as of now 
-	NewPlayerHealthComponent = CreateDefaultSubobject<UNewPlayerHealthComponent>("NewPlayerHealthComp");
-	NewPlayerHealthComponent->SetIsReplicated(true);
-
-	BasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(FName("Basic Attack"));
-	BasicAttack->SetupAttachment(RootComponent);
-	BasicAttack->SetCollisionProfileName("Pawn");
 }
 
 void APROJCharacter::BeginPlay()
@@ -131,13 +118,7 @@ void APROJCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(APROJCharacter, NewPlayerHealthComponent) // Ex. of how variables are added 
-}
-
-void APROJCharacter::PossessedBy(AController* NewController)
-{
-	Super::PossessedBy(NewController);
-	
+	DOREPLIFETIME(APROJCharacter, NewPlayerHealthComponent) 
 }
 
 void APROJCharacter::Jump()
@@ -229,6 +210,7 @@ void APROJCharacter::Tick(float DeltaSeconds)
 
 bool APROJCharacter::IsAlive()
 {
+	// TODO: This should be removed. Health is handled by the health component. This was temporary for playtesting arena 
 	return GetMesh()->GetRelativeScale3D().GetMax() > 0.5f;
 }
 
