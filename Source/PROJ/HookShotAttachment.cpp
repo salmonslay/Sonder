@@ -43,7 +43,7 @@ void AHookShotAttachment::Tick(const float DeltaSeconds)
 	// In Tick because players are loaded in at different times 
 	if(!Robot)
 	{
-		Robot = Cast<ACharacter>(UGameplayStatics::GetActorOfClass(this, ARobotStateMachine::StaticClass()));
+		Robot = Cast<APROJCharacter>(UGameplayStatics::GetActorOfClass(this, ARobotStateMachine::StaticClass()));
 
 		if(Robot)
 		{
@@ -56,7 +56,7 @@ void AHookShotAttachment::Tick(const float DeltaSeconds)
 	if(!Soul)
 		Soul = UGameplayStatics::GetActorOfClass(this, ASoulCharacter::StaticClass());
 
-	if(!Robot || !Robot->IsLocallyControlled()) // TODO: also return if hook shot is not unlocked 
+	if(!Robot || !Robot->IsLocallyControlled() || !Robot->AbilityTwo) 
 		return; 
 
 	SetCurrentHookTarget();

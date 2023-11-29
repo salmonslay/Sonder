@@ -52,7 +52,7 @@ private:
 	AActor* Soul;
 
 	UPROPERTY()
-	ACharacter* Robot;
+	class APROJCharacter* Robot;
 
 	UPROPERTY()
 	class URobotHookingState* HookState;
