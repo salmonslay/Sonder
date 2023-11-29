@@ -280,7 +280,10 @@ void APROJCharacter::RotatePlayer(const float HorizontalMovementInput)
 	
 	NewRot.Yaw = NewYawRot;
 	
+	// https://forums.unrealengine.com/t/client-owned-character-rotates-slower-than-listen-server-owned-character/427427
+	GetCharacterMovement()->FlushServerMoves();  
 	SetActorRotation(NewRot);
+	
 	ServerRPC_RotatePlayer(NewRot); 
 }
 
