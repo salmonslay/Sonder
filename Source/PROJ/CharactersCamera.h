@@ -40,6 +40,14 @@ public:
 	UPROPERTY(VisibleAnywhere,BlueprintReadWrite)
 	ACameraSpline* CurrentCameraSplineClass;
 
+	void SetInterpSpeed(double SwapInterpSpeed);
+
+	void ResetInterpSpeed();
+
+	UPROPERTY()
+	double DefaultInterpSpeed;
+	
+
 
 private:
 	virtual void Tick(float DeltaSeconds) override;
@@ -60,6 +68,7 @@ private:
 
 	bool bAllowMovement;
 
+	
 	UCameraComponent* CameraComponent;
 
 	UPROPERTY(EditAnywhere)
@@ -67,11 +76,16 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	double InterpSpeedRotation;
-	
 
+	
+	
+	UPROPERTY()
 	APROJCharacter* PlayerOne = nullptr;
+	
+	UPROPERTY()
 	APROJCharacter* PlayerTwo = nullptr;
 
+	UPROPERTY()
 	USplineComponent* CameraSpline;
 
 	

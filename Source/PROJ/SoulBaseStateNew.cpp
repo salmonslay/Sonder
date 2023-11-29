@@ -24,6 +24,9 @@ void USoulBaseStateNew::Enter()
 	if(!SoulCharacter)
 		SoulCharacter = Cast<ASoulCharacter>(PlayerOwner);
 
+	if(!LightGrenade)
+		LightGrenade = Cast<ALightGrenade>(UGameplayStatics::GetActorOfClass(this, ALightGrenade::StaticClass())); 
+
 	// UE_LOG(LogTemp, Warning, TEXT("Entered soul base state, lcl ctrl: %i"), PlayerOwner->IsLocallyControlled()) 
 }
 
@@ -57,9 +60,6 @@ void USoulBaseStateNew::Exit()
 
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &USoulBaseStateNew::ServerRPC_DisableDashCooldown, DashCooldown); 
-
-	// Removing the action binding would require changing the action mapping 
-	// PlayerInputComponent->RemoveActionBinding(DashInputAction, ETriggerEvent::Started); 
 }
 
 void USoulBaseStateNew::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -105,9 +105,10 @@ void USoulBaseStateNew::GetTimeHeld(const FInputActionInstance& Instance)
 
 	// UE_LOG(LogTemp, Warning, TEXT("TimeHeld() local - OnGoing IA: Time: %f"), Instance.GetElapsedTime())
 
+	LightGrenade->IsChargingGrenade(Instance.GetElapsedTime()); 
+
 	// GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "IS Holding " + FString::SanitizeFloat(Instance.GetElapsedTime()));
 	TimeHeld = Instance.GetElapsedTime();
-	
 }
 
 void USoulBaseStateNew::ThrowGrenade()
@@ -131,24 +132,10 @@ void USoulBaseStateNew::ServerRPCThrowGrenade_Implementation(const float TimeHel
 	MulticastRPCThrowGrenade(TimeHeldGrenade);
 }
 
-
 void USoulBaseStateNew::MulticastRPCThrowGrenade_Implementation(const float TimeHeldGrenade)
 {
-	TArray<AActor*> FoundCharacter;
-	UGameplayStatics::GetAllActorsOfClass(GetWorld(), ALightGrenade::StaticClass(), FoundCharacter);
-
-	if (!FoundCharacter.IsEmpty())
-	{
-		ALightGrenade* Grenade = Cast<ALightGrenade>(FoundCharacter[0]);
-		if(Grenade)
-		{
-		UE_LOG(LogTemp, Warning, TEXT("Time held %f"), TimeHeldGrenade);
-		Grenade->Throw(TimeHeldGrenade);
-		}
-		
-		
-	}
-	
+	if(LightGrenade)
+		LightGrenade->Throw(TimeHeldGrenade);
 }
 
 void USoulBaseStateNew::ActivateAbilities()

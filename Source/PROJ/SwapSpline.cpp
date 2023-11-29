@@ -40,8 +40,16 @@ void ASwapSpline::SplineSwap()
 {
 	if (CharactersCamera && NextCameraSpline)
 	{
-		CharactersCamera->AssignSpline(NextCameraSpline);
 		
+		if (TransitionSpeed > 0)
+		{
+			CharactersCamera->SetInterpSpeed(TransitionSpeed);
+		}
+		else
+		{
+			CharactersCamera->SetInterpSpeed(CharactersCamera->DefaultInterpSpeed);
+		}
+		CharactersCamera->AssignSpline(NextCameraSpline);
 	}
 }
 

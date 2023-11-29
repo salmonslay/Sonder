@@ -25,7 +25,7 @@ public:
 	virtual void Exit() override;
 
 	/** Switches state to the base state, ending the hook shot */
-	void EndHookShot() const;
+	void EndHookShot(const bool bEndFromDash = false) const;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
