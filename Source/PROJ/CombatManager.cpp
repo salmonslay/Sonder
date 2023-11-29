@@ -29,6 +29,7 @@ void ACombatManager::BeginPlay()
 	for(FEnemyWave Wave : Waves)
 	{
 		WavesQueue.Add(Wave);
+		TotalEnemies += Wave.NumEnemies;
 	}
 	for(ASpawnPoint* SpawnPoint : SpawnPoints)
 	{
@@ -74,6 +75,7 @@ void ACombatManager::RemoveEnemy(AEnemyCharacter* Enemy)
 {
 	Enemies.Remove(Enemy);
 	NumActiveEnemies--;
+	KilledEnemies++;
 	if(WavesQueue.IsEmpty() && NumActiveEnemies <= 0 && GetLocalRole() == ROLE_Authority)
 	{
 		for(ASpawnPoint* SpawnPoint : SpawnPoints)
