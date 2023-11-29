@@ -18,6 +18,7 @@ TArray<FBPFriendInfo> UStaticsHelper::SortFriendsList(const TArray<FBPFriendInfo
 {
 	TArray<FBPFriendInfo> SortedFriendsList = FriendsList;
 
+	// sort alphabetically
 	SortedFriendsList.StableSort([](const FBPFriendInfo& A, const FBPFriendInfo& B)
 	{
 		return A.DisplayName < B.DisplayName;
@@ -34,8 +35,6 @@ TArray<FBPFriendInfo> UStaticsHelper::SortFriendsList(const TArray<FBPFriendInfo
 	{
 		return A.OnlineState != EBPOnlinePresenceState::Offline && B.OnlineState != EBPOnlinePresenceState::Online;
 	});
-
-	// sort by online
 
 	return SortedFriendsList;
 }
