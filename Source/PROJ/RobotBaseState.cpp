@@ -121,6 +121,8 @@ void URobotBaseState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(URobotBaseState, bHasDashBuff)
+	DOREPLIFETIME(URobotBaseState, bHookShotOnCooldown)
+	DOREPLIFETIME(URobotBaseState, bPulseCoolDownActive)
 }
 
 void URobotBaseState::ShootHook()
