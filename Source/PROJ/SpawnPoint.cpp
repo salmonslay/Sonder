@@ -25,6 +25,13 @@ void ASpawnPoint::BeginPlay()
 	
 }
 
+void ASpawnPoint::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	GetWorldTimerManager().ClearAllTimersForObject(this);
+}
+
 // Called every frame
 void ASpawnPoint::Tick(float DeltaTime)
 {
@@ -38,7 +45,11 @@ void ASpawnPoint::AddEnemyToSpawn(TSubclassOf<AEnemyCharacter> EnemyClass)
 	EnemiesToSpawn.Enqueue(Enemy);
 	if(!GetWorldTimerManager().TimerExists(SpawnCheckTimerHandle))
 	{
-		GetWorldTimerManager().SetTimer(SpawnCheckTimerHandle, this, &ASpawnPoint::TrySpawnNext, SpawnCheckFrequency, true);
+		TrySpawnNext();
+		if(!EnemiesToSpawn.IsEmpty())
+		{
+			GetWorldTimerManager().SetTimer(SpawnCheckTimerHandle, this, &ASpawnPoint::TrySpawnNext, SpawnCheckFrequency, true);
+		}
 	}
 }
 
@@ -59,7 +70,7 @@ void ASpawnPoint::TrySpawnNext()
 			Manager->AddEnemy(SpawnedEnemy);
 		}
 	}
-	if(bCombatOver)
+	else
 	{
 		GetWorldTimerManager().ClearTimer(SpawnCheckTimerHandle);
 	}
