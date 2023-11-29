@@ -46,7 +46,8 @@ public:
 
 	UPROPERTY()
 	double DefaultInterpSpeed;
-	
+
+	void GetPlayers();
 
 
 private:
@@ -55,7 +56,7 @@ private:
 	
 	void MoveCamera();
 
-	void GetPlayers();
+	
 
 	void RotateCamera();
 
