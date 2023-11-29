@@ -138,6 +138,9 @@ void ACutsceneManager::StopCutscene()
 
 	CutscenesPlayingCounter--;
 
+	if(HasAuthority() && !LevelToLoadOnCutsceneEnd.IsNone())
+		GetWorld()->ServerTravel("/Game/Maps/" + LevelToLoadOnCutsceneEnd.ToString());
+
 	if(!IsCutscenePlaying())
 		Destroy(); // TODO: call on server (client has RPC issues)
 }
