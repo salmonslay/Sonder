@@ -4,18 +4,28 @@
 #include "DestructableBox.h"
 
 #include "BaseHealthComponent.h"
+#include "PROJCharacter.h"
+#include "Components/BoxComponent.h"
+#include "GeometryCollection/GeometryCollectionComponent.h"
+#include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
 ADestructableBox::ADestructableBox()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = false;
+	PrimaryActorTick.bCanEverTick = true;
 
 	HealthComponent = CreateDefaultSubobject<UBaseHealthComponent>(TEXT("HealthComponent"));
 
-	StaticMeshComponent = CreateDefaultSubobject<UStaticMeshComponent>(TEXT("Static Mesh"));
-
+	DestructibleBox = CreateDefaultSubobject<UGeometryCollectionComponent>(TEXT("DestructibleBox"));
+	SetRootComponent(DestructibleBox);
+	
+	CollBox = CreateDefaultSubobject<UBoxComponent>(TEXT("CollBox"));
+	CollBox->SetupAttachment(RootComponent);
+	
+	DestructibleBox->SetSimulatePhysics(false);
 }
 
 void ADestructableBox::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -26,22 +36,6 @@ void ADestructableBox::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(ADestructableBox, HealthComponent);
 }
 
-// Called when the game starts or when spawned
-void ADestructableBox::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-// Called every frame
-void ADestructableBox::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-
-
 float ADestructableBox::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
 	AActor* DamageCauser)
 {
@@ -49,15 +43,67 @@ float ADestructableBox::TakeDamage(float DamageAmount, FDamageEvent const& Damag
 	DamageApplied = HealthComponent->TakeDamage(DamageApplied);
 
 	if (HealthComponent->IsDead())
-	{
-		KillMe();
-	}
+		Crumble();
 
 	return DamageApplied;
 }
 
-void ADestructableBox::KillMe()
+void ADestructableBox::Tick(const float DeltaSeconds)
 {
+	Super::Tick(DeltaSeconds);
+
+	if(bDestroyed)
+		Shrink(DeltaSeconds); 
+}
+
+void ADestructableBox::Crumble()
+{
+	if(bDestroyed)
+		return;
+
+	ServerRPC_Crumble(); 
+}
+
+void ADestructableBox::ServerRPC_Crumble_Implementation()
+{
+	if(!HasAuthority())
+		return;
+
+	MulticastRPC_Crumble(); 
+}
+
+void ADestructableBox::MulticastRPC_Crumble_Implementation()
+{
+	DestructibleBox->SetSimulatePhysics(true);
+	CollBox->DestroyComponent(); 
+	
+	// disable collision with players (NOTE: this does not disable collisions with the broken up pieces)
+	TArray<AActor*> Players;
+	UGameplayStatics::GetAllActorsOfClass(this, APROJCharacter::StaticClass(), Players);
+
+	for(const auto Player : Players)
+	{
+		DestructibleBox->IgnoreActorWhenMoving(Player, true);
+		Cast<APawn>(Player)->MoveIgnoreActorAdd(this);
+	}
+
+	// triggers destruction 
+	DestructibleBox->CrumbleActiveClusters();
+
+	DestructibleBox->AddImpulse(FVector(FMath::FRand(), FMath::FRand(), FMath::FRand()) * DestroyedForce);
+
+	bDestroyed = true;
+
 	OnDeath();
+}
+
+void ADestructableBox::Shrink(const float DeltaTime)
+{
+	// decrease scale 
+	SetActorScale3D(UKismetMathLibrary::VInterpTo_Constant(GetActorScale3D(),FVector::Zero(), DeltaTime, ShrinkSpeed));
+	
+	// destroy when scale reaches zero  
+	if(GetActorScale3D().IsNearlyZero())
+		Destroy();
 }
 

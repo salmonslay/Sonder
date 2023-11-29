@@ -20,7 +20,8 @@ public class PROJ : ModuleRules
 			"Niagara", 
 			"LevelSequence", 
 			"MovieScene", 
-			"UMG"
+			"UMG", 
+			"GeometryCollectionEngine"
 		});
 		
 	}
