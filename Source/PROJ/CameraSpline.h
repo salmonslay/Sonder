@@ -7,6 +7,7 @@
 #include "GameFramework/Actor.h"
 #include "CameraSpline.generated.h"
 
+class UBoxComponent;
 UCLASS()
 class PROJ_API ACameraSpline : public AActor
 {
@@ -21,6 +22,25 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* CameraRotation;
+
+	UPROPERTY(EditAnywhere)
+	UBoxComponent* CameraEnterBox;
+
+	UFUNCTION()
+	void ActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult);
+
+protected:
+	// Called when the game starts or when spawned
+	virtual void BeginPlay() override;
+	
+
+private:
+
+	UPROPERTY(EditAnywhere)
+	bool bIsCameraSpline = false;
+
+	
+	
 
 	
 	

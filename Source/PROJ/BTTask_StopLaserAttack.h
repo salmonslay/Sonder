@@ -34,5 +34,10 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;
+
+	void StopRepositioning();
+
+	UBehaviorTreeComponent* TreeComponent;
+	FTimerHandle StopRepositioningTimerHandle;
 	
 };

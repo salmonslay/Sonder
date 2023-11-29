@@ -80,7 +80,9 @@ void ALightGrenade::Throw(const float TimeHeld)
 		PulseExplosionArea->Deactivate();
 		ServerRPCThrow(TimeHeld);
 
-		Indicator->SetActorHiddenInGame(true); 
+		Indicator->SetActorHiddenInGame(true);
+		MaxThrowIterations = 0;
+		GetWorld()->GetTimerManager().ClearTimer(ThrowIterTimerHandle); 
 	}
 }
 
@@ -203,7 +205,14 @@ FVector ALightGrenade::GetLaunchForce(const float TimeHeld)
 		ThrowDir.X = 0; 
 		
 	// Calculate the force and clamp it to ensure it is between set bounds 
-	const FVector ThrowImpulse = ThrowDir.GetSafeNormal() * StartThrowImpulse + ThrowDir.GetSafeNormal() * TimeHeld * FireSpeedPerSecondHeld;
+	FVector ThrowImpulse = ThrowDir.GetSafeNormal() * StartThrowImpulse + ThrowDir.GetSafeNormal() * TimeHeld * FireSpeedPerSecondHeld;
+
+	// Adjust to looping max throw force 
+	ThrowImpulse -= ThrowImpulse.GetSafeNormal() * MaxThrowImpulse * MaxThrowIterations;
+
+	if(ThrowImpulse.Size() >= MaxThrowImpulse && !GetWorld()->GetTimerManager().IsTimerActive(ThrowIterTimerHandle))
+		GetWorld()->GetTimerManager().SetTimer(ThrowIterTimerHandle, this, &ALightGrenade::IncreaseMaxThrowIterations, TimeAtMaxThrowForce); 
+	
 	return ThrowImpulse.GetClampedToMaxSize(MaxThrowImpulse); 
 }
 
@@ -253,17 +262,15 @@ void ALightGrenade::IsChargingGrenade(const float TimeHeld)
 	
 	const bool bHit = UGameplayStatics::Blueprint_PredictProjectilePath_ByTraceChannel
 	(this, HitResult,
-		PathLocs, OutLastTraceDestination , Player->ThrowLoc->GetComponentLocation(), GetLaunchForce(TimeHeld),
-		true, CollisionArea->GetScaledSphereRadius(), ECC_Pawn, false,
+		PathLocs, OutLastTraceDestination , Player->ThrowLoc->GetComponentLocation(), GetLaunchForce(TimeHeld) / IndicatorOffsetDivisor,
+		true, CollisionArea->GetScaledSphereRadius() / 2, ECC_Pawn, false,
 		ActorsToIgnore, EDrawDebugTrace::None, -1);
 
 	if(!bHit)
-		return;
-
-	// UE_LOG(LogTemp, Warning, TEXT("Launch force: %f - time held: %f"), GetLaunchForce(TimeHeld).Size(), TimeHeld)
+		return; 
 
 	// Set indicator to last location in path 
 	Indicator->SetActorHiddenInGame(false); 
-	Indicator->SetActorLocation(PathLocs.Last());
+	Indicator->SetActorLocation(HitResult.ImpactPoint);
 }
 
