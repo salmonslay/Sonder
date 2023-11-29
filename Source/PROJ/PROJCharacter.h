@@ -131,13 +131,10 @@ private:
 
 	FTransform SpawnTransform;
 
-	/** Set in BeginPlay. Uses the existing rotation rate variable exposed to BluePrints */
-	FRotator RotationRateIn2DView = FRotator(0, 1000.f, 0); 
-
-	/** How fast the player should rotate in 3D view. Negative value means instant */
+	/** Rotation rate in 2D view */
 	UPROPERTY(EditAnywhere)
-	float RotationRateIn3DView = 500.f;
-
+	float RotationRateIn2D = 700.f;
+	
 	/** Grounded gravity scale and when jumping upwards */
 	UPROPERTY(EditAnywhere)
 	float DefaultGravityScale = 1.75f; 
@@ -152,14 +149,28 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float CoyoteJumpPeriod = 0.1f;
-
-	void DisableCoyoteJump();
-
+	
 	FTimerHandle CoyoteJumpTimer; 
+	
+	/** Keeps track of which direction to rotate towards in 2D movement */
+	bool bRotateRight = true;
+	
+	void DisableCoyoteJump();
 	
 	void CoyoteJump();
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_CoyoteJump();
+
+	/** Rotates the player towards movement in 3D or full 180 turns in 2D */
+	void RotatePlayer(const float HorizontalMovementInput);
+
+	bool ShouldRotateRight(const float HorizontalMovementInput) const;
+
+	float GetDesiredYawRot() const; 
+
+	/** Rotates the player on the server so it syncs */
+	UFUNCTION(Server, Unreliable)
+	void ServerRPC_RotatePlayer(const FRotator& NewRot); 
 	
 };
