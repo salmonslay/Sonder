@@ -73,7 +73,7 @@ void UBTService_AlternateTargetPlayer::TickNode(UBehaviorTreeComponent& OwnerCom
 	FVector OwnerLocation = OwnerCharacter->GetActorLocation();
 
 	// check if both players are alive
-	if(ClientPlayer->IsAlive() && ClientPlayer->IsAlive() && !OwnerComp.GetBlackboardComponent()->GetValueAsBool("bIsInRangeToAttack"))
+	if(!ClientPlayer->bIsSafe && !ServerPlayer->bIsSafe && !OwnerComp.GetBlackboardComponent()->GetValueAsBool("bIsInRangeToAttack"))
 	{
 		// choose player to target
 		if (FMath::RandRange(0.f, 1.f) < FVector::Distance(OwnerLocation, ServerPlayer->GetActorLocation()) / (FVector::Distance(OwnerLocation, ServerPlayer->GetActorLocation()) + FVector::Distance(OwnerLocation, ClientPlayer->GetActorLocation())))
@@ -87,12 +87,12 @@ void UBTService_AlternateTargetPlayer::TickNode(UBehaviorTreeComponent& OwnerCom
 			CurrentTargetLocation = ServerPlayer->GetActorLocation();
 		}
 	}
-	else if (ClientPlayer->IsAlive())
+	else if (ServerPlayer->bIsSafe)
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject("CurrentTargetPlayer", ClientPlayer);
 		CurrentTargetLocation = ClientPlayer->GetActorLocation();
 	}
-	else
+	else if (ClientPlayer->bIsSafe)
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsObject("CurrentTargetPlayer", ServerPlayer);
 		CurrentTargetLocation = ServerPlayer->GetActorLocation();
