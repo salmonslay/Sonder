@@ -145,7 +145,7 @@ void ACharactersCamera::MoveCamera()
 				const FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(MiddleLocation, ESplineCoordinateSpace::World);
 				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeedLocation);
 				CameraComponent->SetWorldLocation(TargetLocation);
-				UE_LOG(LogTemp, Warning, TEXT("Two Players"));
+				
 			}
 			else if (PlayerTwo == nullptr && PlayerOne != nullptr) // if only player one is in the game 
 			{
@@ -153,7 +153,7 @@ void ACharactersCamera::MoveCamera()
 				//MoveWalls(ActorLocations);
 				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeedLocation);
 				CameraComponent->SetWorldLocation(TargetLocation);
-				UE_LOG(LogTemp, Warning, TEXT("Player One"));
+				
 			}
 			else if (PlayerOne == nullptr && PlayerTwo != nullptr) // if only player two is in the game
 			{
@@ -161,7 +161,7 @@ void ACharactersCamera::MoveCamera()
 				//MoveWalls(ActorLocations);
 				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeedLocation);
 				CameraComponent->SetWorldLocation(TargetLocation);
-				UE_LOG(LogTemp, Warning, TEXT("Player Two"));
+			
 			}
 			else // if no players are in the game
 			{
