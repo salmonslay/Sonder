@@ -149,13 +149,14 @@ void ACharactersCamera::MoveCamera()
 			else if (PlayerTwo == nullptr && PlayerOne != nullptr) // if only player one is in the game 
 			{
 				const FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(PlayerOne->GetActorLocation(), ESplineCoordinateSpace::World);
-
+				MoveWalls(ActorLocations);
 				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeedLocation);
 				CameraComponent->SetWorldLocation(TargetLocation);
 			}
 			else if (PlayerOne == nullptr && PlayerTwo != nullptr) // if only player two is in the game
 			{
 				FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(PlayerTwo->GetActorLocation(), ESplineCoordinateSpace::World);
+				MoveWalls(ActorLocations);
 				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeedLocation);
 				CameraComponent->SetWorldLocation(TargetLocation);
 			}
