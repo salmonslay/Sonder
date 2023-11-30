@@ -92,6 +92,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool IsAlive();
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bIsSafe = false;
+
 #pragma region Events 
 	// Components seem to not be able to create events (easily), which is why most events are declared here 
 
