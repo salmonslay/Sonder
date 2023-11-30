@@ -17,6 +17,7 @@ UBTService_FindPath::UBTService_FindPath()
 void UBTService_FindPath::OnGameplayTaskActivated(UGameplayTask& Task)
 {
 	Super::OnGameplayTaskActivated(Task);
+	
 }
 
 void UBTService_FindPath::OnGameplayTaskDeactivated(UGameplayTask& Task)

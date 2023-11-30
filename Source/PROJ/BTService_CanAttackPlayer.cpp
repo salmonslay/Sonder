@@ -58,7 +58,7 @@ void UBTService_CanAttackPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 		{
 			APROJCharacter* PlayerToAttack = Cast<APROJCharacter>(Overlap.GetActor());
 			// if overlap is found, set values in bb and break
-			if (PlayerToAttack && IsValid(PlayerToAttack) && PlayerToAttack->IsAlive())
+			if (PlayerToAttack && IsValid(PlayerToAttack) && !PlayerToAttack->bIsSafe)
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject("PlayerToAttack", PlayerToAttack);
 				OwnerComp.GetBlackboardComponent()->SetValueAsObject("CurrentTargetPlayer", PlayerToAttack);

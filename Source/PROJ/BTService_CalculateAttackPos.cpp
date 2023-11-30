@@ -49,7 +49,8 @@ void UBTService_CalculateAttackPos::TickNode(UBehaviorTreeComponent& OwnerComp, 
 		PlayerToAttackPosition = PlayerToAttack->GetActorLocation();
 	}
 	// Generate a random height within the specified bounds around player's Z-coordinate
-	float RandomHeight = FMath::FRandRange(PlayerToAttackPosition.Z - OwnerCharacter->MaxAttackHeightDifference, PlayerToAttackPosition.Z + OwnerCharacter->MaxAttackHeightDifference);
+	float AllowedAttackHeightDiff = FMath::Min(FMath::Tan(OwnerCharacter->MaxAngleToAttack) * FVector::Distance(OwnerLocation, PlayerToAttackPosition), OwnerCharacter->MaxAttackHeightDifference);
+	float RandomHeight = FMath::FRandRange(PlayerToAttackPosition.Z - AllowedAttackHeightDiff, PlayerToAttackPosition.Z + AllowedAttackHeightDiff);
 	//float RandomAngle = FMath::FRandRange(0.0f, 2 * PI);
         
 	// Calculate rand new position
