@@ -231,6 +231,9 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 			Grenade->ServerRPCExplosion();
 			UE_LOG(LogTemp, Warning, TEXT("Explode"));
 		}
+
+		else
+			Actor->TakeDamage(Damage, FDamageEvent(), Controller, RobotCharacter);
 	}
 
 	RobotCharacter->OnPulse();
