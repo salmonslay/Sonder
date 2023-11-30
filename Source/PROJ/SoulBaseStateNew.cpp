@@ -105,7 +105,8 @@ void USoulBaseStateNew::GetTimeHeld(const FInputActionInstance& Instance)
 
 	// UE_LOG(LogTemp, Warning, TEXT("TimeHeld() local - OnGoing IA: Time: %f"), Instance.GetElapsedTime())
 
-	LightGrenade->IsChargingGrenade(Instance.GetElapsedTime()); 
+	if(LightGrenade)
+		LightGrenade->IsChargingGrenade(Instance.GetElapsedTime()); 
 
 	// GEngine->AddOnScreenDebugMessage(1, 1, FColor::Cyan, "IS Holding " + FString::SanitizeFloat(Instance.GetElapsedTime()));
 	TimeHeld = Instance.GetElapsedTime();
