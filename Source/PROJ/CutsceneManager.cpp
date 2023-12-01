@@ -42,9 +42,13 @@ void ACutsceneManager::BeginPlay()
 	{
 		// Disable input immediately so player cannot move during level load (delayed because race conditions)
 		GetWorldTimerManager().SetTimerForNextTick(this, &ACutsceneManager::DisablePlayerInput); 
-		
-		FTimerHandle TimerHandle;
-		GetWorldTimerManager().SetTimer(TimerHandle, this, &ACutsceneManager::PlayCutscene, 1.5f); 
+
+		// Trigger play on server so it syncs 
+		if(HasAuthority())
+		{
+			FTimerHandle TimerHandle;
+			GetWorldTimerManager().SetTimer(TimerHandle, this, &ACutsceneManager::ServerRPC_PlayCutscene, 1.5f);
+		}
 	}
 }
 
@@ -90,10 +94,21 @@ void ACutsceneManager::PlayCutscene()
 	FTimerHandle TimerHandle; 
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &ACutsceneManager::StopCutscene, LevelSequencePlayer->GetDuration().AsSeconds());
 
-	UE_LOG(LogTemp, Warning, TEXT("Play, server: %i"), HasAuthority())
-
 	CutscenesPlayingCounter++;
 	bHasPlayed = true; 
+}
+
+void ACutsceneManager::ServerRPC_PlayCutscene_Implementation()
+{
+	if(!HasAuthority())
+		return;
+
+	MulticastRPC_PlayCutscene(); 
+}
+
+void ACutsceneManager::MulticastRPC_PlayCutscene_Implementation()
+{
+	PlayCutscene(); 
 }
 
 void ACutsceneManager::DisablePlayerInput() const
