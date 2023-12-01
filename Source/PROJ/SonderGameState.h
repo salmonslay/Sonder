@@ -36,8 +36,10 @@ public:
 	
 	bool BothPlayersAreSet();
 
+	UFUNCTION(BlueprintPure)
 	APROJCharacter* GetServerPlayer();
-
+	
+	UFUNCTION(BlueprintPure)
 	APROJCharacter* GetClientPlayer();
 
 	bool IsInCameraFieldOfView(const FVector& Location) const;
