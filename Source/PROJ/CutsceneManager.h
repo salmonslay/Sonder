@@ -73,6 +73,12 @@ private:
 	/** Plays the assigned cutscene */
 	void PlayCutscene();
 
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_PlayCutscene();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPC_PlayCutscene(); 
+
 	/** Switches the player's input map to the cutscene's so input is disabled except for skip cutscene */
 	void DisablePlayerInput() const;
 

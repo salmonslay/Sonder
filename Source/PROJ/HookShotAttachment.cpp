@@ -76,8 +76,10 @@ void AHookShotAttachment::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	// If hooks can be individually destroyed, then we might want to remove a specific hook instead of clearing entire array 
 	HookShotAttachmentsInLevel.Empty();
 
+	// Clear static data members 
 	CurrentTarget = nullptr;
-	RobotPlayerController = nullptr; 
+	RobotPlayerController = nullptr;
+	HitResult = FHitResult(); 
 }
 
 AActor* AHookShotAttachment::GetCurrentTarget(FHitResult& HitResultOut)
@@ -94,13 +96,13 @@ bool AHookShotAttachment::HookCanBeUsed(const AHookShotAttachment* Hook, const A
 	if(!UStaticsHelper::ActorIsInFront(Robot, Hook)) 
 		return false; 
 
-	if(!HookIsOnScreen(Hook, Robot))
+	if(!HookIsOnScreen(Hook))
 		return false;
 
 	return true; // All checks passed, can be used 
 }
 
-bool AHookShotAttachment::HookIsOnScreen(const AHookShotAttachment* Hook, const AActor* Robot)
+bool AHookShotAttachment::HookIsOnScreen(const AHookShotAttachment* Hook)
 {
 	// This function could also be in StaticsHelper class 
 	
@@ -246,18 +248,13 @@ void AHookShotAttachment::SetIndicatorWidget()
 		if(!Robot)
 			return; 
 		
-		// Create the widget and set hidden as default 
 		IndicatorWidget = CreateWidget(RobotPlayerController, HookIndicatorWidgetClass);
 		
 		if(!IndicatorWidget)
 			return;
 		
 		IndicatorWidget->AddToPlayerScreen();
-		IndicatorWidget->SetVisibility(ESlateVisibility::Hidden); 
 	}
-	
-	if (!IndicatorWidget)
-		return;
 	
 	if(!CurrentTarget || HookState->IsTravellingToTarget() || RobotBaseState->IsHookShotOnCooldown())
 	{
@@ -279,15 +276,12 @@ void AHookShotAttachment::SetIndicatorWidget()
 	// Source to get DPI Scale: https://forums.unrealengine.com/t/current-dpi-scaling/296699/3 
 	const float ScaleDPI = GetDefault<UUserInterfaceSettings>(UUserInterfaceSettings::StaticClass())->
 		GetDPIScaleBasedOnSize(FIntPoint(ScreenWidth, ScreenHeight));
-
-	// this makes it moves the same with all resolutions 
-	ScreenWidth /= ScaleDPI;
-
+	
 	// calculate new position, where the hook would be on the screen 
 	
 	FVector2d NewScreenPos;
 	UGameplayStatics::ProjectWorldToScreen(PlayerController, CurrentTarget->GetActorLocation(), NewScreenPos);
-	NewScreenPos /= ScaleDPI; // also need to adjust the new position to make it match 
+	NewScreenPos /= ScaleDPI; // adjust position with the DPI Scale to ensure correct pos regardless of resolution 
 
 	// move the image with the calculated values 
 	UWidget* IndicatorImage = IndicatorWidget->GetWidgetFromName(FName("IndicatorImage"));
