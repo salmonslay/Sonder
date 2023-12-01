@@ -30,18 +30,18 @@ struct FEnemyWave
 
 	//Number of enemies to spawn this wave
 	UPROPERTY(EditAnywhere, Category="Enemy Spawn Wave")
-	int NumEnemies;
+	int NumEnemies = 0;
 
 	//Allowed number of remaining enemies in the scene for the wave to spawn
 	UPROPERTY(EditAnywhere, Category="Enemy Spawn Wave")
-	int AllowedRemainingEnemiesForWave;
+	int AllowedRemainingEnemiesForWave = 0;
 
 	//Time to spawn once the threshold has been met
 	UPROPERTY(EditAnywhere, Category="Enemy Spawn Wave")
-	int TimeToWaveAfterEnemiesKilled;
+	int TimeToWaveAfterEnemiesKilled = 0;
 
 	UPROPERTY(EditAnywhere, Category="Enemy Spawn Wave")
-	TArray<ACombatTriggeredBase*> WaveStartedTriggeredActors;
+	TArray<ACombatTriggeredBase*> WaveStartedTriggeredActors = TArray<ACombatTriggeredBase*>();
 };
 
 UCLASS()
@@ -78,11 +78,17 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemies")
 	int NumActiveEnemies = 0;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemies")
+	int KilledEnemies = 0;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemies")
+	int TotalEnemies = 0;
+	
 	UPROPERTY(EditAnywhere, Category="TriggeredActors")
-	TArray<ACombatTriggeredBase*> StartCombatTriggeredActors;
+	TArray<ACombatTriggeredBase*> StartCombatTriggeredActors = TArray<ACombatTriggeredBase*>();
 
 	UPROPERTY(EditAnywhere, Category="TriggeredActors")
-	TArray<ACombatTriggeredBase*> EndCombatTriggeredActors;
+	TArray<ACombatTriggeredBase*> EndCombatTriggeredActors = TArray<ACombatTriggeredBase*>();
 
 	UPROPERTY(EditAnywhere, Category="Grid")
 	AGrid* Grid;

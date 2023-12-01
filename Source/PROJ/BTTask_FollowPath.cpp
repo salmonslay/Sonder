@@ -6,6 +6,7 @@
 #include "AIController.h"
 #include "EnemyCharacter.h"
 #include "FlyingEnemyCharacter.h"
+#include "Grid.h"
 #include "PROJCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -45,15 +46,18 @@ void UBTTask_FollowPath::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	
 	OwnerLocation = OwnerCharacter->GetActorLocation();
 
-	if (!OwnerCharacter->IsPathValid())
-	{
-		return;
-	}
-
 	// Check if the entity has reached the current waypoint.
 	if (OwnerCharacter->CurrentPath.IsEmpty()) 
 	{
-		return;
+		if(AActor* PlayerOne = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("PlayerOne")))
+		{
+			OwnerCharacter->CurrentPath = OwnerCharacter->GetGridPointer()->RequestPath(OwnerLocation, PlayerOne->GetActorLocation(), false);
+			if(OwnerCharacter->CurrentPath.IsEmpty()) { return; }
+		}
+		else
+		{
+			return;
+		}
 	}
 	int WaypointIndex = 0;
 	FVector CurrentWaypoint = OwnerCharacter->CurrentPath[WaypointIndex];

@@ -134,8 +134,6 @@ void USoulDashingState::ServerRPC_CancelHookShot_Implementation()
 void USoulDashingState::MulticastExit_Implementation()
 {
 	PlayerOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Block);
-
-	PlayerOwner->GetCharacterMovement()->BrakingFriction = DefaultFriction;
 	
 	Cast<ASoulCharacter>(PlayerOwner)->OnDashEnd();
 }
@@ -162,14 +160,8 @@ void USoulDashingState::ServerExit_Implementation(const FVector InputVec)
 void USoulDashingState::MulticastRPCDash_Implementation()
 {
 	// run on both client and server
-
-	DefaultFriction = PlayerOwner->GetCharacterMovement()->BrakingFriction; 
-
-	PlayerOwner->GetCharacterMovement()->BrakingFriction = 1;
 	
 	Cast<ASoulCharacter>(PlayerOwner)->OnDash();
-
-	// UE_LOG(LogTemp, Warning, TEXT("Multicast dash"))
 }
 
 void USoulDashingState::ServerRPCDash_Implementation(const FVector DashDir)

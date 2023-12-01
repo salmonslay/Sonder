@@ -204,14 +204,13 @@ FVector ALightGrenade::GetLaunchForce(const float TimeHeld)
 	if(!Player->IsDepthMovementEnabled())
 		ThrowDir.X = 0; 
 		
-	// Calculate the force and clamp it to ensure it is between set bounds 
-	FVector ThrowImpulse = ThrowDir.GetSafeNormal() * StartThrowImpulse + ThrowDir.GetSafeNormal() * TimeHeld * FireSpeedPerSecondHeld;
+	// Calculate the force and clamp it to ensure it is between set bounds and adjust to looping throw force 
+	const FVector ThrowImpulse = ThrowDir.GetSafeNormal() *
+		(StartThrowImpulse + TimeHeld * FireSpeedPerSecondHeld - MaxThrowImpulse * MaxThrowIterations); 
 
-	// Adjust to looping max throw force 
-	ThrowImpulse -= ThrowImpulse.GetSafeNormal() * MaxThrowImpulse * MaxThrowIterations;
-
-	if(ThrowImpulse.Size() >= MaxThrowImpulse && !GetWorld()->GetTimerManager().IsTimerActive(ThrowIterTimerHandle))
-		GetWorld()->GetTimerManager().SetTimer(ThrowIterTimerHandle, this, &ALightGrenade::IncreaseMaxThrowIterations, TimeAtMaxThrowForce); 
+	// Impulse greater than max force, call timer to increase throw loops after set delay if not already called 
+	if(ThrowImpulse.Size() >= MaxThrowImpulse && !GetWorldTimerManager().IsTimerActive(ThrowIterTimerHandle))
+		GetWorldTimerManager().SetTimer(ThrowIterTimerHandle, this, &ALightGrenade::IncreaseMaxThrowIterations, TimeAtMaxThrowForce); 
 	
 	return ThrowImpulse.GetClampedToMaxSize(MaxThrowImpulse); 
 }
@@ -269,7 +268,7 @@ void ALightGrenade::IsChargingGrenade(const float TimeHeld)
 	if(!bHit)
 		return; 
 
-	// Set indicator to last location in path 
+	// Set indicators' location to the impact point 
 	Indicator->SetActorHiddenInGame(false); 
 	Indicator->SetActorLocation(HitResult.ImpactPoint);
 }

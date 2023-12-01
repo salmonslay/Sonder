@@ -12,9 +12,9 @@
 #include "InputActionValue.h"
 #include "NewPlayerHealthComponent.h"
 #include "PlayerBasicAttack.h"
-#include "PlayerHealthComponent.h"
 #include "ProjPlayerController.h"
 #include "Kismet/GameplayStatics.h"
+#include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
 
 DEFINE_LOG_CATEGORY(LogTemplateCharacter);
@@ -30,8 +30,8 @@ APROJCharacter::APROJCharacter()
 	bUseControllerRotationRoll = false;
 
 	// Configure character movement, auto rotation 
-	GetCharacterMovement()->bOrientRotationToMovement = true; // Character moves in the direction of input...	
-	GetCharacterMovement()->RotationRate = FRotator(0.0f, 1000, 0.0f); // ...at this rotation rate
+	GetCharacterMovement()->bOrientRotationToMovement = false; // Character moves in the direction of input...	
+	GetCharacterMovement()->RotationRate = FRotator(0.0f, 500, 0.0f); // ...at this rotation rate
 
 	// Note: For faster iteration times these variables, and many more, can be tweaked in the Character Blueprint
 	// instead of recompiling to adjust them
@@ -48,29 +48,16 @@ APROJCharacter::APROJCharacter()
 	BasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(FName("Basic Attack"));
 	BasicAttack->SetupAttachment(RootComponent);
 	BasicAttack->SetCollisionProfileName("Enemy");
-	//CreateComponents(); // tried not doing this, healthicomponents is not initiated correctly
 
 	bReplicates = true;
 }
 
 void APROJCharacter::SetDepthMovementEnabled(const bool bNewEnable)
 {
-	// Set the correct rotation rate according to if 3D movement is enabled 
-	GetCharacterMovement()->RotationRate = bNewEnable ? FRotator(0.0f, RotationRateIn3DView, 0.0f) : RotationRateIn2DView;
-
 	bDepthMovementEnabled = bNewEnable;
 	GetCharacterMovement()->SetPlaneConstraintEnabled(!bNewEnable);
-}
 
-void APROJCharacter::CreateComponents()
-{
-	// NOTE: This function is not called as of now 
-	NewPlayerHealthComponent = CreateDefaultSubobject<UNewPlayerHealthComponent>("NewPlayerHealthComp");
-	NewPlayerHealthComponent->SetIsReplicated(true);
-
-	BasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(FName("Basic Attack"));
-	BasicAttack->SetupAttachment(RootComponent);
-	BasicAttack->SetCollisionProfileName("Pawn");
+	GetCharacterMovement()->bOrientRotationToMovement = bNewEnable; // Orient to movement in 3D 
 }
 
 void APROJCharacter::BeginPlay()
@@ -98,8 +85,6 @@ void APROJCharacter::BeginPlay()
 	{
 		UE_LOG(LogTemp, Warning, TEXT("Cast to PlayerController failed"));
 	}
-
-	RotationRateIn2DView = GetCharacterMovement()->RotationRate;
 }
 
 void APROJCharacter::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -140,14 +125,9 @@ void APROJCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(APROJCharacter, NewPlayerHealthComponent) // Ex. of how variables are added
+	DOREPLIFETIME(APROJCharacter, NewPlayerHealthComponent) 
 	DOREPLIFETIME(APROJCharacter, AbilityOne)
 	DOREPLIFETIME(APROJCharacter, AbilityTwo)
-}
-
-void APROJCharacter::PossessedBy(AController* NewController)
-{
-	Super::PossessedBy(NewController);
 }
 
 void APROJCharacter::Jump()
@@ -235,10 +215,13 @@ void APROJCharacter::Tick(float DeltaSeconds)
 
 	GetCharacterMovement()->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::X);
 	GetCharacterMovement()->SetPlaneConstraintEnabled(!bDepthMovementEnabled);
+
+	RotatePlayer(GetLastMovementInputVector().Y); 
 }
 
 bool APROJCharacter::IsAlive()
 {
+	// TODO: This should be removed. Health is handled by the health component. This was temporary for playtesting arena 
 	return GetMesh()->GetRelativeScale3D().GetMax() > 0.5f;
 }
 
@@ -265,6 +248,75 @@ void APROJCharacter::Move(const FInputActionValue& Value)
 
 		AddMovementInput(RightDirection, MovementVector.X);
 	}
+}
+
+void APROJCharacter::RotatePlayer(const float HorizontalMovementInput)
+{
+	// 3D rotation is oriented automatically to movement direction 
+	if(bDepthMovementEnabled || !IsLocallyControlled())
+		return;
+	
+	bRotateRight = ShouldRotateRight(HorizontalMovementInput);
+
+	const float DesiredYawRot = GetDesiredYawRot(); 
+
+	FRotator ActorCurrentRot = GetActorRotation();
+
+	// Unreal "clamps" rotation at -180 to 180 which is problematic when trying to lerp to minus values,
+	// will never reach so I "undo" their clamp by subtracting 360
+
+	if(bRotateRight && DesiredYawRot < 0 && ActorCurrentRot.Yaw > 0)
+		ActorCurrentRot.Yaw -= 360;
+	if(!bRotateRight && GetActorForwardVector().X < -0.05 && ActorCurrentRot.Yaw > 0)
+		ActorCurrentRot.Yaw -= 360; 
+
+	if(DesiredYawRot == ActorCurrentRot.Yaw)
+		return;
+
+	const float NewYawRot = UKismetMathLibrary::FInterpTo_Constant(ActorCurrentRot.Yaw,
+		DesiredYawRot, UGameplayStatics::GetWorldDeltaSeconds(this), RotationRateIn2D);
+
+	FRotator NewRot = ActorCurrentRot;
+	
+	NewRot.Yaw = NewYawRot;
+	
+	// https://forums.unrealengine.com/t/client-owned-character-rotates-slower-than-listen-server-owned-character/427427
+	GetCharacterMovement()->FlushServerMoves();  
+	SetActorRotation(NewRot);
+	
+	ServerRPC_RotatePlayer(NewRot); 
+}
+
+bool APROJCharacter::ShouldRotateRight(const float HorizontalMovementInput) const
+{
+	// Moving right 
+	if(HorizontalMovementInput > 0)
+		return true;
+
+	// Moving left 
+	if(HorizontalMovementInput < 0)
+		return false;
+
+	// No input, return current rotation direction 
+	return bRotateRight; 
+}
+
+float APROJCharacter::GetDesiredYawRot() const
+{
+	const bool bFacingTowardsCamera = GetActorForwardVector().X < 0.05;
+
+	if(bRotateRight)
+		return bFacingTowardsCamera ? -270 : 90; 
+	
+	return bFacingTowardsCamera ? -90 : -180; 
+}
+
+void APROJCharacter::ServerRPC_RotatePlayer_Implementation(const FRotator& NewRot)
+{
+	if(!HasAuthority())
+		return; 
+	
+	SetActorRotation(NewRot); 
 }
 
 float APROJCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,

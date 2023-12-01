@@ -64,8 +64,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetSpawnTransform(const FTransform& NewTransform) { SpawnTransform = NewTransform; }
 
-	virtual void PossessedBy(AController* NewController) override;
-
 	UPROPERTY(EditAnywhere)
 	class UPlayerBasicAttack* BasicAttack;
 
@@ -90,10 +88,14 @@ public:
 	UPROPERTY(BlueprintReadWrite, Replicated)
 	bool AbilityTwo = false;
 
+	// TODO: This should be removed. Health is handled by the health component. This was temporary for playtesting arena 
 	UFUNCTION(BlueprintPure)
 	bool IsAlive();
-#pragma region Events
 
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bIsSafe = false;
+
+#pragma region Events 
 	// Components seem to not be able to create events (easily), which is why most events are declared here 
 
 	/** Event called when player performs a basic attack */
@@ -111,6 +113,7 @@ public:
 #pragma endregion
 
 protected:
+
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
@@ -123,23 +126,18 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
+
 	/** Determines if player can move in both axes */
 	bool bDepthMovementEnabled = false;
-
-	void CreateComponents();
 
 	UPROPERTY()
 	UEnhancedInputComponent* EnhancedInputComp;
 
 	FTransform SpawnTransform;
 
-	/** Set in BeginPlay. Uses the existing rotation rate variable exposed to BluePrints */
-	FRotator RotationRateIn2DView = FRotator(0, 1000.f, 0);
-
-	/** How fast the player should rotate in 3D view. Negative value means instant */
 	UPROPERTY(EditAnywhere)
-	float RotationRateIn3DView = 500.f;
-
+	float RotationRateIn2D = 700.f;
+	
 	/** Grounded gravity scale and when jumping upwards */
 	UPROPERTY(EditAnywhere)
 	float DefaultGravityScale = 1.75f;
@@ -154,16 +152,31 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float CoyoteJumpPeriod = 0.1f;
-
+	
+	FTimerHandle CoyoteJumpTimer; 
+	
+	/** Keeps track of which direction to rotate towards in 2D movement */
+	bool bRotateRight = true;
+	
 	void DisableCoyoteJump();
-
-	FTimerHandle CoyoteJumpTimer;
 
 	void CoyoteJump();
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_CoyoteJump();
 
+	/** Rotates the player towards movement in 3D or full 180 turns in 2D */
+	void RotatePlayer(const float HorizontalMovementInput);
+
+	bool ShouldRotateRight(const float HorizontalMovementInput) const;
+
+	float GetDesiredYawRot() const; 
+
+	/** Rotates the player on the server so it syncs */
+	UFUNCTION(Server, Unreliable)
+	void ServerRPC_RotatePlayer(const FRotator& NewRot); 
+	
 	UPROPERTY()
 	ACharactersCamera* Camera;
+
 };

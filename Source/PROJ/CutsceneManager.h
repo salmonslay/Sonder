@@ -65,6 +65,11 @@ private:
 
 	bool bHasPlayed = false; // TODO: Temp bool until destroy works correctly (can keep)
 
+	/** The level to load when the cutscene finished playing. Leaving it empty loads no new level
+	 *  NOTE: Needs to be in form of: TestMaps/MAPNAMEGOESHERE or just the map name if in the Maps folder */ 
+	UPROPERTY(EditAnywhere)
+	FName LevelToLoadOnCutsceneEnd = NAME_None; 
+
 	/** Plays the assigned cutscene */
 	void PlayCutscene();
 

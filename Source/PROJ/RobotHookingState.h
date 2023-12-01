@@ -35,7 +35,11 @@ public:
 
 	/** Returns the location at which to move the hook arm during hook shots */
 	UFUNCTION(BlueprintPure)
-	FVector GetCurrentHookArmLocation() const { return HookArmLocation; } 
+	FVector GetCurrentHookArmLocation() const { return HookArmLocation; }
+
+	bool IsTravellingToTarget() const { return bTravellingTowardsTarget; }
+
+	bool IsTargetSoul() const { return bHookTargetIsSoul; }
 
 private:
 	
@@ -124,9 +128,6 @@ private:
 	/** Simply sets the target location on the server so it replicates to clients */
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_SetHookTarget(const FVector& NewTarget); 
-
-	/** Returns the actor to target, either Soul or a hook point. Returns null if no valid target */
-	AActor* GetActorToTarget(FHitResult& HitResultOut);
 
 	/** Shoots out the physical hook, does not move player. Run each Tick */
 	void ShootHook(const float DeltaTime);
