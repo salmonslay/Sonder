@@ -73,9 +73,6 @@
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{9a692e1f-b290-4b6c-b837-3baddff0f0cb}">
-		<property name="maxVoices">
-			<value>1</value>
-		</property>
 		<property name="maximumDistance">
 			<value>40</value>
 		</property>
@@ -337,8 +334,8 @@
 		<property name="startOffset">
 			<value>49.5</value>
 		</property>
-		<property name="pitch">
-			<value>3</value>
+		<property name="looping">
+			<value>true</value>
 		</property>
 		<relationship name="modulators">
 			<destination>{cfcf6125-5f39-44e0-a133-3417d5698d2d}</destination>
@@ -347,7 +344,7 @@
 			<destination>{95073c04-0a0f-45a2-a62e-54bd333ff553}</destination>
 		</relationship>
 		<relationship name="audioFile">
-			<destination>{2f017292-4068-46bf-93a1-dd14d4fa7370}</destination>
+			<destination>{277ddb1e-3e17-4ff3-8680-e83eb520e468}</destination>
 		</relationship>
 	</object>
 	<object class="EventMixerGroup" id="{e499b12b-6f61-439c-9c03-082acbdf4ab7}">
@@ -381,7 +378,7 @@
 			<destination>{9521ed2d-232d-4dc3-a1a9-1668a640bb68}</destination>
 		</relationship>
 		<relationship name="audioFile">
-			<destination>{82ac2c17-4fa4-49ec-b000-15ed475f57a4}</destination>
+			<destination>{dbf02a2d-84b8-4122-b42e-df4c2aa74864}</destination>
 		</relationship>
 	</object>
 	<object class="EventMixerGroup" id="{b3bddb5d-a4b6-4205-886b-99d2d4a48d7d}">
@@ -405,14 +402,11 @@
 		<property name="length">
 			<value>0.20000000000000001</value>
 		</property>
-		<property name="pitch">
-			<value>3</value>
-		</property>
 		<relationship name="triggerConditions">
 			<destination>{f05b42b8-cf97-42e2-978e-74c7034ca7bb}</destination>
 		</relationship>
 		<relationship name="audioFile">
-			<destination>{d162a793-813d-4cea-bce6-ff72e2d74dc5}</destination>
+			<destination>{47e53c0e-e01d-4552-9117-1e8ee57eff85}</destination>
 		</relationship>
 	</object>
 	<object class="EventMixerGroup" id="{d1e24ab6-ee8e-4bc5-bde8-4c5e2dc76a8a}">

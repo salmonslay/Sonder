@@ -3,11 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "EnemyCharacter.h"
+#include "ShadowCharacter.h"
 #include "ShadowRobotCharacter.generated.h"
 
 UCLASS()
-class PROJ_API AShadowRobotCharacter : public AEnemyCharacter
+class PROJ_API AShadowRobotCharacter : public AShadowCharacter
 {
 	GENERATED_BODY()
 
@@ -23,6 +23,9 @@ public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
 
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
+private:
+
+	UPROPERTY(EditAnywhere)
+	class URobotBaseState* RobotBaseState;
+	
 };
