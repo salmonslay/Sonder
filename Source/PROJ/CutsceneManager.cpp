@@ -47,7 +47,7 @@ void ACutsceneManager::BeginPlay()
 		if(HasAuthority())
 		{
 			FTimerHandle TimerHandle;
-			GetWorldTimerManager().SetTimer(TimerHandle, this, &ACutsceneManager::ServerRPC_PlayCutscene, 1.5f);
+			GetWorldTimerManager().SetTimer(TimerHandle, this, &ACutsceneManager::ServerRPC_PlayCutscene, AutoPlayDelayTime);
 		}
 	}
 }
@@ -83,7 +83,10 @@ void ACutsceneManager::PlayCutscene()
 		return;
 	}
 
-	RemoveHUD(); 
+	RemoveHUD();
+
+	if(bHidePlayersDuringCutscene)
+		TogglePlayerVisibility(false);  
 	
 	ALevelSequenceActor* LevelSequenceActor; // Out actor, the actor for the level sequence player
 	LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(this, Sequencer, FMovieSceneSequencePlaybackSettings(), LevelSequenceActor);
@@ -147,7 +150,10 @@ void ACutsceneManager::StopCutscene()
 	if(!IsCutscenePlaying()) // Not playing, cant stop cutscene so do nothing 
 		return;
 	
-	EnablePlayerInput(); 
+	EnablePlayerInput();
+
+	if(bHidePlayersDuringCutscene)
+		TogglePlayerVisibility(true);  
 
 	LevelSequencePlayer->Stop();
 
@@ -158,6 +164,15 @@ void ACutsceneManager::StopCutscene()
 
 	if(!IsCutscenePlaying())
 		Destroy(); // TODO: call on server (client has RPC issues)
+}
+
+void ACutsceneManager::TogglePlayerVisibility(const bool bVisible) const
+{
+	TArray<AActor*> Players;
+	UGameplayStatics::GetAllActorsOfClass(this, APROJCharacter::StaticClass(), Players);
+
+	for(const auto Player : Players)
+		Player->SetActorHiddenInGame(!bVisible); 
 }
 
 void ACutsceneManager::MulticastRPC_StopCutscene_Implementation()
