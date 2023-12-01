@@ -52,6 +52,7 @@ void UBTTask_FollowPath::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 		if(AActor* PlayerOne = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("PlayerOne")))
 		{
 			OwnerCharacter->CurrentPath = OwnerCharacter->GetGridPointer()->RequestPath(OwnerLocation, PlayerOne->GetActorLocation(), false);
+			if(OwnerCharacter->CurrentPath.IsEmpty()) { return; }
 		}
 		else
 		{
