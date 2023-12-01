@@ -3,12 +3,13 @@
 
 #include "ShadowRobotCharacter.h"
 
+#include "RobotBaseState.h"
+
 
 // Sets default values
 AShadowRobotCharacter::AShadowRobotCharacter()
 {
-	// Set this character to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	RobotBaseState = CreateDefaultSubobject<URobotBaseState>(TEXT("Robot Base State")); 
 }
 
 // Called when the game starts or when spawned
@@ -22,11 +23,5 @@ void AShadowRobotCharacter::BeginPlay()
 void AShadowRobotCharacter::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
+	
 }
-
-// Called to bind functionality to input
-void AShadowRobotCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-}
-

@@ -46,6 +46,7 @@ public:
 	/** Returns true if player can traverse in the depth axis */
 	bool IsDepthMovementEnabled() const { return bDepthMovementEnabled; }
 
+	UFUNCTION(BlueprintCallable)
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
