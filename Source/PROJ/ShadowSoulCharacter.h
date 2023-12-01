@@ -1,19 +1,22 @@
-﻿// Fill out your copyright notice in the Description page of Project Settings.
+// Fill out your copyright notice in the Description page of Project Settings.
 
 #pragma once
 
 #include "CoreMinimal.h"
 #include "ShadowCharacter.h"
-#include "ShadowRobotCharacter.generated.h"
+#include "ShadowSoulCharacter.generated.h"
 
+/**
+ * 
+ */
 UCLASS()
-class PROJ_API AShadowRobotCharacter : public AShadowCharacter
+class PROJ_API AShadowSoulCharacter : public AShadowCharacter
 {
 	GENERATED_BODY()
 
 public:
 	// Sets default values for this character's properties
-	AShadowRobotCharacter();
+	AShadowSoulCharacter();
 
 protected:
 	// Called when the game starts or when spawned
@@ -26,6 +29,10 @@ public:
 private:
 
 	UPROPERTY(EditAnywhere)
-	class URobotBaseState* RobotBaseState;
+	class USoulBaseStateNew* SoulBaseState;
+
+	UPROPERTY(EditAnywhere)
+	class USoulDashingState* DashState;
+	
 	
 };
