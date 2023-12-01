@@ -61,6 +61,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	float HookShotCooldownDelay = 2.f;
 
+	UPROPERTY(Replicated)
 	bool bHookShotOnCooldown = false;
 
 public:
@@ -84,6 +85,7 @@ private:
 	float PulseCooldown = 1.f;
 
 	/** Pulse Cooldown */
+	UPROPERTY(Replicated)
 	bool bPulseCoolDownActive = false;
 
 	/** How fast to make Robot upon receiving the Soul dash buff */

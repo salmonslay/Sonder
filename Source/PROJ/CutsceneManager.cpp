@@ -42,9 +42,13 @@ void ACutsceneManager::BeginPlay()
 	{
 		// Disable input immediately so player cannot move during level load (delayed because race conditions)
 		GetWorldTimerManager().SetTimerForNextTick(this, &ACutsceneManager::DisablePlayerInput); 
-		
-		FTimerHandle TimerHandle;
-		GetWorldTimerManager().SetTimer(TimerHandle, this, &ACutsceneManager::PlayCutscene, 1.5f); 
+
+		// Trigger play on server so it syncs 
+		if(HasAuthority())
+		{
+			FTimerHandle TimerHandle;
+			GetWorldTimerManager().SetTimer(TimerHandle, this, &ACutsceneManager::ServerRPC_PlayCutscene, AutoPlayDelayTime);
+		}
 	}
 }
 
@@ -79,7 +83,10 @@ void ACutsceneManager::PlayCutscene()
 		return;
 	}
 
-	RemoveHUD(); 
+	RemoveHUD();
+
+	if(bHidePlayersDuringCutscene)
+		TogglePlayerVisibility(false);  
 	
 	ALevelSequenceActor* LevelSequenceActor; // Out actor, the actor for the level sequence player
 	LevelSequencePlayer = ULevelSequencePlayer::CreateLevelSequencePlayer(this, Sequencer, FMovieSceneSequencePlaybackSettings(), LevelSequenceActor);
@@ -90,10 +97,21 @@ void ACutsceneManager::PlayCutscene()
 	FTimerHandle TimerHandle; 
 	GetWorldTimerManager().SetTimer(TimerHandle, this, &ACutsceneManager::StopCutscene, LevelSequencePlayer->GetDuration().AsSeconds());
 
-	UE_LOG(LogTemp, Warning, TEXT("Play, server: %i"), HasAuthority())
-
 	CutscenesPlayingCounter++;
 	bHasPlayed = true; 
+}
+
+void ACutsceneManager::ServerRPC_PlayCutscene_Implementation()
+{
+	if(!HasAuthority())
+		return;
+
+	MulticastRPC_PlayCutscene(); 
+}
+
+void ACutsceneManager::MulticastRPC_PlayCutscene_Implementation()
+{
+	PlayCutscene(); 
 }
 
 void ACutsceneManager::DisablePlayerInput() const
@@ -132,14 +150,29 @@ void ACutsceneManager::StopCutscene()
 	if(!IsCutscenePlaying()) // Not playing, cant stop cutscene so do nothing 
 		return;
 	
-	EnablePlayerInput(); 
+	EnablePlayerInput();
+
+	if(bHidePlayersDuringCutscene)
+		TogglePlayerVisibility(true);  
 
 	LevelSequencePlayer->Stop();
 
 	CutscenesPlayingCounter--;
 
+	if(HasAuthority() && !LevelToLoadOnCutsceneEnd.IsNone())
+		GetWorld()->ServerTravel("/Game/Maps/" + LevelToLoadOnCutsceneEnd.ToString());
+
 	if(!IsCutscenePlaying())
 		Destroy(); // TODO: call on server (client has RPC issues)
+}
+
+void ACutsceneManager::TogglePlayerVisibility(const bool bVisible) const
+{
+	TArray<AActor*> Players;
+	UGameplayStatics::GetAllActorsOfClass(this, APROJCharacter::StaticClass(), Players);
+
+	for(const auto Player : Players)
+		Player->SetActorHiddenInGame(!bVisible); 
 }
 
 void ACutsceneManager::MulticastRPC_StopCutscene_Implementation()

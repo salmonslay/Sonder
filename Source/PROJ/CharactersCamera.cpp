@@ -41,7 +41,7 @@ void ACharactersCamera::BeginPlay()
 	}
 
 	FTimerHandle WallHandle;
-	GetWorld()->GetTimerManager().SetTimer(WallHandle, this, &ACharactersCamera::SetWallCollision, 5.0f);
+	GetWorld()->GetTimerManager().SetTimer(WallHandle, this, &ACharactersCamera::SetWallCollision, 3.0f);
 }
 
 ACameraSpline* ACharactersCamera::AssignSpline(ACameraSpline* CameraSplineClass)
@@ -145,19 +145,23 @@ void ACharactersCamera::MoveCamera()
 				const FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(MiddleLocation, ESplineCoordinateSpace::World);
 				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeedLocation);
 				CameraComponent->SetWorldLocation(TargetLocation);
+				
 			}
 			else if (PlayerTwo == nullptr && PlayerOne != nullptr) // if only player one is in the game 
 			{
 				const FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(PlayerOne->GetActorLocation(), ESplineCoordinateSpace::World);
-
+				//MoveWalls(ActorLocations);
 				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeedLocation);
 				CameraComponent->SetWorldLocation(TargetLocation);
+				
 			}
 			else if (PlayerOne == nullptr && PlayerTwo != nullptr) // if only player two is in the game
 			{
 				FVector ActorLocations = CameraSpline->FindLocationClosestToWorldLocation(PlayerTwo->GetActorLocation(), ESplineCoordinateSpace::World);
+				//MoveWalls(ActorLocations);
 				TargetLocation = FMath::VInterpTo(CameraComponent->GetComponentLocation(), ActorLocations, FApp::GetDeltaTime(), InterpSpeedLocation);
 				CameraComponent->SetWorldLocation(TargetLocation);
+			
 			}
 			else // if no players are in the game
 			{

@@ -29,6 +29,7 @@ void ACombatManager::BeginPlay()
 	for(FEnemyWave Wave : Waves)
 	{
 		WavesQueue.Add(Wave);
+		TotalEnemies += Wave.NumEnemies;
 	}
 	for(ASpawnPoint* SpawnPoint : SpawnPoints)
 	{
@@ -38,6 +39,13 @@ void ACombatManager::BeginPlay()
 	{
 		CombatTrigger->Manager = this;
 	}
+}
+
+void ACombatManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	GetWorldTimerManager().ClearAllTimersForObject(this);
 }
 
 // Called every frame
@@ -74,6 +82,7 @@ void ACombatManager::RemoveEnemy(AEnemyCharacter* Enemy)
 {
 	Enemies.Remove(Enemy);
 	NumActiveEnemies--;
+	KilledEnemies++;
 	if(WavesQueue.IsEmpty() && NumActiveEnemies <= 0 && GetLocalRole() == ROLE_Authority)
 	{
 		for(ASpawnPoint* SpawnPoint : SpawnPoints)
@@ -148,4 +157,6 @@ void ACombatManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ACombatManager, bCombatStarted);
 	DOREPLIFETIME(ACombatManager, bCombatEnded);
 	DOREPLIFETIME(ACombatManager, CurrentWave);
+	DOREPLIFETIME(ACombatManager, KilledEnemies);
+	DOREPLIFETIME(ACombatManager, NumActiveEnemies);
 }

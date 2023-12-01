@@ -19,7 +19,9 @@ public class PROJ : ModuleRules
 			"CableComponent",
 			"Niagara", 
 			"LevelSequence", 
-			"MovieScene" 
+			"MovieScene", 
+			"UMG", 
+			"GeometryCollectionEngine"
 		});
 		
 	}

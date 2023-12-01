@@ -121,6 +121,8 @@ void URobotBaseState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutL
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
 	DOREPLIFETIME(URobotBaseState, bHasDashBuff)
+	DOREPLIFETIME(URobotBaseState, bHookShotOnCooldown)
+	DOREPLIFETIME(URobotBaseState, bPulseCoolDownActive)
 }
 
 void URobotBaseState::ShootHook()
@@ -229,6 +231,9 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 			Grenade->ServerRPCExplosion();
 			UE_LOG(LogTemp, Warning, TEXT("Explode"));
 		}
+
+		else
+			Actor->TakeDamage(Damage, FDamageEvent(), Controller, RobotCharacter);
 	}
 
 	RobotCharacter->OnPulse();

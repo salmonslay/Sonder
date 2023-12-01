@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "PROJCharacter.generated.h"
 
+class ACharactersCamera;
 class AProjPlayerController;
 class UInputMappingContext;
 class UInputAction;
@@ -36,12 +37,11 @@ class APROJCharacter : public ACharacter
 	UInputAction* LookAction;
 
 public:
-	
 	APROJCharacter();
 
 	/** Toggles depth movement */
 	UFUNCTION(BlueprintCallable)
-	void SetDepthMovementEnabled(const bool bNewEnable); 
+	void SetDepthMovementEnabled(const bool bNewEnable);
 
 	/** Returns true if player can traverse in the depth axis */
 	bool IsDepthMovementEnabled() const { return bDepthMovementEnabled; }
@@ -53,18 +53,16 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DamageToPlayer = 0.f;
 
-	UEnhancedInputComponent* GetInputComponent() const { return EnhancedInputComp; } 
+	UEnhancedInputComponent* GetInputComponent() const { return EnhancedInputComp; }
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite, Category=Health, Replicated)
 	class UNewPlayerHealthComponent* NewPlayerHealthComponent = nullptr;
-	
+
 	UFUNCTION(BlueprintPure, BlueprintCallable)
 	FTransform GetSpawnTransform() const { return SpawnTransform; }
 
 	UFUNCTION(BlueprintCallable)
 	void SetSpawnTransform(const FTransform& NewTransform) { SpawnTransform = NewTransform; }
-	
-	virtual void PossessedBy(AController* NewController) override;
 
 	UPROPERTY(EditAnywhere)
 	class UPlayerBasicAttack* BasicAttack;
@@ -81,21 +79,25 @@ public:
 
 	virtual void OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode) override;
 
-	virtual void Tick(float DeltaSeconds) override; 
+	virtual void Tick(float DeltaSeconds) override;
 
 	// Bools controlling players ability to use abilities
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, Replicated)
 	bool AbilityOne = false;
-	
-	UPROPERTY(BlueprintReadWrite)
+
+	UPROPERTY(BlueprintReadWrite, Replicated)
 	bool AbilityTwo = false;
 
+	// TODO: This should be removed. Health is handled by the health component. This was temporary for playtesting arena 
 	UFUNCTION(BlueprintPure)
 	bool IsAlive();
+
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	bool bIsSafe = false;
+
 #pragma region Events 
-	
 	// Components seem to not be able to create events (easily), which is why most events are declared here 
-	
+
 	/** Event called when player performs a basic attack */
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnBasicAttack();
@@ -111,6 +113,7 @@ public:
 #pragma endregion
 
 protected:
+
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
@@ -123,27 +126,22 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
+
 	/** Determines if player can move in both axes */
 	bool bDepthMovementEnabled = false;
-	
-	void CreateComponents();
 
 	UPROPERTY()
-	UEnhancedInputComponent* EnhancedInputComp; 
+	UEnhancedInputComponent* EnhancedInputComp;
 
 	FTransform SpawnTransform;
 
-	/** Set in BeginPlay. Uses the existing rotation rate variable exposed to BluePrints */
-	FRotator RotationRateIn2DView = FRotator(0, 1000.f, 0); 
-
-	/** How fast the player should rotate in 3D view. Negative value means instant */
 	UPROPERTY(EditAnywhere)
-	float RotationRateIn3DView = 500.f;
-
+	float RotationRateIn2D = 700.f;
+	
 	/** Grounded gravity scale and when jumping upwards */
 	UPROPERTY(EditAnywhere)
-	float DefaultGravityScale = 1.75f; 
-	
+	float DefaultGravityScale = 1.75f;
+
 	UPROPERTY(EditAnywhere)
 	float GravityScaleWhileFalling = 3.f;
 
@@ -154,14 +152,31 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float CoyoteJumpPeriod = 0.1f;
-
-	void DisableCoyoteJump();
-
+	
 	FTimerHandle CoyoteJumpTimer; 
 	
+	/** Keeps track of which direction to rotate towards in 2D movement */
+	bool bRotateRight = true;
+	
+	void DisableCoyoteJump();
+
 	void CoyoteJump();
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_CoyoteJump();
+
+	/** Rotates the player towards movement in 3D or full 180 turns in 2D */
+	void RotatePlayer(const float HorizontalMovementInput);
+
+	bool ShouldRotateRight(const float HorizontalMovementInput) const;
+
+	float GetDesiredYawRot() const; 
+
+	/** Rotates the player on the server so it syncs */
+	UFUNCTION(Server, Unreliable)
+	void ServerRPC_RotatePlayer(const FRotator& NewRot); 
 	
+	UPROPERTY()
+	ACharactersCamera* Camera;
+
 };

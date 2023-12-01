@@ -43,9 +43,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	float DashDamageAmount = 3.f; 
 	
-	/** Start friction to re-apply after dash. Set in Enter */
-	float DefaultFriction = 10.f; 
-	
 	/** The impulse/force need to be applied on the server */
 	UFUNCTION(Server, Reliable)
 	void ServerRPCDash(const FVector DashDir); 
