@@ -69,7 +69,7 @@ private:
 	static bool HookCanBeUsed(const AHookShotAttachment* Hook, const AActor* Robot);
 
 	/** Returns true if the hook is visible on screen */
-	static bool HookIsOnScreen(const AHookShotAttachment* Hook, const AActor* Robot); 
+	static bool HookIsOnScreen(const AHookShotAttachment* Hook); 
 
 	/** Returns the closest Hook from the passed array */
 	static AHookShotAttachment* GetClosestHook(TArray<AHookShotAttachment*>& Hooks, const AActor* Robot);
