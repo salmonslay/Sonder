@@ -33,6 +33,11 @@ private:
 	UPROPERTY(EditAnywhere)
 	bool bAutoPlay = false;
 
+	/** How long to wait before playing the cutscene when auto play is active. Should match the fade in time.
+	 *  Needed so both players have time to load in. */ 
+	UPROPERTY(EditAnywhere)
+	float AutoPlayDelayTime = 1.5f; 
+
 	/** Plays the cutscene when any player overlaps with it */
 	UPROPERTY(EditAnywhere)
 	bool bPlayOnOverlap = false; 
@@ -68,10 +73,20 @@ private:
 	/** The level to load when the cutscene finished playing. Leaving it empty loads no new level
 	 *  NOTE: Needs to be in form of: TestMaps/MAPNAMEGOESHERE or just the map name if in the Maps folder */ 
 	UPROPERTY(EditAnywhere)
-	FName LevelToLoadOnCutsceneEnd = NAME_None; 
+	FName LevelToLoadOnCutsceneEnd = NAME_None;
+
+	/** Should players be hidden during cutscene? */
+	UPROPERTY(EditAnywhere)
+	bool bHidePlayersDuringCutscene = true; 
 
 	/** Plays the assigned cutscene */
 	void PlayCutscene();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_PlayCutscene();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPC_PlayCutscene(); 
 
 	/** Switches the player's input map to the cutscene's so input is disabled except for skip cutscene */
 	void DisablePlayerInput() const;
@@ -91,6 +106,9 @@ private:
 	void ServerRPC_StopCutscene();
 
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPC_StopCutscene(); 
+	void MulticastRPC_StopCutscene();
+
+	/** Sets players' visibility */ 
+	void TogglePlayerVisibility(const bool bVisible) const; 
 	
 };

@@ -13,5 +13,8 @@ UCLASS()
 class PROJ_API USonderGameInstance : public UAdvancedFriendsGameInstance
 {
 	GENERATED_BODY()
-	
+
+public:
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsPlayingLocal = false;
 };

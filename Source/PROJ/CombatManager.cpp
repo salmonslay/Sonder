@@ -41,6 +41,13 @@ void ACombatManager::BeginPlay()
 	}
 }
 
+void ACombatManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
+{
+	Super::EndPlay(EndPlayReason);
+
+	GetWorldTimerManager().ClearAllTimersForObject(this);
+}
+
 // Called every frame
 void ACombatManager::Tick(float DeltaTime)
 {
@@ -150,4 +157,6 @@ void ACombatManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ACombatManager, bCombatStarted);
 	DOREPLIFETIME(ACombatManager, bCombatEnded);
 	DOREPLIFETIME(ACombatManager, CurrentWave);
+	DOREPLIFETIME(ACombatManager, KilledEnemies);
+	DOREPLIFETIME(ACombatManager, NumActiveEnemies);
 }
