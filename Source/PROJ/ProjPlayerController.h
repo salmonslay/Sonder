@@ -42,7 +42,7 @@ private:
 	void SetCamera();
 
 	UPROPERTY()
-	ACameraActor* MainCam;
+	class ACharactersCamera* MainCam;
 
 	bool bHasSetCamera = false; 
 
