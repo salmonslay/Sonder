@@ -3,6 +3,7 @@
 
 #include "ProjPlayerController.h"
 
+#include "CharactersCamera.h"
 #include "CutsceneManager.h"
 #include "PROJCharacter.h"
 #include "PROJGameMode.h"
@@ -116,7 +117,7 @@ void AProjPlayerController::OnFinishSeamlessTravel()
 void AProjPlayerController::SetCamera()
 {
 	if (!MainCam)
-		MainCam = Cast<ACameraActor>(UGameplayStatics::GetActorOfClass(this, ACameraActor::StaticClass()));
+		MainCam = Cast<ACharactersCamera>(UGameplayStatics::GetActorOfClass(this, ACharactersCamera::StaticClass()));
 
 	if (IsValid(MainCam))
 	{
