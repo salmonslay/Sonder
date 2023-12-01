@@ -22,7 +22,7 @@ void USoulBaseStateNew::Enter()
 	Super::Enter();
 
 	if(!SoulCharacter)
-		SoulCharacter = Cast<ASoulCharacter>(PlayerOwner);
+		SoulCharacter = Cast<ASoulCharacter>(CharOwner);
 
 	if(!LightGrenade)
 		LightGrenade = Cast<ALightGrenade>(UGameplayStatics::GetActorOfClass(this, ALightGrenade::StaticClass())); 
@@ -72,10 +72,10 @@ void USoulBaseStateNew::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void USoulBaseStateNew::Dash()
 {
 	// Only run locally 
-	if(bDashCoolDownActive || !PlayerOwner->IsLocallyControlled() || !SoulCharacter->AbilityOne)
+	if(bDashCoolDownActive || !CharOwner->IsLocallyControlled() || !SoulCharacter->AbilityOne)
 		return;
 
-	PlayerOwner->SwitchState(SoulCharacter->DashingState); 
+	Cast<ACharacterStateMachine>(CharOwner)->SwitchState(SoulCharacter->DashingState); 
 }
 
 void USoulBaseStateNew::ServerRPC_EnableDashCooldown_Implementation()
@@ -98,7 +98,7 @@ void USoulBaseStateNew::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Ou
 
 void USoulBaseStateNew::GetTimeHeld(const FInputActionInstance& Instance)
 {
-	if (!PlayerOwner->IsLocallyControlled() || !SoulCharacter->AbilityTwo)
+	if (!CharOwner->IsLocallyControlled() || !SoulCharacter->AbilityTwo)
 	{
 		return;	
 	}
@@ -114,7 +114,7 @@ void USoulBaseStateNew::GetTimeHeld(const FInputActionInstance& Instance)
 
 void USoulBaseStateNew::ThrowGrenade()
 {
-	if (!PlayerOwner->IsLocallyControlled() || !SoulCharacter->AbilityTwo)
+	if (!CharOwner->IsLocallyControlled() || !SoulCharacter->AbilityTwo)
 	{
 		return;	
 	}
@@ -125,7 +125,7 @@ void USoulBaseStateNew::ThrowGrenade()
 
 void USoulBaseStateNew::ServerRPCThrowGrenade_Implementation(const float TimeHeldGrenade)
 {
-	if(!PlayerOwner->HasAuthority())
+	if(!CharOwner->HasAuthority())
 		return;
 	
 	//LightGrenade = GetWorld()->SpawnActor<AActor>(LightGrenadeRef,SoulCharacter->FireLoc->GetComponentLocation(),SoulCharacter->FireLoc->GetComponentRotation());

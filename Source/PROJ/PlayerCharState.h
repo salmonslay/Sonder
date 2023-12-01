@@ -40,7 +40,7 @@ protected:
 
 	/** The owning player */
 	UPROPERTY()
-	class ACharacterStateMachine* PlayerOwner; 
+	ACharacter* CharOwner; 
 
 	virtual void BeginPlay() override;
 		

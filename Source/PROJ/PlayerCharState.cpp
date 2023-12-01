@@ -3,7 +3,6 @@
 
 #include "PlayerCharState.h"
 
-#include "CharacterStateMachine.h"
 #include "PROJCharacter.h"
 
 // Sets default values for this component's properties
@@ -16,8 +15,8 @@ UPlayerCharState::UPlayerCharState()
 
 void UPlayerCharState::Enter()
 {
-	if(!PlayerOwner)
-		PlayerOwner = Cast<ACharacterStateMachine>(GetOwner()); 
+	if(!CharOwner)
+		CharOwner = Cast<ACharacter>(GetOwner()); 
 }
 
 void UPlayerCharState::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
@@ -29,8 +28,8 @@ void UPlayerCharState::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlayerOwner = Cast<ACharacterStateMachine>(GetOwner()); 
+	CharOwner = Cast<ACharacter>(GetOwner()); 
 
-	if(!PlayerOwner)
+	if(!CharOwner)
 		UE_LOG(LogTemp, Error, TEXT("No player owner"))
 }
