@@ -57,6 +57,8 @@ protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+
 public:
 	// Called every frame
 	virtual void Tick(float DeltaTime) override;
@@ -75,10 +77,10 @@ public:
 
 	//Used to keep track of the number of active enemies in the combat scenario
 	//Used instead Enemies.Num() because it needs to be increased as the spawns are queued and not when they are instanced
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemies")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemies", Replicated)
 	int NumActiveEnemies = 0;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemies")
+	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemies", Replicated)
 	int KilledEnemies = 0;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadOnly, Category="Enemies")
