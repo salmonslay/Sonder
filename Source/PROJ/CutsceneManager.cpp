@@ -33,11 +33,7 @@ void ACutsceneManager::BeginPlay()
 	PlayerController = UGameplayStatics::GetPlayerController(this, 0);
 
 	GetWorldTimerManager().SetTimerForNextTick(this, &ACutsceneManager::BindSkipCutsceneButton); 
-	
-	// if(GetNetMode() == ENetMode::NM_Client) // Client has no owning connection so cant call perform RPCs 
-	// 	SetOwner(UGameplayStatics::GetPlayerPawn(GetWorld(), 0)); 
 
-	// TODO: Simulates cutscene, call Play from fade widget instead? Perhaps not necessary if all levels have the same intro length 
 	if(bAutoPlay)
 	{
 		// Disable input immediately so player cannot move during level load (delayed because race conditions)
@@ -56,16 +52,7 @@ void ACutsceneManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	switch (EndPlayReason)
-	{
-	case EEndPlayReason::Quit: 
-	case EEndPlayReason::EndPlayInEditor: 
-		CutscenesPlayingCounter = 0;
-		GetWorldTimerManager().ClearAllTimersForObject(this);
-		break;
-		
-	default: ; // Do nothing 
-	}
+	GetWorldTimerManager().ClearAllTimersForObject(this); // TODO: Will need switch if object is destroyed 
 }
 
 void ACutsceneManager::PlayCutscene()
@@ -138,7 +125,8 @@ void ACutsceneManager::EnablePlayerInput() const
 
 void ACutsceneManager::BindSkipCutsceneButton()
 {
-	// TODO: Cant skip on client rn 
+	// TODO: Cant skip on client rn. I think it needs to be passed through the player controller, i.e make a server rpc
+	// TODO: function on the player controller class which is called when pressing skip https://cedric-neukirchen.net/docs/multiplayer-compendium/ownership/ 
 	
 	// Bind skip cutscene button (is "activated" first when cutscene plays)
 	if(const auto InputComp = Cast<UEnhancedInputComponent>(PlayerController->InputComponent))
@@ -147,7 +135,7 @@ void ACutsceneManager::BindSkipCutsceneButton()
 
 void ACutsceneManager::StopCutscene()
 {
-	if(!IsCutscenePlaying()) // Not playing, cant stop cutscene so do nothing 
+	if(!IsCutscenePlaying() || !LevelSequencePlayer) // Not playing, cant stop cutscene so do nothing 
 		return;
 	
 	EnablePlayerInput();
@@ -155,15 +143,16 @@ void ACutsceneManager::StopCutscene()
 	if(bHidePlayersDuringCutscene)
 		TogglePlayerVisibility(true);  
 
-	LevelSequencePlayer->Stop();
+	if(LevelSequencePlayer)
+		LevelSequencePlayer->Stop();
 
 	CutscenesPlayingCounter--;
 
 	if(HasAuthority() && !LevelToLoadOnCutsceneEnd.IsNone())
 		GetWorld()->ServerTravel("/Game/Maps/" + LevelToLoadOnCutsceneEnd.ToString());
 
-	if(!IsCutscenePlaying())
-		Destroy(); // TODO: call on server (client has RPC issues)
+	// if(!IsCutscenePlaying())
+	// 	Destroy(); // TODO: Destroy? 
 }
 
 void ACutsceneManager::TogglePlayerVisibility(const bool bVisible) const
