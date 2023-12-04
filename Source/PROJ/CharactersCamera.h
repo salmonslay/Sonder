@@ -49,6 +49,9 @@ public:
 
 	void GetPlayers();
 
+	UFUNCTION(BlueprintCallable)
+	bool SetAllowWallsMovement( bool bValue);
+
 
 private:
 	virtual void Tick(float DeltaSeconds) override;
@@ -65,7 +68,7 @@ private:
 	void SetWallCollision();
 
 	
-	
+	bool bAllowWallsMovement = true;
 
 	bool bAllowMovement;
 
