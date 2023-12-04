@@ -13,6 +13,7 @@
 #include "NewPlayerHealthComponent.h"
 #include "PlayerBasicAttack.h"
 #include "ProjPlayerController.h"
+#include "RobotHookingState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -169,7 +170,7 @@ void APROJCharacter::CoyoteJump()
 
 		if (!HasAuthority()) // If player is client, also jump locally to prevent stuttering 
 		{
-			GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+			GetCharacterMovement()->SetMovementMode(MOVE_Walking); 
 			GetCharacterMovement()->Velocity.Z = 0;
 			Jump();
 		}
@@ -189,6 +190,17 @@ void APROJCharacter::ServerRPC_CoyoteJump_Implementation()
 void APROJCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8 PreviousCustomMode)
 {
 	Super::OnMovementModeChanged(PrevMovementMode, PreviousCustomMode);
+
+	// if Robot, check if player is in hook shot, then don't update 
+	if(const auto HookState = FindComponentByClass<URobotHookingState>())
+	{
+		if(HookState->IsHookShotting())
+		{
+			GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+			ServerRPC_SetMovementMode(MOVE_Flying);
+			return;
+		}
+	}
 
 	const EMovementMode CurrentMovementMode = GetCharacterMovement()->MovementMode;
 
@@ -309,6 +321,14 @@ float APROJCharacter::GetDesiredYawRot() const
 		return bFacingTowardsCamera ? -270 : 90; 
 	
 	return bFacingTowardsCamera ? -90 : -180; 
+}
+
+void APROJCharacter::ServerRPC_SetMovementMode_Implementation(const EMovementMode NewMode)
+{
+	if(!HasAuthority())
+		return;
+
+	GetCharacterMovement()->SetMovementMode(NewMode); 
 }
 
 void APROJCharacter::ServerRPC_RotatePlayer_Implementation(const FRotator& NewRot)

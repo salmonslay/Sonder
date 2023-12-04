@@ -190,6 +190,8 @@ void URobotHookingState::StartShootHook()
 	bShootingHookOutwards = true;
 	bHookShotActive = true; 
 	
+	HookArmLocation = CharOwner->GetActorLocation(); 
+	
 	ServerRPCHookShotStart(CurrentHookTargetLocation, RobotCharacter); 
 }
 
