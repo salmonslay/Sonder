@@ -13,6 +13,7 @@
 #include "NewPlayerHealthComponent.h"
 #include "PlayerBasicAttack.h"
 #include "ProjPlayerController.h"
+#include "SonderSaveGame.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -65,7 +66,7 @@ void APROJCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-	if(!Camera)
+	if (!Camera)
 		Camera = Cast<ACharactersCamera>(UGameplayStatics::GetActorOfClass(this, ACharactersCamera::StaticClass()));
 
 	Camera->GetPlayers();
@@ -125,7 +126,7 @@ void APROJCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(APROJCharacter, NewPlayerHealthComponent) 
+	DOREPLIFETIME(APROJCharacter, NewPlayerHealthComponent)
 	DOREPLIFETIME(APROJCharacter, AbilityOne)
 	DOREPLIFETIME(APROJCharacter, AbilityTwo)
 }
@@ -205,7 +206,8 @@ void APROJCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8
 		GetCharacterMovement()->GravityScale = GravityScaleWhileFalling;
 
 		GetWorld()->GetTimerManager().ClearTimer(CoyoteJumpTimer);
-		GetWorld()->GetTimerManager().SetTimer(CoyoteJumpTimer, this, &APROJCharacter::DisableCoyoteJump, CoyoteJumpPeriod);
+		GetWorld()->GetTimerManager().SetTimer(CoyoteJumpTimer, this, &APROJCharacter::DisableCoyoteJump,
+		                                       CoyoteJumpPeriod);
 	}
 }
 
@@ -216,13 +218,68 @@ void APROJCharacter::Tick(float DeltaSeconds)
 	GetCharacterMovement()->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::X);
 	GetCharacterMovement()->SetPlaneConstraintEnabled(!bDepthMovementEnabled);
 
-	RotatePlayer(GetLastMovementInputVector().Y); 
+	RotatePlayer(GetLastMovementInputVector().Y);
 }
 
 bool APROJCharacter::IsAlive()
 {
 	// TODO: This should be removed. Health is handled by the health component. This was temporary for playtesting arena 
 	return GetMesh()->GetRelativeScale3D().GetMax() > 0.5f;
+}
+
+void APROJCharacter::SaveGame() const
+{
+	USonderSaveGame* SaveGameInstance = Cast<USonderSaveGame>(
+	UGameplayStatics::LoadGameFromSlot("Sonder", 0));
+
+	if (!SaveGameInstance)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Creating new save file"))
+		SaveGameInstance = Cast<USonderSaveGame>(
+			UGameplayStatics::CreateSaveGameObject(USonderSaveGame::StaticClass()));
+	}
+
+	if (SaveGameInstance == nullptr)
+	{
+		UE_LOG(LogTemp, Display, TEXT("No save game instance found!"));
+		return;
+	}
+
+	// todo: save stuff here
+
+	UE_LOG(LogTemp, Display, TEXT("Saved game!"))
+
+	UGameplayStatics::SaveGameToSlot(SaveGameInstance, "SpaceLeek Save", 0);
+}
+
+USonderSaveGame* APROJCharacter::LoadGame() const
+{
+	USonderSaveGame* SaveGameInstance = Cast<USonderSaveGame>(
+	UGameplayStatics::LoadGameFromSlot("Sonder", 0));
+
+	if (SaveGameInstance == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No save game instance found! Not loading anything"));
+		return nullptr;
+	}
+	
+	return SaveGameInstance;
+}
+
+USonderSaveGame* APROJCharacter::GetSaveGameSafe()
+{
+	USonderSaveGame* SaveGameInstance = Cast<USonderSaveGame>(
+		UGameplayStatics::LoadGameFromSlot("Sonder", 0));
+
+	if (SaveGameInstance == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No save game instance found!"));
+
+		SaveGameInstance = Cast<
+			USonderSaveGame>(UGameplayStatics::CreateSaveGameObject(USonderSaveGame::StaticClass()));
+	}
+
+	return SaveGameInstance;
 }
 
 void APROJCharacter::Move(const FInputActionValue& Value)
@@ -253,70 +310,72 @@ void APROJCharacter::Move(const FInputActionValue& Value)
 void APROJCharacter::RotatePlayer(const float HorizontalMovementInput)
 {
 	// 3D rotation is oriented automatically to movement direction 
-	if(bDepthMovementEnabled || !IsLocallyControlled())
+	if (bDepthMovementEnabled || !IsLocallyControlled())
 		return;
-	
+
 	bRotateRight = ShouldRotateRight(HorizontalMovementInput);
 
-	const float DesiredYawRot = GetDesiredYawRot(); 
+	const float DesiredYawRot = GetDesiredYawRot();
 
 	FRotator ActorCurrentRot = GetActorRotation();
 
 	// Unreal "clamps" rotation at -180 to 180 which is problematic when trying to lerp to minus values,
 	// will never reach so I "undo" their clamp by subtracting 360
 
-	if(bRotateRight && DesiredYawRot < 0 && ActorCurrentRot.Yaw > 0)
+	if (bRotateRight && DesiredYawRot < 0 && ActorCurrentRot.Yaw > 0)
 		ActorCurrentRot.Yaw -= 360;
-	if(!bRotateRight && GetActorForwardVector().X < -0.05 && ActorCurrentRot.Yaw > 0)
-		ActorCurrentRot.Yaw -= 360; 
+	if (!bRotateRight && GetActorForwardVector().X < -0.05 && ActorCurrentRot.Yaw > 0)
+		ActorCurrentRot.Yaw -= 360;
 
-	if(DesiredYawRot == ActorCurrentRot.Yaw)
+	if (DesiredYawRot == ActorCurrentRot.Yaw)
 		return;
 
 	const float NewYawRot = UKismetMathLibrary::FInterpTo_Constant(ActorCurrentRot.Yaw,
-		DesiredYawRot, UGameplayStatics::GetWorldDeltaSeconds(this), RotationRateIn2D);
+	                                                               DesiredYawRot,
+	                                                               UGameplayStatics::GetWorldDeltaSeconds(this),
+	                                                               RotationRateIn2D);
 
 	FRotator NewRot = ActorCurrentRot;
-	
+
 	NewRot.Yaw = NewYawRot;
-	
+
 	// https://forums.unrealengine.com/t/client-owned-character-rotates-slower-than-listen-server-owned-character/427427
-	GetCharacterMovement()->FlushServerMoves();  
+	GetCharacterMovement()->FlushServerMoves();
 	SetActorRotation(NewRot);
-	
-	ServerRPC_RotatePlayer(NewRot); 
+
+	ServerRPC_RotatePlayer(NewRot);
 }
 
 bool APROJCharacter::ShouldRotateRight(const float HorizontalMovementInput) const
 {
 	// Moving right 
-	if(HorizontalMovementInput > 0)
+	if (HorizontalMovementInput > 0)
 		return true;
 
 	// Moving left 
-	if(HorizontalMovementInput < 0)
+	if (HorizontalMovementInput < 0)
 		return false;
 
 	// No input, return current rotation direction 
-	return bRotateRight; 
+	return bRotateRight;
 }
 
 float APROJCharacter::GetDesiredYawRot() const
 {
 	const bool bFacingTowardsCamera = GetActorForwardVector().X < 0.05;
 
-	if(bRotateRight)
-		return bFacingTowardsCamera ? -270 : 90; 
-	
-	return bFacingTowardsCamera ? -90 : -180; 
+	if (bRotateRight)
+		return bFacingTowardsCamera ? -270 : 90;
+
+	return bFacingTowardsCamera ? -90 : -180;
 }
 
 void APROJCharacter::ServerRPC_RotatePlayer_Implementation(const FRotator& NewRot)
 {
-	if(!HasAuthority())
-		return; 
-	
-	SetActorRotation(NewRot); 
+	if (!HasAuthority())
+		return;
+
+	SetActorRotation(NewRot);
 }
 
 float APROJCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
