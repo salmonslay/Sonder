@@ -7,6 +7,8 @@
 #include "RobotBaseState.h"
 #include "RobotHookingState.h"
 #include "RobotStateMachine.h"
+#include "ShadowCharacter.h"
+#include "ShadowSoulCharacter.h"
 #include "SoulBaseStateNew.h"
 #include "SoulCharacter.h"
 #include "Components/CapsuleComponent.h"
@@ -27,10 +29,11 @@ void USoulDashingState::Enter()
 	FVector DashDir = CharOwner->GetLastMovementInputVector().IsNearlyZero() ? CharOwner->GetActorForwardVector() : CharOwner->GetLastMovementInputVector(); 
 
 	DashDir.Z = 0; // Disable dash in Z axis (up/down)
-		
-	if(!Cast<APROJCharacter>(CharOwner)->IsDepthMovementEnabled())
-		DashDir.X = 0;
 
+	// TODO: limit direction for AI as well? 
+	if(CharOwner->IsPlayerControlled() && !Cast<APROJCharacter>(CharOwner)->IsDepthMovementEnabled()) 
+		DashDir.X = 0; 
+	
 	DashDir.Normalize(); 
 
 	// Dash locally 
@@ -45,9 +48,10 @@ void USoulDashingState::Enter()
 
 	StartLoc = CharOwner->GetActorLocation();
 
-	CharOwner->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &USoulDashingState::ActorOverlap); 
+	CharOwner->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &USoulDashingState::ActorOverlap);
 
-	CancelHookShot();
+	if(CharOwner->IsPlayerControlled())
+		CancelHookShot();
 }
 
 void USoulDashingState::Update(const float DeltaTime)
@@ -56,7 +60,12 @@ void USoulDashingState::Update(const float DeltaTime)
 
 	// Change state/stop dash when velocity is 0 (collided) or travelled max distance 
 	if(CharOwner->GetCharacterMovement()->Velocity.IsNearlyZero() || FVector::Dist(StartLoc, CharOwner->GetActorLocation()) > MaxDashDistance)
-		Cast<ACharacterStateMachine>(CharOwner)->SwitchState(Cast<ASoulCharacter>(CharOwner)->BaseStateNew);
+	{
+		if(CharOwner->IsPlayerControlled()) // Player 
+			Cast<ACharacterStateMachine>(CharOwner)->SwitchState(Cast<ASoulCharacter>(CharOwner)->BaseStateNew);
+		else // AI 
+			Cast<AShadowCharacter>(CharOwner)->SwitchState(Cast<AShadowSoulCharacter>(CharOwner)->SoulBaseState); 
+	}
 }
 
 void USoulDashingState::Exit()
@@ -83,7 +92,7 @@ void USoulDashingState::CancelHookShot()
 }
 
 void USoulDashingState::ActorOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
-	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
+                                     UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if(!CharOwner->IsLocallyControlled())
 		return;
@@ -91,10 +100,13 @@ void USoulDashingState::ActorOverlap(UPrimitiveComponent* OverlappedComp, AActor
 	// If dashing through Robot, apply buff to Robot 
 	if(const auto Robot = Cast<ARobotStateMachine>(OtherActor))
 	{
-		if(!CharOwner->HasAuthority())
-			ServerRPC_RobotBuff(Robot); 
-		else
-			Robot->FindComponentByClass<URobotBaseState>()->ApplySoulDashBuff(); 
+		if(CharOwner->IsPlayerControlled()) // Only apply buff if a player dashed through, not shadow soul (AI) 
+		{
+			if(!CharOwner->HasAuthority())
+				ServerRPC_RobotBuff(Robot); 
+			else
+				Robot->FindComponentByClass<URobotBaseState>()->ApplySoulDashBuff();
+		} 
 	}
 	else 
 		ServerRPC_DamageActor(OtherActor); // Otherwise deal damage to overlapping object, needs to be applied on server 
@@ -115,17 +127,23 @@ void USoulDashingState::ServerRPC_DamageActor_Implementation(AActor* ActorToDama
 
 void USoulDashingState::ClientRPC_CancelHookShot_Implementation()
 {
-	if(!HookState)
-		HookState = UGameplayStatics::GetActorOfClass(this, ARobotStateMachine::StaticClass())->FindComponentByClass<URobotHookingState>(); 
-
-	if(HookState)
-		HookState->EndHookShot(true);
+	EndHookShot(); 
 }
 
 void USoulDashingState::ServerRPC_CancelHookShot_Implementation()
 {
+	EndHookShot(); 
+}
+
+void USoulDashingState::EndHookShot()
+{
 	if(!HookState)
-		HookState = UGameplayStatics::GetActorOfClass(this, ARobotStateMachine::StaticClass())->FindComponentByClass<URobotHookingState>(); 
+	{
+		if(const auto Robot = UGameplayStatics::GetActorOfClass(this, ARobotStateMachine::StaticClass()))
+			HookState = Robot->FindComponentByClass<URobotHookingState>();
+		else
+			return; 
+	}
 
 	if(HookState)
 		HookState->EndHookShot(true);
@@ -134,8 +152,11 @@ void USoulDashingState::ServerRPC_CancelHookShot_Implementation()
 void USoulDashingState::MulticastExit_Implementation()
 {
 	CharOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Block);
-	
-	Cast<ASoulCharacter>(CharOwner)->OnDashEnd();
+
+	if(CharOwner->IsPlayerControlled()) 
+		Cast<ASoulCharacter>(CharOwner)->OnDashEnd();
+	else
+		Cast<AShadowSoulCharacter>(CharOwner)->OnDashEnd(); 
 }
 
 void USoulDashingState::ServerExit_Implementation(const FVector InputVec)
@@ -147,7 +168,7 @@ void USoulDashingState::ServerExit_Implementation(const FVector InputVec)
 	FVector VelDir = CharOwner->GetCharacterMovement()->Velocity;
 	VelDir.Z = 0;
 	
-	if(!Cast<ACharacterStateMachine>(CharOwner)->IsDepthMovementEnabled())
+	if(CharOwner->IsPlayerControlled() && !Cast<ACharacterStateMachine>(CharOwner)->IsDepthMovementEnabled())
 		VelDir.X = 0;
 
 	CharOwner->SetCanBeDamaged(true); 
@@ -159,9 +180,10 @@ void USoulDashingState::ServerExit_Implementation(const FVector InputVec)
 
 void USoulDashingState::MulticastRPCDash_Implementation()
 {
-	// run on both client and server
-	
-	Cast<ASoulCharacter>(CharOwner)->OnDash();
+	if(CharOwner->IsPlayerControlled())
+		Cast<ASoulCharacter>(CharOwner)->OnDash();
+	else
+		Cast<AShadowSoulCharacter>(CharOwner)->OnDash(); 
 }
 
 void USoulDashingState::ServerRPCDash_Implementation(const FVector DashDir)
