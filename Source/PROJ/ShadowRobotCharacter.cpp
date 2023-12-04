@@ -4,10 +4,12 @@
 #include "ShadowRobotCharacter.h"
 
 #include "RobotBaseState.h"
+#include "RobotHookingState.h"
 
 
 // Sets default values
 AShadowRobotCharacter::AShadowRobotCharacter()
 {
-	RobotBaseState = CreateDefaultSubobject<URobotBaseState>(TEXT("Robot Base State")); 
+	RobotBaseState = CreateDefaultSubobject<URobotBaseState>(TEXT("Robot Base State"));
+	RobotHookState = CreateDefaultSubobject<URobotHookingState>(TEXT("Robot Hook State")); 
 }
