@@ -8,6 +8,7 @@ ACombatTrigger::ACombatTrigger()
 {
 	PrimaryActorTick.bCanEverTick = true;
 	Bounds = CreateDefaultSubobject<UBoxComponent>(TEXT("Bounds"));
+	Bounds->SetCollisionProfileName("CombatTrigger");
 	RootComponent = Bounds;
 }
 
