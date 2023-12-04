@@ -4,22 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
-#include "BTService_CanAttackPlayer.generated.h"
+#include "BTService_SeparateFromCollision.generated.h"
 
-class AEnemyCharacter;
-class APROJCharacter;
+class AFlyingEnemyCharacter;
 /**
  * 
  */
 UCLASS()
-class PROJ_API UBTService_CanAttackPlayer : public UBTService_BlackboardBase
+class PROJ_API UBTService_SeparateFromCollision : public UBTService_BlackboardBase
 {
 	GENERATED_BODY()
 
-			
-public: /** Constructor*/
-	UBTService_CanAttackPlayer();
+public:
 
+	UBTService_SeparateFromCollision();
+	
 	/** I have no idea when this is called but it is needed */
 	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;
 
@@ -32,15 +31,24 @@ protected:
 
 
 	UPROPERTY(VisibleAnywhere)
-	AEnemyCharacter* OwnerCharacter = nullptr;
+	AFlyingEnemyCharacter* OwnerCharacter = nullptr;
 
-
-	
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float RadiusToDetectPlayer = 0.f;
-
+	FVector OwnerLocation = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;
-	
+
+	UPROPERTY(EditAnywhere)
+	float CollisionCheckRadius = 100.f;
+
+	UPROPERTY(EditAnywhere)
+	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypeQueries;
+
+	FCollisionObjectQueryParams CollisionObjectParams;
+
+	int CollisionCounter = 0;
+
+	FVector TotalSeparationVector = FVector::ZeroVector;
+
+	FVector CalculateTotalSeparationForce( FVector &Separation);
 };

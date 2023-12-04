@@ -175,7 +175,10 @@ private:
 
 	/** Rotates the player on the server so it syncs */
 	UFUNCTION(Server, Unreliable)
-	void ServerRPC_RotatePlayer(const FRotator& NewRot); 
+	void ServerRPC_RotatePlayer(const FRotator& NewRot);
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_SetMovementMode(EMovementMode NewMode); 
 	
 	UPROPERTY()
 	ACharactersCamera* Camera;
