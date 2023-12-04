@@ -15,17 +15,12 @@ public:
 	// Sets default values for this character's properties
 	AShadowRobotCharacter();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
+	UPROPERTY(EditAnywhere)
+	class URobotBaseState* RobotBaseState;
 
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 private:
 
-	UPROPERTY(EditAnywhere)
-	class URobotBaseState* RobotBaseState;
+	
 	
 };

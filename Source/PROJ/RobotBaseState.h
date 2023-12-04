@@ -21,11 +21,7 @@ public:
 
 	virtual void Enter() override;
 
-	virtual void Update(const float DeltaTime) override;
-
 	virtual void UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp) override;
-
-	virtual void Exit() override;
 
 	void ApplySoulDashBuff();
 
@@ -47,11 +43,11 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	class UInputAction* AbilityInputAction;
 
-
 	bool bHasSetUpInput = false;
 
 	bool bCanPulse = true;
 
+	UPROPERTY()
 	ACharacter* PlayerActor;
 
 	UPROPERTY()
