@@ -15,7 +15,8 @@ APROJGameMode::APROJGameMode()
 	// This is from UE auto generation 
 
 	// set default pawn class to our Blueprinted character
-	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(TEXT("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter"));
+	static ConstructorHelpers::FClassFinder<APawn> PlayerPawnBPClass(
+		TEXT("/Game/ThirdPerson/Blueprints/BP_ThirdPersonCharacter"));
 	if (PlayerPawnBPClass.Class != NULL)
 	{
 		DefaultPawnClass = PlayerPawnBPClass.Class;
@@ -97,8 +98,11 @@ FString APROJGameMode::InitNewPlayer(APlayerController* NewPlayerController, con
 	// Set the new player's spawn position 
 	NewPlayerController->StartSpot = UnusedPlayerStarts.Pop();
 
-	// Get the pawn class to use based on player count, we might want to handle this differently in the future 
-	const auto PawnClassToSpawn = PlayerPawnClasses[PlayerCount];
+	// Get the pawn class to use based on player count, we might want to handle this differently in the future
+	TArray<TSubclassOf<APROJCharacter>> ReversedPlayerPawnClasses;
+	for (int i = PlayerPawnClasses.Num() - 1; i >= 0; i--)
+		ReversedPlayerPawnClasses.Add(PlayerPawnClasses[i]);
+	const auto PawnClassToSpawn = ReversedPlayerPawnClasses[PlayerCount];
 
 	DefaultPawnClass = PawnClassToSpawn;
 
@@ -134,7 +138,9 @@ void APROJGameMode::HandleSeamlessTravelPlayer(AController*& Controller)
 	if (PC && PC->Player)
 	{
 		// We need to spawn a new PlayerController to replace the old one
-		APlayerController* NewPC = SpawnPlayerController(PC->IsLocalPlayerController() ? ROLE_SimulatedProxy : ROLE_AutonomousProxy, PC->GetFocalLocation(), PC->GetControlRotation());
+		APlayerController* NewPC = SpawnPlayerController(
+			PC->IsLocalPlayerController() ? ROLE_SimulatedProxy : ROLE_AutonomousProxy, PC->GetFocalLocation(),
+			PC->GetControlRotation());
 
 		if (NewPC)
 		{
@@ -146,7 +152,9 @@ void APROJGameMode::HandleSeamlessTravelPlayer(AController*& Controller)
 		}
 		else
 		{
-			UE_LOG(LogGameMode, Warning, TEXT("HandleSeamlessTravelPlayer: Failed to spawn new PlayerController for %s (old class %s)"), *PC->GetHumanReadableName(), *PC->GetClass()->GetName());
+			UE_LOG(LogGameMode, Warning,
+			       TEXT("HandleSeamlessTravelPlayer: Failed to spawn new PlayerController for %s (old class %s)"),
+			       *PC->GetHumanReadableName(), *PC->GetClass()->GetName());
 			PC->Destroy();
 			return;
 		}
@@ -157,10 +165,10 @@ void APROJGameMode::HandleSeamlessTravelPlayer(AController*& Controller)
 	// Initialize hud and other player details, shared with PostLogin
 	GenericPlayerInitialization(Controller);
 
-	if(PC)
+	if (PC)
 	{
 		AProjPlayerController* ProjPC = Cast<AProjPlayerController>(PC);
-		if(ProjPC)
+		if (ProjPC)
 		{
 			ProjPC->OnFinishSeamlessTravel();
 		}
@@ -182,12 +190,12 @@ void APROJGameMode::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLif
 
 void APROJGameMode::SetPlayerPointers()
 {
-	if(GetLocalRole() == ROLE_Authority)
+	if (GetLocalRole() == ROLE_Authority)
 	{
 		ServerPlayer = GetActivePlayer(0);
 		ClientPlayer = GetActivePlayer(1);
 	}
-	if(ServerPlayer && ClientPlayer)
+	if (ServerPlayer && ClientPlayer)
 	{
 		GetWorldTimerManager().ClearTimer(PlayerPointerTimerHandle);
 	}
