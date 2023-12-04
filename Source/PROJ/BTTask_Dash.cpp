@@ -17,8 +17,15 @@ EBTNodeResult::Type UBTTask_Dash::ExecuteTask(UBehaviorTreeComponent& OwnerComp,
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
+	const bool bCanDash = GetWorld()->TimeSeconds - DashCooldown > TimeOnLastDash;
+
+	// idk if we want to consider this a success 
+	if(!bCanDash)
+		return EBTNodeResult::Succeeded; 
+
 	if(const auto ShadowSoul = Cast<AShadowSoulCharacter>(OwnerComp.GetAIOwner()->GetPawn()))
 	{
+		TimeOnLastDash = GetWorld()->TimeSeconds; 
 		ShadowSoul->SwitchState(ShadowSoul->DashState);
 		return EBTNodeResult::Succeeded; 
 	}
