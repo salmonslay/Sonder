@@ -32,10 +32,9 @@ EBTNodeResult::Type UBTTask_StopLaserAttack::ExecuteTask(UBehaviorTreeComponent&
 	OwnerLocation = OwnerCharacter->GetActorLocation();
 	
 	OwnerComp.GetBlackboardComponent()->SetValueAsFloat("StopAttackTime", OwnerCharacter->UnlockRotationAfterAttackDuration);
-	/*
+	
 	OwnerComp.GetBlackboardComponent()->SetValueAsBool("bIsRepositioning", true);
 	GetWorld()->GetTimerManager().SetTimer(StopRepositioningTimerHandle, this, &UBTTask_StopLaserAttack::StopRepositioning, OwnerCharacter->RepositioningDuration, false);
-	*/
 	OwnerCharacter->bSetFocusToPlayer = true;
 	OwnerCharacter->OnStopAttackEvent(OwnerCharacter->UnlockRotationAfterAttackDuration);
 	OwnerCharacter->Idle();
