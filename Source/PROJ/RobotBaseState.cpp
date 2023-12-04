@@ -31,11 +31,6 @@ void URobotBaseState::Enter()
 	DefaultWalkSpeed = CharOwner->GetCharacterMovement()->MaxWalkSpeed;
 }
 
-void URobotBaseState::Update(const float DeltaTime)
-{
-	Super::Update(DeltaTime);
-}
-
 void URobotBaseState::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
 {
 	Super::UpdateInputCompOnEnter(InputComp);
@@ -52,11 +47,6 @@ void URobotBaseState::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
 
 		bHasSetUpInput = true;
 	}
-}
-
-void URobotBaseState::Exit()
-{
-	Super::Exit();
 }
 
 void URobotBaseState::ApplySoulDashBuff()
@@ -160,8 +150,6 @@ void URobotBaseState::Pulse()
 
 void URobotBaseState::ServerRPCPulse_Implementation()
 {
-	// Code here is only run on server, will probably not be changed unless we'll have server specific behaviour 
-
 	// Should only run on server 
 	if (!GetOwner()->HasAuthority())
 		return;

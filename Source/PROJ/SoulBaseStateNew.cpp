@@ -26,15 +26,6 @@ void USoulBaseStateNew::Enter()
 
 	if(!LightGrenade)
 		LightGrenade = Cast<ALightGrenade>(UGameplayStatics::GetActorOfClass(this, ALightGrenade::StaticClass())); 
-
-	// UE_LOG(LogTemp, Warning, TEXT("Entered soul base state, lcl ctrl: %i"), PlayerOwner->IsLocallyControlled()) 
-}
-
-void USoulBaseStateNew::Update(const float DeltaTime)
-{
-	Super::Update(DeltaTime);
-
-	
 }
 
 void USoulBaseStateNew::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
