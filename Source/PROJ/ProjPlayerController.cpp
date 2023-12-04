@@ -85,10 +85,11 @@ void AProjPlayerController::OnFinishSeamlessTravel()
 	{
 		FActorSpawnParameters SpawnParam;
 		SpawnParam.SpawnCollisionHandlingOverride = ESpawnActorCollisionHandlingMethod::AlwaysSpawn;
-		UClass* SoulClass = Gm->PlayerPawnClasses[1];
-		UClass* RobotClass = Gm->PlayerPawnClasses[0];
 
-		UClass* PickedClass = UGameplayStatics::GetActorOfClass(GetWorld(), RobotClass) ? SoulClass : RobotClass;
+		UClass* RobotClass = Gm->PlayerPawnClasses[0];
+		UClass* SoulClass = Gm->PlayerPawnClasses[1];
+
+		UClass* PickedClass = UGameplayStatics::GetActorOfClass(GetWorld(), SoulClass) ? RobotClass : SoulClass;
 		FName ClassTag = PickedClass == SoulClass ? FName("Soul") : FName("Robot");
 
 		// iter through all playerstarts
@@ -122,6 +123,6 @@ void AProjPlayerController::SetCamera()
 	if (IsValid(MainCam))
 	{
 		SetViewTarget(MainCam);
-		bHasSetCamera = true; 
+		bHasSetCamera = true;
 	}
 }
