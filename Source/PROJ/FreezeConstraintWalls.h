@@ -24,14 +24,12 @@ public:
 	
 	UFUNCTION(BlueprintCallable)
 	void RemoveWallsFromLoc();
-
-	UPROPERTY(BlueprintReadWrite)
-	UBoxComponent* TriggerArea;
 	
-	UPROPERTY(BlueprintReadWrite)
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	USphereComponent* RightWallLocation;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	USphereComponent* LeftWallLocation;
 
 protected:

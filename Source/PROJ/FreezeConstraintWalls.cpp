@@ -14,15 +14,11 @@ AFreezeConstraintWalls::AFreezeConstraintWalls()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	//TriggerArea->CreateDefaultSubobject<UBoxComponent>("TriggerArea");
-	//TriggerArea->SetupAttachment(RootComponent);
-
-	LeftWallLocation->CreateDefaultSubobject<USphereComponent>("LeftWallLoc");
+	LeftWallLocation = CreateDefaultSubobject<USphereComponent>(TEXT("LeftLoc"));
 	LeftWallLocation->SetupAttachment(RootComponent);
-
-	RightWallLocation->CreateDefaultSubobject<USphereComponent>("RightWallLoc");
+	
+	RightWallLocation = CreateDefaultSubobject<USphereComponent>(TEXT("RightLoc"));
 	RightWallLocation->SetupAttachment(RootComponent);
-
 }
 
 
