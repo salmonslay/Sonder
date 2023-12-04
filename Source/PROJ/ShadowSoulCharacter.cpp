@@ -11,15 +11,3 @@ AShadowSoulCharacter::AShadowSoulCharacter()
 	SoulBaseState = CreateDefaultSubobject<USoulBaseStateNew>(TEXT("SoulBaseState")); 
 	DashState = CreateDefaultSubobject<USoulDashingState>(TEXT("DashState")); 
 }
-
-void AShadowSoulCharacter::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-void AShadowSoulCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	
-}

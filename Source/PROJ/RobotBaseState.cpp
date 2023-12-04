@@ -26,14 +26,9 @@ void URobotBaseState::Enter()
 	Super::Enter();
 
 	if (!RobotCharacter)
-		RobotCharacter = Cast<ARobotStateMachine>(PlayerOwner);
+		RobotCharacter = Cast<ARobotStateMachine>(CharOwner);
 
-	DefaultWalkSpeed = PlayerOwner->GetCharacterMovement()->MaxWalkSpeed;
-}
-
-void URobotBaseState::Update(const float DeltaTime)
-{
-	Super::Update(DeltaTime);
+	DefaultWalkSpeed = CharOwner->GetCharacterMovement()->MaxWalkSpeed;
 }
 
 void URobotBaseState::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
@@ -54,11 +49,6 @@ void URobotBaseState::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
 	}
 }
 
-void URobotBaseState::Exit()
-{
-	Super::Exit();
-}
-
 void URobotBaseState::ApplySoulDashBuff()
 {
 	// Clear timer so it resets if there already is an existing buff, then start it again 
@@ -72,7 +62,7 @@ void URobotBaseState::ApplySoulDashBuff()
 
 void URobotBaseState::ServerRPC_DashBuffStart_Implementation()
 {
-	if (!PlayerOwner->HasAuthority())
+	if (!CharOwner->HasAuthority())
 		return;
 
 	bHasDashBuff = true;
@@ -82,7 +72,7 @@ void URobotBaseState::ServerRPC_DashBuffStart_Implementation()
 
 void URobotBaseState::MulticastRPC_DashBuffStart_Implementation()
 {
-	PlayerOwner->GetCharacterMovement()->MaxWalkSpeed = WalkSpeedWhenBuffed;
+	CharOwner->GetCharacterMovement()->MaxWalkSpeed = WalkSpeedWhenBuffed;
 
 	RobotCharacter->OnDashBuffStart();
 }
@@ -94,7 +84,7 @@ void URobotBaseState::ResetDashBuff()
 
 void URobotBaseState::ServerRPC_DashBuffEnd_Implementation()
 {
-	if (!PlayerOwner->HasAuthority())
+	if (!CharOwner->HasAuthority())
 		return;
 
 	bHasDashBuff = false;
@@ -104,7 +94,7 @@ void URobotBaseState::ServerRPC_DashBuffEnd_Implementation()
 
 void URobotBaseState::MulticastRPC_DashBuffEnd_Implementation()
 {
-	PlayerOwner->GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
+	CharOwner->GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
 
 	RobotCharacter->OnDashBuffEnd();
 }
@@ -139,14 +129,14 @@ void URobotBaseState::ShootHook()
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &URobotBaseState::DisableHookShotCooldown,
 	                                       HookShotCooldownDelay);
 
-	PlayerOwner->SwitchState(RobotCharacter->HookState);
+	Cast<ACharacterStateMachine>(CharOwner)->SwitchState(RobotCharacter->HookState);
 }
 
 void URobotBaseState::Pulse()
 {
 	// Ensure player cant spam attack and is locally controlled 
 	// Only run locally 
-	if (bPulseCoolDownActive || !PlayerOwner->IsLocallyControlled() || !RobotCharacter->AbilityOne)
+	if (bPulseCoolDownActive || !CharOwner->IsLocallyControlled() || !RobotCharacter->AbilityOne)
 		return;
 
 	bPulseCoolDownActive = true;
@@ -160,8 +150,6 @@ void URobotBaseState::Pulse()
 
 void URobotBaseState::ServerRPCPulse_Implementation()
 {
-	// Code here is only run on server, will probably not be changed unless we'll have server specific behaviour 
-
 	// Should only run on server 
 	if (!GetOwner()->HasAuthority())
 		return;

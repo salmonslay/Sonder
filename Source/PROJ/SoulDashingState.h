@@ -65,6 +65,9 @@ private:
 	UFUNCTION(Client, Reliable)
 	void ClientRPC_CancelHookShot();
 
+	/** The actual function that cancels the hook shot */ 
+	void EndHookShot(); 
+
 	UFUNCTION()
 	void ActorOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult); 
 	

@@ -21,8 +21,6 @@ public:
 
 	virtual void Enter() override;
 
-	virtual void Update(const float DeltaTime) override;
-
 	virtual void UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp) override;
 
 	virtual void Exit() override;
