@@ -15,9 +15,9 @@ void USoulBaseState::Enter()
 	Super::Enter();
 
 	if(!SoulCharacter)
-		SoulCharacter = Cast<ASoulCharacter>(PlayerOwner);
+		SoulCharacter = Cast<ASoulCharacter>(CharOwner);
 
-	UE_LOG(LogTemp, Warning, TEXT("Entered soul base state, lcl ctrl: %i"), PlayerOwner->IsLocallyControlled()) 
+	UE_LOG(LogTemp, Warning, TEXT("Entered soul base state, lcl ctrl: %i"), CharOwner->IsLocallyControlled()) 
 }
 
 void USoulBaseState::Update(const float DeltaTime)
@@ -61,8 +61,8 @@ void USoulBaseState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 void USoulBaseState::Dash()
 {
 	// Only run locally 
-	if(bDashCoolDownActive || !PlayerOwner->IsLocallyControlled() || !SoulCharacter->AbilityOne)
+	if(bDashCoolDownActive || !CharOwner->IsLocallyControlled() || !SoulCharacter->AbilityOne)
 		return;
 
-	PlayerOwner->SwitchState(SoulCharacter->DashingState); 
+	// CharOwner->SwitchState(SoulCharacter->DashingState); 
 }

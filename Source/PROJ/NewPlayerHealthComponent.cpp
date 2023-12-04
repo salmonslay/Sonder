@@ -67,5 +67,5 @@ void UNewPlayerHealthComponent::ServerRPCPlayerDied_Implementation()
 void UNewPlayerHealthComponent::MulticastRPCPlayerDied_Implementation()
 {
 	Player->OnPlayerDied();
-	CurrentHealth = MaxHealth;
+	//CurrentHealth = MaxHealth;
 }
