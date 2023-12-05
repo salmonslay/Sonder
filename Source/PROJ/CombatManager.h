@@ -128,6 +128,15 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool IsCombatEnded() const { return bCombatEnded; }
 
+	UPROPERTY(EditAnywhere, Category="EndlessMode")
+	bool bEndlessMode = false;
+
+	//Adds a wave to the active queue, used by CombatDirector to add waves in runtime
+	void AddWave(FEnemyWave Wave);
+
+	//Makes the spawn points spit out enemies faster to prevent clogging as endless mode progresses
+	void IncreaseSpawnCheckFrequency();
+
 private:
 	//Used for networking the start and end events and for checking whether to spawn enemies 
 	UPROPERTY(ReplicatedUsing=OnRep_CombatStarted)
