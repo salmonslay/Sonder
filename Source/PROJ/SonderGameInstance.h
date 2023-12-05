@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "AdvancedFriendsGameInstance.h"
+#include "SonderSaveGame.h"
 #include "SonderGameInstance.generated.h"
 
 /**
