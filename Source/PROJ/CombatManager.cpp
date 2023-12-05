@@ -53,8 +53,8 @@ void ACombatManager::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if(bCombatStarted && !bCombatEnded && GetLocalRole() == ROLE_Authority && !WavesQueue.IsEmpty() &&
-		!bWaitingForWave && NumActiveEnemies <= WavesQueue[0].AllowedRemainingEnemiesForWave)
+	if(bCombatStarted && !bCombatEnded && GetLocalRole() == ROLE_Authority && !WavesQueue.IsEmpty() && !bWaitingForWave
+		&& (NumActiveEnemies <= WavesQueue[0].AllowedRemainingEnemiesForWave || WavesQueue[0].AllowedRemainingEnemiesForWave == -1))
 	{
 		float Wait = WavesQueue[0].TimeToWaveAfterEnemiesKilled;
 		if (Wait <= 0)
@@ -83,7 +83,7 @@ void ACombatManager::RemoveEnemy(AEnemyCharacter* Enemy)
 	Enemies.Remove(Enemy);
 	NumActiveEnemies--;
 	KilledEnemies++;
-	if(WavesQueue.IsEmpty() && NumActiveEnemies <= 0 && GetLocalRole() == ROLE_Authority)
+	if(!bEndlessMode && WavesQueue.IsEmpty() && NumActiveEnemies <= 0 && GetLocalRole() == ROLE_Authority)
 	{
 		for(ASpawnPoint* SpawnPoint : SpawnPoints)
 		{
@@ -108,6 +108,27 @@ void ACombatManager::StartCombat()
 		for(ACombatTriggeredBase* Triggered : StartCombatTriggeredActors)
 		{
 			Triggered->TriggeredEvent();
+		}
+	}
+}
+
+void ACombatManager::AddWave(FEnemyWave Wave)
+{
+	WavesQueue.Add(Wave);
+	TotalEnemies += Wave.NumEnemies;
+}
+
+void ACombatManager::IncreaseSpawnCheckFrequency()
+{
+	bool bFirstPrinted = false;
+	for(ASpawnPoint* SpawnPoint : SpawnPoints)
+	{
+		SpawnPoint->SpawnCheckFrequency *= 0.8f;
+		SpawnPoint->SpawnCheckFrequency += 0.1f;
+		if(!bFirstPrinted)
+		{
+			bFirstPrinted = true;
+			UE_LOG(LogTemp, Warning, TEXT("Increased spawn speed, current speed: %f"), SpawnPoint->SpawnCheckFrequency);
 		}
 	}
 }
