@@ -48,8 +48,7 @@ public:
 	bool IsDepthMovementEnabled() const { return bDepthMovementEnabled; }
 
 	UFUNCTION(BlueprintCallable)
-	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
-	                         AActor* DamageCauser) override;
+	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -134,6 +133,7 @@ public:
 #pragma endregion
 
 protected:
+
 	/** Called for movement input */
 	void Move(const FInputActionValue& Value);
 
@@ -146,6 +146,7 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
+
 	/** Determines if player can move in both axes */
 	bool bDepthMovementEnabled = false;
 
@@ -156,7 +157,7 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float RotationRateIn2D = 700.f;
-
+	
 	/** Grounded gravity scale and when jumping upwards */
 	UPROPERTY(EditAnywhere)
 	float DefaultGravityScale = 1.75f;
@@ -171,12 +172,12 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float CoyoteJumpPeriod = 0.1f;
-
-	FTimerHandle CoyoteJumpTimer;
-
+	
+	FTimerHandle CoyoteJumpTimer; 
+	
 	/** Keeps track of which direction to rotate towards in 2D movement */
 	bool bRotateRight = true;
-
+	
 	void DisableCoyoteJump();
 
 	void CoyoteJump();
@@ -189,12 +190,16 @@ private:
 
 	bool ShouldRotateRight(const float HorizontalMovementInput) const;
 
-	float GetDesiredYawRot() const;
+	float GetDesiredYawRot() const; 
 
 	/** Rotates the player on the server so it syncs */
 	UFUNCTION(Server, Unreliable)
 	void ServerRPC_RotatePlayer(const FRotator& NewRot);
 
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_SetMovementMode(EMovementMode NewMode); 
+	
 	UPROPERTY()
 	ACharactersCamera* Camera;
+
 };

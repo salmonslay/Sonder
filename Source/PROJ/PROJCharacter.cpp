@@ -14,6 +14,7 @@
 #include "PlayerBasicAttack.h"
 #include "ProjPlayerController.h"
 #include "SonderSaveGame.h"
+#include "RobotHookingState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -66,7 +67,7 @@ void APROJCharacter::BeginPlay()
 	// Call the base class  
 	Super::BeginPlay();
 
-	if (!Camera)
+	if(!Camera)
 		Camera = Cast<ACharactersCamera>(UGameplayStatics::GetActorOfClass(this, ACharactersCamera::StaticClass()));
 
 	Camera->GetPlayers();
@@ -126,7 +127,7 @@ void APROJCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(APROJCharacter, NewPlayerHealthComponent)
+	DOREPLIFETIME(APROJCharacter, NewPlayerHealthComponent) 
 	DOREPLIFETIME(APROJCharacter, AbilityOne)
 	DOREPLIFETIME(APROJCharacter, AbilityTwo)
 }
@@ -191,6 +192,17 @@ void APROJCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8
 {
 	Super::OnMovementModeChanged(PrevMovementMode, PreviousCustomMode);
 
+	// if Robot, check if player is in hook shot, then don't update 
+	if(const auto HookState = FindComponentByClass<URobotHookingState>())
+	{
+		if(HookState->IsHookShotting())
+		{
+			GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+			ServerRPC_SetMovementMode(MOVE_Flying);
+			return;
+		}
+	}
+
 	const EMovementMode CurrentMovementMode = GetCharacterMovement()->MovementMode;
 
 	// Reset gravity scale when player becomes grounded 
@@ -206,8 +218,7 @@ void APROJCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8
 		GetCharacterMovement()->GravityScale = GravityScaleWhileFalling;
 
 		GetWorld()->GetTimerManager().ClearTimer(CoyoteJumpTimer);
-		GetWorld()->GetTimerManager().SetTimer(CoyoteJumpTimer, this, &APROJCharacter::DisableCoyoteJump,
-		                                       CoyoteJumpPeriod);
+		GetWorld()->GetTimerManager().SetTimer(CoyoteJumpTimer, this, &APROJCharacter::DisableCoyoteJump, CoyoteJumpPeriod);
 	}
 }
 
@@ -218,7 +229,7 @@ void APROJCharacter::Tick(float DeltaSeconds)
 	GetCharacterMovement()->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::X);
 	GetCharacterMovement()->SetPlaneConstraintEnabled(!bDepthMovementEnabled);
 
-	RotatePlayer(GetLastMovementInputVector().Y);
+	RotatePlayer(GetLastMovementInputVector().Y); 
 }
 
 bool APROJCharacter::IsAlive()
@@ -310,72 +321,78 @@ void APROJCharacter::Move(const FInputActionValue& Value)
 void APROJCharacter::RotatePlayer(const float HorizontalMovementInput)
 {
 	// 3D rotation is oriented automatically to movement direction 
-	if (bDepthMovementEnabled || !IsLocallyControlled())
+	if(bDepthMovementEnabled || !IsLocallyControlled())
 		return;
-
+	
 	bRotateRight = ShouldRotateRight(HorizontalMovementInput);
 
-	const float DesiredYawRot = GetDesiredYawRot();
+	const float DesiredYawRot = GetDesiredYawRot(); 
 
 	FRotator ActorCurrentRot = GetActorRotation();
 
 	// Unreal "clamps" rotation at -180 to 180 which is problematic when trying to lerp to minus values,
 	// will never reach so I "undo" their clamp by subtracting 360
 
-	if (bRotateRight && DesiredYawRot < 0 && ActorCurrentRot.Yaw > 0)
+	if(bRotateRight && DesiredYawRot < 0 && ActorCurrentRot.Yaw > 0)
 		ActorCurrentRot.Yaw -= 360;
-	if (!bRotateRight && GetActorForwardVector().X < -0.05 && ActorCurrentRot.Yaw > 0)
-		ActorCurrentRot.Yaw -= 360;
+	if(!bRotateRight && GetActorForwardVector().X < -0.05 && ActorCurrentRot.Yaw > 0)
+		ActorCurrentRot.Yaw -= 360; 
 
-	if (DesiredYawRot == ActorCurrentRot.Yaw)
+	if(DesiredYawRot == ActorCurrentRot.Yaw)
 		return;
 
 	const float NewYawRot = UKismetMathLibrary::FInterpTo_Constant(ActorCurrentRot.Yaw,
-	                                                               DesiredYawRot,
-	                                                               UGameplayStatics::GetWorldDeltaSeconds(this),
-	                                                               RotationRateIn2D);
+		DesiredYawRot, UGameplayStatics::GetWorldDeltaSeconds(this), RotationRateIn2D);
 
 	FRotator NewRot = ActorCurrentRot;
-
+	
 	NewRot.Yaw = NewYawRot;
-
+	
 	// https://forums.unrealengine.com/t/client-owned-character-rotates-slower-than-listen-server-owned-character/427427
-	GetCharacterMovement()->FlushServerMoves();
+	GetCharacterMovement()->FlushServerMoves();  
 	SetActorRotation(NewRot);
-
-	ServerRPC_RotatePlayer(NewRot);
+	
+	ServerRPC_RotatePlayer(NewRot); 
 }
 
 bool APROJCharacter::ShouldRotateRight(const float HorizontalMovementInput) const
 {
 	// Moving right 
-	if (HorizontalMovementInput > 0)
+	if(HorizontalMovementInput > 0)
 		return true;
 
 	// Moving left 
-	if (HorizontalMovementInput < 0)
+	if(HorizontalMovementInput < 0)
 		return false;
 
 	// No input, return current rotation direction 
-	return bRotateRight;
+	return bRotateRight; 
 }
 
 float APROJCharacter::GetDesiredYawRot() const
 {
 	const bool bFacingTowardsCamera = GetActorForwardVector().X < 0.05;
 
-	if (bRotateRight)
-		return bFacingTowardsCamera ? -270 : 90;
+	if(bRotateRight)
+		return bFacingTowardsCamera ? -270 : 90; 
+	
+	return bFacingTowardsCamera ? -90 : -180; 
+}
 
-	return bFacingTowardsCamera ? -90 : -180;
+void APROJCharacter::ServerRPC_SetMovementMode_Implementation(const EMovementMode NewMode)
+{
+	if(!HasAuthority())
+		return;
+
+	GetCharacterMovement()->SetMovementMode(NewMode); 
 }
 
 void APROJCharacter::ServerRPC_RotatePlayer_Implementation(const FRotator& NewRot)
 {
-	if (!HasAuthority())
-		return;
-
-	SetActorRotation(NewRot);
+	if(!HasAuthority())
+		return; 
+	
+	SetActorRotation(NewRot); 
 }
 
 float APROJCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
