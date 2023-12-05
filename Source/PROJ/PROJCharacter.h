@@ -7,6 +7,7 @@
 #include "Logging/LogMacros.h"
 #include "PROJCharacter.generated.h"
 
+class USonderSaveGame;
 class ACharactersCamera;
 class AProjPlayerController;
 class UInputMappingContext;
@@ -96,7 +97,25 @@ public:
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bIsSafe = false;
 
-#pragma region Events 
+#pragma region Saving
+	/** Save all the currently tracked values to disk */
+	void SaveGame() const;
+
+	/**
+	* Load all the values from disk and apply them to the player.
+	* To get hold of a save game, use GetSaveGameSafe()
+    */
+	UFUNCTION(BlueprintCallable)
+	USonderSaveGame* LoadGame() const;
+
+	/**
+	 * Get the save game, if it exists. Otherwise, return a blank one
+	 */
+	UFUNCTION(BlueprintPure)
+	static USonderSaveGame* GetSaveGameSafe();
+#pragma endregion
+
+#pragma region Events
 	// Components seem to not be able to create events (easily), which is why most events are declared here 
 
 	/** Event called when player performs a basic attack */
