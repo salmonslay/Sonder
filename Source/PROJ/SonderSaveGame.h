@@ -36,4 +36,7 @@ public:
 
 	UFUNCTION(BlueprintPure)
 	TArray<ESonderLevel> GetLevelsCompleted() const { return LevelsCompleted; }
+
+	UFUNCTION(BlueprintPure)
+	ESonderLevel GetHighestLevelCompleted() const;
 };
