@@ -142,10 +142,20 @@ void URobotBaseState::ShootHook()
 void URobotBaseState::Pulse()
 {
 	// Ensure player cant spam attack and is locally controlled 
+	// Only run locally
+
+	/*
+if (bPulseCoolDownActive || !CharOwner->IsLocallyControlled() || !RobotCharacter->AbilityOne)
+		return;
+*/
 	// Only run locally 
-	if (bPulseCoolDownActive || !CharOwner->IsLocallyControlled() || !RobotCharacter->AbilityOne)
+	if(bPulseCoolDownActive || !CharOwner->IsLocallyControlled()) 
 		return;
 
+	// controlled by player and ability is not unlocked 
+	if(CharOwner->IsPlayerControlled() && !RobotCharacter->AbilityOne)
+		return; 
+	
 	bPulseCoolDownActive = true;
 
 	FTimerHandle PulseTimerHandle;
@@ -170,7 +180,7 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 {
 	// Code here is run on each player (client and server)
 	TArray<AActor*> OverlappingActors;
-	RobotCharacter->GetOverlappingActors(OverlappingActors, AActor::StaticClass());
+	CharOwner->GetOverlappingActors(OverlappingActors, AActor::StaticClass());
 
 	for (const auto Actor : OverlappingActors)
 	{
@@ -178,12 +188,12 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 		{
 			// See if there is line of sight to Soul, if there isn't then do nothing with Soul 
 			FHitResult HitResult; 
-			if(GetWorld()->LineTraceSingleByChannel(HitResult, RobotCharacter->GetActorLocation(), Soul->GetActorLocation(), ECC_Pawn))
+			if(GetWorld()->LineTraceSingleByChannel(HitResult, CharOwner->GetActorLocation(), Soul->GetActorLocation(), ECC_Pawn))
 				continue;
 			
-			if(RobotCharacter->GetActorLocation().Y - 100 < Actor->GetActorLocation().Y && Actor->GetActorLocation().Y < RobotCharacter->GetActorLocation().Y + 100)
+			if(CharOwner->GetActorLocation().Y - 100 < Actor->GetActorLocation().Y && Actor->GetActorLocation().Y < CharOwner->GetActorLocation().Y + 100)
 			{
-				if (Actor->GetActorLocation().Z > RobotCharacter->GetActorLocation().Z + 5)
+				if (Actor->GetActorLocation().Z > CharOwner->GetActorLocation().Z + 5)
 				{
 					PlayerActor = Soul;
 					UE_LOG(LogTemp, Warning, TEXT("Boost"));
@@ -199,13 +209,13 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 					GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f);
 				}
 
-				else if (Actor->GetActorLocation().Z + 20 < RobotCharacter->GetActorLocation().Z && RobotCharacter->GetCharacterMovement()->IsMovingOnGround() == false)
+				else if (Actor->GetActorLocation().Z + 20 < CharOwner->GetActorLocation().Z && CharOwner->GetCharacterMovement()->IsMovingOnGround() == false)
 				{
 					PlayerActor = RobotCharacter; 
 
-					RobotCharacter->GetCharacterMovement()->Velocity.Z = 0;
-					RobotCharacter->JumpMaxCount = 2;
-					RobotCharacter->Jump();
+					CharOwner->GetCharacterMovement()->Velocity.Z = 0;
+					CharOwner->JumpMaxCount = 2;
+					CharOwner->Jump();
 
 					FTimerHandle MemberTimerHandle;
 					GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f);
@@ -216,7 +226,7 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 		else if (const auto Enemy = Cast<AEnemyCharacter>(Actor))
 		{
 			Enemy->Stun(3.0f);
-			Enemy->TakeDamage(Damage, FDamageEvent(), Controller, RobotCharacter);
+			Enemy->TakeDamage(Damage, FDamageEvent(), Controller, CharOwner);
 			UE_LOG(LogTemp, Warning, TEXT("Stun"));
 		}
 		
@@ -228,10 +238,21 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 		}
 
 		else
-			Actor->TakeDamage(Damage, FDamageEvent(), Controller, RobotCharacter);
+			Actor->TakeDamage(Damage, FDamageEvent(), Controller, CharOwner);
 	}
-
-	RobotCharacter->OnPulse();
+	
+	
+	if (CharOwner->IsPlayerControlled())
+	{
+		RobotCharacter->OnPulse();
+	}
+	else
+	{
+		if (const auto ShadowRobot = Cast<AShadowRobotCharacter>(CharOwner))
+		{
+			ShadowRobot->OnPulse();
+		}
+	}
 }
 
 void URobotBaseState::ActivateAbilities()
