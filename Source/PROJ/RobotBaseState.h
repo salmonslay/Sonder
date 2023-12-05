@@ -70,6 +70,8 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool IsPulseCoolDownActive() const { return bPulseCoolDownActive; }
 
+	void Pulse();
+	
 	UPROPERTY()
 	AController* Controller;
 
@@ -107,8 +109,6 @@ private:
 
 	/** Function firing when player presses button to request hook shot */
 	void ShootHook();
-
-	void Pulse();
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPCPulse();

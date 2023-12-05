@@ -22,7 +22,7 @@ public:
 	class USoulBaseStateNew* SoulBaseState;
 
 	UPROPERTY(EditAnywhere)
-	class USoulDashingState* DashState;
+	class USoulDashingState* DashState; 
 
 	// EVENTS
 

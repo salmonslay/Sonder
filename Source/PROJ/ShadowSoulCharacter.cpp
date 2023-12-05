@@ -8,6 +8,6 @@
 
 AShadowSoulCharacter::AShadowSoulCharacter()
 {
-	SoulBaseState = CreateDefaultSubobject<USoulBaseStateNew>(TEXT("SoulBaseState")); 
+	SoulBaseState = CreateDefaultSubobject<USoulBaseStateNew>(TEXT("BaseState")); 
 	DashState = CreateDefaultSubobject<USoulDashingState>(TEXT("DashState")); 
 }
