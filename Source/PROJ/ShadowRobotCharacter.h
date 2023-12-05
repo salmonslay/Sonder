@@ -17,10 +17,18 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class URobotBaseState* RobotBaseState;
+	
+	UPROPERTY(EditAnywhere)
+	class URobotHookingState* RobotHookState;
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHookStart();
 
-private:
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnHookEnd();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnPulse();
 	
 	
 };

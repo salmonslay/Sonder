@@ -37,7 +37,7 @@ protected:
 
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
-	float RadiusToDamagePlayer = 0.f;
+	float RadiusToDetectPlayer = 0.f;
 
 
 	UPROPERTY(EditAnywhere)
