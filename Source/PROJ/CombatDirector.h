@@ -16,6 +16,9 @@ struct FSpawnStruct
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, Category="SpawnParams")
+	FName Name = FName();
+
+	UPROPERTY(EditAnywhere, Category="SpawnParams")
 	float BaseCost = 0.f;
 
 	UPROPERTY(EditAnywhere, Category="SpawnParams")
@@ -29,7 +32,14 @@ struct FSpawnStruct
 
 	UPROPERTY(EditAnywhere, Category="SpawnParams")
 	TArray<ACombatTriggeredBase*> WaveTriggeredActors = TArray<ACombatTriggeredBase*>();
+
+	UPROPERTY(EditAnywhere, Category="SpawnParams")
+	bool bDoOnce = false;
+
+	UPROPERTY(EditAnywhere, Category="SpawnParams")
+	TArray<FName> UnlockedSpawnTypes = TArray<FName>();
 	
+	bool operator==(const FSpawnStruct&) const;
 };
 
 UCLASS()
@@ -68,7 +78,7 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Budget")
 	float BudgetGrowthTimer = 10.f;
-
+	
 	UPROPERTY(EditAnywhere, Category="Spawn")
 	float MinSpawnWait = 4.f;
 
@@ -76,10 +86,16 @@ public:
 	float MaxSpawnWait = 8.f;
 
 	UPROPERTY(EditAnywhere, Category="Spawn")
+	float UnderSpendSpawnWait = 0.5f;
+
+	UPROPERTY(EditAnywhere, Category="Spawn")
 	float SpawnCheckFrequencyIncreaseTimer = 20.f;
 
 	UPROPERTY(EditAnywhere, Category="Spawn")
 	TArray<FSpawnStruct> SpawnTypes;
+
+	UPROPERTY(EditAnywhere, Category="Spawn")
+	TMap<FName, FSpawnStruct> UnlockableSpawnTypes;
 
 	void SpendBudget();
 

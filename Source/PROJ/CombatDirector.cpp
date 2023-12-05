@@ -6,6 +6,11 @@
 #include "CombatManager.h"
 
 
+bool FSpawnStruct::operator==(const FSpawnStruct& Other) const
+{
+	return Name == Other.Name;
+}
+
 // Sets default values
 ACombatDirector::ACombatDirector()
 {
@@ -18,8 +23,7 @@ void ACombatDirector::BeginPlay()
 {
 	Super::BeginPlay();
 
-	SpawnTypes.Sort([](const FSpawnStruct SS1, const FSpawnStruct SS2)
-		{return SS1.BaseCost < SS2.BaseCost;});
+	SpawnTypes.Sort([](const FSpawnStruct SS1, const FSpawnStruct SS2){return SS1.BaseCost < SS2.BaseCost;});
 }
 
 void ACombatDirector::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -53,23 +57,31 @@ void ACombatDirector::SpendBudget()
 	int MaxValidIndex = -1;
 	for (const FSpawnStruct Spawn : SpawnTypes)
 	{
-		if(CurrentBudget > Spawn.BaseCost)
+		if(CurrentBudget >= Spawn.BaseCost)
 			MaxValidIndex++;
 		else
 			break;
 	}
+	float WaitTimeForNextCheck = FMath::RandRange(MinSpawnWait, MaxSpawnWait);
 	if(MaxValidIndex >= 0)
 	{
-		const int Index = FMath::RandRange(0, SpawnTypes.Num() - 1);
+		const int Index = FMath::RandRange(0, MaxValidIndex);
 		FSpawnStruct Spawn = SpawnTypes[Index];
-		UE_LOG(LogTemp, Warning, TEXT("Budget before spending: %f"), CurrentBudget);
+		//UE_LOG(LogTemp, Warning, TEXT("Budget before spending: %f"), CurrentBudget);
 		CurrentBudget -= Spawn.BaseCost;
 		int ExtraEnemies = 0;
 		if(Spawn.CostPerAdditionalEnemy > 0)
 		{
 			ExtraEnemies = CurrentBudget / Spawn.CostPerAdditionalEnemy;
-			UE_LOG(LogTemp, Warning, TEXT("Number of extra enemies to spawn: %i"), ExtraEnemies);
+			//UE_LOG(LogTemp, Warning, TEXT("Number of extra enemies to spawn: %i"), ExtraEnemies);
 			CurrentBudget -= ExtraEnemies * Spawn.CostPerAdditionalEnemy;
+		}
+		if(Spawn.EnemyClasses.Num() <= 0)
+		{
+			FEnemyWave Wave = FEnemyWave();
+			Wave.AllowedRemainingEnemiesForWave = -1;
+			Wave.WaveStartedTriggeredActors = Spawn.WaveTriggeredActors;
+			Manager->AddWave(Wave);
 		}
 		for(const TSubclassOf<AEnemyCharacter> EnemyClass : Spawn.EnemyClasses)
 		{
@@ -83,16 +95,29 @@ void ACombatDirector::SpendBudget()
 			const int StartSpawnPointIndex = FMath::RandRange(0, Manager->SpawnPoints.Num() - 2);
 			const int EndSpawnPointIndex = FMath::RandRange(StartSpawnPointIndex + 1,
 				FMath::Min(Manager->SpawnPoints.Num(), StartSpawnPointIndex + Wave.NumEnemies));
-			UE_LOG(LogTemp, Warning, TEXT("Starting and ending spawn point indexes: %i and %i"), StartSpawnPointIndex, EndSpawnPointIndex);
+			//UE_LOG(LogTemp, Warning, TEXT("Starting and ending spawn point indexes: %i and %i"), StartSpawnPointIndex, EndSpawnPointIndex);
 			for(int i = StartSpawnPointIndex; i < EndSpawnPointIndex; i++)
 			{
 				Wave.SpawnPoints.Emplace(Manager->SpawnPoints[i]);
 			}
 			Manager->AddWave(Wave);
 		}
-		UE_LOG(LogTemp, Warning, TEXT("Budget before spending: %f"), CurrentBudget);
+		if(CurrentBudget > Spawn.BaseCost)
+		{
+			WaitTimeForNextCheck = UnderSpendSpawnWait;
+		}
+		if(Spawn.bDoOnce)
+		{
+			for(FName AddedSpawn : Spawn.UnlockedSpawnTypes)
+			{
+				SpawnTypes.Add(UnlockableSpawnTypes[AddedSpawn]);
+			}
+			SpawnTypes.Remove(Spawn);
+			SpawnTypes.Sort([](const FSpawnStruct SS1, const FSpawnStruct SS2){return SS1.BaseCost < SS2.BaseCost;});
+		}
+		//UE_LOG(LogTemp, Warning, TEXT("Budget before spending: %f"), CurrentBudget);
 	}
-	GetWorldTimerManager().SetTimer(SpendBudgetTimerHandle, this, &ACombatDirector::SpendBudget, FMath::RandRange(MinSpawnWait, MaxSpawnWait));
+	GetWorldTimerManager().SetTimer(SpendBudgetTimerHandle, this, &ACombatDirector::SpendBudget, WaitTimeForNextCheck);
 }
 
 void ACombatDirector::IncreaseBudgetMultiplier()

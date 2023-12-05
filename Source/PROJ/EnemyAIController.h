@@ -23,7 +23,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	UStaticMeshComponent* TempMesh;
 
-	void Initialize();
+	virtual void Initialize();
 
 	APROJCharacter* GetPlayerFromController(int Index);
 

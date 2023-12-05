@@ -13,5 +13,13 @@ UCLASS()
 class PROJ_API AFlyingEnemyAIController : public AEnemyAIController
 {
 	GENERATED_BODY()
+
+	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
+	
+	virtual void Initialize() override;
+
+	void StopRepositioning();
+
+	FTimerHandle RepositioningResetTimerHandle;
 	
 };
