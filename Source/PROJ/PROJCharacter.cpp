@@ -293,6 +293,11 @@ USonderSaveGame* APROJCharacter::GetSaveGameSafe()
 	return SaveGameInstance;
 }
 
+void APROJCharacter::SetSaveGame(USonderSaveGame* SaveGame)
+{
+	UGameplayStatics::SaveGameToSlot(SaveGame, "Sonder", 0);
+}
+
 void APROJCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
