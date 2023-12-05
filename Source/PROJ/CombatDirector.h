@@ -54,7 +54,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	ACombatManager* Manager;
 
-	UPROPERTY(VisibleAnywhere, Category="Budget")
+	UPROPERTY(EditAnywhere, Category="Budget")
 	float CurrentBudget = 0.f;
 
 	UPROPERTY(EditAnywhere, Category="Budget")
@@ -73,10 +73,10 @@ public:
 	float MinSpawnWait = 4.f;
 
 	UPROPERTY(EditAnywhere, Category="Spawn")
-	float MaxSpawnWait = 4.f;
+	float MaxSpawnWait = 8.f;
 
 	UPROPERTY(EditAnywhere, Category="Spawn")
-	float SpawnCheckFrequencyIncreaseTimer;
+	float SpawnCheckFrequencyIncreaseTimer = 20.f;
 
 	UPROPERTY(EditAnywhere, Category="Spawn")
 	TArray<FSpawnStruct> SpawnTypes;
