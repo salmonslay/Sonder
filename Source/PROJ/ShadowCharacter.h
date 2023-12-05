@@ -30,6 +30,11 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	// EVENTS
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnBasicAttack(); 
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -51,5 +56,8 @@ private:
 	/** This is an example of how a state can be added and created in the constructor, will be removed */
 	UPROPERTY(EditAnywhere)
 	class UDummyPlayerState* DummyState;
+
+	UPROPERTY(EditAnywhere)
+	class UEnemyBasicAttack* EnemyBasicAttack; 
 	
 };
