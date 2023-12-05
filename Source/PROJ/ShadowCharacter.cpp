@@ -3,6 +3,7 @@
 #include "ShadowCharacter.h"
 
 #include "DummyPlayerState.h"
+#include "EnemyBasicAttack.h"
 #include "PlayerCharState.h"
 #include "RobotBaseState.h"
 #include "SoulBaseStateNew.h"
@@ -12,6 +13,9 @@ AShadowCharacter::AShadowCharacter()
 {
 	// Create the states 
 	DummyState = CreateDefaultSubobject<UDummyPlayerState>(TEXT("DummyStateNew"));
+
+	EnemyBasicAttack = CreateDefaultSubobject<UEnemyBasicAttack>(TEXT("BasicAttack"));
+	EnemyBasicAttack->SetupAttachment(RootComponent);
 
 }
 

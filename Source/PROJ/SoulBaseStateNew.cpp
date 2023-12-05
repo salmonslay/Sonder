@@ -7,6 +7,7 @@
 #include "EnhancedInputComponent.h"
 #include "LightGrenade.h"
 #include "PROJCharacter.h"
+#include "ShadowSoulCharacter.h"
 #include "SoulCharacter.h"
 #include "SoulDashingState.h"
 #include "Kismet/GameplayStatics.h"
@@ -63,10 +64,17 @@ void USoulBaseStateNew::EndPlay(const EEndPlayReason::Type EndPlayReason)
 void USoulBaseStateNew::Dash()
 {
 	// Only run locally 
-	if(bDashCoolDownActive || !CharOwner->IsLocallyControlled() || !SoulCharacter->AbilityOne)
+	if(bDashCoolDownActive || !CharOwner->IsLocallyControlled()) 
 		return;
 
-	Cast<ACharacterStateMachine>(CharOwner)->SwitchState(SoulCharacter->DashingState); 
+	// controlled by player and ability is not unlocked 
+	if(CharOwner->IsPlayerControlled() && !SoulCharacter->AbilityOne)
+		return; 
+
+	if(CharOwner->IsPlayerControlled())
+		Cast<ACharacterStateMachine>(CharOwner)->SwitchState(SoulCharacter->DashingState);
+	else if(const auto ShadowSoul = Cast<AShadowSoulCharacter>(CharOwner))
+		ShadowSoul->SwitchState(ShadowSoul->DashState); 
 }
 
 void USoulBaseStateNew::ServerRPC_EnableDashCooldown_Implementation()

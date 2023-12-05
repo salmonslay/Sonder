@@ -4,18 +4,21 @@
 
 #include "CoreMinimal.h"
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
-#include "BTTask_Dash.generated.h"
+#include "BTTask_DoBasicAttack.generated.h"
 
 /**
- * Calls Dash in SoulBaseState immediately 
+ * 
  */
 UCLASS()
-class PROJ_API UBTTask_Dash : public UBTTask_BlackboardBase
+class PROJ_API UBTTask_DoBasicAttack : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 
 public:
 
+	UBTTask_DoBasicAttack(); 
+
+	/** I have no idea when this is called but it is needed */
 	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;
 
 	/** Execute task is called once every time this task is activated */
