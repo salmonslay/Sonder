@@ -10,6 +10,7 @@
 #include "RobotHookingState.h"
 #include "PulseObjectComponent.h"
 #include "RobotStateMachine.h"
+#include "ShadowRobotCharacter.h"
 #include "SoulCharacter.h"
 #include "Chaos/CollisionResolutionUtil.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -74,7 +75,10 @@ void URobotBaseState::MulticastRPC_DashBuffStart_Implementation()
 {
 	CharOwner->GetCharacterMovement()->MaxWalkSpeed = WalkSpeedWhenBuffed;
 
-	RobotCharacter->OnDashBuffStart();
+	if(CharOwner->IsPlayerControlled())
+		RobotCharacter->OnDashBuffStart();
+	else
+		Cast<AShadowRobotCharacter>(CharOwner)->OnDashBuffStart(); 
 }
 
 void URobotBaseState::ResetDashBuff()
@@ -96,7 +100,10 @@ void URobotBaseState::MulticastRPC_DashBuffEnd_Implementation()
 {
 	CharOwner->GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
 
-	RobotCharacter->OnDashBuffEnd();
+	if(CharOwner->IsPlayerControlled())
+		RobotCharacter->OnDashBuffEnd();
+	else
+		Cast<AShadowRobotCharacter>(CharOwner)->OnDashBuffEnd(); 
 }
 
 void URobotBaseState::EndPlay(const EEndPlayReason::Type EndPlayReason)

@@ -35,8 +35,8 @@ void AFreezeConstraintWalls::BeginPlay()
 	
     CharactersCamera = Cast<ACharactersCamera>(UGameplayStatics::GetActorOfClass(this,ACharactersCamera::StaticClass()));
 
-	TriggerArea->OnComponentBeginOverlap.AddDynamic(this,&AFreezeConstraintWalls::OverlapBegin);
-	TriggerArea->OnComponentEndOverlap.AddDynamic(this,&AFreezeConstraintWalls::OverlapEnd);
+	// TriggerArea->OnComponentBeginOverlap.AddDynamic(this,&AFreezeConstraintWalls::OverlapBegin);
+	// TriggerArea->OnComponentEndOverlap.AddDynamic(this,&AFreezeConstraintWalls::OverlapEnd);
 	
 	
 }
