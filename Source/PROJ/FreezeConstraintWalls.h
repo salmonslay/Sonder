@@ -27,10 +27,15 @@ public:
 	
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UBoxComponent* TriggerArea;
+	
+	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	USphereComponent* RightWallLocation;
+	
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	USphereComponent* LeftWallLocation;
+
 
 protected:
 	// Called when the game starts or when spawned
@@ -39,7 +44,7 @@ protected:
 
 private:
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY()
 	ACharactersCamera* CharactersCamera;
 
 	
