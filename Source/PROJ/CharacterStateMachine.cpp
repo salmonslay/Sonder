@@ -34,8 +34,6 @@ void ACharacterStateMachine::BeginPlay()
 
 void ACharacterStateMachine::UpdateStateInputComp() 
 {
-	// UE_LOG(LogTemp, Warning, TEXT("Updating input comp new, %s"), *GetActorNameOrLabel())
-
 	if(!IsLocallyControlled())
 		return; 
 
@@ -44,9 +42,11 @@ void ACharacterStateMachine::UpdateStateInputComp()
 	else
 	{
 		CurrentState = GetStartingState();
-		CurrentState->UpdateInputCompOnEnter(GetInputComponent());
-		// UE_LOG(LogTemp, Error, TEXT("No current state, %s - lcl ctrl: %i"), *GetActorNameOrLabel(), IsLocallyControlled())
+		CurrentState->UpdateInputCompOnEnter(GetInputComponent()); 
 	}
+
+	if(!CurrentState)
+		UE_LOG(LogTemp, Error, TEXT("No current state, %s - lcl ctrl: %i"), *GetActorNameOrLabel(), IsLocallyControlled())
 }
 
 void ACharacterStateMachine::Tick(const float DeltaSeconds)

@@ -33,14 +33,14 @@ void USoulBaseStateNew::UpdateInputCompOnEnter(UEnhancedInputComponent* InputCom
 {
 	Super::UpdateInputCompOnEnter(InputComp);
 
-	if(!bHasSetUpInput)
-	{
+	// if(!bHasSetUpInput) // problems when on server 
+	// {
 		InputComp->BindAction(DashInputAction, ETriggerEvent::Started, this, &USoulBaseStateNew::Dash);
 		InputComp->BindAction(ThrowGrenadeInputAction,ETriggerEvent::Completed,this,&USoulBaseStateNew::ThrowGrenade);
 		InputComp->BindAction(ThrowGrenadeInputAction,ETriggerEvent::Ongoing,this,&USoulBaseStateNew::GetTimeHeld);
 		InputComp->BindAction(AbilityInputAction,ETriggerEvent::Started,this,&USoulBaseStateNew::ActivateAbilities);
 		bHasSetUpInput = true; 
-	}
+	// }
 }
 
 void USoulBaseStateNew::Exit()
