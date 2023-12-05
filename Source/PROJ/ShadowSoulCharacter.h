@@ -22,7 +22,7 @@ public:
 	class USoulBaseStateNew* SoulBaseState;
 
 	UPROPERTY(EditAnywhere)
-	class USoulDashingState* DashState;
+	class USoulDashingState* DashState; 
 
 	// EVENTS
 
@@ -30,7 +30,11 @@ public:
 	void OnDash();
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnDashEnd(); 
+	void OnDashEnd();
+
+protected:
+
+	virtual void BeginPlay() override;
 	
 private:
 
