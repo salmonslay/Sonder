@@ -26,10 +26,14 @@ UCLASS()
 class PROJ_API USonderSaveGame : public USaveGame
 {
 	GENERATED_BODY()
-
+public:
+	UPROPERTY()
 	TArray<ESonderLevel> LevelsCompleted = {ESonderLevel::None};
 
 public:
 	UFUNCTION(BlueprintCallable)
 	void AddLevelCompleted(const ESonderLevel LevelCompleted) { LevelsCompleted.AddUnique(LevelCompleted); }
+
+	UFUNCTION(BlueprintPure)
+	TArray<ESonderLevel> GetLevelsCompleted() const { return LevelsCompleted; }
 };
