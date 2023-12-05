@@ -8,6 +8,7 @@
 
 UBTTask_DoPulse::UBTTask_DoPulse()
 {
+	NodeName = TEXT("DoPulse");
 }
 
 void UBTTask_DoPulse::OnGameplayTaskActivated(UGameplayTask& Task)
