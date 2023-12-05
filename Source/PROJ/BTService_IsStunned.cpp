@@ -37,15 +37,15 @@ void UBTService_IsStunned::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 	OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsStunned", OwnerCharacter->bIsStunned);
 	OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsFloat("StunnedDuration", OwnerCharacter->StunnedDuration);
 
-	/*
-	if (OwnerCharacter->bIsStunned && OwnerCharacter->StunnedDuration > OwnerCharacter->StaggeredDuration &&
+	
+	if (OwnerCharacter->bIsStunned && /*OwnerCharacter->StunnedDuration > OwnerCharacter->StaggeredDuration OwnerCharacter->StunnedDuration > 0 &&*/
 		!OwnerComp.GetBlackboardComponent()->GetValueAsBool("bIsRepositioning"))
 	{
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool("bIsRepositioning", true);
 		GetWorld()->GetTimerManager().SetTimer(StopRepositioningTimerHandle, this, &UBTService_IsStunned::StopRepositioning,
 			OwnerCharacter->RepositioningDuration + OwnerCharacter->StunnedDuration, false);
 	}
-	*/
+	
 }
 
 void UBTService_IsStunned::StopRepositioning()

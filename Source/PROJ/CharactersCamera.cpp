@@ -112,7 +112,7 @@ void ACharactersCamera::MoveWalls(FVector MiddlePoint)
 	if(!HasAuthority())
 		return; 
 	
-	if (WallOne && WallTwo)
+	if (WallOne && WallTwo && bAllowWallsMovement)
 	{
 		float FOV = CameraComponent->FieldOfView / 2;
 		FVector Camloc = CameraComponent->GetComponentLocation();
@@ -182,3 +182,8 @@ void ACharactersCamera::ResetInterpSpeed()
 	InterpSpeedLocation = DefaultInterpSpeed;
 }
 
+bool ACharactersCamera::SetAllowWallsMovement(bool bValue){
+
+	return bAllowWallsMovement = bValue;
+	
+}

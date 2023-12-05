@@ -48,23 +48,33 @@ void UBTService_CalculateAttackPos::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	{
 		PlayerToAttackPosition = PlayerToAttack->GetActorLocation();
 	}
-	// Generate a random height within the specified bounds around player's Z-coordinate
-	float AllowedAttackHeightDiff = FMath::Min(FMath::Abs(FMath::Tan(OwnerCharacter->MaxAngleToAttack) * FVector::Distance(OwnerLocation, PlayerToAttackPosition)), OwnerCharacter->MaxAttackHeightDifference);
-	float RandomHeight = FMath::FRandRange(PlayerToAttackPosition.Z - AllowedAttackHeightDiff, PlayerToAttackPosition.Z + AllowedAttackHeightDiff);
-	//float RandomAngle = FMath::FRandRange(0.0f, 2 * PI);
-        
-	// Calculate rand new position
-	FVector NewPosition = FVector(PlayerToAttackPosition.X, OwnerLocation.Y , PlayerToAttackPosition.Z +RandomHeight);
-	OwnerComp.GetBlackboardComponent()->SetValueAsVector("StartAttackPosition", NewPosition);
-	if (bDebug)
+
+	if (!IsStartAttackPositionValid(OwnerComp.GetBlackboardComponent()->GetValueAsVector("StartAttackPosition")))
 	{
-		DrawDebugSphere(GetWorld(), NewPosition, 20.f, 30, FColor::Cyan, false, 0.2f, 0, 5);
+		// Generate a random height within the specified bounds around player's Z-coordinate
+		float AllowedAttackHeightDiff = FMath::Min(FMath::Abs(FMath::Tan(OwnerCharacter->MaxAngleToAttack) * FVector::Distance(OwnerLocation, PlayerToAttackPosition)), OwnerCharacter->MaxAttackHeightDifference);
+		float RandomHeight = FMath::FRandRange(PlayerToAttackPosition.Z - AllowedAttackHeightDiff, PlayerToAttackPosition.Z + AllowedAttackHeightDiff);
+		//float RandomAngle = FMath::FRandRange(0.0f, 2 * PI);
+        
+		// Calculate rand new position
+		FVector NewPosition = FVector(PlayerToAttackPosition.X, OwnerLocation.Y , PlayerToAttackPosition.Z +RandomHeight);
+		OwnerComp.GetBlackboardComponent()->SetValueAsVector("StartAttackPosition", NewPosition);
+		if (bDebug)
+		{
+			DrawDebugSphere(GetWorld(), NewPosition, 20.f, 30, FColor::Cyan, false, 0.2f, 0, 5);
+		}
 	}
-	
 }
 
 bool UBTService_CalculateAttackPos::IsStartAttackPositionValid(const FVector& PosToCheck)
 {
+	// Calculate AllowedAttackHeightDiff
+	float AllowedAttackHeightDiff = FMath::Min(FMath::Abs(FMath::Tan(OwnerCharacter->MaxAngleToAttack) * FVector::Distance(OwnerLocation, PlayerToAttackPosition)), OwnerCharacter->MaxAttackHeightDifference);
+
+	// Check if GeneratedPosition is within the allowed attack height difference
+	if (PosToCheck.Z < PlayerToAttackPosition.Z - AllowedAttackHeightDiff || PosToCheck.Z > PlayerToAttackPosition.Z + AllowedAttackHeightDiff) {
+		return false; // GeneratedPosition is outside the allowed height difference
+	}
 	return true;
 }
 

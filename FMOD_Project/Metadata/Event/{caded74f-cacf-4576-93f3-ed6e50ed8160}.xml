@@ -5,7 +5,7 @@
 			<value>Whispers</value>
 		</property>
 		<property name="outputFormat">
-			<value>1</value>
+			<value>2</value>
 		</property>
 		<relationship name="folder">
 			<destination>{2ef75753-f785-47b7-825a-3539cb650a32}</destination>
@@ -59,7 +59,11 @@
 			<destination>{089e1bfd-ec44-423e-adf6-037dcccf1a44}</destination>
 		</relationship>
 	</object>
-	<object class="EventAutomatableProperties" id="{fa8d59f7-25d1-46a5-8e5a-5f92a8210568}" />
+	<object class="EventAutomatableProperties" id="{fa8d59f7-25d1-46a5-8e5a-5f92a8210568}">
+		<property name="maximumDistance">
+			<value>15</value>
+		</property>
+	</object>
 	<object class="MarkerTrack" id="{bc201d93-5868-4b08-961c-df69f6c4e8f2}" />
 	<object class="Timeline" id="{4ab9ca3f-e33a-446e-a3ea-e9bcff87d114}">
 		<property name="isProxyEnabled">
@@ -99,6 +103,7 @@
 	<object class="MixerBusEffectChain" id="{14e65b07-910c-431e-9c8d-dceaa07eeac5}">
 		<relationship name="effects">
 			<destination>{89972cd1-647f-4cf8-badd-0dac71c24f97}</destination>
+			<destination>{273399bc-c296-40df-a850-6190d833e2ab}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{5deed322-259b-4b1f-8274-bd0a7cbff35e}" />
@@ -118,6 +123,7 @@
 	</object>
 	<object class="MixerBusFader" id="{994923c2-ef34-4ca9-8745-9f073f554508}" />
 	<object class="MixerBusFader" id="{89972cd1-647f-4cf8-badd-0dac71c24f97}" />
+	<object class="SpatialiserEffect" id="{273399bc-c296-40df-a850-6190d833e2ab}" />
 	<object class="RandomizerModulator" id="{31015c4d-be15-4fc4-b2da-f967dfa74e99}">
 		<property name="nameOfPropertyBeingModulated">
 			<value>startOffset</value>

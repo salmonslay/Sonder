@@ -65,6 +65,8 @@ void URobotHookingState::Update(const float DeltaTime)
 
 	if(bTravellingTowardsTarget)
 	{
+		CurrentHookTargetLocation = CurrentTargetActor->GetActorLocation(); 
+		
 		FHitResult HitResult; 
 		AHookShotAttachment::GetCurrentTarget(HitResult); 
 	
@@ -76,8 +78,9 @@ void URobotHookingState::Update(const float DeltaTime)
 		}
 		
 		TravelTowardsTarget(DeltaTime);
-	} else // Hit an object, retract hook 
-		RetractHook(DeltaTime); 
+	}
+
+	RetractHook(DeltaTime); 
 }
 
 void URobotHookingState::Exit()
@@ -189,6 +192,8 @@ void URobotHookingState::StartShootHook()
 	
 	bShootingHookOutwards = true;
 	bHookShotActive = true; 
+	
+	HookArmLocation = CharOwner->GetActorLocation(); 
 	
 	ServerRPCHookShotStart(CurrentHookTargetLocation, RobotCharacter); 
 }
@@ -316,9 +321,12 @@ void URobotHookingState::CollidedWithSoul()
 
 void URobotHookingState::RetractHook(const float DeltaTime) 
 {
-	// Should only retract the hook if the player hit an obstacle, otherwise it "retracts" with the player moving to target 
 	if(bTravellingTowardsTarget)
-		return; 
+	{
+		// if travelling towards the target, simply set the hook arm to be placed at target location 
+		ServerRPC_RetractHook(CurrentHookTargetLocation); 
+		return;
+	}
 	
 	// Lerp hook arm location back towards the Robot TODO: Replace player loc with shoulder loc? 
 	const FVector NewEndLoc = UKismetMathLibrary::VInterpTo_Constant(HookArmLocation, CharOwner->GetActorLocation(), DeltaTime, RetractHookOnMissSpeed); 

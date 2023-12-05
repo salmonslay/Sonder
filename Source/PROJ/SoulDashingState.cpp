@@ -97,17 +97,15 @@ void USoulDashingState::ActorOverlap(UPrimitiveComponent* OverlappedComp, AActor
 	if(!CharOwner->IsLocallyControlled())
 		return;
 
-	// If dashing through Robot, apply buff to Robot 
-	if(const auto Robot = Cast<ARobotStateMachine>(OtherActor))
+	// If dashing through Robot, apply buff to Robot. Only apply buff if a player dashed through, not shadow Soul (AI)
+	const auto Robot = Cast<ARobotStateMachine>(OtherActor); 
+	if(CharOwner->IsPlayerControlled() && Robot)
 	{
-		if(CharOwner->IsPlayerControlled()) // Only apply buff if a player dashed through, not shadow soul (AI) 
-		{
-			if(!CharOwner->HasAuthority())
-				ServerRPC_RobotBuff(Robot); 
-			else
-				Robot->FindComponentByClass<URobotBaseState>()->ApplySoulDashBuff();
-		} 
-	}
+		if(!CharOwner->HasAuthority())
+			ServerRPC_RobotBuff(Robot); 
+		else
+			Robot->FindComponentByClass<URobotBaseState>()->ApplySoulDashBuff(); 
+	} 
 	else 
 		ServerRPC_DamageActor(OtherActor); // Otherwise deal damage to overlapping object, needs to be applied on server 
 }
