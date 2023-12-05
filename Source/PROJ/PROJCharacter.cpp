@@ -13,6 +13,7 @@
 #include "NewPlayerHealthComponent.h"
 #include "PlayerBasicAttack.h"
 #include "ProjPlayerController.h"
+#include "SonderSaveGame.h"
 #include "RobotHookingState.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
@@ -170,7 +171,7 @@ void APROJCharacter::CoyoteJump()
 
 		if (!HasAuthority()) // If player is client, also jump locally to prevent stuttering 
 		{
-			GetCharacterMovement()->SetMovementMode(MOVE_Walking); 
+			GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 			GetCharacterMovement()->Velocity.Z = 0;
 			Jump();
 		}
@@ -235,6 +236,66 @@ bool APROJCharacter::IsAlive()
 {
 	// TODO: This should be removed. Health is handled by the health component. This was temporary for playtesting arena 
 	return GetMesh()->GetRelativeScale3D().GetMax() > 0.5f;
+}
+
+void APROJCharacter::SaveGame() const
+{
+	USonderSaveGame* SaveGameInstance = Cast<USonderSaveGame>(
+	UGameplayStatics::LoadGameFromSlot("Sonder", 0));
+
+	if (!SaveGameInstance)
+	{
+		UE_LOG(LogTemp, Display, TEXT("Creating new save file"))
+		SaveGameInstance = Cast<USonderSaveGame>(
+			UGameplayStatics::CreateSaveGameObject(USonderSaveGame::StaticClass()));
+	}
+
+	if (SaveGameInstance == nullptr)
+	{
+		UE_LOG(LogTemp, Display, TEXT("No save game instance found!"));
+		return;
+	}
+
+	// todo: save stuff here
+
+	UE_LOG(LogTemp, Display, TEXT("Saved game!"))
+
+	UGameplayStatics::SaveGameToSlot(SaveGameInstance, "SpaceLeek Save", 0);
+}
+
+USonderSaveGame* APROJCharacter::LoadGame() const
+{
+	USonderSaveGame* SaveGameInstance = Cast<USonderSaveGame>(
+	UGameplayStatics::LoadGameFromSlot("Sonder", 0));
+
+	if (SaveGameInstance == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No save game instance found! Not loading anything"));
+		return nullptr;
+	}
+	
+	return SaveGameInstance;
+}
+
+USonderSaveGame* APROJCharacter::GetSaveGameSafe()
+{
+	USonderSaveGame* SaveGameInstance = Cast<USonderSaveGame>(
+		UGameplayStatics::LoadGameFromSlot("Sonder", 0));
+
+	if (SaveGameInstance == nullptr)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No save game instance found!"));
+
+		SaveGameInstance = Cast<
+			USonderSaveGame>(UGameplayStatics::CreateSaveGameObject(USonderSaveGame::StaticClass()));
+	}
+
+	return SaveGameInstance;
+}
+
+void APROJCharacter::SetSaveGame(USonderSaveGame* SaveGame)
+{
+	UGameplayStatics::SaveGameToSlot(SaveGame, "Sonder", 0);
 }
 
 void APROJCharacter::Move(const FInputActionValue& Value)
