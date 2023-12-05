@@ -14,7 +14,7 @@ AShadowCharacter::AShadowCharacter()
 	// Create the states 
 	DummyState = CreateDefaultSubobject<UDummyPlayerState>(TEXT("DummyStateNew"));
 
-	EnemyBasicAttack = CreateDefaultSubobject<UEnemyBasicAttack>(TEXT("BasicAttack"));
+	EnemyBasicAttack = CreateDefaultSubobject<UEnemyBasicAttack>(TEXT("EnemyBasicAttack"));
 	EnemyBasicAttack->SetupAttachment(RootComponent);
 
 }
