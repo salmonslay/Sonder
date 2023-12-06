@@ -36,17 +36,14 @@ void URobotBaseState::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
 {
 	Super::UpdateInputCompOnEnter(InputComp);
 
-	// UE_LOG(LogTemp, Warning, TEXT("Setting up input, lcl ctrl: %i"), PlayerOwner->IsLocallyControlled())
-
-	if (!bHasSetUpInput)
+	// Testing showed that there are 5 bindings set up before this is called (7 for some margin)
+	if (InputComp->GetActionEventBindings().Num() < 7)
 	{
 		InputComp->BindAction(HookShotInputAction, ETriggerEvent::Started, this, &URobotBaseState::ShootHook);
 
 		InputComp->BindAction(PulseInputAction, ETriggerEvent::Started, this, &URobotBaseState::Pulse);
 
-		InputComp->BindAction(AbilityInputAction, ETriggerEvent::Started, this, &URobotBaseState::ActivateAbilities);
-
-		bHasSetUpInput = true;
+		InputComp->BindAction(AbilityInputAction, ETriggerEvent::Started, this, &URobotBaseState::ActivateAbilities); 
 	}
 }
 
