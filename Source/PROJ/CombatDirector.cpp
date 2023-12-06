@@ -55,18 +55,22 @@ void ACombatDirector::Tick(float DeltaTime)
 void ACombatDirector::SpendBudget()
 {
 	int MaxValidIndex = -1;
-	for (const FSpawnStruct Spawn : SpawnTypes)
+	int TotalWeight = 0;
+	for (FSpawnStruct Spawn : SpawnTypes)
 	{
 		if(CurrentBudget >= Spawn.BaseCost)
+		{
 			MaxValidIndex++;
-		else
-			break;
+			TotalWeight += CalculateSpawnWeight(Spawn);
+		}
+		Spawn.WavesUnpicked++;
 	}
 	float WaitTimeForNextCheck = FMath::RandRange(MinSpawnWait, MaxSpawnWait);
 	if(MaxValidIndex >= 0)
 	{
-		const int Index = FMath::RandRange(0, MaxValidIndex);
+		const int Index = WeightedRandomSpawnTypeIndex(TotalWeight, MaxValidIndex);
 		FSpawnStruct Spawn = SpawnTypes[Index];
+		Spawn.WavesUnpicked = 0;
 		//UE_LOG(LogTemp, Warning, TEXT("Budget before spending: %f"), CurrentBudget);
 		CurrentBudget -= Spawn.BaseCost;
 		int ExtraEnemies = 0;
@@ -115,7 +119,7 @@ void ACombatDirector::SpendBudget()
 			SpawnTypes.Remove(Spawn);
 			SpawnTypes.Sort([](const FSpawnStruct SS1, const FSpawnStruct SS2){return SS1.BaseCost < SS2.BaseCost;});
 		}
-		//UE_LOG(LogTemp, Warning, TEXT("Budget before spending: %f"), CurrentBudget);
+		//UE_LOG(LogTemp, Warning, TEXT("Budget after spending: %f"), CurrentBudget);
 	}
 	GetWorldTimerManager().SetTimer(SpendBudgetTimerHandle, this, &ACombatDirector::SpendBudget, WaitTimeForNextCheck);
 }
@@ -123,6 +127,28 @@ void ACombatDirector::SpendBudget()
 void ACombatDirector::IncreaseBudgetMultiplier()
 {
 	BudgetMultiplier *= BudgetGrowthMultiplier;
-	UE_LOG(LogTemp, Warning, TEXT("Increased budget multiplier, current multiplier: %f"), BudgetMultiplier);
+	//UE_LOG(LogTemp, Warning, TEXT("Increased budget multiplier, current multiplier: %f"), BudgetMultiplier);
 }
+
+int ACombatDirector::CalculateSpawnWeight(const FSpawnStruct& Spawn) const
+{
+	return Spawn.BaseCost * CostWeightMultiplier + Spawn.WavesUnpicked * UnpickedWeightMultiplier +
+		Spawn.bActiveEnemiesAddWeight * Manager->NumActiveEnemies * ActiveEnemiesWeightMultiplier;
+}
+
+int ACombatDirector::WeightedRandomSpawnTypeIndex(int TotalWeight, int MaxValidIndex)
+{
+	int RandVal = rand() % TotalWeight;
+	for(int i = 0; i <= MaxValidIndex; i++)
+	{
+		const int SpawnWeight = CalculateSpawnWeight(SpawnTypes[i]);
+		if(RandVal <= SpawnWeight)
+		{
+			return i;
+		}
+		RandVal -= SpawnWeight;
+	}
+	return -1;
+}
+
 

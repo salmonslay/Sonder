@@ -5,6 +5,8 @@
 #include "CombatTrigger.h"
 #include "CombatTriggeredBase.h"
 #include "EnemyCharacter.h"
+#include "PROJCharacter.h"
+#include "SonderGameState.h"
 #include "Components/BoxComponent.h"
 #include "Net/UnrealNetwork.h"
 
@@ -67,6 +69,18 @@ void ACombatManager::Tick(float DeltaTime)
 			bWaitingForWave = true;
 			GetWorldTimerManager().SetTimer(WaveWaitTimerHandle, this, &ACombatManager::HandleSpawn, Wait, false, Wait);
 		}
+	}
+	if(bCombatStarted && !bCombatEnded && GetLocalRole() == ROLE_Authority &&
+		Cast<ASonderGameState>(GetWorld()->GetGameState())->GetServerPlayer()->bIsSafe &&
+		Cast<ASonderGameState>(GetWorld()->GetGameState())->GetClientPlayer()->bIsSafe)
+	{
+		for(ASpawnPoint* SpawnPoint : SpawnPoints)
+		{
+			SpawnPoint->bCombatOver = true;
+		}
+		bCombatEnded = true;
+		GetWorldTimerManager().ClearTimer(WaveWaitTimerHandle);
+		OnCombatEnd();
 	}
 }
 
