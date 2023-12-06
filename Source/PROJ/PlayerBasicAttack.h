@@ -19,6 +19,11 @@ public:
 	/** Called to connect input to attack function */
 	void SetUpInput(UEnhancedInputComponent* InputComp);
 
+	/** Locally run function called when player presses attack button */
+	void Attack();
+
+	bool CanAttack() const { return bCanAttack; }
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -44,10 +49,7 @@ private:
 	void EnableCanAttack();
 
 	UPROPERTY()
-	class APROJCharacter* Player; 
-
-	/** Locally run function called when player presses attack button */
-	void Attack();
+	class ACharacter* Owner; 
 	
 	/**
 	 * Function executed on server ONLY when client attacks, called from client. This function will probably only call

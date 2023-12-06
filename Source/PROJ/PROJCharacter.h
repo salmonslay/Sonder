@@ -134,6 +134,10 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnPlayerDied();
 
+	/** Called when the basic attack actually lands a hit */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnBasicAttackHit(); 
+
 #pragma endregion
 
 protected:

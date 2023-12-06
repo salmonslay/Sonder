@@ -32,8 +32,13 @@ public:
 
 	// EVENTS
 
+	/** Called when a basic attack is performed, regardless if it hit something */
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnBasicAttack(); 
+	void OnBasicAttack();
+
+	/** Called when the basic attack actually lands a hit, and is called for every hit */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnBasicAttackHit(); 
 
 protected:
 
@@ -58,6 +63,6 @@ private:
 	class UDummyPlayerState* DummyState;
 
 	UPROPERTY(EditAnywhere)
-	class UEnemyBasicAttack* EnemyBasicAttack; 
+	class UPlayerBasicAttack* EnemyBasicAttack; 
 	
 };
