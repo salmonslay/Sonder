@@ -55,7 +55,7 @@ void ASpawnPoint::AddEnemyToSpawn(TSubclassOf<AEnemyCharacter> EnemyClass)
 
 void ASpawnPoint::TrySpawnNext()
 {
-	if(!EnemiesToSpawn.IsEmpty())
+	if(!EnemiesToSpawn.IsEmpty() && !bCombatOver)
 	{
 		AEnemyCharacter* SpawnedEnemy = GetWorld()->SpawnActor<AEnemyCharacter>(EnemiesToSpawn.Peek()->Class, GetActorLocation(), GetActorRotation());
 		if(SpawnedEnemy)
