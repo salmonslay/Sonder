@@ -12,10 +12,12 @@
 #include "Kismet/GameplayStatics.h"
 #include "HookExplosionActor.h"
 #include "HookShotAttachment.h"
+#include "NiagaraFunctionLibrary.h"
 #include "StaticsHelper.h"
 #include "Engine/DamageEvents.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
+#include "NiagaraComponent.h"
 
 URobotHookingState::URobotHookingState()
 {
@@ -280,6 +282,12 @@ void URobotHookingState::ServerRPCStartTravel_Implementation()
 
 void URobotHookingState::MulticastRPCStartTravel_Implementation()
 {
+	if(GrabEffect)
+		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, GrabEffect, CurrentHookTargetLocation);
+
+	if(HookShotTravelEffect)
+		HookShotTravelComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(HookShotTravelEffect, GetOwner()->GetRootComponent(), NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false);
+
 	Cast<ARobotStateMachine>(CharOwner)->OnHookShotTravelStart(); 
 }
 
@@ -363,7 +371,10 @@ void URobotHookingState::ServerRPC_RetractHook_Implementation(const FVector& New
 
 void URobotHookingState::MulticastRPCHookShotEnd_Implementation(ARobotStateMachine* RobotChar)
 {
-	CharOwner->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking); 
+	CharOwner->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+
+	if(HookShotTravelComponent)
+		HookShotTravelComponent->DestroyComponent(); 
 
 	RobotChar->OnHookShotEnd(); 
 }

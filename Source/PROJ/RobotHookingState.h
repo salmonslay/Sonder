@@ -117,7 +117,17 @@ private:
 
 	/** Currently shooting a hook - true/false */
 	UPROPERTY(Replicated)
-	bool bHookShotActive = false; 
+	bool bHookShotActive = false;
+	
+	UPROPERTY(EditDefaultsOnly)
+	class UNiagaraSystem* GrabEffect;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UNiagaraSystem* HookShotTravelEffect;
+
+	/** The component that spawns when spawning the travel effect, used to disable the effect when travel is done */
+	UPROPERTY()
+	class UNiagaraComponent* HookShotTravelComponent; 
 	
 	/** Returns the HookTarget if there is no available target, ensuring hook is shot forwards */
 	FVector GetTargetOnNothingInFront() const;
