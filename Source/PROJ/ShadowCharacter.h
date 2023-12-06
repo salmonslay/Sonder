@@ -40,6 +40,13 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnBasicAttackHit(); 
 
+	UPROPERTY(BlueprintReadWrite)
+	bool bCanJumpFromPlatform = false;
+
+	FVector AvaliableJumpPoint = FVector::ZeroVector;
+
+	bool bIsJumping = false;
+
 protected:
 
 	virtual void BeginPlay() override;
