@@ -44,6 +44,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	FBlackboardKeySelector BBKeyCurrentTarget;
+	
+	UPROPERTY(EditAnywhere)
+	FBlackboardKeySelector BBKeyChargingSpecialAttack;
 
 	/** Returns true if the Owner's special attack (Pulse or Dash) is on cooldown and cant be performed */
 	bool IsSpecialAttackOnCooldown(APawn* Owner) const;
