@@ -70,6 +70,8 @@ void UPlayerBasicAttack::MulticastRPCAttack_Implementation()
 	// Sometimes attack is fired before player is set when loading new level, ensure player is set 
 	if(!Owner)
 		return;
+
+	bool bCalledHitEvent = false; 
 	
 	// Code here is run on each player (client and server)
 	TArray<AActor*> OverlappingActors; 
@@ -81,11 +83,27 @@ void UPlayerBasicAttack::MulticastRPCAttack_Implementation()
 	{
 		// Player, damage all but other players 
 		if(Owner->IsPlayerControlled() && !Actor->ActorHasTag(FName("Player")))
+		{
 			Actor->TakeDamage(Damage, FDamageEvent(), GetOwner()->GetInstigatorController(), GetOwner());
+			
+			if(!bCalledHitEvent)
+			{
+				Cast<APROJCharacter>(Owner)->OnBasicAttackHit();
+				bCalledHitEvent = true; 
+			}
+		}
 
 		// AI controlled, damage only players 
 		else if(!Owner->IsPlayerControlled() && Actor->IsA(APROJCharacter::StaticClass()))
+		{
 			Actor->TakeDamage(Damage, FDamageEvent(), GetOwner()->GetInstigatorController(), GetOwner());
+
+			if(!bCalledHitEvent)
+			{
+				Cast<AShadowCharacter>(Owner)->OnBasicAttackHit();
+				bCalledHitEvent = true; 
+			}
+		}
 
 	}
 

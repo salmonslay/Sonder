@@ -38,6 +38,12 @@ struct FSpawnStruct
 
 	UPROPERTY(EditAnywhere, Category="SpawnParams")
 	TArray<FName> UnlockedSpawnTypes = TArray<FName>();
+
+	UPROPERTY(EditAnywhere, Category="Weight")
+	bool bActiveEnemiesAddWeight = false;
+
+	UPROPERTY(VisibleAnywhere, Category="Weight")
+	int WavesUnpicked = 0;
 	
 	bool operator==(const FSpawnStruct&) const;
 };
@@ -97,11 +103,25 @@ public:
 	UPROPERTY(EditAnywhere, Category="Spawn")
 	TMap<FName, FSpawnStruct> UnlockableSpawnTypes;
 
+	UPROPERTY(EditAnywhere, Category="Weight")
+	float CostWeightMultiplier = 1.f;
+
+	UPROPERTY(EditAnywhere, Category="Weight")
+	float ActiveEnemiesWeightMultiplier = 1.f;
+
+	UPROPERTY(EditAnywhere, Category="Weight")
+	float UnpickedWeightMultiplier = 2.f;
+
 	void SpendBudget();
 
 	void IncreaseBudgetMultiplier();
 	
 private:
+	
+	int CalculateSpawnWeight(const FSpawnStruct& Spawn) const;
+
+	int WeightedRandomSpawnTypeIndex(int TotalWeight, int MaxValidIndex);
+	
 	FTimerHandle SpendBudgetTimerHandle;
 	
 	FTimerHandle BudgetGrowthTimerHandle;
