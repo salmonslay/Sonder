@@ -43,8 +43,6 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	class UInputAction* AbilityInputAction;
 
-	bool bHasSetUpInput = false;
-
 	bool bCanPulse = true;
 
 	UPROPERTY()
