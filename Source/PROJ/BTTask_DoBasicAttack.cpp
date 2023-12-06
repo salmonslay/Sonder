@@ -4,7 +4,6 @@
 #include "BTTask_DoBasicAttack.h"
 
 #include "AIController.h"
-#include "EnemyBasicAttack.h"
 #include "PlayerBasicAttack.h"
 
 UBTTask_DoBasicAttack::UBTTask_DoBasicAttack()
@@ -21,7 +20,7 @@ EBTNodeResult::Type UBTTask_DoBasicAttack::ExecuteTask(UBehaviorTreeComponent& O
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	if(const auto BasicAttackComp = OwnerComp.GetAIOwner()->GetPawn()->FindComponentByClass<UEnemyBasicAttack>())
+	if(const auto BasicAttackComp = OwnerComp.GetAIOwner()->GetPawn()->FindComponentByClass<UPlayerBasicAttack>())
 	{
 		BasicAttackComp->Attack();
 		return EBTNodeResult::Succeeded; 

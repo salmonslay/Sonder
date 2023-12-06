@@ -58,8 +58,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	float DashCooldown = 1.f;
 
-	bool bHasSetUpInput = false;
-
 	UPROPERTY(Replicated)
 	float TimeHeld;
 

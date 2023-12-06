@@ -22,6 +22,8 @@ public:
 
 	virtual void Exit() override;
 
+	float GetMaxDashDistance() const { return MaxDashDistance; }
+
 private:
 
 	UPROPERTY(EditAnywhere)
@@ -75,6 +77,6 @@ private:
 	void ServerRPC_DamageActor(AActor* ActorToDamage);
 
 	UFUNCTION(Server, Reliable)
-	void ServerRPC_RobotBuff(class ARobotStateMachine* Robot);
+	void ServerRPC_RobotBuff(class URobotBaseState* RobotBaseState);
 	
 };
