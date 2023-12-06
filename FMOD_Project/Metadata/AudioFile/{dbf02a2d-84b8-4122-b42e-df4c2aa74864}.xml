@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="AudioFile" id="{dbf02a2d-84b8-4122-b42e-df4c2aa74864}">
 		<property name="assetPath">
-			<value>SFX/Puzzle/smallPlatform/Small Platform Land.wav</value>
+			<value>SFX/Puzzle/movingPlatform/smallPlatform/Small Platform Land.wav</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>44.0999985</value>

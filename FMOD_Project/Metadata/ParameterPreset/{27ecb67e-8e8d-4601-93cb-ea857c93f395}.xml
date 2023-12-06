@@ -16,12 +16,15 @@
 			<value>2</value>
 		</property>
 		<property name="maximum">
-			<value>3</value>
+			<value>6</value>
 		</property>
 		<property name="enumerationLabels">
 			<value>metalDoor</value>
 			<value>smallPlatform</value>
 			<value>largePlatform</value>
+			<value>shoecleanerPlatform</value>
+			<value>pistonPlatform</value>
+			<value>lawnmowerPlatform</value>
 		</property>
 		<property name="initialValue">
 			<value>0</value>
