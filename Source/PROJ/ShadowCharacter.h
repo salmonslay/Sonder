@@ -58,6 +58,6 @@ private:
 	class UDummyPlayerState* DummyState;
 
 	UPROPERTY(EditAnywhere)
-	class UEnemyBasicAttack* EnemyBasicAttack; 
+	class UPlayerBasicAttack* EnemyBasicAttack; 
 	
 };
