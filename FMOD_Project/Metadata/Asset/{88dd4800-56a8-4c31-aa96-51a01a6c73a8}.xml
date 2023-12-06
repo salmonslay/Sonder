@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="EncodableAsset" id="{88dd4800-56a8-4c31-aa96-51a01a6c73a8}">
 		<property name="assetPath">
-			<value>SFX/Puzzle/smallPlatform/</value>
+			<value>SFX/Puzzle/movingPlatform/smallPlatform/</value>
 		</property>
 		<relationship name="masterAssetFolder">
 			<destination>{542ff4ed-1b88-4c2c-98cc-a4f4c45c5308}</destination>

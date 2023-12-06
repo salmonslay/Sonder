@@ -63,8 +63,6 @@ void USoulBaseStateNew::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 void USoulBaseStateNew::Dash()
 {
-	UE_LOG(LogTemp, Warning, TEXT("Dash function called"))
-
 	// Only run locally 
 	if(bDashCoolDownActive || !CharOwner->IsLocallyControlled()) 
 		return;

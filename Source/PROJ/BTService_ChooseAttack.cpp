@@ -15,6 +15,10 @@ void UBTService_ChooseAttack::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
+	// Do nothing if AI is charging its special attack 
+	if(OwnerComp.GetBlackboardComponent()->GetValueAsBool(BBKeyChargingSpecialAttack.SelectedKeyName)) 
+		return;
+
 	const auto OwnerPawn = OwnerComp.GetAIOwner()->GetPawn(); 
 
 	const float DistanceToTarget = FVector::Dist(OwnerComp.GetBlackboardComponent()->GetValueAsVector(BBKeyCurrentTarget.SelectedKeyName), OwnerPawn->GetActorLocation());
