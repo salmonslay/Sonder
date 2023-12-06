@@ -11,3 +11,14 @@ AShadowSoulCharacter::AShadowSoulCharacter()
 	SoulBaseState = CreateDefaultSubobject<USoulBaseStateNew>(TEXT("BaseState")); 
 	DashState = CreateDefaultSubobject<USoulDashingState>(TEXT("DashState")); 
 }
+
+void AShadowSoulCharacter::BeginPlay()
+{
+	Super::BeginPlay();
+
+	if(!SoulBaseState)
+		SoulBaseState = FindComponentByClass<USoulBaseStateNew>();
+
+	if(!DashState)
+		DashState = FindComponentByClass<USoulDashingState>(); 
+}
