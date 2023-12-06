@@ -197,7 +197,7 @@ void APROJCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8
 	// if Robot, check if player is in hook shot, then don't update 
 	if(const auto HookState = FindComponentByClass<URobotHookingState>())
 	{
-		if(HookState->IsHookShotting())
+		if(HookState->IsHookShotting() && HookState->HasValidTarget())
 		{
 			GetCharacterMovement()->SetMovementMode(MOVE_Flying);
 			ServerRPC_SetMovementMode(MOVE_Flying);
