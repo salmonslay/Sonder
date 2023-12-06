@@ -39,6 +39,8 @@ public:
 
 	bool IsTravellingToTarget() const { return bTravellingTowardsTarget; }
 
+	bool HasValidTarget() const { return IsValid(CurrentTargetActor); }
+
 	bool IsTargetSoul() const { return bHookTargetIsSoul; }
 
 private:
