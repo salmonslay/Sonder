@@ -29,6 +29,11 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnPulse();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDashBuffStart();
 	
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnDashBuffEnd();
 	
 };

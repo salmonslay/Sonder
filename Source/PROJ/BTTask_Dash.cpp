@@ -4,8 +4,7 @@
 #include "BTTask_Dash.h"
 
 #include "AIController.h"
-#include "ShadowSoulCharacter.h"
-#include "SoulDashingState.h"
+#include "SoulBaseStateNew.h"
 
 void UBTTask_Dash::OnGameplayTaskActivated(UGameplayTask& Task)
 {
@@ -17,16 +16,9 @@ EBTNodeResult::Type UBTTask_Dash::ExecuteTask(UBehaviorTreeComponent& OwnerComp,
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	const bool bCanDash = GetWorld()->TimeSeconds - DashCooldown > TimeOnLastDash;
-
-	// idk if we want to consider this a success 
-	if(!bCanDash)
-		return EBTNodeResult::Succeeded; 
-
-	if(const auto ShadowSoul = Cast<AShadowSoulCharacter>(OwnerComp.GetAIOwner()->GetPawn()))
+	if(const auto SoulBaseState = OwnerComp.GetAIOwner()->GetPawn()->FindComponentByClass<USoulBaseStateNew>())
 	{
-		TimeOnLastDash = GetWorld()->TimeSeconds; 
-		ShadowSoul->SwitchState(ShadowSoul->DashState);
+		SoulBaseState->Dash(); 
 		return EBTNodeResult::Succeeded; 
 	}
 

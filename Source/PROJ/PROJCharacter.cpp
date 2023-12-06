@@ -13,8 +13,10 @@
 #include "NewPlayerHealthComponent.h"
 #include "PlayerBasicAttack.h"
 #include "ProjPlayerController.h"
+#include "RobotBaseState.h"
 #include "SonderSaveGame.h"
 #include "RobotHookingState.h"
+#include "ShadowRobotCharacter.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -195,7 +197,7 @@ void APROJCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8
 	// if Robot, check if player is in hook shot, then don't update 
 	if(const auto HookState = FindComponentByClass<URobotHookingState>())
 	{
-		if(HookState->IsHookShotting())
+		if(HookState->IsHookShotting() && HookState->HasValidTarget())
 		{
 			GetCharacterMovement()->SetMovementMode(MOVE_Flying);
 			ServerRPC_SetMovementMode(MOVE_Flying);
@@ -403,6 +405,10 @@ void APROJCharacter::ServerRPC_RotatePlayer_Implementation(const FRotator& NewRo
 float APROJCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
                                  AActor* DamageCauser)
 {
+	// Increase damage by eventual Shadow Robot damage multiplier 
+	if(const auto Robot = Cast<AShadowRobotCharacter>(DamageCauser))
+		DamageAmount *= Robot->FindComponentByClass<URobotBaseState>()->GetDamageBoostMultiplier();
+	
 	float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
 	//ensure (HealthComponent != nullptr);

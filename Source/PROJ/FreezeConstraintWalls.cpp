@@ -7,6 +7,7 @@
 #include "PROJCharacter.h"
 #include "Components/BoxComponent.h"
 #include "Components/SphereComponent.h"
+#include "Kismet/GameplayStatics.h"
 
 // Sets default values
 AFreezeConstraintWalls::AFreezeConstraintWalls()
@@ -14,11 +15,15 @@ AFreezeConstraintWalls::AFreezeConstraintWalls()
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
 
-	LeftWallLocation = CreateDefaultSubobject<USphereComponent>(TEXT("LeftLoc"));
-	LeftWallLocation->SetupAttachment(RootComponent);
+	TriggerArea = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerArea"));
+	TriggerArea->SetupAttachment(RootComponent);
 	
+	LeftWallLocation = CreateDefaultSubobject<USphereComponent>(TEXT("LeftLoc"));
+	LeftWallLocation->SetupAttachment(TriggerArea);
+
 	RightWallLocation = CreateDefaultSubobject<USphereComponent>(TEXT("RightLoc"));
-	RightWallLocation->SetupAttachment(RootComponent);
+	RightWallLocation->SetupAttachment(TriggerArea);
+	
 }
 
 
@@ -28,19 +33,31 @@ void AFreezeConstraintWalls::BeginPlay()
 {
 	Super::BeginPlay();
 	
+    CharactersCamera = Cast<ACharactersCamera>(UGameplayStatics::GetActorOfClass(this,ACharactersCamera::StaticClass()));
+
+	// TriggerArea->OnComponentBeginOverlap.AddDynamic(this,&AFreezeConstraintWalls::OverlapBegin);
+	// TriggerArea->OnComponentEndOverlap.AddDynamic(this,&AFreezeConstraintWalls::OverlapEnd);
+	
+	
 }
 
 void AFreezeConstraintWalls::MoveWallsToLoc()
 {
 	CharactersCamera->SetAllowWallsMovement(false);
-	CharactersCamera->WallOne->SetActorLocation(LeftWallLocation->GetComponentLocation());
-	CharactersCamera->WallTwo->SetActorLocation(RightWallLocation->GetComponentLocation());
+	if (CharactersCamera->WallOne && CharactersCamera->WallTwo)
+	{
+		CharactersCamera->WallOne->SetActorLocation(LeftWallLocation->GetComponentLocation());
+		CharactersCamera->WallTwo->SetActorLocation(RightWallLocation->GetComponentLocation());
+	}
+		
 }
 
 void AFreezeConstraintWalls::RemoveWallsFromLoc()
 {
 	CharactersCamera->SetAllowWallsMovement(true);
 }
+
+
 
 
 

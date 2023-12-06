@@ -56,7 +56,7 @@
 			<destination>{c8071c4b-ea31-41ac-b551-0d77e2b833ac}</destination>
 		</relationship>
 		<relationship name="output">
-			<destination>{089e1bfd-ec44-423e-adf6-037dcccf1a44}</destination>
+			<destination>{d296c49f-9499-4308-b391-2af5c9ba477a}</destination>
 		</relationship>
 	</object>
 	<object class="EventAutomatableProperties" id="{728ec558-f7a8-4a2f-8b0b-2b31f28f93a0}">
@@ -107,6 +107,7 @@
 		<relationship name="effects">
 			<destination>{59476e52-ec19-4439-a0ae-fa77716f1330}</destination>
 			<destination>{3fbfface-f6cb-4b01-96cb-2fc1be1edaad}</destination>
+			<destination>{5412a903-d00b-4444-bf70-740d46743d6c}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{ce1fe2f7-6af9-43e5-a683-ad2b26707cf6}" />
@@ -115,7 +116,10 @@
 			<value>50</value>
 		</property>
 		<property name="volume">
-			<value>-28.5</value>
+			<value>-15.5</value>
+		</property>
+		<property name="pitch">
+			<value>-9.5</value>
 		</property>
 		<property name="looping">
 			<value>true</value>
@@ -135,6 +139,14 @@
 		</property>
 		<property name="extentMode">
 			<value>1</value>
+		</property>
+	</object>
+	<object class="ThreeEQEffect" id="{5412a903-d00b-4444-bf70-740d46743d6c}">
+		<property name="midGain">
+			<value>-3</value>
+		</property>
+		<property name="highGain">
+			<value>-80</value>
 		</property>
 	</object>
 	<object class="RandomizerModulator" id="{062d36c4-01ef-4fc7-a400-b6ead4c7fed7}">

@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="AudioFile" id="{d162a793-813d-4cea-bce6-ff72e2d74dc5}">
 		<property name="assetPath">
-			<value>SFX/Puzzle/BeginConveyor_Placeholder.wav</value>
+			<value>SFX/Puzzle/movingPlatform/BeginConveyor_Placeholder.wav</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>44.0999985</value>

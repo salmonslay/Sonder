@@ -33,6 +33,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	ALightGrenade* GetLightGrenade() const { return LightGrenade; }
 
+	/** Run locally */
+	void Dash();
+
 private:
 	UPROPERTY(EditAnywhere)
 	class UInputAction* DashInputAction;
@@ -55,13 +58,8 @@ private:
 	UPROPERTY(EditAnywhere)
 	float DashCooldown = 1.f;
 
-	bool bHasSetUpInput = false;
-
 	UPROPERTY(Replicated)
 	float TimeHeld;
-
-	/** Run locally and called when player presses the dash-button */
-	void Dash();
 
 	void GetTimeHeld(const FInputActionInstance& Instance);
 
