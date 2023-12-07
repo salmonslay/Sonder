@@ -48,6 +48,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	FBlackboardKeySelector BBKeyChargingSpecialAttack;
 
+	/** Returns true if the AI is charging or using its special attack (dash) */
+	bool IsUsingSpecialAttack(UBehaviorTreeComponent& OwnerComp) const; 
+
 	/** Returns true if the Owner's special attack (Pulse or Dash) is on cooldown and cant be performed */
 	bool IsSpecialAttackOnCooldown(APawn* Owner) const;
 

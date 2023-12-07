@@ -3,6 +3,8 @@
 #include "ShadowCharacter.h"
 
 #include "DummyPlayerState.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "PlayerBasicAttack.h"
 #include "PlayerCharState.h"
 #include "RobotBaseState.h"
@@ -14,8 +16,12 @@ AShadowCharacter::AShadowCharacter()
 	// Create the states 
 	DummyState = CreateDefaultSubobject<UDummyPlayerState>(TEXT("DummyStateNew"));
 
-	EnemyBasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(TEXT("EnemyBasicAttack"));
+	EnemyBasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(TEXT("BasicAttack"));
 	EnemyBasicAttack->SetupAttachment(RootComponent);
+
+	EnemyBasicAttack->SetRelativeLocation(FVector(50, 0, 0)); 
+	EnemyBasicAttack->SetRelativeScale3D(FVector(1.5f, 1.5f, 2.f));
+	EnemyBasicAttack->SetCollisionEnabled(ECollisionEnabled::QueryOnly); 
 
 }
 
@@ -79,4 +85,25 @@ void AShadowCharacter::SwitchState(UPlayerCharState* NewState)
 	CurrentState = NewState;
 
 	CurrentState->Enter();
+}
+
+void AShadowCharacter::ServerRPC_ToggleChargeEffect_Implementation(const bool bActive)
+{
+	if(!HasAuthority())
+		return;
+
+	MulticastRPC_ToggleChargeEffect(bActive); 
+}
+
+void AShadowCharacter::MulticastRPC_ToggleChargeEffect_Implementation(const bool bActive)
+{
+	if(!ChargeEffect)
+		return;
+
+	// Create the effect if not already created 
+	if(!ChargeEffectComp)
+		ChargeEffectComp = UNiagaraFunctionLibrary::SpawnSystemAttached(ChargeEffect, GetRootComponent(), NAME_None,
+			FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false);
+
+	bActive ? ChargeEffectComp->Activate(true) : ChargeEffectComp->Deactivate(); 
 }

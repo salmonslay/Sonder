@@ -30,8 +30,7 @@ void USoulDashingState::Enter()
 
 	DashDir.Z = 0; // Disable dash in Z axis (up/down)
 
-	// TODO: limit direction for AI as well? 
-	if(CharOwner->IsPlayerControlled() && !Cast<APROJCharacter>(CharOwner)->IsDepthMovementEnabled()) 
+	if(!CharOwner->IsPlayerControlled() || (CharOwner->IsPlayerControlled() && !Cast<APROJCharacter>(CharOwner)->IsDepthMovementEnabled()))
 		DashDir.X = 0; 
 	
 	DashDir.Normalize(); 
