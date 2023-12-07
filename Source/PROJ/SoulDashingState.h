@@ -72,6 +72,8 @@ private:
 
 	UFUNCTION()
 	void ActorOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult); 
+
+	void DashOverlap(AActor* OtherActor); 
 	
 	UFUNCTION(Server, Reliable)
 	void ServerRPC_DamageActor(AActor* ActorToDamage);

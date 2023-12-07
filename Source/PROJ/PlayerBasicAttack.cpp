@@ -71,7 +71,17 @@ void UPlayerBasicAttack::MulticastRPCAttack_Implementation()
 	if(!Owner)
 		return;
 
-	bool bCalledHitEvent = false; 
+	bool bCalledHitEvent = false;
+
+	if(ShouldCallHitEvent(nullptr))
+	{
+		if(Owner->IsPlayerControlled())
+			Cast<APROJCharacter>(Owner)->OnBasicAttackHit();
+		else
+			Cast<AShadowCharacter>(Owner)->OnBasicAttackHit();
+		
+		bCalledHitEvent = true; 
+	}
 	
 	// Code here is run on each player (client and server)
 	TArray<AActor*> OverlappingActors; 
@@ -86,7 +96,7 @@ void UPlayerBasicAttack::MulticastRPCAttack_Implementation()
 		{
 			Actor->TakeDamage(Damage, FDamageEvent(), GetOwner()->GetInstigatorController(), GetOwner());
 			
-			if(!bCalledHitEvent)
+			if(!bCalledHitEvent && ShouldCallHitEvent(Actor)) 
 			{
 				Cast<APROJCharacter>(Owner)->OnBasicAttackHit();
 				bCalledHitEvent = true; 
@@ -98,13 +108,12 @@ void UPlayerBasicAttack::MulticastRPCAttack_Implementation()
 		{
 			Actor->TakeDamage(Damage, FDamageEvent(), GetOwner()->GetInstigatorController(), GetOwner());
 
-			if(!bCalledHitEvent)
+			if(!bCalledHitEvent && ShouldCallHitEvent(Actor)) 
 			{
 				Cast<AShadowCharacter>(Owner)->OnBasicAttackHit();
 				bCalledHitEvent = true; 
 			}
 		}
-
 	}
 
 	bCanAttack = false; 
@@ -113,6 +122,21 @@ void UPlayerBasicAttack::MulticastRPCAttack_Implementation()
 		Cast<APROJCharacter>(Owner)->OnBasicAttack();
 	else
 		Cast<AShadowCharacter>(Owner)->OnBasicAttack(); 
+}
+
+bool UPlayerBasicAttack::ShouldCallHitEvent(AActor* OverlappingActor) const
+{
+	// Pawns are considered hits even though they dont physically collide 
+	if(OverlappingActor && OverlappingActor->IsA(APawn::StaticClass()))
+		return true; 
+	
+	FHitResult HitResult;
+	FCollisionQueryParams Params;
+	Params.AddIgnoredActor(Owner);
+
+	// Perform line trace forwards to see if something blocks/the punch hit something physical
+	FVector EndLoc = Owner->GetActorLocation() + Owner->GetActorForwardVector() * HitEventLengthCheck; 
+	return GetWorld()->LineTraceSingleByChannel(HitResult, Owner->GetActorLocation(), EndLoc, ECC_Pawn, Params); 
 }
 
 void UPlayerBasicAttack::EnableCanAttack()
