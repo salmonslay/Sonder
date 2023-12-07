@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="AudioFile" id="{577b0bd2-ed93-4c79-8790-4b3399b6399b}">
 		<property name="assetPath">
-			<value>SFX/vox/robot/Talk 8.wav</value>
+			<value>SFX/vox/robot/Broken/Talk 8.wav</value>
 		</property>
 		<property name="frequencyInKHz">
 			<value>44.0999985</value>
