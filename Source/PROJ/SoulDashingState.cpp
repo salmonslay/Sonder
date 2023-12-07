@@ -8,6 +8,7 @@
 #include "RobotHookingState.h"
 #include "RobotStateMachine.h"
 #include "ShadowCharacter.h"
+#include "ShadowRobotCharacter.h"
 #include "ShadowSoulCharacter.h"
 #include "SoulBaseStateNew.h"
 #include "SoulCharacter.h"
@@ -48,6 +49,13 @@ void USoulDashingState::Enter()
 	StartLoc = CharOwner->GetActorLocation();
 
 	CharOwner->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &USoulDashingState::ActorOverlap);
+
+	// Deal damage or buff appropriate character that are already colliding 
+	TArray<AActor*> OverlappingActors;
+	CharOwner->GetCapsuleComponent()->GetOverlappingActors(OverlappingActors, ACharacter::StaticClass());
+
+	for(const auto OverlapActor : OverlappingActors)
+		DashOverlap(OverlapActor); 
 
 	if(CharOwner->IsPlayerControlled())
 		CancelHookShot();
@@ -96,16 +104,26 @@ void USoulDashingState::ActorOverlap(UPrimitiveComponent* OverlappedComp, AActor
 	if(!CharOwner->IsLocallyControlled())
 		return;
 
-	// If dashing through Robot, apply buff to Robot 
-	if(const auto RobotState = OtherActor->FindComponentByClass<URobotBaseState>())
+	DashOverlap(OtherActor); 
+}
+
+void USoulDashingState::DashOverlap(AActor* OtherActor)
+{
+	// Player dashing through player or AI dashing through AI 
+	if((CharOwner->IsPlayerControlled() && OtherActor->IsA(ARobotStateMachine::StaticClass()) ||
+		(!CharOwner->IsPlayerControlled() && OtherActor->IsA(AShadowRobotCharacter::StaticClass()))))
 	{
-		if(!CharOwner->HasAuthority())
-			ServerRPC_RobotBuff(RobotState); 
-		else
-			RobotState->ApplySoulDashBuff(); 
-	} 
-	else 
-		ServerRPC_DamageActor(OtherActor); // Otherwise deal damage to overlapping object, needs to be applied on server 
+		if(const auto RobotState = OtherActor->FindComponentByClass<URobotBaseState>())
+		{
+			if(!CharOwner->HasAuthority())
+				ServerRPC_RobotBuff(RobotState); 
+			else
+				RobotState->ApplySoulDashBuff(); 
+		}
+		return; 
+	}
+		
+	ServerRPC_DamageActor(OtherActor); // Otherwise deal damage to overlapping object, needs to be applied on server 
 }
 
 void USoulDashingState::ServerRPC_RobotBuff_Implementation(URobotBaseState* RobotBaseState)
