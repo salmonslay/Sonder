@@ -6,6 +6,15 @@
 #include "StaticsHelper.generated.h"
 
 struct FBPFriendInfo;
+
+UENUM(BlueprintType)
+enum class ECharacterType : uint8
+{
+	Both,
+	Robot,
+	Soul,
+};
+
 /**
  * Helper functions 
  */
@@ -16,7 +25,10 @@ class PROJ_API UStaticsHelper : public UObject
 
 public:
 	/** Checks if ActorTo is in front of ActorFrom based on ActorFrom's forward vector. Perpendicular counts as in front */
-	static bool ActorIsInFront(const AActor* ActorFrom, const AActor* ActorTo) { return ActorIsInFront(ActorFrom, ActorTo->GetActorLocation()); };
+	static bool ActorIsInFront(const AActor* ActorFrom, const AActor* ActorTo)
+	{
+		return ActorIsInFront(ActorFrom, ActorTo->GetActorLocation());
+	};
 
 	/** Checks if ToLocation is in front of ActorFrom based on ActorFrom's forward vector. Perpendicular counts as in front */
 	static bool ActorIsInFront(const AActor* ActorFrom, const FVector& ToLocation);
