@@ -3,6 +3,8 @@
 #include "ShadowCharacter.h"
 
 #include "DummyPlayerState.h"
+#include "NiagaraComponent.h"
+#include "NiagaraFunctionLibrary.h"
 #include "PlayerBasicAttack.h"
 #include "PlayerCharState.h"
 #include "RobotBaseState.h"
@@ -83,4 +85,25 @@ void AShadowCharacter::SwitchState(UPlayerCharState* NewState)
 	CurrentState = NewState;
 
 	CurrentState->Enter();
+}
+
+void AShadowCharacter::ServerRPC_ToggleChargeEffect_Implementation(const bool bActive)
+{
+	if(!HasAuthority())
+		return;
+
+	MulticastRPC_ToggleChargeEffect(bActive); 
+}
+
+void AShadowCharacter::MulticastRPC_ToggleChargeEffect_Implementation(const bool bActive)
+{
+	if(!ChargeEffect)
+		return;
+
+	// Create the effect if not already created 
+	if(!ChargeEffectComp)
+		ChargeEffectComp = UNiagaraFunctionLibrary::SpawnSystemAttached(ChargeEffect, GetRootComponent(), NAME_None,
+			FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false);
+
+	bActive ? ChargeEffectComp->Activate(true) : ChargeEffectComp->Deactivate(); 
 }
