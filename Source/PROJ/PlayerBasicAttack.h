@@ -46,7 +46,9 @@ private:
 	UPROPERTY(Replicated)
 	bool bCanAttack = true;
 
-	void EnableCanAttack();
+	/** How far forwards to see if something is blocking and thus call the hit event */
+	UPROPERTY(EditAnywhere)
+	float HitEventLengthCheck = 100.f; 
 
 	UPROPERTY()
 	class ACharacter* Owner; 
@@ -62,7 +64,10 @@ private:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCAttack();
 
+	void EnableCanAttack();
+	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
+	bool ShouldCallHitEvent(AActor* OverlappingActor) const; 
 	
 };

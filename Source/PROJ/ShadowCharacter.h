@@ -47,6 +47,9 @@ public:
 
 	bool bIsJumping = false;
 
+	UFUNCTION(Server, Reliable) 
+	void ServerRPC_ToggleChargeEffect(const bool bActive); 
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -70,6 +73,15 @@ private:
 	class UDummyPlayerState* DummyState;
 
 	UPROPERTY(EditAnywhere)
-	class UPlayerBasicAttack* EnemyBasicAttack; 
+	class UPlayerBasicAttack* EnemyBasicAttack;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UNiagaraSystem* ChargeEffect;
+
+	UPROPERTY()
+	class UNiagaraComponent* ChargeEffectComp; 
+	
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPC_ToggleChargeEffect(const bool bActive); 
 	
 };
