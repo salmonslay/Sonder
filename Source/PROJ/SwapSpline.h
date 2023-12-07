@@ -24,8 +24,7 @@ protected:
 	virtual void BeginPlay() override;
 
 public:	
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
+	
 
 	//UPROPERTY(EditAnywhere)
 	//ACameraSpline* CurrentCameraSpline;
@@ -47,7 +46,15 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	double TransitionSpeed;
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPCSwap(); 
+
+	/** Attack function run on each game instance, client and server */
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPCSwap();
 	
+	//virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 	
 
 

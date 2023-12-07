@@ -46,7 +46,10 @@ void ALightGrenade::BeginPlay()
 	PulseExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 
 	Player = Cast<ASoulCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ASoulCharacter::StaticClass()));
+	
 
+	PlayerBase = Cast<APROJCharacter>(Player);
+    
 	// Create the grenade indicator if not already created 
 	if(!Indicator)
 	{
@@ -98,11 +101,13 @@ void ALightGrenade::MulticastRPCThrow_Implementation(const float TimeHeld)
 {
 	if(bCanThrow)
 	{
-		Player = Cast<ASoulCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ASoulCharacter::StaticClass()));
+		
 
-		PlayerBase = Cast<APROJCharacter>(Player);
-
-		Controller = PlayerBase->GetInstigatorController();
+		if (PlayerBase)
+		{
+			Controller = PlayerBase->GetInstigatorController();
+		}
+		
 		
 		UE_LOG(LogTemp, Warning, TEXT("Throw Grenade"));
 	
