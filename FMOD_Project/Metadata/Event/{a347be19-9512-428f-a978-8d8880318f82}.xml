@@ -64,7 +64,7 @@
 			<value>0</value>
 		</property>
 		<property name="maximumDistance">
-			<value>45</value>
+			<value>40</value>
 		</property>
 	</object>
 	<object class="MarkerTrack" id="{2a8f16a7-64ec-464b-99f0-60d02b587d86}" />
@@ -80,8 +80,11 @@
 	</object>
 	<object class="EventMixerMaster" id="{da932cab-592c-4cd5-bf2a-6dd7f86dd3c9}">
 		<property name="volume">
-			<value>-11.5</value>
+			<value>-15.5</value>
 		</property>
+		<relationship name="modulators">
+			<destination>{43c6cea2-a267-4f07-907b-3e34cb016cb4}</destination>
+		</relationship>
 		<relationship name="effectChain">
 			<destination>{1c1ec801-aad0-4116-a722-57e40d760cfe}</destination>
 		</relationship>
@@ -106,10 +109,22 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{5f8db830-cc17-4e01-9425-e87846e43898}" />
+	<object class="ADSRModulator" id="{43c6cea2-a267-4f07-907b-3e34cb016cb4}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>volume</value>
+		</property>
+		<property name="initialValue">
+			<value>-80</value>
+		</property>
+		<property name="finalValue">
+			<value>-80</value>
+		</property>
+	</object>
 	<object class="MixerBusEffectChain" id="{1c1ec801-aad0-4116-a722-57e40d760cfe}">
 		<relationship name="effects">
 			<destination>{89b243b6-6c9b-45e5-a7aa-6f85e551c263}</destination>
 			<destination>{8eae37b2-73ea-46ee-b491-bc3f5e1223e4}</destination>
+			<destination>{d890952e-fec6-40a6-b6be-a65269b9bb9b}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{8da31b6a-8a47-4f1d-8956-e7ce9ec2b5a6}" />
@@ -135,6 +150,11 @@
 		</property>
 		<property name="extentMode">
 			<value>1</value>
+		</property>
+	</object>
+	<object class="ThreeEQEffect" id="{d890952e-fec6-40a6-b6be-a65269b9bb9b}">
+		<property name="lowGain">
+			<value>-13</value>
 		</property>
 	</object>
 	<object class="RandomizerModulator" id="{547f9c34-5c73-4f59-b640-119c046df08b}">
