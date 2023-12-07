@@ -95,6 +95,11 @@ void ACombatDirector::SpendBudget()
 			Wave.AllowedRemainingEnemiesForWave = -1;
 			Wave.WaveStartedTriggeredActors = Spawn.WaveTriggeredActors;
 
+			int MaxNumSpawnPoints = FMath::Min(Manager->SpawnPoints.Num() / Spawn.EnemyClasses.Num(), Wave.NumEnemies);
+			int NumSpawnPoints = FMath::RandRange(1, MaxNumSpawnPoints);
+			AddSpawnPointsToWave(Wave, NumSpawnPoints);
+
+			/*
 			//todo: there has to be a better way to do this, would also like it if there was no overlap when spawning two enemy types
 			const int StartSpawnPointIndex = FMath::RandRange(0, Manager->SpawnPoints.Num() - 2);
 			const int EndSpawnPointIndex = FMath::RandRange(StartSpawnPointIndex + 1,
@@ -104,6 +109,7 @@ void ACombatDirector::SpendBudget()
 			{
 				Wave.SpawnPoints.Emplace(Manager->SpawnPoints[i]);
 			}
+			*/
 			Manager->AddWave(Wave);
 		}
 		if(CurrentBudget > Spawn.BaseCost)
@@ -153,13 +159,19 @@ int ACombatDirector::WeightedRandomSpawnTypeIndex(int TotalWeight, int MaxValidI
 	return -1;
 }
 
-void ACombatDirector::MakeWaves(const FSpawnStruct& Spawn)
+void ACombatDirector::AddSpawnPointsToWave(FEnemyWave& Wave, int NumSpawnPoints)
 {
-	if(SpawnPointIndices.IsEmpty())
+	for(int i = 0; i < NumSpawnPoints; i++)
 	{
-		for(int i = 0; i < Manager->SpawnPoints.Num(); i++)
+		if(SpawnPointIndices.IsEmpty())
 		{
-			SpawnPointIndices.Emplace(i);
+			for(int j = 0; j < Manager->SpawnPoints.Num(); j++)
+			{
+				SpawnPointIndices.Emplace(i);
+			}
 		}
+		int RandomIndex = SpawnPointIndices[rand() % SpawnPointIndices.Num()];
+		Wave.SpawnPoints.Emplace(Manager->SpawnPoints[RandomIndex]);
+		SpawnPointIndices.Remove(RandomIndex);
 	}
 }
