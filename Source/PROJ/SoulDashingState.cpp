@@ -50,6 +50,13 @@ void USoulDashingState::Enter()
 
 	CharOwner->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &USoulDashingState::ActorOverlap);
 
+	// Deal damage or buff appropriate character that are already colliding 
+	TArray<AActor*> OverlappingActors;
+	CharOwner->GetCapsuleComponent()->GetOverlappingActors(OverlappingActors, ACharacter::StaticClass());
+
+	for(const auto OverlapActor : OverlappingActors)
+		DashOverlap(OverlapActor); 
+
 	if(CharOwner->IsPlayerControlled())
 		CancelHookShot();
 }
@@ -97,6 +104,11 @@ void USoulDashingState::ActorOverlap(UPrimitiveComponent* OverlappedComp, AActor
 	if(!CharOwner->IsLocallyControlled())
 		return;
 
+	DashOverlap(OtherActor); 
+}
+
+void USoulDashingState::DashOverlap(AActor* OtherActor)
+{
 	// Player dashing through player or AI dashing through AI 
 	if((CharOwner->IsPlayerControlled() && OtherActor->IsA(ARobotStateMachine::StaticClass()) ||
 		(!CharOwner->IsPlayerControlled() && OtherActor->IsA(AShadowRobotCharacter::StaticClass()))))
