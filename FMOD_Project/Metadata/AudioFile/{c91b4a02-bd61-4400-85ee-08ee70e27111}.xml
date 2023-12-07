@@ -1,17 +1,17 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects serializationModel="Studio.02.02.00">
-	<object class="AudioFile" id="{184dbe5a-a7a7-426c-9cda-bef10f1519f1}">
+	<object class="AudioFile" id="{c91b4a02-bd61-4400-85ee-08ee70e27111}">
 		<property name="assetPath">
-			<value>SFX/char/PostStep/Snow/S_Snow3.wav</value>
+			<value>SFX/char/PostStep/Dirt/Dirt 12.wav</value>
 		</property>
 		<property name="frequencyInKHz">
-			<value>96</value>
+			<value>44.0999985</value>
 		</property>
 		<property name="channelCount">
 			<value>2</value>
 		</property>
 		<property name="length">
-			<value>0.35718749999999999</value>
+			<value>0.4096825396825397</value>
 		</property>
 		<relationship name="masterAssetFolder">
 			<destination>{542ff4ed-1b88-4c2c-98cc-a4f4c45c5308}</destination>
