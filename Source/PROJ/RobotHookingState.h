@@ -93,7 +93,7 @@ private:
 
 	/** The speed at which the hook cable should retract when it hits a blocking object */
 	UPROPERTY(EditAnywhere)
-	float RetractHookOnMissSpeed = 1000.f;
+	float RetractHookOnMissSpeed = 2000.f;
 
 	/** How far the hook should shoot out (max distance) when it hits a block or has no valid target */
 	UPROPERTY(EditAnywhere)
