@@ -33,15 +33,6 @@ struct FLevelInfo
 	FText LevelTitle;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UTexture2D* LevelCover;
-	
-	static FLevelInfo Make(const ESonderLevel Level, const FText& LevelTitle, UTexture2D* LevelCover)
-	{
-		FLevelInfo LevelInfo;
-		LevelInfo.Level = Level;
-		LevelInfo.LevelTitle = LevelTitle;
-		LevelInfo.LevelCover = LevelCover;
-		return LevelInfo;
-	}
 };
 
 UCLASS()
