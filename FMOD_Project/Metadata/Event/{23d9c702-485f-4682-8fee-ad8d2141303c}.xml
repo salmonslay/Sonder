@@ -104,7 +104,7 @@
 			<value>-10</value>
 		</property>
 		<relationship name="audioFile">
-			<destination>{873f1fa1-4283-4ec0-88ee-5459804bb18c}</destination>
+			<destination>{82ff5286-85f2-40bc-89c3-84386a6e664d}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusFader" id="{198755e4-257d-4933-86de-e6954c6596b1}" />

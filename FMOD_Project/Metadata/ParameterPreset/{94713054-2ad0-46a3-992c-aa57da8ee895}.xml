@@ -25,7 +25,7 @@
 			<value>Metal</value>
 		</property>
 		<property name="initialValue">
-			<value>0</value>
+			<value>1</value>
 		</property>
 	</object>
 </objects>
