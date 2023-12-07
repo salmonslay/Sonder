@@ -26,30 +26,39 @@ void ASwapSpline::BeginPlay()
 	
 }
 
-// Called every frame
-void ASwapSpline::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-	
-
-}
-
 
 
 void ASwapSpline::SplineSwap()
 {
+	
 	if (CharactersCamera && NextCameraSpline)
 	{
+		ServerRPCSwap();
 		
-		if (TransitionSpeed > 0)
-		{
-			CharactersCamera->SetInterpSpeed(TransitionSpeed);
-		}
-		else
-		{
-			CharactersCamera->SetInterpSpeed(CharactersCamera->DefaultInterpSpeed);
-		}
-		CharactersCamera->AssignSpline(NextCameraSpline);
+		
 	}
+
+	
 }
 
+
+void ASwapSpline::ServerRPCSwap_Implementation()
+{
+    if(!this->HasAuthority())
+		return;
+		
+	MulticastRPCSwap();
+}
+
+void ASwapSpline::MulticastRPCSwap_Implementation()
+{
+	if (TransitionSpeed > 0)
+	{
+		CharactersCamera->SetInterpSpeed(TransitionSpeed);
+	}
+	else
+	{
+		CharactersCamera->SetInterpSpeed(CharactersCamera->DefaultInterpSpeed);
+	}
+	CharactersCamera->AssignSpline(NextCameraSpline);
+}

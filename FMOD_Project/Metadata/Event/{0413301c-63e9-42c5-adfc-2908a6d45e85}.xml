@@ -82,6 +82,9 @@
 		<property name="volume">
 			<value>-11.5</value>
 		</property>
+		<relationship name="modulators">
+			<destination>{e176fd9a-0097-456c-9556-1cc51d3475c3}</destination>
+		</relationship>
 		<relationship name="effectChain">
 			<destination>{e7f83a03-f391-49cd-ad58-9d63f709a7b7}</destination>
 		</relationship>
@@ -106,6 +109,17 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{dad58236-5633-4a36-a2f8-a2852b20f99b}" />
+	<object class="ADSRModulator" id="{e176fd9a-0097-456c-9556-1cc51d3475c3}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>volume</value>
+		</property>
+		<property name="initialValue">
+			<value>-80</value>
+		</property>
+		<property name="finalValue">
+			<value>-80</value>
+		</property>
+	</object>
 	<object class="MixerBusEffectChain" id="{e7f83a03-f391-49cd-ad58-9d63f709a7b7}">
 		<relationship name="effects">
 			<destination>{abe16e8b-0c55-4350-b8af-f6ba6745e749}</destination>
