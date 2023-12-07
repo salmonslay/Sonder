@@ -7,7 +7,7 @@
 #include "BTTask_ToggleChargeSpecialAttack.generated.h"
 
 /**
- * Begins charging the special attack 
+ * Toggles charging the special attack 
  */
 UCLASS()
 class PROJ_API UBTTask_ToggleChargeSpecialAttack : public UBTTask_BlackboardBase
@@ -27,14 +27,8 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	FBlackboardKeySelector BBKeyChargingSpecialAttack; 
-
-	UPROPERTY(EditAnywhere)
-	FBlackboardKeySelector BBKeyChargingAttackEffectComp;
-
-	UPROPERTY(EditAnywhere)
-	class UNiagaraSystem* ChargeEffect;
 	
 	UPROPERTY(EditAnywhere)
-	bool bActivateCharge = true; 
+	bool bActivateCharge = true;
 	
 };
