@@ -23,59 +23,45 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 
 	if (OwnerCharacter == nullptr) return;
 
-	// TODO: when can jump aka enemy is overlapping with trigger and moving platform is there, jump
-
-	if (OwnerCharacter->bCanJumpFromPlatform) //TODO: Chech if enemy is jumping, in that case dont do jump
-	{
-		if (bDebug) DrawDebugSphere(GetWorld(), OwnerCharacter->AvaliableJumpPoint, 20, 24, FColor::Red, false, .5f);
-	}
-	/*
 	OwnerLocation = OwnerCharacter->GetActorLocation();
 
-	// Make a sphere from cats location as large as defined radius
-	const FVector MyLocation = OwnerCharacter->GetActorLocation();
-	const FCollisionShape CheckSphereShape = FCollisionShape::MakeSphere(RadiusToDetectPlatform); 
-	FCollisionObjectQueryParams Params = FCollisionObjectQueryParams();
-
-	// Add other channels maybe?
-	Params.AddObjectTypesToQuery(ECC_GameTraceChannel7); // Moving platform
-
-
-	TArray<FOverlapResult> OverlapResults;
-
-	if (bDebug) DrawDebugSphere(GetWorld(), MyLocation, RadiusToDetectPlatform, 24, FColor::Black, false, .5f);
-
-	// check if sphere overlaps with any rats
-	bool bOverlaps = GetWorld()->OverlapMultiByObjectType(
-		OverlapResults,
-		MyLocation,
-		FQuat::Identity,
-		Params,
-		CheckSphereShape);
-	
-	if(bOverlaps)
+	if (OwnerCharacter->bHasLandedOnPlatform)
 	{
-		for(FOverlapResult Overlap : OverlapResults)
-		{
-			// if overlap with platform is found, check its bounds and if its close enough to allow jump
-			AMovingPlatform* MovingPlatform = Cast<AMovingPlatform>(Overlap.GetActor());
-			if (MovingPlatform)
-			{
-				FVector Origin;
-				FVector Extent;
-				MovingPlatform->GetActorBounds(true, Origin, Extent);
-				FVector JumpPoint = FVector(OwnerLocation.X, (Origin + Extent/2).Y, (Origin + Extent/2).Z);
-				
-				
-				//point on platform closest to character
-				if (CanJumpToPoint(OwnerLocation, JumpPoint))
-				{
-					JumpToPoint(OwnerLocation,JumpPoint);
-					break;
-				}
-			}
-		}
+		return;
 	}
+	
+	//  if both are false, do whatever it is you do
+	if (OwnerCharacter->bCanJumpToPlatform && !OwnerCharacter->bCanJumpFromPlatform && !OwnerCharacter->bIsJumping)
+	{
+		JumpToPoint(OwnerLocation, OwnerCharacter->AvaliableJumpPoint);
+	}
+	
+	/*
+	if (OwnerCharacter->bCanJumpToPlatform && !OwnerCharacter->bIsJumping && !OwnerCharacter->bHasLandedOnPlatform) // inside trigger with a moving platform, not jumping and doesnt stand on a moving platform
+	{
+		// Om jumppoint till eller från plattform är närmare Current target player än ens egna location, hoppa
+		// TODO: Jump delay, for anim. then make jump
+		
+		//JumpToPoint(OwnerLocation, OwnerCharacter->AvaliableJumpPoint);
+	}
+	if (OwnerCharacter->bHasLandedOnPlatform) // Standing on moving platform,
+	{
+		OwnerCharacter->bIsJumping = false;
+		OwnerCharacter->bCanJumpToPlatform = false; // om has landed on platform, player can jump from platform = true on overlap end
+		OwnerCharacter->bCanJumpFromPlatform = true;
+	}
+
+	
+	if (!OwnerCharacter->bCanJumpToPlatform &&OwnerCharacter->bCanJumpFromPlatform && !OwnerCharacter->bIsJumping && OwnerCharacter->bHasLandedOnPlatform) // inside trigger with a moving platform, not jumping and doesnt stand on a moving platform
+	{
+	// Om jumppoint till eller från plattform är närmare Current target player än ens egna location, hoppa
+	// TODO: Jump delay, for anim. then make jump
+		//JumpToPoint(OwnerLocation, OwnerCharacter->AvaliableJumpPoint);
+		//DrawDebugSphere(GetWorld(),OwnerCharacter->AvaliableJumpPoint, 30.f, 24, FColor::Green, false, 1.f);
+	}
+
+	// när man gjort hoppet, rör dig mot spelaren
+
 	*/
 }
 
@@ -97,9 +83,13 @@ bool UBTService_CanJumpOnPlatform::CanJumpToPoint(FVector StartPoint, FVector Ju
 
 void UBTService_CanJumpOnPlatform::JumpToPoint(FVector StartPoint,FVector JumpPoint)
 {
+	OwnerCharacter->bIsJumping = true;
 	FVector OutVel;
 	UGameplayStatics::SuggestProjectileVelocity_CustomArc(GetWorld(), OutVel, StartPoint, JumpPoint);
-	OwnerCharacter->LaunchCharacter(OutVel * JumpBoost, true, true );
+	OwnerCharacter->LaunchCharacter(OutVel * JumpBoost, false, false );
+
+	UE_LOG(LogTemp, Error, TEXT("Doing jump "));
+
 }
 
 

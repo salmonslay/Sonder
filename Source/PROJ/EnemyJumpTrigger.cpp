@@ -6,6 +6,7 @@
 #include "MovingPlatform.h"
 #include "ShadowCharacter.h"
 #include "Components/BoxComponent.h"
+#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AEnemyJumpTrigger::AEnemyJumpTrigger()
@@ -28,6 +29,53 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+
+	if (!bIsOverlappingWithMovingPlatform && !OverlappingGround && !bIsOverlappingWithEnemy)
+	{
+		UE_LOG(LogTemp, Error, TEXT("not ticking "));
+		return;
+	}
+	
+	for (AShadowCharacter* Enemy : WaitingEnemies)
+	{
+		if (Enemy)
+		{
+			if (Enemy->bCanJumpToPlatform && !Enemy->bCanJumpFromPlatform && !Enemy->bIsJumping)
+			{
+				Enemy->AvaliableJumpPoint = CalculateJumpToPlatform(Enemy->GetActorLocation(), Enemy->GetActorForwardVector());
+				DrawDebugSphere(GetWorld(),Enemy->AvaliableJumpPoint, 30.f, 24, FColor::Blue, false, 1.f);
+			}
+			
+			else if (!Enemy->bCanJumpToPlatform && Enemy->bCanJumpFromPlatform && !Enemy->bIsJumping)
+			{
+				Enemy->AvaliableJumpPoint = CalculateJumpFromPlatform(Enemy->GetActorLocation(), Enemy->GetActorForwardVector());
+			}
+			if (!Enemy->bIsJumping)
+			{
+				// if enemy is on a platform, calculate point on ground to jump to
+				if (!Enemy->bHasLandedOnPlatform)
+				{
+					//Enemy->bCanJumpToPlatform = false;
+					//Enemy->bCanJumpFromPlatform = true;
+					//Enemy->AvaliableJumpPoint = CalculateJumpFromPlatform(Enemy->GetActorLocation(), Enemy->GetActorForwardVector());
+					//UE_LOG(LogTemp, Error, TEXT("Jumping from platform, to point %f, %f, %f, "), Enemy->AvaliableJumpPoint.X, Enemy->AvaliableJumpPoint.Y, Enemy->AvaliableJumpPoint.Z );
+					//DrawDebugSphere(GetWorld(),Enemy->AvaliableJumpPoint, 30.f, 24, FColor::Blue, false, 1.f);
+
+				}
+				
+				// if enemy is on ground, calculate a point platform to jump to
+				else
+				{
+					//Enemy->bCanJumpToPlatform = true;
+					//Enemy->bCanJumpFromPlatform = false;
+					//Enemy->AvaliableJumpPoint = CalculateJumpToPlatform(Enemy->GetActorLocation(), Enemy->GetActorForwardVector());
+					//DrawDebugSphere(GetWorld(),Enemy->AvaliableJumpPoint, 30.f, 24, FColor::Green, false, 1.f);
+				}
+			}
+		}
+	}
+	
+	
 }
 
 void AEnemyJumpTrigger::RemoveWaitingEnemy(AShadowCharacter* EnemyToRemove)
@@ -50,50 +98,85 @@ void AEnemyJumpTrigger::AddWaitingEnemy(AShadowCharacter* EnemyToAdd)
 	}
 }
 
-FVector AEnemyJumpTrigger::CalculateJumpEndPoint(const FVector& EnemyLocation)
+FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation, const FVector& EnemyForwardVector) // forward vector * Jumpdistance
 {
-	if (bIsOverlappingWithMovingPlatform && OverlappingPlatform != nullptr)
+	if (!OverlappingPlatform)
 	{
-		FVector Origin;
-		FVector Extent;
-		OverlappingPlatform->GetActorBounds(true, Origin, Extent);
-		return FVector(EnemyLocation.X, (Origin + (Extent/2)-EnemyJumpOffset).Y, (Origin + (Extent/2)-EnemyJumpOffset).Z);
+		return FVector::ZeroVector;
 	}
-	return FVector::ZeroVector;
+	FVector Origin;
+	FVector Extent;
+	OverlappingPlatform->GetActorBounds(true, Origin, Extent);
+	return FVector(EnemyLocation.X, EnemyLocation.Y + EnemyForwardVector.Y * EnemyJumpDistance, Origin.Z);
+	
 }
 
-void AEnemyJumpTrigger::AllowJumpToPlatform()
+FVector AEnemyJumpTrigger::CalculateJumpFromPlatform(const FVector& EnemyLocation, const FVector& EnemyForwardVector)
 {
-	if (bIsOverlappingWithMovingPlatform)
+	if (!OverlappingPlatform || !OverlappingGround)
 	{
+		return FVector::ZeroVector;
+	}
+	FVector Origin;
+	FVector Extent;
+	OverlappingGround->GetActorBounds(true, Origin, Extent);
+	return FVector(EnemyLocation.X, EnemyLocation.Y + EnemyForwardVector.Y * EnemyJumpDistance, Origin.Z);
+}
+
+void AEnemyJumpTrigger::AllowJump() // runs on overlap begin with moving platform, if enemy is standing on a platform - allow jump to ground, if not - allow jump to platform
+{
+	
+	if (WaitingEnemies.IsEmpty())
+	{
+		return;
+	}
+	
+	for (AShadowCharacter* Enemy : WaitingEnemies)
+	{
+		if (Enemy)
+		{
+			if (!Enemy->bHasLandedOnPlatform)
+			{
+				UE_LOG(LogTemp, Error, TEXT("Allowing jump to platform, not from platform"));
+				Enemy->bCanJumpToPlatform = true;
+				Enemy->bCanJumpFromPlatform = false;
+			}
+			else
+			{
+				UE_LOG(LogTemp, Error, TEXT("Allowing jumping from platform and not to it"));
+
+				Enemy->bCanJumpToPlatform = false;
+				Enemy->bCanJumpFromPlatform = true;
+			}
+		}
+	}
+}
+
+void AEnemyJumpTrigger::DenyJump()  // runs on overlap end with moving platform, if enemy is standing on a platform - allow jump to ground, if not - allow jump to platform
+{
+	//if (!bIsOverlappingWithMovingPlatform)
+	//{
 		if (!WaitingEnemies.IsEmpty())
 		{
 			for (AShadowCharacter* Enemy : WaitingEnemies)
 			{
 				if (Enemy)
 				{
-					Enemy->bCanJumpFromPlatform = true;
-					Enemy->AvaliableJumpPoint = CalculateJumpEndPoint(Enemy->GetActorLocation());
+					if (!Enemy->bHasLandedOnPlatform)
+					{
+						UE_LOG(LogTemp, Error, TEXT("Denying jump to platform"));
+						Enemy->bCanJumpToPlatform = false;
+						Enemy->bCanJumpFromPlatform = true;
+					}
+					else if(Enemy->bHasLandedOnPlatform)
+					{
+						UE_LOG(LogTemp, Error, TEXT("Denying jump from platform, is allowed to jump to it"));
+						Enemy->bCanJumpToPlatform = true;
+						Enemy->bCanJumpFromPlatform = false;
+					}
 				}
 			}
 		}
-	}
-}
-
-void AEnemyJumpTrigger::DenyJumpToPlatform()
-{
-	if (!bIsOverlappingWithMovingPlatform)
-	{
-		if (!WaitingEnemies.IsEmpty())
-		{
-			for (AShadowCharacter* Enemy : WaitingEnemies)
-			{
-				if (Enemy)
-				{
-					Enemy->bCanJumpFromPlatform = false;
-				}
-			}
-		}
-	}
+	//}
 }
 

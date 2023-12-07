@@ -40,6 +40,8 @@ void AShadowCharacter::BeginPlay()
 
 	if(CurrentState)
 		CurrentState->Enter();
+
+	
 }
 
 void AShadowCharacter::Tick(const float DeltaSeconds)
@@ -51,6 +53,17 @@ void AShadowCharacter::Tick(const float DeltaSeconds)
 
 	if(CurrentState)
 		CurrentState->Update(DeltaSeconds);
+
+	if (bIsJumping)
+	{
+		
+		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
+	}
+	else
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+	}
+	
 }
 
 UPlayerCharState* AShadowCharacter::GetStartingState() const
@@ -64,6 +77,7 @@ UPlayerCharState* AShadowCharacter::GetStartingState() const
 	UE_LOG(LogTemp, Warning, TEXT("Error. %s has no base state"), *GetActorNameOrLabel())
 	return DummyState; // Should not get here 
 }
+
 
 void AShadowCharacter::ServerRPC_SwitchState_Implementation(UPlayerCharState* NewState)
 {

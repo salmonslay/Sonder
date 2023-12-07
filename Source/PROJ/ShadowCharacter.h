@@ -41,12 +41,21 @@ public:
 	void OnBasicAttackHit(); 
 
 	UPROPERTY(BlueprintReadWrite)
+	bool bCanJumpToPlatform = false;
+
+	UPROPERTY(BlueprintReadWrite)
 	bool bCanJumpFromPlatform = false;
 
 	FVector AvaliableJumpPoint = FVector::ZeroVector;
 
+	UPROPERTY(BlueprintReadWrite)
 	bool bIsJumping = false;
 
+	UPROPERTY(BlueprintReadWrite)
+	bool bHasLandedOnPlatform = false;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bHasLandedOnGround = false;
 	UFUNCTION(Server, Reliable) 
 	void ServerRPC_ToggleChargeEffect(const bool bActive); 
 
@@ -74,12 +83,14 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	class UPlayerBasicAttack* EnemyBasicAttack;
+	class UPlayerBasicAttack* EnemyBasicAttack;
 
 	UPROPERTY(EditDefaultsOnly)
 	class UNiagaraSystem* ChargeEffect;
 
 	UPROPERTY()
 	class UNiagaraComponent* ChargeEffectComp; 
+	
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPC_ToggleChargeEffect(const bool bActive); 
