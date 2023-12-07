@@ -138,14 +138,6 @@ void URobotBaseState::ShootHook()
 
 void URobotBaseState::Pulse()
 {
-	// Ensure player cant spam attack and is locally controlled 
-	// Only run locally
-
-	/*
-if (bPulseCoolDownActive || !CharOwner->IsLocallyControlled() || !RobotCharacter->AbilityOne)
-		return;
-*/
-	// Only run locally 
 	if(bPulseCoolDownActive || !CharOwner->IsLocallyControlled()) 
 		return;
 
@@ -167,8 +159,6 @@ void URobotBaseState::ServerRPCPulse_Implementation()
 	// Should only run on server 
 	if (!GetOwner()->HasAuthority())
 		return;
-
-	// UE_LOG(LogTemp, Warning, TEXT("Server pulse"))
 
 	MulticastRPCPulse();
 }
