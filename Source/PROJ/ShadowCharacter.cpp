@@ -14,8 +14,12 @@ AShadowCharacter::AShadowCharacter()
 	// Create the states 
 	DummyState = CreateDefaultSubobject<UDummyPlayerState>(TEXT("DummyStateNew"));
 
-	EnemyBasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(TEXT("EnemyBasicAttack"));
+	EnemyBasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(TEXT("BasicAttack"));
 	EnemyBasicAttack->SetupAttachment(RootComponent);
+
+	EnemyBasicAttack->SetRelativeLocation(FVector(50, 0, 0)); 
+	EnemyBasicAttack->SetRelativeScale3D(FVector(1.5f, 1.5f, 2.f));
+	EnemyBasicAttack->SetCollisionEnabled(ECollisionEnabled::QueryOnly); 
 
 }
 
