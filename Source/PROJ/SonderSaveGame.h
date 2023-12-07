@@ -26,17 +26,35 @@ UCLASS()
 class PROJ_API USonderSaveGame : public USaveGame
 {
 	GENERATED_BODY()
+
 public:
 	UPROPERTY()
 	TArray<ESonderLevel> LevelsCompleted = {ESonderLevel::None};
 
-public:
 	UFUNCTION(BlueprintCallable)
 	void AddLevelCompleted(const ESonderLevel LevelCompleted) { LevelsCompleted.AddUnique(LevelCompleted); }
 
 	UFUNCTION(BlueprintPure)
 	TArray<ESonderLevel> GetLevelsCompleted() const { return LevelsCompleted; }
 
+	/**
+	 * Iter through all completed levels and return the highest one
+	 * @return The highest level completed, or ESonderLevel::None if no levels have been completed
+	 */
 	UFUNCTION(BlueprintPure)
 	ESonderLevel GetHighestLevelCompleted() const;
+
+	/**
+	 * @return A map of all the level enums and their file paths
+	 */
+	UFUNCTION(BlueprintPure)
+	static TMap<ESonderLevel, FString> GetLevelPaths();
+
+	/**
+	 * Calculate which level to travel to based on what you've completed
+	 * @param From The level you're coming from (i.e. the level you just completed, or the highest level you've completed if you're continuing)
+	 * @return The path to the level you should travel to
+	 */
+	UFUNCTION(BlueprintPure)
+	static FString GetLevelToContinueTo(const ESonderLevel From = ESonderLevel::None);
 };
