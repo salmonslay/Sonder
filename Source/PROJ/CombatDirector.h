@@ -121,6 +121,8 @@ private:
 	int CalculateSpawnWeight(const FSpawnStruct& Spawn) const;
 
 	int WeightedRandomSpawnTypeIndex(int TotalWeight, int MaxValidIndex);
+
+	void MakeWaves(const FSpawnStruct& Spawn);
 	
 	FTimerHandle SpendBudgetTimerHandle;
 	
@@ -129,5 +131,7 @@ private:
 	FTimerHandle SpawnFrequencyIncreaseTimerHandle;
 
 	bool bInitialized = false;
+
+	TArray<int> SpawnPointIndices = TArray<int>();
 
 };

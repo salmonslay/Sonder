@@ -152,3 +152,14 @@ int ACombatDirector::WeightedRandomSpawnTypeIndex(int TotalWeight, int MaxValidI
 	}
 	return -1;
 }
+
+void ACombatDirector::MakeWaves(const FSpawnStruct& Spawn)
+{
+	if(SpawnPointIndices.IsEmpty())
+	{
+		for(int i = 0; i < Manager->SpawnPoints.Num(); i++)
+		{
+			SpawnPointIndices.Emplace(i);
+		}
+	}
+}
