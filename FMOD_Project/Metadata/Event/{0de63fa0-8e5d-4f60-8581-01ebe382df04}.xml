@@ -79,6 +79,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{38026911-d178-4dbc-81a0-276d9ce7e5f3}">
+		<property name="volume">
+			<value>-11</value>
+		</property>
 		<relationship name="effectChain">
 			<destination>{0689f97b-3fc7-4344-b200-9170db671553}</destination>
 		</relationship>
@@ -179,8 +182,14 @@
 		<property name="filterTypeB">
 			<value>6</value>
 		</property>
+		<property name="frequencyA">
+			<value>314.623352</value>
+		</property>
 		<property name="frequencyB">
 			<value>70.781601</value>
+		</property>
+		<property name="qualityA">
+			<value>0.581413805</value>
 		</property>
 		<property name="qualityB">
 			<value>0.267448276</value>
