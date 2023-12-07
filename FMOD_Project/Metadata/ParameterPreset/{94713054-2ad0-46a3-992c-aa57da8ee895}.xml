@@ -20,7 +20,7 @@
 		</property>
 		<property name="enumerationLabels">
 			<value>Cement</value>
-			<value>Snow</value>
+			<value>Dirt</value>
 			<value>Wood</value>
 			<value>Metal</value>
 		</property>
