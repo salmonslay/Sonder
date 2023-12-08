@@ -40,22 +40,23 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnBasicAttackHit(); 
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bCanJumpToPlatform = false;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bCanJumpFromPlatform = false;
 
 	FVector AvaliableJumpPoint = FVector::ZeroVector;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bIsJumping = false;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bHasLandedOnPlatform = false;
 
-	UPROPERTY(BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bHasLandedOnGround = false;
+	
 	UFUNCTION(Server, Reliable) 
 	void ServerRPC_ToggleChargeEffect(const bool bActive); 
 
@@ -82,7 +83,6 @@ private:
 	class UDummyPlayerState* DummyState;
 
 	UPROPERTY(EditAnywhere)
-	class UPlayerBasicAttack* EnemyBasicAttack;
 	class UPlayerBasicAttack* EnemyBasicAttack;
 
 	UPROPERTY(EditDefaultsOnly)

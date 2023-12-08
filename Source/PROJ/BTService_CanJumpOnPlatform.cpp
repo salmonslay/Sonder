@@ -25,16 +25,21 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 
 	OwnerLocation = OwnerCharacter->GetActorLocation();
 
-	if (OwnerCharacter->bHasLandedOnPlatform)
+	if (!OwnerCharacter->bCanJumpFromPlatform && !OwnerCharacter->bCanJumpToPlatform)
 	{
 		return;
 	}
-	
+
+	if (OwnerCharacter->bIsJumping)
+	{
+		return;
+	}
 	//  if both are false, do whatever it is you do
 	if (OwnerCharacter->bCanJumpToPlatform && !OwnerCharacter->bCanJumpFromPlatform && !OwnerCharacter->bIsJumping)
 	{
 		JumpToPoint(OwnerLocation, OwnerCharacter->AvaliableJumpPoint);
 	}
+	
 	
 	/*
 	if (OwnerCharacter->bCanJumpToPlatform && !OwnerCharacter->bIsJumping && !OwnerCharacter->bHasLandedOnPlatform) // inside trigger with a moving platform, not jumping and doesnt stand on a moving platform
