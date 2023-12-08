@@ -29,9 +29,9 @@ void AHookShotAttachment::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// This class is only relevant for the Robot so disable tick for Soul 
-	if(!UGameplayStatics::GetPlayerController(this, 0)->GetPawn()->IsA(ARobotStateMachine::StaticClass()))
-		SetActorTickEnabled(false);
+	// This class is only relevant for the Robot so disable tick for Soul if not playing local 
+	if(!UStaticsHelper::IsPlayingLocal(this) && !UGameplayStatics::GetPlayerController(this, 0)->GetPawn()->IsA(ARobotStateMachine::StaticClass()))
+		SetActorTickEnabled(false); 
 
 	HookShotAttachmentsInLevel.Add(this); 
 }
@@ -47,7 +47,11 @@ void AHookShotAttachment::Tick(const float DeltaSeconds)
 
 		if(Robot)
 		{
-			RobotPlayerController = Cast<APlayerController>(Cast<APawn>(Robot)->GetController());
+			if(!UStaticsHelper::IsPlayingLocal(this))
+				RobotPlayerController = Cast<APlayerController>(Robot->GetController());
+			else
+				RobotPlayerController = UGameplayStatics::GetPlayerController(this, 0);
+			
 			HookState = Robot->FindComponentByClass<URobotHookingState>();
 			RobotBaseState = Robot->FindComponentByClass<URobotBaseState>(); 
 		}
@@ -62,7 +66,7 @@ void AHookShotAttachment::Tick(const float DeltaSeconds)
 	SetCurrentHookTarget();
 
 	SetIndicatorWidget();
-
+	
 	// UE_LOG(LogTemp, Warning, TEXT("Current target: %s"), CurrentTarget ? *CurrentTarget->GetActorNameOrLabel() : *FString("nullptr"))
 }
 
@@ -194,7 +198,7 @@ AActor* AHookShotAttachment::GetValidTarget()
 		return nullptr; 
 
 	FCollisionQueryParams Params;
-	Params.AddIgnoredActors( TArray<AActor*>( {Robot, Soul, HookTarget } ) ); // Ignore players and hook 
+	Params.AddIgnoredActors( TArray<AActor*>( { Robot, Soul, HookTarget } ) ); // Ignore players and hook 
 
 	const auto CapsuleComp = Robot->GetCapsuleComponent();
 	
@@ -253,7 +257,7 @@ void AHookShotAttachment::SetIndicatorWidget()
 		if(!IndicatorWidget)
 			return;
 		
-		IndicatorWidget->AddToPlayerScreen();
+		IndicatorWidget->AddToPlayerScreen(); 
 	}
 	
 	if(!CurrentTarget || HookState->IsTravellingToTarget() || RobotBaseState->IsHookShotOnCooldown())
@@ -263,15 +267,13 @@ void AHookShotAttachment::SetIndicatorWidget()
 	}
 
 	IndicatorWidget->SetVisibility(ESlateVisibility::Visible); 
-	
-	const APlayerController* PlayerController = RobotPlayerController;
 
-	if (!PlayerController)
+	if (!RobotPlayerController)
 		return;
 
 	// get screen bounds 
 	int32 ScreenWidth, ScreenHeight;
-	PlayerController->GetViewportSize(ScreenWidth, ScreenHeight);
+	RobotPlayerController->GetViewportSize(ScreenWidth, ScreenHeight);
 
 	// Source to get DPI Scale: https://forums.unrealengine.com/t/current-dpi-scaling/296699/3 
 	const float ScaleDPI = GetDefault<UUserInterfaceSettings>(UUserInterfaceSettings::StaticClass())->
@@ -280,8 +282,8 @@ void AHookShotAttachment::SetIndicatorWidget()
 	// calculate new position, where the hook would be on the screen 
 	
 	FVector2d NewScreenPos;
-	UGameplayStatics::ProjectWorldToScreen(PlayerController, CurrentTarget->GetActorLocation(), NewScreenPos);
-	NewScreenPos /= ScaleDPI; // adjust position with the DPI Scale to ensure correct pos regardless of resolution 
+	UGameplayStatics::ProjectWorldToScreen(RobotPlayerController, CurrentTarget->GetActorLocation(), NewScreenPos);
+	NewScreenPos /= ScaleDPI; // adjust position with the DPI Scale to ensure correct pos regardless of resolution
 
 	// move the image with the calculated values 
 	UWidget* IndicatorImage = IndicatorWidget->GetWidgetFromName(FName("IndicatorImage"));
