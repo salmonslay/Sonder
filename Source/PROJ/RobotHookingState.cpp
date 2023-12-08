@@ -336,14 +336,17 @@ void URobotHookingState::RetractHook(const float DeltaTime)
 		return;
 	}
 	
-	// Lerp hook arm location back towards the Robot TODO: Replace player loc with shoulder loc? 
+	// Lerp hook arm location back towards the Robot TODO: Replace player loc with shoulder/hand loc? 
 	const FVector NewEndLoc = UKismetMathLibrary::VInterpTo_Constant(HookArmLocation, CharOwner->GetActorLocation(), DeltaTime, RetractHookOnMissSpeed); 
 
-	ServerRPC_RetractHook(NewEndLoc);
-
 	// Fully retracted hook, change back to base state 
-	if(HookArmLocation.Equals(CharOwner->GetActorLocation())) 
-		EndHookShot(); 
+	if(FVector::DistSquared(NewEndLoc, CharOwner->GetActorLocation()) < 100)
+	{
+		EndHookShot();
+		return;
+	}
+	
+	ServerRPC_RetractHook(NewEndLoc);
 }
 
 void URobotHookingState::ActorOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor,
