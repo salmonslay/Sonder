@@ -4,6 +4,7 @@
 #include "StaticsHelper.h"
 
 #include "BlueprintDataDefinitions.h"
+#include "Kismet/GameplayStatics.h"
 
 bool UStaticsHelper::ActorIsInFront(const AActor* ActorFrom, const FVector& ToLocation)
 {
@@ -12,6 +13,11 @@ bool UStaticsHelper::ActorIsInFront(const AActor* ActorFrom, const FVector& ToLo
 	const float Dot = FVector::DotProduct(DirToTarget, ActorFrom->GetActorForwardVector());
 
 	return Dot >= 0; // In front of player if Dot Product is > 0, perpendicular when 0 
+}
+
+bool UStaticsHelper::IsPlayingLocal(const UObject* WorldRefObject)
+{
+	return UGameplayStatics::GetNumLocalPlayerControllers(WorldRefObject) > 1; 
 }
 
 TArray<FBPFriendInfo> UStaticsHelper::SortFriendsList(const TArray<FBPFriendInfo>& FriendsList)
