@@ -29,7 +29,8 @@ void URobotBaseState::Enter()
 	if (!RobotCharacter)
 		RobotCharacter = Cast<ARobotStateMachine>(CharOwner);
 
-	DefaultWalkSpeed = CharOwner->GetCharacterMovement()->MaxWalkSpeed;
+	if(CharOwner->GetCharacterMovement()->MaxWalkSpeed != WalkSpeedWhenBuffed)
+		DefaultWalkSpeed = CharOwner->GetCharacterMovement()->MaxWalkSpeed;
 }
 
 void URobotBaseState::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
