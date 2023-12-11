@@ -37,6 +37,13 @@ void ACutsceneManager::BeginPlay()
 
 	if(bAutoPlay)
 	{
+		if(AutoPlayBlackScreenWidget)
+		{
+			AutoPlayWidget = CreateWidget(PlayerController, AutoPlayBlackScreenWidget);
+
+			AutoPlayWidget->AddToPlayerScreen(); 
+		}
+	
 		// Disable input immediately so player cannot move during level load (delayed because race conditions)
 		GetWorldTimerManager().SetTimerForNextTick(this, &ACutsceneManager::DisablePlayerInput); 
 
@@ -73,6 +80,8 @@ void ACutsceneManager::PlayCutscene()
 		return;
 	}
 
+	DisablePlayerInput(); 
+
 	RemoveHUD();
 
 	if(bHidePlayersDuringCutscene)
@@ -106,6 +115,12 @@ void ACutsceneManager::MulticastRPC_PlayCutscene_Implementation()
 
 void ACutsceneManager::DisablePlayerInput() const
 {
+	if(!PlayerController)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No player ctrl in cutscene"))
+		return; 
+	}
+	
 	// Set the action mapping to Cutscene action mapping 
 	if (const auto InputSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
 	{
@@ -151,18 +166,10 @@ void ACutsceneManager::StopCutscene()
 
 	CutscenesPlayingCounter--;
 
-	if(!LevelToLoadOnCutsceneEnd.IsNone())
-	{
-		if(WidgetForLoadingNewMap)
-		{
-			const auto Widget = CreateWidget(PlayerController, WidgetForLoadingNewMap);
+	OnCutsceneEnd(!LevelToLoadOnCutsceneEnd.IsNone()); 
 
-			Widget->AddToPlayerScreen(); 
-		}	
-
-		if(HasAuthority())
-			GetWorld()->ServerTravel("/Game/Maps/" + LevelToLoadOnCutsceneEnd.ToString());
-	}
+	if(!LevelToLoadOnCutsceneEnd.IsNone() && HasAuthority())
+		GetWorld()->ServerTravel("/Game/Maps/" + LevelToLoadOnCutsceneEnd.ToString());
 
 	// if(!IsCutscenePlaying())
 	// 	Destroy(); // TODO: Destroy? 
@@ -190,7 +197,8 @@ void ACutsceneManager::ServerRPC_StopCutscene_Implementation()
 	MulticastRPC_StopCutscene();
 }
 
-void ACutsceneManager::RemoveHUD()
+void ACutsceneManager::RemoveHUD() const
 {
-	// TODO: Everything 
+	if(AutoPlayWidget)
+		AutoPlayWidget->RemoveFromParent(); 
 }

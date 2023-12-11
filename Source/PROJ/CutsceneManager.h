@@ -27,9 +27,24 @@ public:
 
 	static bool IsCutscenePlaying() { return CutscenesPlayingCounter != 0; }
 
+	/** Call to play the assigned cutscene for all players */
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerRPC_PlayCutscene();
+
+protected:
+	
+	UPROPERTY(BlueprintReadOnly)
+	APlayerController* PlayerController;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bDisplayWidgetOnCutsceneEnd = true; 
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnCutsceneEnd(const bool bLoadingNewMap);
+
 private:
 
-	/** Auto plays the cutscene on level load, TODO: after loading screen */
+	/** Auto plays the cutscene on level load, TODO: after loading screen? */
 	UPROPERTY(EditAnywhere)
 	bool bAutoPlay = false;
 
@@ -62,32 +77,31 @@ private:
 	UPROPERTY(EditAnywhere)
 	class ULevelSequence* Sequencer;
 
-	UPROPERTY()
-	APlayerController* PlayerController;
-
 	/** Keeps track of how many cutscenes are playing to account for multiple players */
 	inline static int CutscenesPlayingCounter = 0;
 
 	bool bHasPlayed = false; // TODO: Temp bool until destroy works correctly (can keep)
 
-	/** The level to load when the cutscene finished playing. Leaving it empty loads no new level
-	 *  NOTE: Needs to be in form of: TestMaps/MAPNAMEGOESHERE or just the map name if in the Maps folder */ 
-	UPROPERTY(EditAnywhere)
-	FName LevelToLoadOnCutsceneEnd = NAME_None;
-
 	/** Should players be hidden during cutscene? */
 	UPROPERTY(EditAnywhere)
 	bool bHidePlayersDuringCutscene = true;
-
-	/** The widget to display when loading a new level, probably a black screen but not necessarily */
+    
+	/** The level to load when the cutscene finished playing. Leaving it empty loads no new level
+     *  NOTE: Needs to be in form of: TestMaps/MAPNAMEGOESHERE or just the map name if in the Maps folder */ 
 	UPROPERTY(EditAnywhere)
-	TSubclassOf<UUserWidget> WidgetForLoadingNewMap; 
+	FName LevelToLoadOnCutsceneEnd = NAME_None;
+
+	/** Widget shown until the cutscene starts playing, probably a black screen but not necessarily.
+	 * Is removed when cutscene starts */
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> AutoPlayBlackScreenWidget;
+
+	/** The widget created which will be removed when cutscene starts */
+	UPROPERTY()
+	class UUserWidget* AutoPlayWidget; 
 
 	/** Plays the assigned cutscene */
 	void PlayCutscene();
-
-	UFUNCTION(Server, Reliable)
-	void ServerRPC_PlayCutscene();
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPC_PlayCutscene(); 
@@ -101,7 +115,7 @@ private:
 	void BindSkipCutsceneButton(); 
 
 	/** Removes the HUD for the player */
-	void RemoveHUD();
+	void RemoveHUD() const;
 	
 	/** Stops the cutscene and resets everything. Called either by skipping or when cutscene finished naturally */
 	void StopCutscene();
