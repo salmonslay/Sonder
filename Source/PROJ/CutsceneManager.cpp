@@ -73,6 +73,8 @@ void ACutsceneManager::PlayCutscene()
 		return;
 	}
 
+	DisablePlayerInput(); 
+
 	RemoveHUD();
 
 	if(bHidePlayersDuringCutscene)
