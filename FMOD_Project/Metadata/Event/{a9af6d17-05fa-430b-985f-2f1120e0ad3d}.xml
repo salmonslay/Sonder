@@ -64,7 +64,7 @@
 			<value>0</value>
 		</property>
 		<property name="maximumDistance">
-			<value>10</value>
+			<value>7.5999999</value>
 		</property>
 	</object>
 	<object class="MarkerTrack" id="{11e253f4-bd73-4346-aa43-d0b122a94ea7}" />
@@ -124,12 +124,16 @@
 		<relationship name="effects">
 			<destination>{ea9c6ff3-1be8-41b0-b06a-9a5a03a0a4bf}</destination>
 			<destination>{9220ac25-6939-4847-b8eb-b19ae1fccb10}</destination>
+			<destination>{a9b57f51-a799-4179-a6ca-db1ccd6bb52d}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{b21273e5-a5ec-465b-9c1e-f38f49df4b1c}" />
 	<object class="SingleSound" id="{c2baa03b-1c6f-4238-a564-e89a92f76f38}">
 		<property name="startOffset">
 			<value>50</value>
+		</property>
+		<property name="volume">
+			<value>1.5</value>
 		</property>
 		<property name="looping">
 			<value>true</value>
@@ -138,7 +142,7 @@
 			<destination>{58823c3f-cf19-4d3e-a38d-7fa4dfa4673f}</destination>
 		</relationship>
 		<relationship name="audioFile">
-			<destination>{f921e190-4a3b-4a1e-8521-8e9a389d5ba1}</destination>
+			<destination>{67bf64e2-db8f-4f6e-9deb-a71d3754024a}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusFader" id="{d26e6f51-fff2-44c6-ba1c-1abfd5c74fc9}" />
@@ -149,6 +153,14 @@
 		</property>
 		<property name="extentMode">
 			<value>1</value>
+		</property>
+		<property name="soundSize">
+			<value>0.349999994</value>
+		</property>
+	</object>
+	<object class="ThreeEQEffect" id="{a9b57f51-a799-4179-a6ca-db1ccd6bb52d}">
+		<property name="lowGain">
+			<value>-80</value>
 		</property>
 	</object>
 	<object class="RandomizerModulator" id="{58823c3f-cf19-4d3e-a38d-7fa4dfa4673f}">

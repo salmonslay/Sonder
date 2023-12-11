@@ -16,16 +16,42 @@
 	</object>
 	<object class="MixerBusEffectChain" id="{77726c04-c098-4db6-8de5-619e5df10e18}">
 		<relationship name="effects">
+			<destination>{63535af0-093b-42d9-a15a-30348c0d04dc}</destination>
 			<destination>{a19176fb-eaae-4b69-8b48-9b8e884d0ef4}</destination>
 			<destination>{0bc972f6-8cd1-4659-a3ca-dfcf9db5a6e9}</destination>
-			<destination>{f55d05b4-4548-40db-9675-b665c6678722}</destination>
 			<destination>{516a4689-b702-48d0-9747-fa8f86215eb7}</destination>
+			<destination>{f55d05b4-4548-40db-9675-b665c6678722}</destination>
 			<destination>{72cb41b4-ab1f-4984-8b9f-6dd3fa79abf6}</destination>
 			<destination>{e286a1a2-e4fe-409a-ab72-e27f03b8313b}</destination>
+			<destination>{0c515091-7012-426b-bc10-c46f87562bfd}</destination>
 		</relationship>
 	</object>
-	<object class="MixerBusPanner" id="{af2e12a5-53dd-49ea-ba08-ea2368eb1fe4}" />
+	<object class="MixerBusPanner" id="{af2e12a5-53dd-49ea-ba08-ea2368eb1fe4}">
+		<property name="surroundLFELevel">
+			<value>-4</value>
+		</property>
+		<property name="overridingOutputFormat">
+			<value>2</value>
+		</property>
+		<relationship name="modulators">
+			<destination>{e372bd90-3794-4ebc-babb-a8bece53fcc5}</destination>
+		</relationship>
+	</object>
+	<object class="ConvolutionReverbEffect" id="{63535af0-093b-42d9-a15a-30348c0d04dc}">
+		<property name="endFrame">
+			<value>157069</value>
+		</property>
+		<property name="wetLevel">
+			<value>-1</value>
+		</property>
+		<relationship name="referenceableData">
+			<destination>{0b0bf83b-e99b-45d1-aee8-d880d30ced35}</destination>
+		</relationship>
+	</object>
 	<object class="SFXReverbEffect" id="{a19176fb-eaae-4b69-8b48-9b8e884d0ef4}">
+		<property name="bypass">
+			<value>true</value>
+		</property>
 		<property name="decayTime">
 			<value>1200</value>
 		</property>
@@ -39,7 +65,7 @@
 			<value>96.5</value>
 		</property>
 		<property name="earlyLateMix">
-			<value>23</value>
+			<value>0</value>
 		</property>
 		<property name="wetLevel">
 			<value>-3.5</value>
@@ -57,7 +83,7 @@
 			<value>30</value>
 		</property>
 		<property name="feedback">
-			<value>44</value>
+			<value>22.5</value>
 		</property>
 		<property name="dryLevel">
 			<value>-80</value>
@@ -66,21 +92,7 @@
 			<destination>{6783465f-9cb5-46a8-88f0-5230069b694d}</destination>
 		</relationship>
 	</object>
-	<object class="ThreeEQEffect" id="{f55d05b4-4548-40db-9675-b665c6678722}">
-		<property name="lowGain">
-			<value>-80</value>
-		</property>
-		<property name="midGain">
-			<value>-6.5</value>
-		</property>
-		<property name="highGain">
-			<value>-4</value>
-		</property>
-	</object>
 	<object class="PitchShifterEffect" id="{516a4689-b702-48d0-9747-fa8f86215eb7}">
-		<property name="bypass">
-			<value>true</value>
-		</property>
 		<property name="pitch">
 			<value>1</value>
 		</property>
@@ -91,12 +103,36 @@
 			<value>1</value>
 		</property>
 	</object>
+	<object class="ThreeEQEffect" id="{f55d05b4-4548-40db-9675-b665c6678722}">
+		<property name="lowGain">
+			<value>-80</value>
+		</property>
+		<property name="midGain">
+			<value>-19</value>
+		</property>
+		<property name="highGain">
+			<value>-4</value>
+		</property>
+	</object>
 	<object class="GainEffect" id="{72cb41b4-ab1f-4984-8b9f-6dd3fa79abf6}">
 		<relationship name="automators">
 			<destination>{baf9f45f-db85-4bfb-9a67-866a4454dd5d}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusFader" id="{e286a1a2-e4fe-409a-ab72-e27f03b8313b}" />
+	<object class="TremoloEffect" id="{0c515091-7012-426b-bc10-c46f87562bfd}">
+		<property name="depth">
+			<value>0.379999995</value>
+		</property>
+	</object>
+	<object class="RandomizerModulator" id="{e372bd90-3794-4ebc-babb-a8bece53fcc5}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>surroundPanDirection</value>
+		</property>
+		<property name="amount">
+			<value>67.5</value>
+		</property>
+	</object>
 	<object class="Automator" id="{74c1ca51-bf46-4788-b415-8b79120c50e5}">
 		<property name="nameOfPropertyBeingAutomated">
 			<value>wetLevel</value>
@@ -189,7 +225,7 @@
 			<value>1</value>
 		</property>
 		<property name="value">
-			<value>1200</value>
+			<value>751.515259</value>
 		</property>
 	</object>
 	<object class="AutomationPoint" id="{9dd044d7-7f61-49f5-9e97-60d69dc1a046}">
