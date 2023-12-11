@@ -40,6 +40,9 @@
 		</relationship>
 	</object>
 	<object class="MixerSend" id="{001079f0-07b5-4581-8172-aed1d63e1a46}">
+		<property name="level">
+			<value>0</value>
+		</property>
 		<property name="inputFormat">
 			<value>2</value>
 		</property>

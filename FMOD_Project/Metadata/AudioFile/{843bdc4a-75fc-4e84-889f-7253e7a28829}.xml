@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{843bdc4a-75fc-4e84-889f-7253e7a28829}">
+		<property name="assetPath">
+			<value>IR/07_Air_Raid_Shelter/07-DPA 4061-Stereo-48K-BURST/07c-AirRaidShelterFront-DPA 4061-Stereo-48K-BURST.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>2.9669791666666665</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{542ff4ed-1b88-4c2c-98cc-a4f4c45c5308}</destination>
+		</relationship>
+	</object>
+</objects>
