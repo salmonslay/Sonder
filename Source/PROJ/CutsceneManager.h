@@ -91,6 +91,15 @@ private:
 	UPROPERTY(EditAnywhere)
 	FName LevelToLoadOnCutsceneEnd = NAME_None;
 
+	/** Widget shown until the cutscene starts playing, probably a black screen but not necessarily.
+	 * Is removed when cutscene starts */
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> AutoPlayBlackScreenWidget;
+
+	/** The widget created which will be removed when cutscene starts */
+	UPROPERTY()
+	class UUserWidget* AutoPlayWidget; 
+
 	/** Plays the assigned cutscene */
 	void PlayCutscene();
 
@@ -106,7 +115,7 @@ private:
 	void BindSkipCutsceneButton(); 
 
 	/** Removes the HUD for the player */
-	void RemoveHUD();
+	void RemoveHUD() const;
 	
 	/** Stops the cutscene and resets everything. Called either by skipping or when cutscene finished naturally */
 	void StopCutscene();
