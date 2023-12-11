@@ -26,17 +26,22 @@ private:
 	FBlackboardKeySelector BBKeyDoBasicAttack;
 
 	UPROPERTY(EditAnywhere)
+	FBlackboardKeySelector BBKeyDashThroughRobot;
+
+	UPROPERTY(EditAnywhere)
 	FBlackboardKeySelector BBKeyDoSpecialAttack;
 
 	UPROPERTY()
 	TArray<TEnumAsByte<EObjectTypeQuery>> ShadowObjectType;
+
+	/** How far away a Robot needs to be to dash through, assuming all other conditions are met */
+	UPROPERTY(EditAnywhere)
+	float DistanceToRobotToDash = 100.f; 
 
 	/** Returns true if the Owner (Shadow Soul) is attacking, determined by seeing if any attack bool is true */
 	bool IsAttacking(UBehaviorTreeComponent& OwnerComp) const;
 
 	/** Returns true if it's appropriate to dash (resulting in a probable Robot buff) */
 	bool ShouldDashThroughRobot(const APawn* Owner) const;
-
-	bool IsRobotInMovementDirection(const AActor* Robot, const APawn* Owner) const; 
 	
 };
