@@ -5,7 +5,7 @@
 
 #include "AIController.h"
 #include "ShadowRobotCharacter.h"
-#include "SoulDashingState.h"
+#include "StaticsHelper.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
@@ -20,19 +20,18 @@ void UBTService_SetDashThroughRobot::TickNode(UBehaviorTreeComponent& OwnerComp,
 	
 	if(IsAttacking(OwnerComp))
 	{
-		// Clear special attack value?
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool(BBKeyDashThroughRobot.SelectedKeyName, false);
+		OwnerComp.GetBlackboardComponent()->ClearValue(BBKeyDashThroughRobot.SelectedKeyName); 
 		return; 
 	}
 
 	const auto OwnerPawn = OwnerComp.GetAIOwner()->GetPawn(); 
 
-	OwnerComp.GetBlackboardComponent()->SetValueAsBool(BBKeyDoSpecialAttack.SelectedKeyName, ShouldDashThroughRobot(OwnerPawn));
+	OwnerComp.GetBlackboardComponent()->SetValueAsBool(BBKeyDashThroughRobot.SelectedKeyName, ShouldDashThroughRobot(OwnerPawn));
 }
 
 bool UBTService_SetDashThroughRobot::IsAttacking(UBehaviorTreeComponent& OwnerComp) const
 {
-	// We might want to check this differently, cooldowns etc. can make this work poorly 
-	
 	// Doing basic attack, return true 
 	if(OwnerComp.GetBlackboardComponent()->GetValueAsBool(BBKeyDoBasicAttack.SelectedKeyName))
 		return true;
@@ -43,30 +42,17 @@ bool UBTService_SetDashThroughRobot::IsAttacking(UBehaviorTreeComponent& OwnerCo
 
 bool UBTService_SetDashThroughRobot::ShouldDashThroughRobot(const APawn* Owner) const
 {
-	if(const auto DashState = Owner->FindComponentByClass<USoulDashingState>())
-	{
-		const float DashDistance = DashState->GetMaxDashDistance();
+	// Get all ShadowRobots in dash distance, i.e potential targets 
+	const TArray<AActor*> ActorsToIgnore;
+	TArray<AActor*> OverlappingActors;
+	
+	UKismetSystemLibrary::SphereOverlapActors(this, Owner->GetActorLocation(), DistanceToRobotToDash,
+	ShadowObjectType, AShadowRobotCharacter::StaticClass(), ActorsToIgnore, OverlappingActors);
 
-		// Get all ShadowRobots in dash distance, i.e potential targets 
-		const TArray<AActor*> ActorsToIgnore;
-		TArray<AActor*> OverlappingActors;
-		
-		UKismetSystemLibrary::SphereOverlapActors(this, Owner->GetActorLocation(), DashDistance,
-			ShadowObjectType, AShadowRobotCharacter::StaticClass(), ActorsToIgnore, OverlappingActors);
-
-		// Check if any Robot is in movement direction, if it is then we can buff a Robot 
-		for(const auto Robot : OverlappingActors)
-			if(IsRobotInMovementDirection(Robot, Owner))
-				return true; 
-	}
+	// Check if any Robot is in movement direction, if it is then we can buff a Robot 
+	for(const auto Robot : OverlappingActors)
+		if(UStaticsHelper::ActorIsInFront(Owner, Robot))
+			return true; 
 
 	return false; 
-}
-
-bool UBTService_SetDashThroughRobot::IsRobotInMovementDirection(const AActor* Robot, const APawn* Owner) const
-{
-	const FVector DirToRobot = Robot->GetActorLocation() - Owner->GetActorLocation();
-
-	// Check if Robot is in front of Soul 
-	return FVector::DotProduct(DirToRobot, Owner->GetActorForwardVector()) > 0; 
 }
