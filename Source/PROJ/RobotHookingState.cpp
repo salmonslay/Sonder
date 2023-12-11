@@ -94,8 +94,6 @@ void URobotHookingState::Exit()
 	if(!RobotCharacter->InputEnabled())
 		RobotCharacter->EnableInput(RobotCharacter->GetLocalViewingPlayerController());
 
-	CharOwner->SetCanBeDamaged(true);
-
 	CharOwner->GetCapsuleComponent()->OnComponentBeginOverlap.RemoveDynamic(this, &URobotHookingState::ActorOverlap);
 
 	// Calculate new velocity, defaulting at current velocity 
@@ -393,7 +391,9 @@ void URobotHookingState::ServerRPCHookShotEnd_Implementation(ARobotStateMachine*
 	
 	MovementComp->Velocity = NewVel;
 
-	bHookShotActive = false; 
+	bHookShotActive = false;
+
+	CharOwner->SetCanBeDamaged(true);
 
 	MulticastRPCHookShotEnd(RobotChar); 
 }
