@@ -53,3 +53,11 @@ FString USonderSaveGame::GetLevelToContinueTo(const ESonderLevel From)
 		return LevelPaths[ESonderLevel::Tutorial];
 	}
 }
+
+bool USonderSaveGame::CanPlayLevel(const ESonderLevel LevelToPlay)
+{
+	const USonderSaveGame* SaveGame = APROJCharacter::GetSaveGameSafe();
+	const ESonderLevel Highest = SaveGame->GetHighestLevelCompleted();
+
+	return LevelToPlay <= Highest || LevelToPlay == static_cast<ESonderLevel>(static_cast<uint8>(Highest) + 10);
+}
