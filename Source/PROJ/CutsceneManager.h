@@ -77,7 +77,11 @@ private:
 
 	/** Should players be hidden during cutscene? */
 	UPROPERTY(EditAnywhere)
-	bool bHidePlayersDuringCutscene = true; 
+	bool bHidePlayersDuringCutscene = true;
+
+	/** The widget to display when loading a new level, probably a black screen but not necessarily */
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<UUserWidget> WidgetForLoadingNewMap; 
 
 	/** Plays the assigned cutscene */
 	void PlayCutscene();
