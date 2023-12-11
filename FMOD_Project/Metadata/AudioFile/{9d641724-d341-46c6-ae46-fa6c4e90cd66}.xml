@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{9d641724-d341-46c6-ae46-fa6c4e90cd66}">
+		<property name="assetPath">
+			<value>IR/07_Air_Raid_Shelter/07-KM184-Stereo-48K-BURST/07a-AirRaidShelterCenter-KM184-Stereo-48K-BURST.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>3.6379999999999999</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{542ff4ed-1b88-4c2c-98cc-a4f4c45c5308}</destination>
+		</relationship>
+	</object>
+</objects>

@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="DataFile" id="{cef7725b-3c56-40b1-b53e-18a1339d0dd9}">
+		<property name="assetPath">
+			<value>IR/07_Air_Raid_Shelter/AirRaidShelter.jpg</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{542ff4ed-1b88-4c2c-98cc-a4f4c45c5308}</destination>
+		</relationship>
+	</object>
+</objects>
