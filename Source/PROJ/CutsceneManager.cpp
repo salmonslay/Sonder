@@ -151,18 +151,10 @@ void ACutsceneManager::StopCutscene()
 
 	CutscenesPlayingCounter--;
 
-	if(!LevelToLoadOnCutsceneEnd.IsNone())
-	{
-		if(WidgetForLoadingNewMap)
-		{
-			const auto Widget = CreateWidget(PlayerController, WidgetForLoadingNewMap);
+	OnCutsceneEnd(!LevelToLoadOnCutsceneEnd.IsNone()); 
 
-			Widget->AddToPlayerScreen(); 
-		}	
-
-		if(HasAuthority())
-			GetWorld()->ServerTravel("/Game/Maps/" + LevelToLoadOnCutsceneEnd.ToString());
-	}
+	if(!LevelToLoadOnCutsceneEnd.IsNone() && HasAuthority())
+		GetWorld()->ServerTravel("/Game/Maps/" + LevelToLoadOnCutsceneEnd.ToString());
 
 	// if(!IsCutscenePlaying())
 	// 	Destroy(); // TODO: Destroy? 
