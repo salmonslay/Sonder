@@ -27,6 +27,10 @@ public:
 
 	static bool IsCutscenePlaying() { return CutscenesPlayingCounter != 0; }
 
+	/** Call to play the assigned cutscene for all players */
+	UFUNCTION(Server, Reliable, BlueprintCallable)
+	void ServerRPC_PlayCutscene();
+
 protected:
 	
 	UPROPERTY(BlueprintReadOnly)
@@ -89,9 +93,6 @@ private:
 
 	/** Plays the assigned cutscene */
 	void PlayCutscene();
-
-	UFUNCTION(Server, Reliable)
-	void ServerRPC_PlayCutscene();
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPC_PlayCutscene(); 
