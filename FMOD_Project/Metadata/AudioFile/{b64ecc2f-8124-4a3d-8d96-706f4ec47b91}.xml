@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{b64ecc2f-8124-4a3d-8d96-706f4ec47b91}">
+		<property name="assetPath">
+			<value>IR/06_Commissioners_House/DPA4061-Stereo-48K-BURST/06e_CHouse-2ndFl_LargeBedRoom_DPA4061-Stereo-48K-BURST.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>1.2</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{542ff4ed-1b88-4c2c-98cc-a4f4c45c5308}</destination>
+		</relationship>
+	</object>
+</objects>
