@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="EncodableAsset" id="{7753a854-9bee-4dc5-9991-cbe61bc54cfa}">
+		<property name="assetPath">
+			<value>IR/07_Air_Raid_Shelter/07-KM184-Stereo-48K-BURST/</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{542ff4ed-1b88-4c2c-98cc-a4f4c45c5308}</destination>
+		</relationship>
+	</object>
+</objects>

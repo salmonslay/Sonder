@@ -1,0 +1,11 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="DataFile" id="{fe30fe9c-2b52-4e81-9420-ecf15cc1792b}">
+		<property name="assetPath">
+			<value>IR/06_Commissioners_House/06a-CHouse-Cellar.jpg</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{542ff4ed-1b88-4c2c-98cc-a4f4c45c5308}</destination>
+		</relationship>
+	</object>
+</objects>

@@ -8,6 +8,7 @@
 #include "LevelSequenceActor.h"
 #include "LevelSequencePlayer.h"
 #include "PROJCharacter.h"
+#include "Blueprint/UserWidget.h"
 #include "Kismet/GameplayStatics.h"
 
 ACutsceneManager::ACutsceneManager()
@@ -51,6 +52,8 @@ void ACutsceneManager::BeginPlay()
 void ACutsceneManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
+
+	CutscenesPlayingCounter = 0; 
 
 	GetWorldTimerManager().ClearAllTimersForObject(this); // TODO: Will need switch if object is destroyed 
 }
@@ -148,7 +151,9 @@ void ACutsceneManager::StopCutscene()
 
 	CutscenesPlayingCounter--;
 
-	if(HasAuthority() && !LevelToLoadOnCutsceneEnd.IsNone())
+	OnCutsceneEnd(!LevelToLoadOnCutsceneEnd.IsNone()); 
+
+	if(!LevelToLoadOnCutsceneEnd.IsNone() && HasAuthority())
 		GetWorld()->ServerTravel("/Game/Maps/" + LevelToLoadOnCutsceneEnd.ToString());
 
 	// if(!IsCutscenePlaying())
