@@ -42,7 +42,7 @@
 			<value>157069</value>
 		</property>
 		<property name="wetLevel">
-			<value>-1</value>
+			<value>10</value>
 		</property>
 		<relationship name="referenceableData">
 			<destination>{0b0bf83b-e99b-45d1-aee8-d880d30ced35}</destination>
@@ -111,7 +111,7 @@
 			<value>-19</value>
 		</property>
 		<property name="highGain">
-			<value>-4</value>
+			<value>-7</value>
 		</property>
 	</object>
 	<object class="GainEffect" id="{72cb41b4-ab1f-4984-8b9f-6dd3fa79abf6}">
@@ -241,7 +241,7 @@
 			<value>0.9844632768361582</value>
 		</property>
 		<property name="value">
-			<value>3.81469727e-06</value>
+			<value>7</value>
 		</property>
 	</object>
 	<object class="AutomationPoint" id="{f22f14fc-b6a0-45ba-82d5-2918a88e7fd0}">

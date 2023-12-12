@@ -29,7 +29,7 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	/** Returns true if the player is currently hook shotting */
+	/** Returns true if the player is currently hook shotting, with or without a valid target */
 	UFUNCTION(BlueprintPure)
 	bool IsHookShotting() const { return bHookShotActive; } 
 
@@ -37,6 +37,8 @@ public:
 	UFUNCTION(BlueprintPure)
 	FVector GetCurrentHookArmLocation() const { return HookArmLocation; }
 
+	/** Currently travelling towards a valid target */
+	UFUNCTION(BlueprintPure)
 	bool IsTravellingToTarget() const { return bTravellingTowardsTarget; }
 
 	bool HasValidTarget() const { return IsValid(CurrentTargetActor); }
@@ -58,6 +60,7 @@ private:
 	UPROPERTY()
 	class ARobotStateMachine* RobotCharacter;
 
+	UPROPERTY(Replicated)
 	bool bTravellingTowardsTarget = false;
 
 	bool bHookTargetIsSoul = false;

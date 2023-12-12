@@ -40,15 +40,46 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnBasicAttackHit(); 
 
-	UPROPERTY(BlueprintReadWrite)
-	bool bCanJumpFromPlatform = false;
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bCanJump = false;
 
 	FVector AvaliableJumpPoint = FVector::ZeroVector;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bIsJumping = false;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bHasLanded= false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bHasLandedOnGround = true;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	float JumpCoolDownDuration = 2.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	float JumpCoolDownTimer = 0.f;
+	
 	UFUNCTION(Server, Reliable) 
-	void ServerRPC_ToggleChargeEffect(const bool bActive); 
+	void ServerRPC_ToggleChargeEffect(const bool bActive);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, ReplicatedUsing=OnRep_Jump)
+	bool bIsPerformingJump = false;
+
+	void MakeJump();
+
+	UFUNCTION(BlueprintCallable)
+	virtual void Idle() override;
+	
+	UFUNCTION()
+	void OnRep_Jump();
+
+	FVector CurrentTargetLocation = FVector::ZeroVector;
+	
+	UFUNCTION(BlueprintImplementableEvent)
+
+	void OnJumpEvent();
+
 
 protected:
 

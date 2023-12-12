@@ -29,8 +29,44 @@ void AShadowCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AShadowCharacter, CurrentState) 
+	DOREPLIFETIME(AShadowCharacter, CurrentState)
+	DOREPLIFETIME(AShadowCharacter, bIsPerformingJump)
 }
+
+void AShadowCharacter::MakeJump()
+{
+	if(GetLocalRole() == ROLE_Authority && !bIsStunned)
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
+		UE_LOG(LogTemp, Error, TEXT("MovementMode falling"));
+		
+		bIsPerformingJump = true;
+		OnJumpEvent();
+	}
+}
+
+void AShadowCharacter::Idle()
+{
+	if(GetLocalRole() == ROLE_Authority && !bIsStunned)
+	{
+		UE_LOG(LogTemp, Error, TEXT("MovementMode walking"));
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		bIsPerformingJump = false;
+	}
+}
+
+void AShadowCharacter::OnRep_Jump()
+{
+	if (bIsPerformingJump)
+	{
+		OnJumpEvent();
+	}
+	else
+	{
+		Idle();
+	}
+}
+
 
 void AShadowCharacter::BeginPlay()
 {
@@ -40,6 +76,8 @@ void AShadowCharacter::BeginPlay()
 
 	if(CurrentState)
 		CurrentState->Enter();
+
+	
 }
 
 void AShadowCharacter::Tick(const float DeltaSeconds)
@@ -51,6 +89,8 @@ void AShadowCharacter::Tick(const float DeltaSeconds)
 
 	if(CurrentState)
 		CurrentState->Update(DeltaSeconds);
+
+	
 }
 
 UPlayerCharState* AShadowCharacter::GetStartingState() const
@@ -64,6 +104,7 @@ UPlayerCharState* AShadowCharacter::GetStartingState() const
 	UE_LOG(LogTemp, Warning, TEXT("Error. %s has no base state"), *GetActorNameOrLabel())
 	return DummyState; // Should not get here 
 }
+
 
 void AShadowCharacter::ServerRPC_SwitchState_Implementation(UPlayerCharState* NewState)
 {
