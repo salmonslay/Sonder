@@ -129,6 +129,7 @@ void URobotHookingState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(URobotHookingState, CurrentHookTargetLocation)
 	DOREPLIFETIME(URobotHookingState, bHookShotActive)
 	DOREPLIFETIME(URobotHookingState, HookArmLocation)
+	DOREPLIFETIME(URobotHookingState, bTravellingTowardsTarget)
 }
 
 bool URobotHookingState::SetHookTarget()
@@ -273,7 +274,9 @@ void URobotHookingState::ServerRPCStartTravel_Implementation()
 		return;
 
 	// Invincible during hook shot, needs to be set on server 
-	CharOwner->SetCanBeDamaged(false); 
+	CharOwner->SetCanBeDamaged(false);
+
+	bTravellingTowardsTarget = true; 
 	
 	MulticastRPCStartTravel(); 
 }
@@ -392,6 +395,7 @@ void URobotHookingState::ServerRPCHookShotEnd_Implementation(ARobotStateMachine*
 	MovementComp->Velocity = NewVel;
 
 	bHookShotActive = false;
+	bTravellingTowardsTarget = false;
 
 	CharOwner->SetCanBeDamaged(true);
 
