@@ -42,6 +42,8 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 	{
 		if (Enemy)
 		{
+
+			// TODO: check if has valid path, do nothing if has path bb
 			if (Enemy->bHasLanded || Enemy->bHasLandedOnGround)
 			{
 				Enemy->bIsJumping = false;
