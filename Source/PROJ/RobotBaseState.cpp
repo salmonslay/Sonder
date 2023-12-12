@@ -220,6 +220,11 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 		
 		else if (const auto Grenade = Cast<ALightGrenade>(Actor))
 		{
+			// See if there is line of sight to Soul, if there isn't then do nothing with Soul 
+			FHitResult HitResult; 
+			if(GetWorld()->LineTraceSingleByChannel(HitResult, CharOwner->GetActorLocation(), Grenade->GetActorLocation(), ECC_Pawn))
+				continue;
+			
 			Grenade->PulseExplosion();
 			Grenade->ServerRPCExplosion();
 			UE_LOG(LogTemp, Warning, TEXT("Explode"));
