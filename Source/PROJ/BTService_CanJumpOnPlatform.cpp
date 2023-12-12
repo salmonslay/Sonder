@@ -4,6 +4,8 @@
 #include "BTService_CanJumpOnPlatform.h"
 
 #include "AIController.h"
+#include "NavigationSystem.h"
+#include "NavigationSystemTypes.h"
 #include "ShadowCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -58,6 +60,8 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	{
 		if (OwnerCharacter->JumpCoolDownTimer >= OwnerCharacter->JumpCoolDownDuration)
 		{
+
+			//TODO: 
 			if (OwnerCharacter->AvaliableJumpPoint != FVector::ZeroVector)
 			{
 				OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", true);
@@ -84,23 +88,68 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	}
 }
 
-bool UBTService_CanJumpOnPlatform::CanJumpToPoint(FVector StartPoint, FVector JumpPoint)
+bool UBTService_CanJumpOnPlatform::CheckPathToPlayer(const FVector &StartPoint, const FVector &JumpPoint)
 {
-	FVector GravitationalForce = OwnerCharacter->GetCharacterMovement()->GetGravityDirection();
-	float CharacterSpeed = OwnerCharacter->GetCharacterMovement()->GetMaxSpeed();
-	float HorizontalDistance = FVector::Dist(JumpPoint, StartPoint); 
-
-	float TravelTime = HorizontalDistance/CharacterSpeed;
-	FVector FalloffVector = GravitationalForce / 2 * FMath::Pow(TravelTime,2);
-
-	if ((StartPoint - FalloffVector).Z <= JumpPoint.Z)
+	/*
+	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(GetWorld());
+	if (NavSystem)
 	{
-		return true;
+		AController* EnemyController = OwnerCharacter->GetController();
+		// Check if there's a path between owner character and current target location
+		const ANavigationData* NavData = Cast<ANavigationData>(NavSystem->GetNavDataForProps(EnemyController->GetNavAgentPropertiesRef()));
+		if (NavData)
+		{
+			FNavAgentProperties AgentProperties;
+			FPathFindingQuery Query = FPathFindingQuery(EnemyController, *NavData, StartPoint, JumpPoint);
+			
+			//bool bPathExists = NavSystem->TestPathSync(Query, EPathFindingMode::Hierarchical);
+			FNavPathSharedPtr NavPath;
+			FPathFindingResult PathResult;
+			bool bPathExists = NavSystem->FindPathSync(NavData, Query, StartPoint, JumpPoint, PathResult, nullptr);
+
+
+			// Path exists, check for holes in the NavMesh
+			if (bPathExists && NavPath.IsValid())
+			{
+				TArray<FVector> PathPoints;
+				NavPath->GetPathPoints(PathPoints);
+
+				for (const FVector& PathPoint : PathPoints)
+				{
+					// Check if each point on the path is navigable
+					if (!NavData->ProjectPointToNavigation(PathPoint, PathPoint))
+					{
+						// Point is not navigable, suggesting a potential hole or broken NavMesh area
+						// Handle accordingly or log the location for debugging
+					}
+				}
+			}
+			if (bPathExists)
+			{
+				
+				if (Result.IsSuccessful())
+				{
+					// No holes in the NavMesh between AI character and player character
+					// Proceed with actions for direct path
+				}
+				else
+				{
+					// Holes found in the NavMesh between AI character and player character
+					// Handle accordingly
+				}
+			}
+			else
+			{
+				// No path found between AI character and player character
+				// Handle accordingly
+			}
+		}
 	}
-	return false;
+	*/
 }
 
-void UBTService_CanJumpOnPlatform::JumpToPoint(FVector StartPoint,FVector JumpPoint)
+
+void UBTService_CanJumpOnPlatform::JumpToPoint(const FVector &StartPoint, const FVector &JumpPoint) const 
 {
 	OwnerCharacter->bIsJumping = true;
 	OwnerCharacter->bIsPerformingJump = true;
@@ -115,4 +164,5 @@ void UBTService_CanJumpOnPlatform::JumpToPoint(FVector StartPoint,FVector JumpPo
 		UE_LOG(LogTemp, Error, TEXT("Doing jump "));
 	}
 }
+
 

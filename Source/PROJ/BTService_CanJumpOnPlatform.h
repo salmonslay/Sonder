@@ -49,10 +49,11 @@ private:
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;
 	
-	/** Calculates force to jump on platform if jump is possible, and performs jump*/ 
-	void JumpToPoint(FVector StartPoint, FVector JumpPoint);
+	/** Calculates force to jump on platform if jump is possible, and performs jump */ 
+	void JumpToPoint(const FVector &StartPoint, const FVector &JumpPoint) const;
 
-	bool CanJumpToPoint(FVector StartPoint, FVector JumpPoint);
+	/** Check if there's a path between AI character and player character*/
+	bool CheckPathToPlayer(const FVector &StartPoint, const FVector &JumpPoint);
 
 	float JumpCoolDownTimer = 0.f;
 };

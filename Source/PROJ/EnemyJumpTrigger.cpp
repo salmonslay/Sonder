@@ -44,6 +44,9 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 		{
 
 			// TODO: check if has valid path, do nothing if has path bb
+			// TODO: fix so that if enemy is jumping, it does not get set to can jump on begin overlap.
+			// TODO: check math for jump, might be enemyjumpdistance that is weird.
+			// TODO: check if i should set bHasLanded / bHasLandedOnGround to false when jumping, might break something doe
 			if (Enemy->bHasLanded || Enemy->bHasLandedOnGround)
 			{
 				Enemy->bIsJumping = false;
