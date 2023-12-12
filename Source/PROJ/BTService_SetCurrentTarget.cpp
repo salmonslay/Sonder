@@ -5,6 +5,7 @@
 
 #include "EnemyAIController.h"
 #include "PROJCharacter.h"
+#include "ShadowCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 void UBTService_SetCurrentTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -16,6 +17,13 @@ void UBTService_SetCurrentTarget::TickNode(UBehaviorTreeComponent& OwnerComp, ui
 
 FVector UBTService_SetCurrentTarget::GetTargetLocation(AAIController* BaseAIController)
 {
+	OwnerCharacter = Cast<AShadowCharacter>(BaseAIController->GetCharacter());
+
+	if (!OwnerCharacter)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Could not cast AI character in Service Set Current target"))
+		return FVector::Zero(); 
+	}
 	if(const auto AIController = Cast<AEnemyAIController>(BaseAIController))
 	{
 		const auto Player1 = AIController->GetPlayerFromController(0);
@@ -33,9 +41,12 @@ FVector UBTService_SetCurrentTarget::GetTargetLocation(AAIController* BaseAICont
 		const auto DistToPlayerTwo = FVector::Dist(Player2->GetActorLocation(), CurrentLocation);
 
 		if(DistToPlayerOne < DistToPlayerTwo)
-			return Player1->GetActorLocation();
-
-		return Player2->GetActorLocation(); 
+		{
+			OwnerCharacter->CurrentTargetLocation = Player1->GetActorLocation();
+			return OwnerCharacter->CurrentTargetLocation;
+		}
+		OwnerCharacter->CurrentTargetLocation = Player2->GetActorLocation();
+		return OwnerCharacter->CurrentTargetLocation; 
 	}
 
 	UE_LOG(LogTemp, Error, TEXT("Could not cast AI controller in Service Set Current target"))

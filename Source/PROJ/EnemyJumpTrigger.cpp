@@ -5,6 +5,7 @@
 
 #include "MovingPlatform.h"
 #include "ShadowCharacter.h"
+#include "SonderGameState.h"
 #include "Components/BoxComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -35,8 +36,7 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	//if (!bIsOverlappingWithMovingPlatform) return;
-	//if (!OverlappingGround) return; // bort
+	if (WaitingEnemies.IsEmpty()) return;
 	
 	for (AShadowCharacter* Enemy : WaitingEnemies)
 	{
@@ -50,22 +50,22 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 			
 			if (bTriggerJumpToMovablePlatform )
 			{
-				if (Enemy->bCanJump && !Enemy->bHasLanded && !Enemy->bIsJumping) // is not on moving platform
+				if (Enemy->bCanJump && !Enemy->bHasLanded && Enemy->bHasLandedOnGround && !Enemy->bIsJumping && !Enemy->bIsPerformingJump) // is not on moving platform
 				{
 					Enemy->AvaliableJumpPoint = CalculateJumpToPlatform(Enemy->GetActorLocation(), Enemy->GetActorForwardVector());
-					//UE_LOG(LogTemp, Error, TEXT("want to jump to jumppoint %f, %f, %f"), Enemy->AvaliableJumpPoint.X, Enemy->AvaliableJumpPoint.Y, Enemy->AvaliableJumpPoint.Z);
-					//DrawDebugSphere(GetWorld(),Enemy->AvaliableJumpPoint, 30.f, 24, FColor::Blue, false, 5.f);
 				}
-				else if (Enemy->bCanJump && Enemy->bHasLanded && !Enemy->bIsJumping) // is on moving platform and wants to jump off it
+				else if (Enemy->bCanJump && Enemy->bHasLanded && !Enemy->bHasLandedOnGround &&  !Enemy->bIsJumping && !Enemy->bIsPerformingJump) // is on moving platform and wants to jump off it
 				{
-					Enemy->AvaliableJumpPoint = CalculateJumpToPoint(Enemy->GetActorLocation());
-					//UE_LOG(LogTemp, Error, TEXT("want to jump to jumppoint"));
-					//DrawDebugSphere(GetWorld(),Enemy->AvaliableJumpPoint, 30.f, 24, FColor::Blue, false, 5.f);
+					Enemy->AvaliableJumpPoint = CalculateJumpToPoint(Enemy);
 				}
 			}
 			else
 			{
 				
+				if (Enemy->bCanJump && Enemy->bHasLandedOnGround && !Enemy->bIsJumping && !Enemy->bIsPerformingJump) // ordinary jump to some point 
+				{
+					Enemy->AvaliableJumpPoint = CalculateJumpToPoint( Enemy);
+				}
 			}
 			
 		}
@@ -101,14 +101,13 @@ FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation,
 	
 }
 
-FVector AEnemyJumpTrigger::CalculateJumpToPoint(const FVector& EnemyLocation)
+FVector AEnemyJumpTrigger::CalculateJumpToPoint(AShadowCharacter* Enemy)
 {
-	if (FVector::Distance(EnemyLocation, JumpPoint1->GetComponentLocation()) > FVector::Distance(EnemyLocation, JumpPoint2->GetComponentLocation()))
+	// choose jump point that is closest to enemy's current target
+	if (FVector::Distance(JumpPoint1->GetComponentLocation(), Enemy->CurrentTargetLocation) <=  FVector::Distance(JumpPoint2->GetComponentLocation(), Enemy->CurrentTargetLocation))
 	{
 		return JumpPoint1->GetComponentLocation();
 	}
-	//UE_LOG(LogTemp, Error, TEXT("want to jump to point 2"));
-	//DrawDebugSphere(GetWorld(),JumpPoint2->GetComponentLocation(), 30.f, 24, FColor::Yellow, false, 5.f);
 	return JumpPoint2->GetComponentLocation();
 }
 
@@ -126,23 +125,8 @@ void AEnemyJumpTrigger::AllowJump() // runs on overlap begin with moving platfor
 		{
 
 			Enemy->bCanJump = true;
-			/*
-			if (!Enemy->bHasLandedOnPlatform)
-			{
-				UE_LOG(LogTemp, Error, TEXT("Allowing jump to platform"));
-				Enemy->bCanJumpToPlatform = true;
-				//Enemy->bCanJumpFromPlatform = false;
-			}
-			else
-			{
-				UE_LOG(LogTemp, Error, TEXT("Allowing jumping from platform"));
-
-				//Enemy->bCanJumpToPlatform = false;
-				Enemy->bCanJumpFromPlatform = true;
-			}
-			*/
+			Enemy->JumpCoolDownTimer = Enemy->JumpCoolDownDuration;
 		}
-	
 	}
 }
 
@@ -156,22 +140,7 @@ void AEnemyJumpTrigger::DenyJump()  // runs on overlap end with moving platform,
 			{
 				if (Enemy)
 				{
-
 					Enemy->bCanJump = false;
-					/*
-					if (!Enemy->bHasLandedOnPlatform)
-					{
-						UE_LOG(LogTemp, Error, TEXT("Denying jump to platform"));
-						Enemy->bCanJumpToPlatform = false;
-						//Enemy->bCanJumpFromPlatform = true;
-					}
-					else
-					{
-						UE_LOG(LogTemp, Error, TEXT("Denying jump from platform"));
-						//Enemy->bCanJumpToPlatform = true;
-						Enemy->bCanJumpFromPlatform = false;
-					}
-					*/
 				}
 			}
 		}
