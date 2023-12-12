@@ -24,6 +24,11 @@ private:
 	AShadowCharacter* OwnerCharacter = nullptr;
 
 	/** Returns the closest player's location */ 
-	FVector GetTargetLocation(AAIController* BaseAIController); 
+	FVector GetTargetLocation(AAIController* BaseAIController);
+
+	bool HasLineOfSightToPlayer(AShadowCharacter* Owner, class APROJCharacter* PlayerTarget);
+
+	UPROPERTY(EditAnywhere)
+	TArray<TEnumAsByte<EObjectTypeQuery>> LineTraceObjects; 
 	
 };
