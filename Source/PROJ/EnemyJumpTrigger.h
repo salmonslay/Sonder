@@ -22,6 +22,15 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UBoxComponent* Bounds;
 
+	UPROPERTY(EditAnywhere)
+	UBoxComponent* JumpPoint1;
+
+	UPROPERTY(EditAnywhere)
+	UBoxComponent* JumpPoint2;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	AActor* OverlappingGround;
+
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -50,16 +59,23 @@ public:
 	
 private:
 	UPROPERTY(EditAnywhere)
-	float EnemyJumpOffset = 50.f;
+	float EnemyJumpDistance = 200.f;
+
+	UPROPERTY(EditAnywhere)
+	bool bTriggerJumpToMovablePlatform = false;
 		
 	TArray<AShadowCharacter*> WaitingEnemies = TArray<AShadowCharacter*>();
 
-	FVector CalculateJumpEndPoint(const FVector& EnemyLocation);
+	FVector CalculateJumpToPlatform(const FVector& EnemyLocation, const FVector& EnemyForwardVector);
 
-	UFUNCTION(BlueprintCallable)
-	void AllowJumpToPlatform();
+	FVector CalculateJumpToPoint(const FVector& EnemyLocation);
 
+	/** Runs on overlap begin with moving platform, enemies on moving platform are allowed to jump to ground, enemies on ground are allowed to jump on platform*/
 	UFUNCTION(BlueprintCallable)
-	void DenyJumpToPlatform();
+	void AllowJump();
+
+	/** Runs on overlap end with moving platform, enemies on moving platform are denied to jump to ground, enemies on ground are denied to jump on platform*/
+	UFUNCTION(BlueprintCallable)
+	void DenyJump();
 	
 };
