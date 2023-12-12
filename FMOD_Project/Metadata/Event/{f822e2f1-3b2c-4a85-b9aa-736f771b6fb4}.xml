@@ -1002,6 +1002,9 @@
 		<property name="startOffset">
 			<value>49.5</value>
 		</property>
+		<property name="volume">
+			<value>5</value>
+		</property>
 		<property name="pitch">
 			<value>1</value>
 		</property>
