@@ -41,10 +41,7 @@ public:
 	void OnBasicAttackHit(); 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	bool bCanJumpToPlatform = false;
-
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	bool bCanJumpFromPlatform = false;
+	bool bCanJump = false;
 
 	FVector AvaliableJumpPoint = FVector::ZeroVector;
 
@@ -52,13 +49,33 @@ public:
 	bool bIsJumping = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	bool bHasLandedOnPlatform = false;
+	bool bHasLanded= false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bHasLandedOnGround = false;
+
+	UPROPERTY(EditAnywhere)
+	float JumpCoolDownDuration = 2.f;
 	
 	UFUNCTION(Server, Reliable) 
-	void ServerRPC_ToggleChargeEffect(const bool bActive); 
+	void ServerRPC_ToggleChargeEffect(const bool bActive);
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, ReplicatedUsing=OnRep_Jump)
+	bool bIsPerformingJump = false;
+
+	void MakeJump();
+
+	virtual void Idle() override;
+	
+	UFUNCTION()
+	void OnRep_Jump();
+
+	
+	
+	UFUNCTION(BlueprintImplementableEvent)
+
+	void OnJumpEvent();
+
 
 protected:
 
@@ -90,7 +107,6 @@ private:
 
 	UPROPERTY()
 	class UNiagaraComponent* ChargeEffectComp; 
-	
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPC_ToggleChargeEffect(const bool bActive); 

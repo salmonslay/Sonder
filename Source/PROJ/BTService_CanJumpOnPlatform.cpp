@@ -10,7 +10,19 @@
 
 UBTService_CanJumpOnPlatform::UBTService_CanJumpOnPlatform()
 {
-	NodeName = TEXT("CanJumoOnPlatform");
+	NodeName = TEXT("CanJumpOnPlatform");
+}
+
+void UBTService_CanJumpOnPlatform::OnGameplayTaskActivated(UGameplayTask& Task)
+{
+	Super::OnGameplayTaskActivated(Task);
+
+	JumpCoolDownTimer = 0.f;
+}
+
+void UBTService_CanJumpOnPlatform::OnGameplayTaskDeactivated(UGameplayTask& Task)
+{
+	Super::OnGameplayTaskDeactivated(Task);
 }
 
 void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -25,7 +37,9 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 
 	OwnerLocation = OwnerCharacter->GetActorLocation();
 
-	if (!OwnerCharacter->bCanJumpFromPlatform && !OwnerCharacter->bCanJumpToPlatform)
+	JumpCoolDownTimer += DeltaSeconds;
+	
+	if (!OwnerCharacter->bCanJump)
 	{
 		return;
 	}
@@ -34,40 +48,16 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	{
 		return;
 	}
-	//  if both are false, do whatever it is you do
-	if (OwnerCharacter->bCanJumpToPlatform && !OwnerCharacter->bCanJumpFromPlatform && !OwnerCharacter->bIsJumping)
-	{
-		JumpToPoint(OwnerLocation, OwnerCharacter->AvaliableJumpPoint);
-	}
-	
-	
-	/*
-	if (OwnerCharacter->bCanJumpToPlatform && !OwnerCharacter->bIsJumping && !OwnerCharacter->bHasLandedOnPlatform) // inside trigger with a moving platform, not jumping and doesnt stand on a moving platform
-	{
-		// Om jumppoint till eller från plattform är närmare Current target player än ens egna location, hoppa
-		// TODO: Jump delay, for anim. then make jump
-		
-		//JumpToPoint(OwnerLocation, OwnerCharacter->AvaliableJumpPoint);
-	}
-	if (OwnerCharacter->bHasLandedOnPlatform) // Standing on moving platform,
-	{
-		OwnerCharacter->bIsJumping = false;
-		OwnerCharacter->bCanJumpToPlatform = false; // om has landed on platform, player can jump from platform = true on overlap end
-		OwnerCharacter->bCanJumpFromPlatform = true;
-	}
 
-	
-	if (!OwnerCharacter->bCanJumpToPlatform &&OwnerCharacter->bCanJumpFromPlatform && !OwnerCharacter->bIsJumping && OwnerCharacter->bHasLandedOnPlatform) // inside trigger with a moving platform, not jumping and doesnt stand on a moving platform
+	if (OwnerCharacter->bCanJump && !OwnerCharacter->bIsJumping)
 	{
-	// Om jumppoint till eller från plattform är närmare Current target player än ens egna location, hoppa
-	// TODO: Jump delay, for anim. then make jump
-		//JumpToPoint(OwnerLocation, OwnerCharacter->AvaliableJumpPoint);
-		//DrawDebugSphere(GetWorld(),OwnerCharacter->AvaliableJumpPoint, 30.f, 24, FColor::Green, false, 1.f);
+		if (JumpCoolDownTimer >= OwnerCharacter->JumpCoolDownDuration)
+		{
+			JumpToPoint(OwnerLocation, OwnerCharacter->AvaliableJumpPoint);
+			JumpCoolDownTimer = 0;
+			JumpCoolDownTimer += DeltaSeconds;
+		}
 	}
-
-	// när man gjort hoppet, rör dig mot spelaren
-
-	*/
 }
 
 bool UBTService_CanJumpOnPlatform::CanJumpToPoint(FVector StartPoint, FVector JumpPoint)
@@ -89,12 +79,12 @@ bool UBTService_CanJumpOnPlatform::CanJumpToPoint(FVector StartPoint, FVector Ju
 void UBTService_CanJumpOnPlatform::JumpToPoint(FVector StartPoint,FVector JumpPoint)
 {
 	OwnerCharacter->bIsJumping = true;
+	OwnerCharacter->bIsPerformingJump = true;
 	FVector OutVel;
-	UGameplayStatics::SuggestProjectileVelocity_CustomArc(GetWorld(), OutVel, StartPoint, JumpPoint);
-	OwnerCharacter->LaunchCharacter(OutVel * JumpBoost, false, false );
-
+	OwnerCharacter->GetMovementComponent()->Velocity = FVector(0.f, 0.f, 0.f);
+	UGameplayStatics::SuggestProjectileVelocity_CustomArc(GetWorld(), OutVel, StartPoint, JumpPoint, 0, 0.6);
+	OwnerCharacter->LaunchCharacter(OutVel * JumpBoost, true, true );
 	UE_LOG(LogTemp, Error, TEXT("Doing jump "));
-
 }
 
 

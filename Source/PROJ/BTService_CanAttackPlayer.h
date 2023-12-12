@@ -29,12 +29,10 @@ public: /** Constructor*/
 protected:
 	/** Tick node is called every tick service is in progress*/
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
-
-
+	
 	UPROPERTY(VisibleAnywhere)
 	AEnemyCharacter* OwnerCharacter = nullptr;
-
-
+	
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float RadiusToDetectPlayer = 0.f;

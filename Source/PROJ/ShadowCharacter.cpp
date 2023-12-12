@@ -29,8 +29,38 @@ void AShadowCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
 
-	DOREPLIFETIME(AShadowCharacter, CurrentState) 
+	DOREPLIFETIME(AShadowCharacter, CurrentState)
+	DOREPLIFETIME(AShadowCharacter, bIsPerformingJump)
 }
+
+void AShadowCharacter::MakeJump()
+{
+	if(GetLocalRole() == ROLE_Authority && !bIsStunned)
+	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
+		bIsPerformingJump = true;
+		OnJumpEvent();
+	}
+}
+
+void AShadowCharacter::Idle()
+{
+	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+
+	if(GetLocalRole() == ROLE_Authority && !bIsStunned)
+	{
+		bIsPerformingJump = false;
+	}
+}
+
+void AShadowCharacter::OnRep_Jump()
+{
+	if (bIsPerformingJump)
+	{
+		OnJumpEvent();
+	}
+}
+
 
 void AShadowCharacter::BeginPlay()
 {
@@ -53,17 +83,6 @@ void AShadowCharacter::Tick(const float DeltaSeconds)
 
 	if(CurrentState)
 		CurrentState->Update(DeltaSeconds);
-
-	if (bIsJumping)
-	{
-		
-		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
-	}
-	else
-	{
-		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-	}
-	
 }
 
 UPlayerCharState* AShadowCharacter::GetStartingState() const
