@@ -119,7 +119,7 @@ private:
 
 	void DisablePulseCooldown() { bPulseCoolDownActive = false; }
 
-	void DisableSecondJump() { PlayerActor->JumpMaxCount = 1; }
+	void DisableSecondJump() { if (CharOwner->IsPlayerControlled()) {PlayerActor->JumpMaxCount = 1; }}
 
 	void ResetDashBuff();
 

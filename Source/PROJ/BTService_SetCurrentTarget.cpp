@@ -7,6 +7,7 @@
 #include "PROJCharacter.h"
 #include "ShadowCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 void UBTService_SetCurrentTarget::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
@@ -42,9 +43,13 @@ FVector UBTService_SetCurrentTarget::GetTargetLocation(AAIController* BaseAICont
 
 		if(DistToPlayerOne < DistToPlayerTwo)
 		{
-			OwnerCharacter->CurrentTargetLocation = Player1->GetActorLocation();
-			return OwnerCharacter->CurrentTargetLocation;
+			if(HasLineOfSightToPlayer(OwnerCharacter, Player1) || !HasLineOfSightToPlayer(OwnerCharacter, Player2))
+			{
+				OwnerCharacter->CurrentTargetLocation = Player1->GetActorLocation();
+				return OwnerCharacter->CurrentTargetLocation;
+			}
 		}
+		
 		OwnerCharacter->CurrentTargetLocation = Player2->GetActorLocation();
 		return OwnerCharacter->CurrentTargetLocation; 
 	}
@@ -52,3 +57,19 @@ FVector UBTService_SetCurrentTarget::GetTargetLocation(AAIController* BaseAICont
 	UE_LOG(LogTemp, Error, TEXT("Could not cast AI controller in Service Set Current target"))
 	return FVector::Zero(); 
 }
+
+bool UBTService_SetCurrentTarget::HasLineOfSightToPlayer(AShadowCharacter* Owner, class APROJCharacter* PlayerTarget)
+{
+	FHitResult HitResult;
+	const TArray<AActor*> ActorsToIgnore { OwnerCharacter, PlayerTarget }; 
+
+	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(this, OwnerCharacter->GetActorLocation() + FVector::UpVector * 20.f, PlayerTarget->GetActorLocation(), LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
+
+	if (bHit)
+	{
+		DrawDebugSphere(GetWorld(), HitResult.Location, 30.f, 30, FColor::Red, false, 1.f);
+		UE_LOG(LogTemp, Error, TEXT("Hit %s"), *HitResult.GetActor()->GetName())
+	}
+	return !bHit;
+}
+
