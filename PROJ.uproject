@@ -43,6 +43,11 @@
 			"Name": "AsyncLoadingScreen",
 			"Enabled": false,
 			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/01f39767dc6b4290877f38365787cbf8"
+		},
+		{
+			"Name": "UINavigation",
+			"Enabled": true,
+			"MarketplaceURL": "com.epicgames.launcher://ue/marketplace/product/b9ee9669c98146cd8433a62ea7f23699"
 		}
 	]
 }
