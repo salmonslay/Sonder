@@ -77,7 +77,7 @@
 	</object>
 	<object class="EventMixerMaster" id="{9cb09818-38d0-49f5-beb4-7752d48d7091}">
 		<property name="volume">
-			<value>-4.5</value>
+			<value>-1</value>
 		</property>
 		<relationship name="effectChain">
 			<destination>{bb4c963c-51c4-48a2-9eee-b807a5c26aa1}</destination>
@@ -124,6 +124,12 @@
 		</relationship>
 	</object>
 	<object class="SingleSound" id="{9fc3b657-35d7-4210-9158-c81476d54cf1}">
+		<property name="volume">
+			<value>4</value>
+		</property>
+		<property name="pitch">
+			<value>3</value>
+		</property>
 		<property name="looping">
 			<value>true</value>
 		</property>
@@ -146,10 +152,10 @@
 	</object>
 	<object class="MultibandEqEffect" id="{a2cd08fa-fada-4b11-8812-2b11a8cd87c5}">
 		<property name="frequencyA">
-			<value>5266.79639</value>
+			<value>8659.71094</value>
 		</property>
 		<property name="qualityA">
-			<value>0.623275876</value>
+			<value>0.840758622</value>
 		</property>
 	</object>
 </objects>
