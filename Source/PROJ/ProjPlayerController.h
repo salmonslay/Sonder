@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "UINavController.h"
 #include "GameFramework/PlayerController.h"
 #include "ProjPlayerController.generated.h"
 
@@ -13,7 +14,7 @@
 class APROJCharacter;
 
 UCLASS()
-class PROJ_API AProjPlayerController : public APlayerController
+class PROJ_API AProjPlayerController : public AUINavController
 {
 	GENERATED_BODY()
 
