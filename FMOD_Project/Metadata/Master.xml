@@ -21,9 +21,6 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{1028803e-9f8b-4fa6-b512-d382d8409471}">
-		<property name="surroundPanExtent">
-			<value>90</value>
-		</property>
 		<property name="overridingOutputFormat">
 			<value>2</value>
 		</property>

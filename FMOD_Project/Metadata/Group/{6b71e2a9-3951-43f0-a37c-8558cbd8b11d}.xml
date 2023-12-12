@@ -22,7 +22,11 @@
 			<destination>{19627874-a1c3-4061-82a7-b114ea01dca2}</destination>
 		</relationship>
 	</object>
-	<object class="MixerBusPanner" id="{70fb6047-4eef-4403-af82-ff14e61a7b10}" />
+	<object class="MixerBusPanner" id="{70fb6047-4eef-4403-af82-ff14e61a7b10}">
+		<property name="surroundPanExtent">
+			<value>90</value>
+		</property>
+	</object>
 	<object class="MixerSend" id="{07037d38-0610-43ef-8e85-8844829ec1b5}">
 		<property name="inputFormat">
 			<value>2</value>
