@@ -10,7 +10,7 @@
  * 
  */
 UCLASS()
-class PROJ_API UBTTask_MoveIdle : public UBTTask_MoveDirectlyToward
+class PROJ_API UBTTask_MoveIdle : public UBTTask_MoveTo
 {
 	GENERATED_BODY()
 
