@@ -6,6 +6,7 @@
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
 #include "BTService_SetCurrentTarget.generated.h"
 
+class AShadowCharacter;
 /**
  * Sets the current target to the closest player which is passed as the blackboard key 
  */
@@ -19,6 +20,8 @@ public:
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override; 
 
 private:
+
+	AShadowCharacter* OwnerCharacter = nullptr;
 
 	/** Returns the closest player's location */ 
 	FVector GetTargetLocation(AAIController* BaseAIController); 

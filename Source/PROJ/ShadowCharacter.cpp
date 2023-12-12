@@ -38,6 +38,8 @@ void AShadowCharacter::MakeJump()
 	if(GetLocalRole() == ROLE_Authority && !bIsStunned)
 	{
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
+		UE_LOG(LogTemp, Error, TEXT("MovementMode falling"));
+		
 		bIsPerformingJump = true;
 		OnJumpEvent();
 	}
@@ -45,10 +47,10 @@ void AShadowCharacter::MakeJump()
 
 void AShadowCharacter::Idle()
 {
-	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-
 	if(GetLocalRole() == ROLE_Authority && !bIsStunned)
 	{
+		UE_LOG(LogTemp, Error, TEXT("MovementMode walking"));
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 		bIsPerformingJump = false;
 	}
 }
@@ -58,6 +60,10 @@ void AShadowCharacter::OnRep_Jump()
 	if (bIsPerformingJump)
 	{
 		OnJumpEvent();
+	}
+	else
+	{
+		Idle();
 	}
 }
 
@@ -83,6 +89,8 @@ void AShadowCharacter::Tick(const float DeltaSeconds)
 
 	if(CurrentState)
 		CurrentState->Update(DeltaSeconds);
+
+	
 }
 
 UPlayerCharState* AShadowCharacter::GetStartingState() const
