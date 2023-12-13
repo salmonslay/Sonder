@@ -96,7 +96,6 @@ FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation,
 {
 
 	// TODO: Check if platform is closer to player than enemy, only jump if that is true
-	// TODO: HÄR EMIL
 	if (!OverlappingPlatform)
 	{
 		return FVector::ZeroVector;
@@ -104,7 +103,11 @@ FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation,
 	FVector Origin;
 	FVector Extent;
 	OverlappingPlatform->GetActorBounds(true, Origin, Extent);
-	return FVector(EnemyLocation.X, EnemyLocation.Y + EnemyForwardVector.Y * EnemyJumpDistance, Origin.Z);
+
+	// Jump left if platform's origin is to the left and vice versa with right 
+	const float DirToPlatformY = Origin.Y < EnemyLocation.Y ? -1 : 1;
+	
+	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToPlatformY * EnemyJumpDistance, Origin.Z + PlatformJumpZOffset);
 	
 }
 
