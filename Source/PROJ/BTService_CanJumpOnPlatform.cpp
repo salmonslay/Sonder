@@ -17,8 +17,6 @@ UBTService_CanJumpOnPlatform::UBTService_CanJumpOnPlatform()
 void UBTService_CanJumpOnPlatform::OnGameplayTaskActivated(UGameplayTask& Task)
 {
 	Super::OnGameplayTaskActivated(Task);
-
-	JumpCoolDownTimer = 0.f;
 }
 
 void UBTService_CanJumpOnPlatform::OnGameplayTaskDeactivated(UGameplayTask& Task)
@@ -58,12 +56,16 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	{
 		if (OwnerCharacter->JumpCoolDownTimer >= OwnerCharacter->JumpCoolDownDuration)
 		{
+			
 			if (OwnerCharacter->AvaliableJumpPoint != FVector::ZeroVector)
 			{
-				OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", true);
-				JumpToPoint(OwnerLocation, OwnerCharacter->AvaliableJumpPoint);
-				OwnerCharacter->JumpCoolDownTimer = 0;
-				OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
+				if (!OwnerCharacter->HasNavigationTo( OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsVector("CurrentMoveTarget")))
+				{
+					OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", true);
+					JumpToPoint(OwnerLocation, OwnerCharacter->AvaliableJumpPoint);
+					OwnerCharacter->JumpCoolDownTimer = 0;
+					OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
+				}
 			}
 			else
 			{
@@ -84,23 +86,8 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	}
 }
 
-bool UBTService_CanJumpOnPlatform::CanJumpToPoint(FVector StartPoint, FVector JumpPoint)
-{
-	FVector GravitationalForce = OwnerCharacter->GetCharacterMovement()->GetGravityDirection();
-	float CharacterSpeed = OwnerCharacter->GetCharacterMovement()->GetMaxSpeed();
-	float HorizontalDistance = FVector::Dist(JumpPoint, StartPoint); 
 
-	float TravelTime = HorizontalDistance/CharacterSpeed;
-	FVector FalloffVector = GravitationalForce / 2 * FMath::Pow(TravelTime,2);
-
-	if ((StartPoint - FalloffVector).Z <= JumpPoint.Z)
-	{
-		return true;
-	}
-	return false;
-}
-
-void UBTService_CanJumpOnPlatform::JumpToPoint(FVector StartPoint,FVector JumpPoint)
+void UBTService_CanJumpOnPlatform::JumpToPoint(const FVector &StartPoint, const FVector &JumpPoint) const 
 {
 	OwnerCharacter->bIsJumping = true;
 	OwnerCharacter->bIsPerformingJump = true;
@@ -115,4 +102,48 @@ void UBTService_CanJumpOnPlatform::JumpToPoint(FVector StartPoint,FVector JumpPo
 		UE_LOG(LogTemp, Error, TEXT("Doing jump "));
 	}
 }
+
+/*
+bool UBTService_CanJumpOnPlatform::CheckPathToPlayer(const FVector &StartPoint, const FVector &CurrentTargetPoint)
+{
+	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(GetWorld());
+	if (!NavSystem)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No navsystem lol"));
+		return false;
+	}
+	{
+		AController* EnemyController = OwnerCharacter->GetController();
+		// Check if there's a path between owner character and current target location
+
+		const auto Path = UNavigationSystemV1::FindPathToLocationSynchronously(this, StartPoint, CurrentTargetPoint, EnemyController);
+		
+		if(Path->IsPartial() || Path->IsUnreachable())
+		{
+			UE_LOG(LogTemp, Error, TEXT("Path is partial or unreachable, should return false"));
+		}
+
+		if (!Path)
+		{
+			UE_LOG(LogTemp, Error, TEXT("No path found"));
+			return false;			
+		}
+
+		FVector QueryExtents = OwnerCharacter->GetSimpleCollisionCylinderExtent();
+		TArray<FNavPathPoint> NavPoints = Path->GetPath()->GetPathPoints();
+
+		for (const FNavPathPoint NavPathPoint : NavPoints)
+		{
+			// Check if each point on the path is navigable
+			FNavLocation NavLocation;
+			if (!NavSystem->ProjectPointToNavigation(NavPathPoint.Location, NavLocation, QueryExtents))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+}
+*/
+
 
