@@ -25,6 +25,7 @@ FVector UBTService_SetCurrentTarget::GetTargetLocation(AAIController* BaseAICont
 		UE_LOG(LogTemp, Error, TEXT("Could not cast AI character in Service Set Current target"))
 		return FVector::Zero(); 
 	}
+	
 	if(const auto AIController = Cast<AEnemyAIController>(BaseAIController))
 	{
 		const auto Player1 = AIController->GetPlayerFromController(0);
@@ -41,15 +42,25 @@ FVector UBTService_SetCurrentTarget::GetTargetLocation(AAIController* BaseAICont
 		const auto DistToPlayerOne = FVector::Dist(Player1->GetActorLocation(), CurrentLocation);
 		const auto DistToPlayerTwo = FVector::Dist(Player2->GetActorLocation(), CurrentLocation);
 
-		if(DistToPlayerOne < DistToPlayerTwo)
+		// Respawning/in arena jail 
+		if(Player1->bIsSafe)
 		{
-			if(HasLineOfSightToPlayer(OwnerCharacter, Player1) || !HasLineOfSightToPlayer(OwnerCharacter, Player2))
-			{
-				OwnerCharacter->CurrentTargetLocation = Player1->GetActorLocation();
-				return OwnerCharacter->CurrentTargetLocation;
-			}
+			OwnerCharacter->CurrentTargetLocation = Player2->GetActorLocation();
+			return OwnerCharacter->CurrentTargetLocation; 
 		}
-		
+
+		const bool bLOSToP1 = HasLineOfSightToPlayer(OwnerCharacter, Player1);
+		const bool bLOSToP2 = HasLineOfSightToPlayer(OwnerCharacter, Player2); 
+
+		// P1 closer and has LOS or no LOS to p2, then set p1 as target 
+		// P2 closer but no LOS to P2 and LOS to p1, then also set p1 as target 
+		if((DistToPlayerOne < DistToPlayerTwo && (bLOSToP1 || !bLOSToP2)) || DistToPlayerTwo < DistToPlayerOne && (!bLOSToP2 && bLOSToP1))
+		{
+			OwnerCharacter->CurrentTargetLocation = Player1->GetActorLocation();
+			return OwnerCharacter->CurrentTargetLocation;
+		}
+
+		// Otherwise, p2 is target 
 		OwnerCharacter->CurrentTargetLocation = Player2->GetActorLocation();
 		return OwnerCharacter->CurrentTargetLocation; 
 	}
@@ -58,18 +69,10 @@ FVector UBTService_SetCurrentTarget::GetTargetLocation(AAIController* BaseAICont
 	return FVector::Zero(); 
 }
 
-bool UBTService_SetCurrentTarget::HasLineOfSightToPlayer(AShadowCharacter* Owner, class APROJCharacter* PlayerTarget)
+bool UBTService_SetCurrentTarget::HasLineOfSightToPlayer(AShadowCharacter* Owner, class APROJCharacter* PlayerTarget) const
 {
 	FHitResult HitResult;
-	const TArray<AActor*> ActorsToIgnore { OwnerCharacter, PlayerTarget }; 
+	const TArray<AActor*> ActorsToIgnore { Owner, PlayerTarget }; 
 
-	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(this, OwnerCharacter->GetActorLocation() + FVector::UpVector * 20.f, PlayerTarget->GetActorLocation(), LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
-
-	if (bHit)
-	{
-		DrawDebugSphere(GetWorld(), HitResult.Location, 30.f, 30, FColor::Red, false, 1.f);
-		UE_LOG(LogTemp, Error, TEXT("Hit %s"), *HitResult.GetActor()->GetName())
-	}
-	return !bHit;
+	return !UKismetSystemLibrary::LineTraceSingleForObjects(this, Owner->GetActorLocation() + FVector::UpVector * 20.f, PlayerTarget->GetActorLocation(), LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
 }
-
