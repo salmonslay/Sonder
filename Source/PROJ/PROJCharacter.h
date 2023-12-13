@@ -55,6 +55,9 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float DamageToPlayer = 0.f;
+	
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
+	void AbilityUnlock();
 
 	UEnhancedInputComponent* GetInputComponent() const { return EnhancedInputComp; }
 
