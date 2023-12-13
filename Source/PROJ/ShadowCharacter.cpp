@@ -3,6 +3,8 @@
 #include "ShadowCharacter.h"
 
 #include "DummyPlayerState.h"
+#include "NavigationPath.h"
+#include "NavigationSystem.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "PlayerBasicAttack.h"
@@ -10,6 +12,7 @@
 #include "RobotBaseState.h"
 #include "SoulBaseStateNew.h"
 #include "Net/UnrealNetwork.h"
+
 
 AShadowCharacter::AShadowCharacter()
 {
@@ -69,6 +72,25 @@ void AShadowCharacter::OnRep_Jump()
 }
 
 
+bool AShadowCharacter::HasNavigationTo(const FVector& CurrentTargetPoint) const
+{
+	const UNavigationSystemV1* Navigation = UNavigationSystemV1::GetCurrent(GetWorld());
+
+	if (ensure(IsValid(Navigation))) {
+		const UNavigationPath* NavigationPath = Navigation->FindPathToLocationSynchronously(GetWorld(), GetActorLocation(), CurrentTargetPoint);
+
+		if(ensure(NavigationPath != nullptr) == false)
+		{
+			return false;
+		}
+		const bool IsNavigationValid = NavigationPath->IsValid();
+		const bool IsNavigationNotPartial = NavigationPath->IsPartial() == false;
+		const bool IsNavigationSuccessful = IsNavigationValid && IsNavigationNotPartial;
+		return IsNavigationSuccessful;
+	}
+	return false;
+}
+
 void AShadowCharacter::BeginPlay()
 {
 	Super::BeginPlay();
@@ -77,8 +99,6 @@ void AShadowCharacter::BeginPlay()
 
 	if(CurrentState)
 		CurrentState->Enter();
-
-	
 }
 
 void AShadowCharacter::Tick(const float DeltaSeconds)
@@ -90,8 +110,6 @@ void AShadowCharacter::Tick(const float DeltaSeconds)
 
 	if(CurrentState)
 		CurrentState->Update(DeltaSeconds);
-
-	
 }
 
 UPlayerCharState* AShadowCharacter::GetStartingState() const

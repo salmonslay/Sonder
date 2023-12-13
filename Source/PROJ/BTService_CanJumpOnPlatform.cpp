@@ -4,12 +4,8 @@
 #include "BTService_CanJumpOnPlatform.h"
 
 #include "AIController.h"
-#include "NavigationPath.h"
-#include "NavigationSystem.h"
-#include "NavigationSystemTypes.h"
 #include "ShadowCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "EntitySystem/MovieSceneEntitySystemRunner.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -21,8 +17,6 @@ UBTService_CanJumpOnPlatform::UBTService_CanJumpOnPlatform()
 void UBTService_CanJumpOnPlatform::OnGameplayTaskActivated(UGameplayTask& Task)
 {
 	Super::OnGameplayTaskActivated(Task);
-
-	JumpCoolDownTimer = 0.f;
 }
 
 void UBTService_CanJumpOnPlatform::OnGameplayTaskDeactivated(UGameplayTask& Task)
@@ -65,7 +59,7 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 			
 			if (OwnerCharacter->AvaliableJumpPoint != FVector::ZeroVector)
 			{
-				if (!HasNavigationTo(OwnerLocation, OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsVector("CurrentMoveTarget")))
+				if (!OwnerCharacter->HasNavigationTo( OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsVector("CurrentMoveTarget")))
 				{
 					OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", true);
 					JumpToPoint(OwnerLocation, OwnerCharacter->AvaliableJumpPoint);
@@ -109,6 +103,7 @@ void UBTService_CanJumpOnPlatform::JumpToPoint(const FVector &StartPoint, const 
 	}
 }
 
+/*
 bool UBTService_CanJumpOnPlatform::CheckPathToPlayer(const FVector &StartPoint, const FVector &CurrentTargetPoint)
 {
 	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(GetWorld());
@@ -149,25 +144,6 @@ bool UBTService_CanJumpOnPlatform::CheckPathToPlayer(const FVector &StartPoint, 
 		return true;
 	}
 }
-
-
-bool UBTService_CanJumpOnPlatform::HasNavigationTo(const FVector &StartPoint, const FVector &CurrentTargetPoint) const
-{
-	const UNavigationSystemV1* Navigation = UNavigationSystemV1::GetCurrent(GetWorld());
-
-	if (ensure(IsValid(Navigation))) {
-		const UNavigationPath* NavigationPath = Navigation->FindPathToLocationSynchronously(GetWorld(), StartPoint, CurrentTargetPoint);
-
-		if(ensure(NavigationPath != nullptr) == false)
-		{
-			return false;
-		}
-		const bool IsNavigationValid = NavigationPath->IsValid();
-		const bool IsNavigationNotPartial = NavigationPath->IsPartial() == false;
-		const bool IsNavigationSuccessful = IsNavigationValid && IsNavigationNotPartial;
-		return IsNavigationSuccessful;
-	}
-	return false;
-}
+*/
 
 

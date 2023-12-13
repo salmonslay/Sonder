@@ -5,9 +5,7 @@
 
 #include "MovingPlatform.h"
 #include "ShadowCharacter.h"
-#include "SonderGameState.h"
 #include "Components/BoxComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AEnemyJumpTrigger::AEnemyJumpTrigger()
@@ -28,7 +26,6 @@ AEnemyJumpTrigger::AEnemyJumpTrigger()
 void AEnemyJumpTrigger::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -132,18 +129,15 @@ void AEnemyJumpTrigger::AllowJump() // runs on overlap begin with moving platfor
 
 void AEnemyJumpTrigger::DenyJump()  // runs on overlap end with moving platform, if enemy is standing on a platform - allow jump to ground, if not - allow jump to platform
 {
-	//if (!bIsOverlappingWithMovingPlatform)
-	//{
-		if (!WaitingEnemies.IsEmpty())
+	if (!WaitingEnemies.IsEmpty())
+	{
+		for (AShadowCharacter* Enemy : WaitingEnemies)
 		{
-			for (AShadowCharacter* Enemy : WaitingEnemies)
+			if (Enemy)
 			{
-				if (Enemy)
-				{
-					Enemy->bCanJump = false;
-				}
+				Enemy->bCanJump = false;
 			}
 		}
-	//}
+	}
 }
 

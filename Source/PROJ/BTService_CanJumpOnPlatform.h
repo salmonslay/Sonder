@@ -31,17 +31,11 @@ public:
 
 private:
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY()
 	AShadowCharacter* OwnerCharacter = nullptr;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY()
 	FVector OwnerLocation = FVector::ZeroVector;
-	
-	UPROPERTY(EditAnywhere)
-	float RadiusToDetectPlatform = 200.f;
-
-	UPROPERTY(EditAnywhere)
-	float MaxJumpDistance = 50.f;
 
 	UPROPERTY(EditAnywhere)
 	float JumpBoost = 10.f;
@@ -53,10 +47,6 @@ private:
 	void JumpToPoint(const FVector &StartPoint, const FVector &JumpPoint) const;
 
 	// Currently not in use
-	bool CheckPathToPlayer(const FVector &StartPoint, const FVector &CurrentTargetPoint);
+	//bool CheckPathToPlayer(const FVector &StartPoint, const FVector &CurrentTargetPoint);
 
-	/** Check if there's a path between AI character and player character*/
-	bool HasNavigationTo(const FVector &StartPoint, const FVector &CurrentTargetPoint) const ;
-
-	float JumpCoolDownTimer = 0.f;
 };
