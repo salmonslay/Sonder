@@ -91,11 +91,12 @@ void UBTService_CanJumpOnPlatform::JumpToPoint(const FVector &StartPoint, const 
 {
 	OwnerCharacter->bIsJumping = true;
 	OwnerCharacter->bIsPerformingJump = true;
-	OwnerCharacter->MakeJump();
 	FVector OutVel;
 	OwnerCharacter->GetMovementComponent()->Velocity = FVector(0.f, 0.f, 0.f);
 	UGameplayStatics::SuggestProjectileVelocity_CustomArc(GetWorld(), OutVel, StartPoint, JumpPoint, 0, 0.6);
-	OwnerCharacter->GetCharacterMovement()->AddImpulse(OutVel * JumpBoost);
+	OwnerCharacter->GetCharacterMovement()->AddImpulse(OutVel.GetSafeNormal() * JumpBoost);
+	OwnerCharacter->MakeJump();
+
 	if (bDebug)
 	{
 		DrawDebugSphere(GetWorld(),JumpPoint, 30.f, 24, FColor::Blue, false, 2.f);

@@ -48,6 +48,12 @@ FVector UBTService_SetCurrentTarget::GetTargetLocation(AAIController* BaseAICont
 			OwnerCharacter->CurrentTargetLocation = Player2->GetActorLocation();
 			return OwnerCharacter->CurrentTargetLocation; 
 		}
+		
+		if(Player2->bIsSafe)
+		{
+			OwnerCharacter->CurrentTargetLocation = Player1->GetActorLocation();
+			return OwnerCharacter->CurrentTargetLocation;
+		}
 
 		const bool bLOSToP1 = HasLineOfSightToPlayer(OwnerCharacter, Player1);
 		const bool bLOSToP2 = HasLineOfSightToPlayer(OwnerCharacter, Player2); 
