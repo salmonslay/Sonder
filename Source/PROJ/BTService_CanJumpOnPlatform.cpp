@@ -4,10 +4,12 @@
 #include "BTService_CanJumpOnPlatform.h"
 
 #include "AIController.h"
+#include "NavigationPath.h"
 #include "NavigationSystem.h"
 #include "NavigationSystemTypes.h"
 #include "ShadowCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "EntitySystem/MovieSceneEntitySystemRunner.h"
 #include "GameFramework/CharacterMovementComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -60,14 +62,16 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	{
 		if (OwnerCharacter->JumpCoolDownTimer >= OwnerCharacter->JumpCoolDownDuration)
 		{
-
-			//TODO: 
+			
 			if (OwnerCharacter->AvaliableJumpPoint != FVector::ZeroVector)
 			{
-				OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", true);
-				JumpToPoint(OwnerLocation, OwnerCharacter->AvaliableJumpPoint);
-				OwnerCharacter->JumpCoolDownTimer = 0;
-				OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
+				if (!HasNavigationTo(OwnerLocation, OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsVector("CurrentMoveTarget")))
+				{
+					OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", true);
+					JumpToPoint(OwnerLocation, OwnerCharacter->AvaliableJumpPoint);
+					OwnerCharacter->JumpCoolDownTimer = 0;
+					OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
+				}
 			}
 			else
 			{
@@ -88,67 +92,6 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	}
 }
 
-bool UBTService_CanJumpOnPlatform::CheckPathToPlayer(const FVector &StartPoint, const FVector &JumpPoint)
-{
-	return true;
-	/*
-	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(GetWorld());
-	if (NavSystem)
-	{
-		AController* EnemyController = OwnerCharacter->GetController();
-		// Check if there's a path between owner character and current target location
-		const ANavigationData* NavData = Cast<ANavigationData>(NavSystem->GetNavDataForProps(EnemyController->GetNavAgentPropertiesRef()));
-		if (NavData)
-		{
-			FNavAgentProperties AgentProperties;
-			FPathFindingQuery Query = FPathFindingQuery(EnemyController, *NavData, StartPoint, JumpPoint);
-			
-			//bool bPathExists = NavSystem->TestPathSync(Query, EPathFindingMode::Hierarchical);
-			FNavPathSharedPtr NavPath;
-			FPathFindingResult PathResult;
-			bool bPathExists = NavSystem->FindPathSync(NavData, Query, StartPoint, JumpPoint, PathResult, nullptr);
-
-
-			// Path exists, check for holes in the NavMesh
-			if (bPathExists && NavPath.IsValid())
-			{
-				TArray<FVector> PathPoints;
-				NavPath->GetPathPoints(PathPoints);
-
-				for (const FVector& PathPoint : PathPoints)
-				{
-					// Check if each point on the path is navigable
-					if (!NavData->ProjectPointToNavigation(PathPoint, PathPoint))
-					{
-						// Point is not navigable, suggesting a potential hole or broken NavMesh area
-						// Handle accordingly or log the location for debugging
-					}
-				}
-			}
-			if (bPathExists)
-			{
-				
-				if (Result.IsSuccessful())
-				{
-					// No holes in the NavMesh between AI character and player character
-					// Proceed with actions for direct path
-				}
-				else
-				{
-					// Holes found in the NavMesh between AI character and player character
-					// Handle accordingly
-				}
-			}
-			else
-			{
-				// No path found between AI character and player character
-				// Handle accordingly
-			}
-		}
-	}
-	*/
-}
-
 
 void UBTService_CanJumpOnPlatform::JumpToPoint(const FVector &StartPoint, const FVector &JumpPoint) const 
 {
@@ -164,6 +107,67 @@ void UBTService_CanJumpOnPlatform::JumpToPoint(const FVector &StartPoint, const 
 		DrawDebugSphere(GetWorld(),JumpPoint, 30.f, 24, FColor::Blue, false, 2.f);
 		UE_LOG(LogTemp, Error, TEXT("Doing jump "));
 	}
+}
+
+bool UBTService_CanJumpOnPlatform::CheckPathToPlayer(const FVector &StartPoint, const FVector &CurrentTargetPoint)
+{
+	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(GetWorld());
+	if (!NavSystem)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No navsystem lol"));
+		return false;
+	}
+	{
+		AController* EnemyController = OwnerCharacter->GetController();
+		// Check if there's a path between owner character and current target location
+
+		const auto Path = UNavigationSystemV1::FindPathToLocationSynchronously(this, StartPoint, CurrentTargetPoint, EnemyController);
+		
+		if(Path->IsPartial() || Path->IsUnreachable())
+		{
+			UE_LOG(LogTemp, Error, TEXT("Path is partial or unreachable, should return false"));
+		}
+
+		if (!Path)
+		{
+			UE_LOG(LogTemp, Error, TEXT("No path found"));
+			return false;			
+		}
+
+		FVector QueryExtents = OwnerCharacter->GetSimpleCollisionCylinderExtent();
+		TArray<FNavPathPoint> NavPoints = Path->GetPath()->GetPathPoints();
+
+		for (const FNavPathPoint NavPathPoint : NavPoints)
+		{
+			// Check if each point on the path is navigable
+			FNavLocation NavLocation;
+			if (!NavSystem->ProjectPointToNavigation(NavPathPoint.Location, NavLocation, QueryExtents))
+			{
+				return false;
+			}
+		}
+		return true;
+	}
+}
+
+
+bool UBTService_CanJumpOnPlatform::HasNavigationTo(const FVector &StartPoint, const FVector &CurrentTargetPoint) const
+{
+	const UNavigationSystemV1* Navigation = UNavigationSystemV1::GetCurrent(GetWorld());
+
+	if (ensure(IsValid(Navigation))) {
+		const UNavigationPath* NavigationPath = Navigation->FindPathToLocationSynchronously(GetWorld(), StartPoint, CurrentTargetPoint);
+
+		if(ensure(NavigationPath != nullptr) == false)
+		{
+			return false;
+		}
+		const bool IsNavigationValid = NavigationPath->IsValid();
+		const bool IsNavigationNotPartial = NavigationPath->IsPartial() == false;
+		const bool IsNavigationSuccessful = IsNavigationValid && IsNavigationNotPartial;
+		return IsNavigationSuccessful;
+	}
+	return false;
 }
 
 

@@ -52,8 +52,11 @@ private:
 	/** Calculates force to jump on platform if jump is possible, and performs jump */ 
 	void JumpToPoint(const FVector &StartPoint, const FVector &JumpPoint) const;
 
+	// Currently not in use
+	bool CheckPathToPlayer(const FVector &StartPoint, const FVector &CurrentTargetPoint);
+
 	/** Check if there's a path between AI character and player character*/
-	bool CheckPathToPlayer(const FVector &StartPoint, const FVector &JumpPoint);
+	bool HasNavigationTo(const FVector &StartPoint, const FVector &CurrentTargetPoint) const ;
 
 	float JumpCoolDownTimer = 0.f;
 };

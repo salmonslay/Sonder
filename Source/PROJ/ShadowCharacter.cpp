@@ -47,9 +47,10 @@ void AShadowCharacter::MakeJump()
 
 void AShadowCharacter::Idle()
 {
+	Super::Idle();
+	
 	if(GetLocalRole() == ROLE_Authority && !bIsStunned)
 	{
-		UE_LOG(LogTemp, Error, TEXT("MovementMode walking"));
 		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 		bIsPerformingJump = false;
 	}
