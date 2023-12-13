@@ -35,6 +35,7 @@ void UBTService_SetValidPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 		SetPathIsInvalid(OwnerComp);
 		return; 
 	}
+	
 	if (!OwnerCharacter->HasNavigationTo(CurrentTarget))
 	{
 		SetPathIsInvalid(OwnerComp);

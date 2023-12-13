@@ -33,7 +33,10 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (WaitingEnemies.IsEmpty()) return;
+	if (WaitingEnemies.IsEmpty())
+	{
+		return;
+	}
 	
 	for (AShadowCharacter* Enemy : WaitingEnemies)
 	{
@@ -91,6 +94,13 @@ void AEnemyJumpTrigger::AddWaitingEnemy(AShadowCharacter* EnemyToAdd)
 
 FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation, const FVector& EnemyForwardVector) // forward vector * Jumpdistance
 {
+
+	// TODO: Check if platform is closer to player than enemy, only jump if that is true
+	// TODO: HÄR EMIL
+	if (!OverlappingPlatform)
+	{
+		return FVector::ZeroVector;
+	}
 	FVector Origin;
 	FVector Extent;
 	OverlappingPlatform->GetActorBounds(true, Origin, Extent);
@@ -120,7 +130,6 @@ void AEnemyJumpTrigger::AllowJump() // runs on overlap begin with moving platfor
 	{
 		if (Enemy)
 		{
-
 			Enemy->bCanJump = true;
 			Enemy->JumpCoolDownTimer = Enemy->JumpCoolDownDuration;
 		}
