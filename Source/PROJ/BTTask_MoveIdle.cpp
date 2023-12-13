@@ -50,6 +50,10 @@ void UBTTask_MoveIdle::OnTaskFinished(UBehaviorTreeComponent& OwnerComp, uint8* 
 {
 	Super::OnTaskFinished(OwnerComp, NodeMemory, TaskResult);
 
+	if (!OwnerComp.GetAIOwner()) return;
+	if (!OwnerComp.GetAIOwner()->GetCharacter()) return;
+	if (!OwnerComp.GetAIOwner()->GetCharacter()->GetCharacterMovement()) return;
+	
 	OwnerComp.GetAIOwner()->GetCharacter()->GetCharacterMovement()->MaxWalkSpeed = DefaultMoveSpeed;
 
 	OwnerComp.GetBlackboardComponent()->SetValueAsBool(BBKeyMovingIdle.SelectedKeyName, false); 
