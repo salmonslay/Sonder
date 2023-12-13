@@ -42,6 +42,13 @@ FVector UBTService_SetCurrentTarget::GetTargetLocation(AAIController* BaseAICont
 		const auto DistToPlayerOne = FVector::Dist(Player1->GetActorLocation(), CurrentLocation);
 		const auto DistToPlayerTwo = FVector::Dist(Player2->GetActorLocation(), CurrentLocation);
 
+		// Respawning/in arena jail 
+		if(Player1->bIsSafe)
+		{
+			OwnerCharacter->CurrentTargetLocation = Player2->GetActorLocation();
+			return OwnerCharacter->CurrentTargetLocation; 
+		}
+
 		const bool bLOSToP1 = HasLineOfSightToPlayer(OwnerCharacter, Player1);
 		const bool bLOSToP2 = HasLineOfSightToPlayer(OwnerCharacter, Player2); 
 
