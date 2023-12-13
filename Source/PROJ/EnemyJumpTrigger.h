@@ -29,9 +29,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* JumpPoint2;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	AActor* OverlappingGround;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
