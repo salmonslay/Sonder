@@ -41,7 +41,10 @@ public:
 	void OnBasicAttackHit(); 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	bool bCanJump = false;
+	bool bCanPlatformJump = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bCanBasicJump = false;
 
 	FVector AvaliableJumpPoint = FVector::ZeroVector;
 
@@ -49,7 +52,7 @@ public:
 	bool bIsJumping = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	bool bHasLanded= false;
+	bool bHasLandedOnPlatform = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bHasLandedOnGround = true;

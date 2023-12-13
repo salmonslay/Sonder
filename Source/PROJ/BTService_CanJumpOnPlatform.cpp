@@ -38,7 +38,7 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 
 	OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
 	
-	if (!OwnerCharacter->bCanJump)
+	if (!OwnerCharacter->bCanPlatformJump)
 	{
 		OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", false);
 		OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue("bIsJumping");
@@ -52,7 +52,7 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 		return;
 	}
 
-	if (OwnerCharacter->bCanJump && !OwnerCharacter->bIsJumping)
+	if (OwnerCharacter->bCanPlatformJump && !OwnerCharacter->bIsJumping) // check if can jump || can jump to platform
 	{
 		if (OwnerCharacter->JumpCoolDownTimer >= OwnerCharacter->JumpCoolDownDuration)
 		{
@@ -61,6 +61,7 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 			{
 				if (!OwnerCharacter->HasNavigationTo( OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsVector("CurrentMoveTarget")))
 				{
+					//TODO: check if jumppoint is closer to player than character. If true, jump, else do not jump
 					OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", true);
 					JumpToPoint(OwnerLocation, OwnerCharacter->AvaliableJumpPoint);
 					OwnerCharacter->JumpCoolDownTimer = 0;
