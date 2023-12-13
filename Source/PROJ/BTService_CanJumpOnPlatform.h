@@ -31,17 +31,11 @@ public:
 
 private:
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY()
 	AShadowCharacter* OwnerCharacter = nullptr;
 
-	UPROPERTY(VisibleAnywhere)
+	UPROPERTY()
 	FVector OwnerLocation = FVector::ZeroVector;
-	
-	UPROPERTY(EditAnywhere)
-	float RadiusToDetectPlatform = 200.f;
-
-	UPROPERTY(EditAnywhere)
-	float MaxJumpDistance = 50.f;
 
 	UPROPERTY(EditAnywhere)
 	float JumpBoost = 10.f;
@@ -49,10 +43,10 @@ private:
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;
 	
-	/** Calculates force to jump on platform if jump is possible, and performs jump*/ 
-	void JumpToPoint(FVector StartPoint, FVector JumpPoint);
+	/** Calculates force to jump on platform if jump is possible, and performs jump */ 
+	void JumpToPoint(const FVector &StartPoint, const FVector &JumpPoint) const;
 
-	bool CanJumpToPoint(FVector StartPoint, FVector JumpPoint);
+	// Currently not in use
+	//bool CheckPathToPlayer(const FVector &StartPoint, const FVector &CurrentTargetPoint);
 
-	float JumpCoolDownTimer = 0.f;
 };

@@ -6,6 +6,7 @@
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
 #include "BTService_SetValidPath.generated.h"
 
+class AShadowCharacter;
 /**
  * 
  */
@@ -21,6 +22,12 @@ public:
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 private:
+
+	UPROPERTY()
+	AShadowCharacter* OwnerCharacter = nullptr;
+
+	UPROPERTY()
+	FVector OwnerLocation = FVector::ZeroVector;
 
 	UPROPERTY(EditAnywhere)
 	FBlackboardKeySelector BBKeyCurrentMoveTarget;

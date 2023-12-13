@@ -5,9 +5,7 @@
 
 #include "MovingPlatform.h"
 #include "ShadowCharacter.h"
-#include "SonderGameState.h"
 #include "Components/BoxComponent.h"
-#include "GameFramework/CharacterMovementComponent.h"
 
 // Sets default values
 AEnemyJumpTrigger::AEnemyJumpTrigger()
@@ -28,7 +26,6 @@ AEnemyJumpTrigger::AEnemyJumpTrigger()
 void AEnemyJumpTrigger::BeginPlay()
 {
 	Super::BeginPlay();
-	
 }
 
 // Called every frame
@@ -36,14 +33,15 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (WaitingEnemies.IsEmpty()) return;
+	if (WaitingEnemies.IsEmpty())
+	{
+		return;
+	}
 	
 	for (AShadowCharacter* Enemy : WaitingEnemies)
 	{
 		if (Enemy)
 		{
-
-			// TODO: check if has valid path, do nothing if has path bb
 			if (Enemy->bHasLanded || Enemy->bHasLandedOnGround)
 			{
 				Enemy->bIsJumping = false;
@@ -96,10 +94,20 @@ void AEnemyJumpTrigger::AddWaitingEnemy(AShadowCharacter* EnemyToAdd)
 
 FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation, const FVector& EnemyForwardVector) // forward vector * Jumpdistance
 {
+
+	// TODO: Check if platform is closer to player than enemy, only jump if that is true
+	if (!OverlappingPlatform)
+	{
+		return FVector::ZeroVector;
+	}
 	FVector Origin;
 	FVector Extent;
 	OverlappingPlatform->GetActorBounds(true, Origin, Extent);
-	return FVector(EnemyLocation.X, EnemyLocation.Y + EnemyForwardVector.Y * EnemyJumpDistance, Origin.Z);
+
+	// Jump left if platform's origin is to the left and vice versa with right 
+	const float DirToPlatformY = Origin.Y < EnemyLocation.Y ? -1 : 1;
+	
+	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToPlatformY * EnemyJumpDistance, Origin.Z + PlatformJumpZOffset);
 	
 }
 
@@ -125,7 +133,6 @@ void AEnemyJumpTrigger::AllowJump() // runs on overlap begin with moving platfor
 	{
 		if (Enemy)
 		{
-
 			Enemy->bCanJump = true;
 			Enemy->JumpCoolDownTimer = Enemy->JumpCoolDownDuration;
 		}
@@ -134,18 +141,15 @@ void AEnemyJumpTrigger::AllowJump() // runs on overlap begin with moving platfor
 
 void AEnemyJumpTrigger::DenyJump()  // runs on overlap end with moving platform, if enemy is standing on a platform - allow jump to ground, if not - allow jump to platform
 {
-	//if (!bIsOverlappingWithMovingPlatform)
-	//{
-		if (!WaitingEnemies.IsEmpty())
+	if (!WaitingEnemies.IsEmpty())
+	{
+		for (AShadowCharacter* Enemy : WaitingEnemies)
 		{
-			for (AShadowCharacter* Enemy : WaitingEnemies)
+			if (Enemy)
 			{
-				if (Enemy)
-				{
-					Enemy->bCanJump = false;
-				}
+				Enemy->bCanJump = false;
 			}
 		}
-	//}
+	}
 }
 
