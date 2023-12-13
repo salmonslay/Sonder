@@ -63,7 +63,7 @@ private:
 	float EnemyJumpDistance = 200.f;
 
 	UPROPERTY(EditAnywhere)
-	float EnemyJumpHeightAbovePlatform = 100.f;
+	float PlatformJumpZOffset = 1000.f;
 	
 	TArray<AShadowCharacter*> WaitingEnemies = TArray<AShadowCharacter*>();
 

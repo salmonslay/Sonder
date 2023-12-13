@@ -121,8 +121,5 @@ void AProjPlayerController::SetCamera()
 		MainCam = Cast<ACharactersCamera>(UGameplayStatics::GetActorOfClass(this, ACharactersCamera::StaticClass()));
 
 	if (IsValid(MainCam))
-	{
 		SetViewTarget(MainCam);
-		bHasSetCamera = true;
-	}
 }

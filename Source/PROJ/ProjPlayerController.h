@@ -45,8 +45,6 @@ private:
 	UPROPERTY()
 	class ACharactersCamera* MainCam;
 
-	bool bHasSetCamera = false; 
-
 	inline static int PlayerCount = 0; 
 
 	UPROPERTY(EditDefaultsOnly)
