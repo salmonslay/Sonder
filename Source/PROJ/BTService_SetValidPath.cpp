@@ -6,6 +6,7 @@
 #include "AIController.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
+#include "ShadowCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 
 UBTService_SetValidPath::UBTService_SetValidPath()
@@ -21,24 +22,28 @@ void UBTService_SetValidPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 
 	APawn* Owner = OwnerComp.GetAIOwner()->GetPawn();
 
-	if(FMath::Abs(Owner->GetActorLocation().Z - CurrentTarget.Z) > HeightDifferenceToMarkInvalid)
+	if (OwnerComp.GetAIOwner() == nullptr) return;
+
+	OwnerCharacter = Cast<AShadowCharacter>(OwnerComp.GetAIOwner()->GetCharacter());
+
+	if (OwnerCharacter == nullptr) return;
+	
+	OwnerLocation = OwnerCharacter->GetActorLocation();
+
+	if(FMath::Abs(OwnerLocation.Z - CurrentTarget.Z) > HeightDifferenceToMarkInvalid)
 	{
 		SetPathIsInvalid(OwnerComp);
 		return; 
 	}
-
-	// OwnerComp.GetBlackboardComponent()->SetValueAsBool(BlackboardKey.SelectedKeyName, true);
-
-	const auto Path = UNavigationSystemV1::FindPathToLocationSynchronously(this, Owner->GetActorLocation(), CurrentTarget, Owner);
 	
-	if(Path->IsPartial() || Path->IsUnreachable())
+	if (!OwnerCharacter->HasNavigationTo(CurrentTarget))
 	{
-		SetPathIsInvalid(OwnerComp); 
+		SetPathIsInvalid(OwnerComp);
 		return; 
-	} 
+	}
+	
 	// Path valid 
 	OwnerComp.GetBlackboardComponent()->SetValueAsBool(BlackboardKey.SelectedKeyName, true);
-
 }
 
 void UBTService_SetValidPath::SetPathIsInvalid(UBehaviorTreeComponent& OwnerComp) const

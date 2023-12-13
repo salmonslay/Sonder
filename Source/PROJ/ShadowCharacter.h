@@ -80,7 +80,9 @@ public:
 
 	void OnJumpEvent();
 
-
+	/** Check if there's a path between the enemy character and player character*/
+	bool HasNavigationTo(const FVector &CurrentTargetPoint) const;
+	
 protected:
 
 	virtual void BeginPlay() override;

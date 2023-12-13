@@ -29,9 +29,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* JumpPoint2;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	AActor* OverlappingGround;
-
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
@@ -66,7 +63,7 @@ private:
 	float EnemyJumpDistance = 200.f;
 
 	UPROPERTY(EditAnywhere)
-	float EnemyJumpHeightAbovePlatform = 100.f;
+	float PlatformJumpZOffset = 1000.f;
 	
 	TArray<AShadowCharacter*> WaitingEnemies = TArray<AShadowCharacter*>();
 

@@ -132,6 +132,12 @@
 		<property name="startOffset">
 			<value>50</value>
 		</property>
+		<property name="volume">
+			<value>8</value>
+		</property>
+		<property name="pitch">
+			<value>7</value>
+		</property>
 		<property name="looping">
 			<value>true</value>
 		</property>
@@ -154,7 +160,7 @@
 	</object>
 	<object class="ThreeEQEffect" id="{d890952e-fec6-40a6-b6be-a65269b9bb9b}">
 		<property name="lowGain">
-			<value>-13</value>
+			<value>-9</value>
 		</property>
 	</object>
 	<object class="RandomizerModulator" id="{547f9c34-5c73-4f59-b640-119c046df08b}">
