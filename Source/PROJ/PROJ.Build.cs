@@ -6,7 +6,7 @@ public class PROJ : ModuleRules
 {
 	public PROJ(ReadOnlyTargetRules Target) : base(Target)
 	{
-		PrivateDependencyModuleNames.AddRange(new string[] {"AdvancedSessions"});
+		PrivateDependencyModuleNames.AddRange(new string[] {"AdvancedSessions", "UINavigation"});
 		PCHUsage = PCHUsageMode.UseExplicitOrSharedPCHs;
 
 		PublicDependencyModuleNames.AddRange(new string[] { 
@@ -21,7 +21,8 @@ public class PROJ : ModuleRules
 			"LevelSequence", 
 			"MovieScene", 
 			"UMG", 
-			"GeometryCollectionEngine"
+			"GeometryCollectionEngine", 
+			"NavigationSystem"
 		});
 		
 	}

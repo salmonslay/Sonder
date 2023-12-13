@@ -6,6 +6,7 @@
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
 #include "BTService_SetCurrentTarget.generated.h"
 
+class AShadowCharacter;
 /**
  * Sets the current target to the closest player which is passed as the blackboard key 
  */
@@ -20,7 +21,14 @@ public:
 
 private:
 
+	AShadowCharacter* OwnerCharacter = nullptr;
+
 	/** Returns the closest player's location */ 
-	FVector GetTargetLocation(AAIController* BaseAIController); 
+	FVector GetTargetLocation(AAIController* BaseAIController);
+
+	bool HasLineOfSightToPlayer(AShadowCharacter* Owner, class APROJCharacter* PlayerTarget) const;
+
+	UPROPERTY(EditAnywhere)
+	TArray<TEnumAsByte<EObjectTypeQuery>> LineTraceObjects; 
 	
 };

@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "EnemyJumpTrigger.generated.h"
 
+class APROJCharacter;
 class AMovingPlatform;
 class AShadowCharacter;
 class UBoxComponent;
@@ -27,9 +28,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	UBoxComponent* JumpPoint2;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	AActor* OverlappingGround;
 
 protected:
 	// Called when the game starts or when spawned
@@ -56,19 +54,22 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	AMovingPlatform* OverlappingPlatform = nullptr;
+
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	bool bTriggerJumpToMovablePlatform = false;
 	
 private:
 	UPROPERTY(EditAnywhere)
 	float EnemyJumpDistance = 200.f;
 
 	UPROPERTY(EditAnywhere)
-	bool bTriggerJumpToMovablePlatform = false;
-		
+	float EnemyJumpHeightAbovePlatform = 100.f;
+	
 	TArray<AShadowCharacter*> WaitingEnemies = TArray<AShadowCharacter*>();
 
 	FVector CalculateJumpToPlatform(const FVector& EnemyLocation, const FVector& EnemyForwardVector);
 
-	FVector CalculateJumpToPoint(const FVector& EnemyLocation);
+	FVector CalculateJumpToPoint(AShadowCharacter* Enemy);
 
 	/** Runs on overlap begin with moving platform, enemies on moving platform are allowed to jump to ground, enemies on ground are allowed to jump on platform*/
 	UFUNCTION(BlueprintCallable)

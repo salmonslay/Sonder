@@ -52,10 +52,13 @@ public:
 	bool bHasLanded= false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	bool bHasLandedOnGround = false;
+	bool bHasLandedOnGround = true;
 
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float JumpCoolDownDuration = 2.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	float JumpCoolDownTimer = 0.f;
 	
 	UFUNCTION(Server, Reliable) 
 	void ServerRPC_ToggleChargeEffect(const bool bActive);
@@ -65,18 +68,21 @@ public:
 
 	void MakeJump();
 
+	UFUNCTION(BlueprintCallable)
 	virtual void Idle() override;
 	
 	UFUNCTION()
 	void OnRep_Jump();
 
-	
+	FVector CurrentTargetLocation = FVector::ZeroVector;
 	
 	UFUNCTION(BlueprintImplementableEvent)
 
 	void OnJumpEvent();
 
-
+	/** Check if there's a path between the enemy character and player character*/
+	bool HasNavigationTo(const FVector &CurrentTargetPoint) const;
+	
 protected:
 
 	virtual void BeginPlay() override;

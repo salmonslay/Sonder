@@ -3,6 +3,8 @@
 #include "ShadowCharacter.h"
 
 #include "DummyPlayerState.h"
+#include "NavigationPath.h"
+#include "NavigationSystem.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
 #include "PlayerBasicAttack.h"
@@ -10,6 +12,7 @@
 #include "RobotBaseState.h"
 #include "SoulBaseStateNew.h"
 #include "Net/UnrealNetwork.h"
+
 
 AShadowCharacter::AShadowCharacter()
 {
@@ -38,6 +41,8 @@ void AShadowCharacter::MakeJump()
 	if(GetLocalRole() == ROLE_Authority && !bIsStunned)
 	{
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
+		UE_LOG(LogTemp, Error, TEXT("MovementMode falling"));
+		
 		bIsPerformingJump = true;
 		OnJumpEvent();
 	}
@@ -45,10 +50,11 @@ void AShadowCharacter::MakeJump()
 
 void AShadowCharacter::Idle()
 {
-	GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-
+	Super::Idle();
+	
 	if(GetLocalRole() == ROLE_Authority && !bIsStunned)
 	{
+		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 		bIsPerformingJump = false;
 	}
 }
@@ -59,8 +65,31 @@ void AShadowCharacter::OnRep_Jump()
 	{
 		OnJumpEvent();
 	}
+	else
+	{
+		Idle();
+	}
 }
 
+
+bool AShadowCharacter::HasNavigationTo(const FVector& CurrentTargetPoint) const
+{
+	const UNavigationSystemV1* Navigation = UNavigationSystemV1::GetCurrent(GetWorld());
+
+	if (ensure(IsValid(Navigation))) {
+		const UNavigationPath* NavigationPath = Navigation->FindPathToLocationSynchronously(GetWorld(), GetActorLocation(), CurrentTargetPoint);
+
+		if(ensure(NavigationPath != nullptr) == false)
+		{
+			return false;
+		}
+		const bool IsNavigationValid = NavigationPath->IsValid();
+		const bool IsNavigationNotPartial = NavigationPath->IsPartial() == false;
+		const bool IsNavigationSuccessful = IsNavigationValid && IsNavigationNotPartial;
+		return IsNavigationSuccessful;
+	}
+	return false;
+}
 
 void AShadowCharacter::BeginPlay()
 {
@@ -70,8 +99,6 @@ void AShadowCharacter::BeginPlay()
 
 	if(CurrentState)
 		CurrentState->Enter();
-
-	
 }
 
 void AShadowCharacter::Tick(const float DeltaSeconds)
