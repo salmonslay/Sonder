@@ -27,10 +27,8 @@ void UBTService_SetValidPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 		return; 
 	}
 
-	OwnerComp.GetBlackboardComponent()->SetValueAsBool(BlackboardKey.SelectedKeyName, true);
-	return;
+	// OwnerComp.GetBlackboardComponent()->SetValueAsBool(BlackboardKey.SelectedKeyName, true);
 
-	/*
 	const auto Path = UNavigationSystemV1::FindPathToLocationSynchronously(this, Owner->GetActorLocation(), CurrentTarget, Owner);
 	
 	if(Path->IsPartial() || Path->IsUnreachable())
@@ -38,9 +36,9 @@ void UBTService_SetValidPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 		SetPathIsInvalid(OwnerComp); 
 		return; 
 	} 
-*/
 	// Path valid 
-	
+	OwnerComp.GetBlackboardComponent()->SetValueAsBool(BlackboardKey.SelectedKeyName, true);
+
 }
 
 void UBTService_SetValidPath::SetPathIsInvalid(UBehaviorTreeComponent& OwnerComp) const

@@ -18,4 +18,11 @@ class PROJ_API USonderGameInstance : public UAdvancedFriendsGameInstance
 public:
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsPlayingLocal = false;
+
+	/**
+	 * Whether or not we're currently trying to join a session.
+	 * If true, the main menu will open the lobby menu when the session is joined.
+	 */
+	UPROPERTY(BlueprintReadWrite)
+	bool bIsCurrentlyJoining = false;
 };
