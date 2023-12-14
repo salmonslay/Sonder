@@ -19,6 +19,9 @@ EBTNodeResult::Type UBTService_MoveToJumpPoint::ExecuteTask(UBehaviorTreeCompone
 {
 	const auto Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
+	if(!IsValid(&OwnerComp))
+		return Result; 
+
 	if(JumpPoints.IsEmpty())
 	{
 		TArray<AActor*> TempArray; 
@@ -40,6 +43,9 @@ FVector UBTService_MoveToJumpPoint::GetJumpPoint(const UBehaviorTreeComponent& O
 {
 	const AShadowCharacter* Owner = Cast<AShadowCharacter>(OwnerComp.GetAIOwner()->GetPawn());
 
+	if(!Owner)
+		return FVector::ZeroVector; 
+
 	const FVector CurrentTarget = OwnerComp.GetBlackboardComponent()->GetValueAsVector(BBKeyCurrentTarget.SelectedKeyName); 
 
 	TArray<UBoxComponent*> PossiblePoints; 
@@ -57,7 +63,7 @@ FVector UBTService_MoveToJumpPoint::GetJumpPoint(const UBehaviorTreeComponent& O
 		PossiblePoints.Add(JumpPoint); 
 	}
 
-	float DistToPoint = 0;
+	// float DistToPoint = 0;
 	// if(const auto NearestActor = UGameplayStatics::FindNearestActor(CurrentTarget, PossiblePoints, DistToPoint))
 	// 	return NearestActor->GetActorLocation();
 

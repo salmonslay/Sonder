@@ -117,13 +117,13 @@ void AEnemyCharacter::Stun(const float Duration)
 		}
 		else
 		{
+			bIsStunned = true;
+			bIsChargingAttack = false;
+			bIsAttacking = false;
+			bIsIdle = false;
+			OnStunnedEvent();
 			StunnedDuration = Duration;
 		}
-		bIsStunned = true;
-		bIsChargingAttack = false;
-		bIsAttacking = false;
-		bIsIdle = false;
-		OnStunnedEvent();
 		//GetWorldTimerManager().SetTimer(StunnedTimerHandle, this, &AEnemyCharacter::Idle, Duration, false, -1.f);
 	}
 }

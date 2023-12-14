@@ -56,6 +56,8 @@ void ALightGrenade::BeginPlay()
 		Indicator = GetWorld()->SpawnActor<AActor>(IndicatorActorClass, FVector::ZeroVector, FRotator::ZeroRotator);
 		Indicator->SetActorHiddenInGame(true); // Not shown as default 
 	}
+
+	DisableGrenade();
 }
 
 void ALightGrenade::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -116,7 +118,7 @@ void ALightGrenade::MulticastRPCThrow_Implementation(const float TimeHeld)
 		ThrowEvent();
 
 		bIsExploding = false;
-
+		
 		ExplosionArea->SetWorldLocation(Player->ThrowLoc->GetComponentLocation()); 
 		
 		ExplosionArea->AddImpulse(GetLaunchForce(TimeHeld));
@@ -280,5 +282,11 @@ void ALightGrenade::IsChargingGrenade(const float TimeHeld)
 	// Set indicators' location to the impact point 
 	Indicator->SetActorHiddenInGame(false); 
 	Indicator->SetActorLocation(HitResult.ImpactPoint);
+}
+
+void ALightGrenade::DisableIndicator() const
+{
+	if(Indicator)
+		Indicator->SetActorHiddenInGame(true); 
 }
 

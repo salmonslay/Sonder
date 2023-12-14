@@ -81,7 +81,9 @@ public:
 
 	void PulseExplosion();
 	
-	void IsChargingGrenade(const float TimeHeld); 
+	void IsChargingGrenade(const float TimeHeld);
+
+	void DisableIndicator() const; 
 
 private:
 
