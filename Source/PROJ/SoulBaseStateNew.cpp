@@ -99,6 +99,9 @@ void USoulBaseStateNew::GetTimeHeld(const FInputActionInstance& Instance)
 {
 	if (!CharOwner->IsLocallyControlled() || !SoulCharacter->AbilityTwo)
 	{
+		if(LightGrenade)
+			LightGrenade->DisableIndicator(); 
+			
 		return;	
 	}
 

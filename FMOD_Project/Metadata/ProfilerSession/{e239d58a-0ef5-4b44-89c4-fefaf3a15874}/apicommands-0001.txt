@@ -1,0 +1,85 @@
+Playback::frame, 0
+Playback::version, 2, 131609
+#
+# FMOD v2.02.19 command capture
+#   System::setSoftwareChannels(numsoftwarechannels: 64)
+#   System::setDSPBufferSize(bufferlength: 1024, numbuffers: 4)
+#   System::setSoftwareFormat(samplerate: 48000, speakermode: 6, numrawspeakers: 6)
+#   System::setAdvancedSettings(settings: {maxMPEGCodecs: 0, maxADPCMCodecs: 0, maxXMACodecs: 0, maxVorbisCodecs: 64, maxAT9Codecs: 0, maxFADPCMCodecs: 0, maxPCMCodecs: 0, maxOpusCodecs: 0
+#       ASIONumChannels: 0, vol0virtualvol: 0.001, defaultDecodeBufferSize: 400, geometryMaxFadeTime: 0,
+#       distanceFilterCenterFreq: 1500, reverb3Dinstance: 0, DSPBufferPoolSize: 8, resamplerMethod: 2, randomSeed: 20888})
+#   Studio::System::setAdvancedSettings(settings: {commandqueuesize: 32768, handleinitialsize: 65536, studioupdateperiod: 20, idlesampledatapoolsize: 262144})
+#   Studio::System::initialize(maxchannels: 512, studioflags: 0x00000001, flags: 0x00030000)
+#
+Playback::frame, 0
+# Printing initial instance state
+System::loadBankFile, ../../../../../../Users/GTSA - Infinity/Documents/GitHub/Proj/Content/FMOD/Desktop/Master.bank, 0, 2097280
+Playback::loadBankFinished, {c671b85a-2223-4ade-bb1a-23e1cacbaf7a}, 2097280, 0
+System::loadBankFile, ../../../../../../Users/GTSA - Infinity/Documents/GitHub/Proj/Content/FMOD/Desktop/Master.strings.bank, 0, 2097536
+Playback::loadBankFinished, {5e6c988e-5358-069c-3d53-a91f3b38a9e2}, 2097536, 0
+System::loadBankFile, ../../../../../../Users/GTSA - Infinity/Documents/GitHub/Proj/Content/FMOD/Desktop/OST.bank, 0, 2097792
+Playback::loadBankFinished, {b3221174-4d41-462b-ae3c-728b0bcfef54}, 2097792, 0
+Bank::getEventListItem, 2097792, 0, {5dbaa61c-8b17-4a75-9214-986daff2fc09}, 2099584
+System::loadBankFile, ../../../../../../Users/GTSA - Infinity/Documents/GitHub/Proj/Content/FMOD/Desktop/SFX.bank, 0, 2098048
+Playback::loadBankFinished, {efafb6ac-edfc-4ade-b3d2-ba0708c5883d}, 2098048, 0
+Bank::getEventListItem, 2098048, 0, {12f9321a-aec4-47f3-ba8c-477f8d3bbc2a}, 2127232
+Bank::getEventListItem, 2098048, 1, {76e6b721-06c1-44d0-a79a-83dfb275f472}, 2099072
+Bank::getEventListItem, 2098048, 2, {4f29402f-879a-496d-9d05-128a0bf0ce50}, 2106240
+Bank::getEventListItem, 2098048, 3, {2d5ff270-1516-4be7-b53d-373559e806f4}, 2120064
+Bank::getEventListItem, 2098048, 4, {ba857684-ff04-4e47-90c5-598f34c7adf6}, 2104448
+Bank::getEventListItem, 2098048, 5, {0de63fa0-8e5d-4f60-8581-01ebe382df04}, 2098304
+Bank::getEventListItem, 2098048, 6, {611eccaa-affa-4166-a7e5-b7d8d990565e}, 2103680
+Bank::getEventListItem, 2098048, 7, {5463c4bf-d85a-4954-9343-d6fa3964764c}, 2100096
+Bank::getEventListItem, 2098048, 8, {141c37c9-fcca-42eb-9114-9cbab22f1c0a}, 2102912
+Bank::getEventListItem, 2098048, 9, {4be223ff-584d-4c36-9b0a-372438fa01c5}, 2109568
+System::setNumListeners, 2
+System::setListenerAttributes, 0, {{50.35,6.61963,-0.319691},{0,0,0},{-6.88683e-18,-0.173648,0.984808},{-1.2032e-16,0.984808,0.173648}}, {50.35,6.61963,-0.319691}, true
+System::setListenerAttributes, 1, {{50.35,6.61963,-0.319691},{0,0,0},{-6.88683e-18,-0.173648,0.984808},{-1.2032e-16,0.984808,0.173648}}, {50.35,6.61963,-0.319691}, true
+System::setParameterByName, EnvironmentType, 1, false
+System::setParameterByName, EnvironmentIntensity, 0.35, false
+EventDescription::createInstance, 2098304, 2098816
+EventInstance::set3DAttributes, 2098816, {{-5.7,13.7,0.8},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2098816, 111274
+EventInstance::start, 2098816
+EventDescription::createInstance, 2098304, 2101376
+EventInstance::set3DAttributes, 2101376, {{-5.7,13.7,0.8},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2101376, 109994
+EventInstance::start, 2101376
+EventDescription::createInstance, 2098304, 2098560
+EventInstance::set3DAttributes, 2098560, {{-5.6,13.7,0.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2098560, 111274
+EventInstance::start, 2098560
+EventDescription::createInstance, 2098304, 2101120
+EventInstance::set3DAttributes, 2101120, {{-5.6,13.7,0.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2101120, 109994
+EventInstance::start, 2101120
+EventDescription::createInstance, 2099072, 2099328
+EventInstance::set3DAttributes, 2099328, {{78,36,151.1},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2099328, 111125
+EventInstance::start, 2099328
+EventDescription::createInstance, 2099072, 2101632
+EventInstance::set3DAttributes, 2101632, {{78,36,151.1},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2101632, 109824
+EventInstance::start, 2101632
+# Finished printing initial instance state
+Playback::frame, 12288
+System::setListenerAttributes, 0, {{50.35,6.61963,-0.319691},{0,0,0},{-6.88683e-18,-0.173648,0.984808},{-1.2032e-16,0.984808,0.173648}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{50.35,6.61963,-0.319691},{0,0,0},{-6.88683e-18,-0.173648,0.984808},{-1.2032e-16,0.984808,0.173648}}, {0,0,0}, false
+Playback::frame, 15360
+System::setListenerAttributes, 0, {{50.35,6.61963,-0.319691},{0,0,0},{-6.88683e-18,-0.173648,0.984808},{-1.2032e-16,0.984808,0.173648}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{50.35,6.61963,-0.319691},{0,0,0},{-6.88683e-18,-0.173648,0.984808},{-1.2032e-16,0.984808,0.173648}}, {0,0,0}, false
+Playback::frame, 16384
+System::setListenerAttributes, 0, {{50.35,6.61963,-0.319691},{0,0,0},{-6.88683e-18,-0.173648,0.984808},{-1.2032e-16,0.984808,0.173648}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{50.35,6.61963,-0.319691},{0,0,0},{-6.88683e-18,-0.173648,0.984808},{-1.2032e-16,0.984808,0.173648}}, {0,0,0}, false
+Playback::frame, 16384
+System::setListenerAttributes, 0, {{50.35,6.61963,-0.319691},{0,0,0},{-6.88683e-18,-0.173648,0.984808},{-1.2032e-16,0.984808,0.173648}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{50.35,6.61963,-0.319691},{0,0,0},{-6.88683e-18,-0.173648,0.984808},{-1.2032e-16,0.984808,0.173648}}, {0,0,0}, false
+Playback::frame, 15360
+System::setListenerAttributes, 0, {{50.35,6.61963,-0.319691},{0,0,0},{-6.88683e-18,-0.173648,0.984808},{-1.2032e-16,0.984808,0.173648}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{50.35,6.61963,-0.319691},{0,0,0},{-6.88683e-18,-0.173648,0.984808},{-1.2032e-16,0.984808,0.173648}}, {0,0,0}, false
+Playback::frame, 16384
+System::setListenerAttributes, 0, {{50.35,6.61963,-0.319691},{0,0,0},{-6.88683e-18,-0.173648,0.984808},{-1.2032e-16,0.984808,0.173648}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{50.35,6.61963,-0.319691},{0,0,0},{-6.88683e-18,-0.173648,0.984808},{-1.2032e-16,0.984808,0.173648}}, {0,0,0}, false
+Playback::frame, 16384
+System::setListenerAttributes, 0, {{50.35,6.61963,-0.319691},{0,0,0},{-6.88683e-18,-0.173648,0.984808},{-1.2032e-16,0.984808,0.173648}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{50.35,6.61963,-0.319691},{0,0,0},{-6.88683e-18,-0.173648,0.984808},{-1.2032e-16,0.984808,0.173648}}, {0,0,0}, false

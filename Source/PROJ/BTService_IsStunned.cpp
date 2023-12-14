@@ -9,7 +9,7 @@
 
 UBTService_IsStunned::UBTService_IsStunned()
 {
-	NodeName = TEXT("IsStunnded");
+	NodeName = TEXT("IsStunned");
 }
 
 void UBTService_IsStunned::OnGameplayTaskActivated(UGameplayTask& Task)
@@ -30,13 +30,16 @@ void UBTService_IsStunned::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 
 	TreeComponent = &OwnerComp;
 
-	OwnerCharacter = Cast<AFlyingEnemyCharacter>(OwnerComp.GetAIOwner()->GetCharacter());
+	OwnerCharacter = Cast<AEnemyCharacter>(OwnerComp.GetAIOwner()->GetCharacter());
 
 	if (OwnerCharacter == nullptr) return;
 
 	OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsStunned", OwnerCharacter->bIsStunned);
 	OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsFloat("StunnedDuration", OwnerCharacter->StunnedDuration);
 
+	// Repositioning only relevant for flying enemy 
+	if(!OwnerCharacter->IsA(AFlyingEnemyCharacter::StaticClass()))
+		return; 
 	
 	if (OwnerCharacter->bIsStunned && /*OwnerCharacter->StunnedDuration > OwnerCharacter->StaggeredDuration OwnerCharacter->StunnedDuration > 0 &&*/
 		!OwnerComp.GetBlackboardComponent()->GetValueAsBool("bIsRepositioning"))

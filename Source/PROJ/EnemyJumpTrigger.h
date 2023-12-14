@@ -64,6 +64,9 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float PlatformJumpZOffset = 1000.f;
+
+	UPROPERTY(EditAnywhere)
+	float BasicJumpZOffset = 300.f;
 	
 	TArray<AShadowCharacter*> WaitingEnemies = TArray<AShadowCharacter*>();
 
