@@ -282,3 +282,9 @@ void ALightGrenade::IsChargingGrenade(const float TimeHeld)
 	Indicator->SetActorLocation(HitResult.ImpactPoint);
 }
 
+void ALightGrenade::DisableIndicator() const
+{
+	if(Indicator)
+		Indicator->SetActorHiddenInGame(true); 
+}
+

@@ -80,5 +80,5 @@ bool UBTService_SetCurrentTarget::HasLineOfSightToPlayer(AShadowCharacter* Owner
 	FHitResult HitResult;
 	const TArray<AActor*> ActorsToIgnore { Owner, PlayerTarget }; 
 
-	return !UKismetSystemLibrary::LineTraceSingleForObjects(this, Owner->GetActorLocation() + FVector::UpVector * 20.f, PlayerTarget->GetActorLocation(), LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
+	return !UKismetSystemLibrary::LineTraceSingleForObjects(this, Owner->GetActorLocation() + FVector::UpVector * 40.f, PlayerTarget->GetActorLocation(), LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
 }

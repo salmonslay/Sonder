@@ -122,7 +122,7 @@ FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation,
 FVector AEnemyJumpTrigger::CalculateJumpToPoint(AShadowCharacter* Enemy)
 {
 	
-	if (FVector::Distance(JumpPoint1->GetComponentLocation(), Enemy->CurrentTargetLocation) >=  FVector::Distance(JumpPoint2->GetComponentLocation(), Enemy->CurrentTargetLocation))
+	if (FVector::Distance(JumpPoint1->GetComponentLocation(), Enemy->CurrentTargetLocation) <=  FVector::Distance(JumpPoint2->GetComponentLocation(), Enemy->CurrentTargetLocation))
 	{
 		const float DirToJumpPointY = JumpPoint1->GetComponentLocation().Y < Enemy->GetActorLocation().Y ? -1 : 1;
 		return FVector(Enemy->GetActorLocation().X, Enemy->GetActorLocation().Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint1->GetComponentLocation().Z + BasicJumpZOffset);

@@ -60,10 +60,11 @@ void AHookShotAttachment::Tick(const float DeltaSeconds)
 	if(!Soul)
 		Soul = UGameplayStatics::GetActorOfClass(this, ASoulCharacter::StaticClass());
 
-	if(!Robot || !Robot->IsLocallyControlled() || !Robot->AbilityTwo) 
+	if(!Robot || !Robot->IsLocallyControlled()) 
 		return; 
 
-	SetCurrentHookTarget();
+	if(Robot->AbilityTwo)
+		SetCurrentHookTarget();
 
 	SetIndicatorWidget();
 	
@@ -260,7 +261,7 @@ void AHookShotAttachment::SetIndicatorWidget()
 		IndicatorWidget->AddToPlayerScreen(); 
 	}
 	
-	if(!CurrentTarget || HookState->IsTravellingToTarget() || RobotBaseState->IsHookShotOnCooldown())
+	if(!Robot->AbilityTwo || !CurrentTarget || HookState->IsTravellingToTarget() || RobotBaseState->IsHookShotOnCooldown())
 	{
 		IndicatorWidget->SetVisibility(ESlateVisibility::Hidden);
 		return; 
