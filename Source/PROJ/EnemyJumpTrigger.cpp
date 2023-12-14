@@ -42,32 +42,40 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 	{
 		if (Enemy)
 		{
-			if (Enemy->bHasLanded || Enemy->bHasLandedOnGround)
+			if (Enemy->bHasLandedOnPlatform || Enemy->bHasLandedOnGround)
 			{
 				Enemy->bIsJumping = false;
 				Enemy->bIsPerformingJump = false;
 			}
 			
-			if (bTriggerJumpToMovablePlatform )
+			if (bTriggerJumpToMovablePlatform)
 			{
-				if (Enemy->bCanJump && !Enemy->bHasLanded && Enemy->bHasLandedOnGround && !Enemy->bIsJumping && !Enemy->bIsPerformingJump) // is not on moving platform
+				if (Enemy->bCanPlatformJump && !Enemy->bCanBasicJump && !Enemy->bHasLandedOnPlatform&& Enemy->bHasLandedOnGround && !Enemy->bIsJumping && !Enemy->bIsPerformingJump) // is not on moving platform
 				{
 					Enemy->AvaliableJumpPoint = CalculateJumpToPlatform(Enemy->GetActorLocation(), Enemy->GetActorForwardVector());
 				}
-				else if (Enemy->bCanJump && Enemy->bHasLanded && !Enemy->bHasLandedOnGround &&  !Enemy->bIsJumping && !Enemy->bIsPerformingJump) // is on moving platform and wants to jump off it
+
+				// TODO: det här är samma sak, onödig check
+				else if (Enemy->bCanPlatformJump && !Enemy->bCanBasicJump && Enemy->bHasLandedOnPlatform && !Enemy->bHasLandedOnGround &&  !Enemy->bIsJumping && !Enemy->bIsPerformingJump) // is on moving platform and wants to jump off it
 				{
+					//UE_LOG(LogTemp, Error, TEXT("On movable platform, wants jump to point"))
+
+					Enemy->AvaliableJumpPoint = CalculateJumpToPoint(Enemy);
+				}
+				else if (!Enemy->bCanPlatformJump && Enemy->bCanBasicJump && !Enemy->bHasLandedOnPlatform && Enemy->bHasLandedOnGround &&  !Enemy->bIsJumping && !Enemy->bIsPerformingJump)
+				{
+					//UE_LOG(LogTemp, Error, TEXT("No movable platform, wants jump to other point"))
 					Enemy->AvaliableJumpPoint = CalculateJumpToPoint(Enemy);
 				}
 			}
 			else
 			{
-				
-				if (Enemy->bCanJump && Enemy->bHasLandedOnGround && !Enemy->bIsJumping && !Enemy->bIsPerformingJump) // ordinary jump to some point 
+				//TODO: Should only happen when can make basic jump and is not a movable platform jump-trigger. 
+				if (Enemy->bCanBasicJump && Enemy->bHasLandedOnGround && !Enemy->bIsJumping && !Enemy->bIsPerformingJump) // ordinary jump to some point 
 				{
 					Enemy->AvaliableJumpPoint = CalculateJumpToPoint( Enemy);
 				}
 			}
-			
 		}
 	}
 }
@@ -95,7 +103,7 @@ void AEnemyJumpTrigger::AddWaitingEnemy(AShadowCharacter* EnemyToAdd)
 FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation, const FVector& EnemyForwardVector) // forward vector * Jumpdistance
 {
 
-	// TODO: Check if platform is closer to player than enemy, only jump if that is true
+	// TODO: Check if platform is closer to player than enemy, only jump if that is true SHOULD NOT BE HERE; MAYBE IN SERVICE
 	if (!OverlappingPlatform)
 	{
 		return FVector::ZeroVector;
@@ -113,12 +121,14 @@ FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation,
 
 FVector AEnemyJumpTrigger::CalculateJumpToPoint(AShadowCharacter* Enemy)
 {
-	// choose jump point that is closest to enemy's current target
-	if (FVector::Distance(JumpPoint1->GetComponentLocation(), Enemy->CurrentTargetLocation) <=  FVector::Distance(JumpPoint2->GetComponentLocation(), Enemy->CurrentTargetLocation))
+	
+	if (FVector::Distance(JumpPoint1->GetComponentLocation(), Enemy->CurrentTargetLocation) >=  FVector::Distance(JumpPoint2->GetComponentLocation(), Enemy->CurrentTargetLocation))
 	{
-		return JumpPoint1->GetComponentLocation();
+		const float DirToJumpPointY = JumpPoint1->GetComponentLocation().Y < Enemy->GetActorLocation().Y ? -1 : 1;
+		return FVector(Enemy->GetActorLocation().X, Enemy->GetActorLocation().Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint1->GetComponentLocation().Z + BasicJumpZOffset);
 	}
-	return JumpPoint2->GetComponentLocation();
+	const float DirToJumpPointY = JumpPoint2->GetComponentLocation().Y < Enemy->GetActorLocation().Y ? -1 : 1;
+	return FVector(Enemy->GetActorLocation().X, Enemy->GetActorLocation().Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint2->GetComponentLocation().Z + BasicJumpZOffset);
 }
 
 
@@ -133,7 +143,8 @@ void AEnemyJumpTrigger::AllowJump() // runs on overlap begin with moving platfor
 	{
 		if (Enemy)
 		{
-			Enemy->bCanJump = true;
+			Enemy->bCanPlatformJump = true;
+			Enemy->bCanBasicJump = false;
 			Enemy->JumpCoolDownTimer = Enemy->JumpCoolDownDuration;
 		}
 	}
@@ -147,7 +158,8 @@ void AEnemyJumpTrigger::DenyJump()  // runs on overlap end with moving platform,
 		{
 			if (Enemy)
 			{
-				Enemy->bCanJump = false;
+				Enemy->bCanPlatformJump = false;
+				Enemy->bCanBasicJump = true;
 			}
 		}
 	}
