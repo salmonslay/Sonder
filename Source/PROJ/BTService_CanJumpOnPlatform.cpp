@@ -38,7 +38,7 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 
 	OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
 	
-	if (!OwnerCharacter->bCanPlatformJump)
+	if (!OwnerCharacter->bCanPlatformJump && !OwnerCharacter->bCanBasicJump)
 	{
 		OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", false);
 		OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue("bIsJumping");
@@ -47,29 +47,37 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 
 	if (OwnerCharacter->bIsJumping || OwnerCharacter->bIsPerformingJump )
 	{
+		// this feels wrong but its right, should rename the bb-key
 		OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", false);
 		OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue("bIsJumping");
 		return;
 	}
 
-	if (OwnerCharacter->bCanPlatformJump && !OwnerCharacter->bIsJumping) // check if can jump || can jump to platform
+	if ((OwnerCharacter->bCanPlatformJump || OwnerCharacter->bCanBasicJump) && !OwnerCharacter->bIsJumping) // check if can jump || can jump to platform
 	{
 		if (OwnerCharacter->JumpCoolDownTimer >= OwnerCharacter->JumpCoolDownDuration)
 		{
-			
+			//UE_LOG(LogTemp, Error, TEXT("Jump cooldown is done"))
 			if (OwnerCharacter->AvaliableJumpPoint != FVector::ZeroVector)
 			{
-				if (!OwnerCharacter->HasNavigationTo( OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsVector("CurrentMoveTarget")))
+				if (!OwnerCharacter->HasNavigationToTarget(OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsVector("CurrentMoveTarget")) && OwnerCharacter->PointCloserToPlayer(OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsVector("CurrentMoveTarget")))
 				{
-					//TODO: check if jumppoint is closer to player than character. If true, jump, else do not jump
+					//UE_LOG(LogTemp, Error, TEXT("Wants to jump from service"))
 					OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", true);
 					JumpToPoint(OwnerLocation, OwnerCharacter->AvaliableJumpPoint);
 					OwnerCharacter->JumpCoolDownTimer = 0;
 					OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
 				}
+				else
+				{
+					//UE_LOG(LogTemp, Error, TEXT("Wants to jump but has navigation"))
+					OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", false);
+					OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue("bIsJumping");
+				}
 			}
 			else
 			{
+				//UE_LOG(LogTemp, Error, TEXT("Wants to jump but jump point is zero"))
 				OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", false);
 				OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue("bIsJumping");
 			}

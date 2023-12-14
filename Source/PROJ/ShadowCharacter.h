@@ -84,7 +84,10 @@ public:
 	void OnJumpEvent();
 
 	/** Check if there's a path between the enemy character and player character*/
-	bool HasNavigationTo(const FVector &CurrentTargetPoint) const;
+	bool HasNavigationToTarget(const FVector &CurrentTargetPoint) const;
+
+	/** Calculates if jump point is closer to player than enemy*/
+	bool PointCloserToPlayer(const FVector &CurrentTargetPoint) const;
 	
 protected:
 
