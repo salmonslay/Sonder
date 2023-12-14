@@ -41,7 +41,10 @@ public:
 	void OnBasicAttackHit(); 
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	bool bCanJump = false;
+	bool bCanPlatformJump = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool bCanBasicJump = false;
 
 	FVector AvaliableJumpPoint = FVector::ZeroVector;
 
@@ -49,7 +52,7 @@ public:
 	bool bIsJumping = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
-	bool bHasLanded= false;
+	bool bHasLandedOnPlatform = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bHasLandedOnGround = true;
@@ -81,7 +84,10 @@ public:
 	void OnJumpEvent();
 
 	/** Check if there's a path between the enemy character and player character*/
-	bool HasNavigationTo(const FVector &CurrentTargetPoint) const;
+	bool HasNavigationToTarget(const FVector &CurrentTargetPoint) const;
+
+	/** Calculates if jump point is closer to player than enemy*/
+	bool PointCloserToPlayer(const FVector &CurrentTargetPoint) const;
 	
 protected:
 

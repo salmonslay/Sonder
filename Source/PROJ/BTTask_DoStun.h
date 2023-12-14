@@ -6,7 +6,6 @@
 #include "BehaviorTree/Tasks/BTTask_BlackboardBase.h"
 #include "BTTask_DoStun.generated.h"
 
-class AFlyingEnemyCharacter;
 /**
  * 
  */
@@ -26,11 +25,10 @@ class PROJ_API UBTTask_DoStun : public UBTTask_BlackboardBase
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 	UPROPERTY()
-	AFlyingEnemyCharacter* OwnerCharacter;
+	class AEnemyCharacter* OwnerCharacter;
 
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;
-
 
 	float Timer = 0.f;
 
