@@ -6,6 +6,7 @@
 #include "BehaviorTree/Tasks/BTTask_MoveTo.h"
 #include "BTService_MoveToJumpPoint.generated.h"
 
+class UBoxComponent;
 /**
  * 
  */
@@ -27,6 +28,9 @@ private:
 	float MaxHeightDiff = 150.f;
 
 	UPROPERTY()
-	TArray<AActor*> JumpPoints; 
+	TArray<UBoxComponent*> JumpPoints;
+
+	UPROPERTY(EditAnywhere)
+	FBlackboardKeySelector BBKeyCurrentTarget; 
 	
 };

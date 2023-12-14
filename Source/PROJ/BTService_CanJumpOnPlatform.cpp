@@ -60,7 +60,8 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 			//UE_LOG(LogTemp, Error, TEXT("Jump cooldown is done"))
 			if (OwnerCharacter->AvaliableJumpPoint != FVector::ZeroVector)
 			{
-				if (!OwnerCharacter->HasNavigationToTarget(OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsVector("CurrentMoveTarget")) && OwnerCharacter->PointCloserToPlayer(OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsVector("CurrentMoveTarget")))
+				//  && OwnerCharacter->PointCloserToPlayer(OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsVector("CurrentMoveTarget"))
+				if (!OwnerCharacter->HasNavigationToTarget(OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsVector("CurrentMoveTarget")))
 				{
 					//UE_LOG(LogTemp, Error, TEXT("Wants to jump from service"))
 					OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", true);
