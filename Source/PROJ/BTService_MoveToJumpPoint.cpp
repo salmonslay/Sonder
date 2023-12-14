@@ -19,6 +19,9 @@ EBTNodeResult::Type UBTService_MoveToJumpPoint::ExecuteTask(UBehaviorTreeCompone
 {
 	const auto Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 
+	if(!IsValid(&OwnerComp))
+		return Result; 
+
 	if(JumpPoints.IsEmpty())
 	{
 		TArray<AActor*> TempArray; 
