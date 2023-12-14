@@ -72,7 +72,7 @@ void AShadowCharacter::OnRep_Jump()
 }
 
 
-bool AShadowCharacter::HasNavigationTo(const FVector& CurrentTargetPoint) const
+bool AShadowCharacter::HasNavigationToTarget(const FVector &CurrentTargetPoint) const
 {
 	const UNavigationSystemV1* Navigation = UNavigationSystemV1::GetCurrent(GetWorld());
 
@@ -89,6 +89,11 @@ bool AShadowCharacter::HasNavigationTo(const FVector& CurrentTargetPoint) const
 		return IsNavigationSuccessful;
 	}
 	return false;
+}
+
+bool AShadowCharacter::PointCloserToPlayer(const FVector &CurrentTargetPoint) const
+{
+	return FVector::Distance(AvaliableJumpPoint, CurrentTargetPoint) < FVector::Distance(GetActorLocation(),CurrentTargetPoint);
 }
 
 void AShadowCharacter::BeginPlay()
