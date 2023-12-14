@@ -9,6 +9,7 @@
 class ACombatTriggeredBase;
 class AEnemyCharacter;
 class ACombatManager;
+struct FEnemyWave;
 
 USTRUCT()
 struct FSpawnStruct
@@ -121,6 +122,8 @@ private:
 	int CalculateSpawnWeight(const FSpawnStruct& Spawn) const;
 
 	int WeightedRandomSpawnTypeIndex(int TotalWeight, int MaxValidIndex);
+
+	void AddSpawnPointsToWave(FEnemyWave& Wave, int NumSpawnPoints);
 	
 	FTimerHandle SpendBudgetTimerHandle;
 	
@@ -129,5 +132,7 @@ private:
 	FTimerHandle SpawnFrequencyIncreaseTimerHandle;
 
 	bool bInitialized = false;
+
+	TArray<int> SpawnPointIndices = TArray<int>();
 
 };

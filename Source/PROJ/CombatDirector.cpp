@@ -38,7 +38,7 @@ void ACombatDirector::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if(Manager->bEndlessMode && Manager->IsCombatStarted())
+	if(Manager->bEndlessMode && Manager->IsCombatStarted() && !Manager->IsCombatEnded() && GetLocalRole() == ROLE_Authority)
 	{
 		if(!bInitialized)
 		{
@@ -95,6 +95,11 @@ void ACombatDirector::SpendBudget()
 			Wave.AllowedRemainingEnemiesForWave = -1;
 			Wave.WaveStartedTriggeredActors = Spawn.WaveTriggeredActors;
 
+			int MaxNumSpawnPoints = FMath::Min(Manager->SpawnPoints.Num() / Spawn.EnemyClasses.Num(), Wave.NumEnemies);
+			int NumSpawnPoints = FMath::RandRange(1, MaxNumSpawnPoints);
+			AddSpawnPointsToWave(Wave, NumSpawnPoints);
+
+			/*
 			//todo: there has to be a better way to do this, would also like it if there was no overlap when spawning two enemy types
 			const int StartSpawnPointIndex = FMath::RandRange(0, Manager->SpawnPoints.Num() - 2);
 			const int EndSpawnPointIndex = FMath::RandRange(StartSpawnPointIndex + 1,
@@ -104,6 +109,7 @@ void ACombatDirector::SpendBudget()
 			{
 				Wave.SpawnPoints.Emplace(Manager->SpawnPoints[i]);
 			}
+			*/
 			Manager->AddWave(Wave);
 		}
 		if(CurrentBudget > Spawn.BaseCost)
@@ -132,8 +138,10 @@ void ACombatDirector::IncreaseBudgetMultiplier()
 
 int ACombatDirector::CalculateSpawnWeight(const FSpawnStruct& Spawn) const
 {
-	return Spawn.BaseCost * CostWeightMultiplier + Spawn.WavesUnpicked * UnpickedWeightMultiplier +
+	const int Weight = Spawn.BaseCost * CostWeightMultiplier + Spawn.WavesUnpicked * UnpickedWeightMultiplier +
 		Spawn.bActiveEnemiesAddWeight * Manager->NumActiveEnemies * ActiveEnemiesWeightMultiplier;
+	UE_LOG(LogTemp, Error, TEXT("%s has weight: %i"), *Spawn.Name.ToString(), Weight);
+	return Weight;
 }
 
 int ACombatDirector::WeightedRandomSpawnTypeIndex(int TotalWeight, int MaxValidIndex)
@@ -151,4 +159,19 @@ int ACombatDirector::WeightedRandomSpawnTypeIndex(int TotalWeight, int MaxValidI
 	return -1;
 }
 
-
+void ACombatDirector::AddSpawnPointsToWave(FEnemyWave& Wave, int NumSpawnPoints)
+{
+	for(int i = 0; i < NumSpawnPoints; i++)
+	{
+		if(SpawnPointIndices.IsEmpty())
+		{
+			for(int j = 0; j < Manager->SpawnPoints.Num(); j++)
+			{
+				SpawnPointIndices.Emplace(i);
+			}
+		}
+		int RandomIndex = SpawnPointIndices[rand() % SpawnPointIndices.Num()];
+		Wave.SpawnPoints.Emplace(Manager->SpawnPoints[RandomIndex]);
+		SpawnPointIndices.Remove(RandomIndex);
+	}
+}
