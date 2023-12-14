@@ -26,7 +26,7 @@ EBTNodeResult::Type UBTTask_DoStun::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	
 	if (OwnerComp.GetAIOwner() == nullptr) 	return EBTNodeResult::Failed; 
 
-	OwnerCharacter = Cast<AFlyingEnemyCharacter>(OwnerComp.GetAIOwner()->GetCharacter());
+	OwnerCharacter = Cast<AEnemyCharacter>(OwnerComp.GetAIOwner()->GetCharacter());
 
 	if (OwnerCharacter == nullptr) return EBTNodeResult::Failed;
 
@@ -35,7 +35,9 @@ EBTNodeResult::Type UBTTask_DoStun::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 	if (Timer < StunDuration)
 	{
 		bNotifyTick = 1;
-		OwnerCharacter->bSetFocusToPlayer = false;
+		if(const auto FlyingEnemy = Cast<AFlyingEnemyCharacter>(OwnerCharacter))
+			FlyingEnemy->bSetFocusToPlayer = false;
+		
 		return EBTNodeResult::InProgress;
 	}
 	return EBTNodeResult::Succeeded;
@@ -50,7 +52,9 @@ void UBTTask_DoStun::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 	StunDuration = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsFloat("StunnedDuration");
 	if (Timer > StunDuration)
 	{
-		OwnerCharacter->bSetFocusToPlayer = true;
+		if(const auto FlyingEnemy = Cast<AFlyingEnemyCharacter>(OwnerCharacter))
+			FlyingEnemy->bSetFocusToPlayer = true;
+		
 		OwnerCharacter->bIsStunned = false;
 		//OwnerCharacter->Idle();
 		OwnerCharacter->GetCharacterMovement()->CurrentRootMotion.Clear();
