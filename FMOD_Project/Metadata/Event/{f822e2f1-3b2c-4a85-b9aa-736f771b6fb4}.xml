@@ -391,6 +391,9 @@
 		<property name="startOffset">
 			<value>49.5</value>
 		</property>
+		<property name="volume">
+			<value>-5</value>
+		</property>
 		<property name="pitch">
 			<value>-3</value>
 		</property>
@@ -1241,6 +1244,7 @@
 		<relationship name="effects">
 			<destination>{90962d37-8bc1-4e54-93fb-d7c9bc27ec3f}</destination>
 			<destination>{ea53a5ae-582b-4e37-b0be-3e2d7026bed4}</destination>
+			<destination>{3c6a6238-0ab1-441d-b29d-2215be7cabc6}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{b11f97f2-430f-4af1-b669-a2a74789b5a8}" />
@@ -1748,6 +1752,7 @@
 	</object>
 	<object class="MixerBusFader" id="{90962d37-8bc1-4e54-93fb-d7c9bc27ec3f}" />
 	<object class="SpatialiserEffect" id="{ea53a5ae-582b-4e37-b0be-3e2d7026bed4}" />
+	<object class="ThreeEQEffect" id="{3c6a6238-0ab1-441d-b29d-2215be7cabc6}" />
 	<object class="MixerBusFader" id="{d0926f56-1a7c-4f8f-86fa-2ab35c9f2224}" />
 	<object class="MixerBusFader" id="{470fe09c-cd0f-45d7-8d76-fed56fede256}" />
 	<object class="MixerBusFader" id="{725d6e44-7b4e-4c8f-a6f4-74a8f155968c}" />
