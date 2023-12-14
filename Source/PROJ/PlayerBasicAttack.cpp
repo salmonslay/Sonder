@@ -33,6 +33,8 @@ void UPlayerBasicAttack::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
+	bCanAttack = true; 
+
 	GetWorld()->GetTimerManager().ClearAllTimersForObject(this); 
 }
 
