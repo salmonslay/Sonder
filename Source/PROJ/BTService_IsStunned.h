@@ -6,7 +6,6 @@
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
 #include "BTService_IsStunned.generated.h"
 
-class AFlyingEnemyCharacter;
 /**
  * 
  */
@@ -29,13 +28,14 @@ protected:
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 	UPROPERTY(VisibleAnywhere)
-	AFlyingEnemyCharacter* OwnerCharacter = nullptr;
+	class AEnemyCharacter* OwnerCharacter = nullptr;
 
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;
 
 	void StopRepositioning();
 
+	UPROPERTY()
 	UBehaviorTreeComponent* TreeComponent;
 	FTimerHandle StopRepositioningTimerHandle;
 	
