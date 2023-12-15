@@ -5,7 +5,7 @@
 			<value>PowerUp</value>
 		</property>
 		<property name="outputFormat">
-			<value>1</value>
+			<value>2</value>
 		</property>
 		<relationship name="folder">
 			<destination>{f29c3ef4-1edc-4a98-860d-49acaea3f324}</destination>
@@ -99,6 +99,7 @@
 	<object class="MixerBusEffectChain" id="{272235d6-9092-43b0-a423-037f73f8bbb7}">
 		<relationship name="effects">
 			<destination>{dffa02e1-c8d1-4e76-89bc-ece90d1accdd}</destination>
+			<destination>{8d204e06-9089-471f-9844-2a2f5e71e526}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{bdc597c5-0b62-4c25-a75f-6dc19e4826bd}" />
@@ -109,4 +110,12 @@
 	</object>
 	<object class="MixerBusFader" id="{3c1f4aa2-0e4a-45a0-ad37-841fc33fe89b}" />
 	<object class="MixerBusFader" id="{dffa02e1-c8d1-4e76-89bc-ece90d1accdd}" />
+	<object class="SpatialiserEffect" id="{8d204e06-9089-471f-9844-2a2f5e71e526}">
+		<property name="extentMode">
+			<value>1</value>
+		</property>
+		<property name="soundSize">
+			<value>2.60000014</value>
+		</property>
+	</object>
 </objects>

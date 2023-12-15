@@ -76,9 +76,6 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{fe3834dd-58e4-49e4-a19a-16e7dfed13a7}">
-		<property name="volume">
-			<value>-10</value>
-		</property>
 		<relationship name="modulators">
 			<destination>{97db6b4c-a701-43b2-b163-23f12a3a1427}</destination>
 		</relationship>
@@ -142,6 +139,9 @@
 	<object class="MixerBusFader" id="{beb7abef-8d44-4f23-97f8-20944c387578}" />
 	<object class="SpatialiserEffect" id="{32363510-538b-4544-9f7f-444cf1482b23}">
 		<property name="distanceRolloffType">
+			<value>1</value>
+		</property>
+		<property name="extentMode">
 			<value>1</value>
 		</property>
 	</object>
