@@ -7,6 +7,7 @@
 #include "EnhancedInputComponent.h"
 #include "PressurePlateBase.h"
 #include "PROJCharacter.h"
+#include "SonderGameState.h"
 #include "SoulCharacter.h"
 #include "Engine/DamageEvents.h"
 #include "Kismet/GameplayStatics.h"
@@ -119,18 +120,9 @@ void ALightGrenade::MulticastRPCThrow_Implementation(const float TimeHeld)
 		ThrowEvent();
 
 		bIsExploding = false;
-
 		
-		if(Player->GetActorForwardVector().X > 0)
-		{
-			ThrowLoc = Player->GetActorLocation() + FVector(80,0,50);
-		}
-		else
-		{
-			ThrowLoc = Player->GetActorLocation() + FVector(-80,-0,50);
-		}
 
-		ExplosionArea->SetWorldLocation(ThrowLoc); 
+		ExplosionArea->SetWorldLocation(Player->ThrowLoc->GetComponentLocation()); 
 		
 		ExplosionArea->AddImpulse(GetLaunchForce(TimeHeld));
 
@@ -221,8 +213,12 @@ void ALightGrenade::MulticastRPCExplosion_Implementation()
 
 FVector ALightGrenade::GetLaunchForce(const float TimeHeld)
 {
+	if (!Player)
+	{
+		GetPlayer();
+	}
 	// Get the direction to throw the grenade in, check if depth movement is enabled 
-	FVector ThrowDir = ThrowLoc - Player->GetActorLocation();
+	FVector ThrowDir = Player->ThrowLoc->GetComponentLocation() - Player->GetActorLocation();
 	if(!Player->IsDepthMovementEnabled())
 		ThrowDir.X = 0; 
 		
@@ -261,7 +257,12 @@ void ALightGrenade::EnableGrenade()
 
 void ALightGrenade::GetPlayer()
 {
-	Player = Cast<ASoulCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ASoulCharacter::StaticClass()));
+	Player = Cast<ASoulCharacter>(Cast<ASonderGameState>(UGameplayStatics::GetGameState(this))->GetServerPlayer());
+	if (!Player)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Player"));
+		Player = Cast<ASoulCharacter>(Cast<ASonderGameState>(UGameplayStatics::GetGameState(this))->GetClientPlayer());
+	}
 	
 	PlayerBase = Cast<APROJCharacter>(Player);
 }
