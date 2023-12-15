@@ -36,9 +36,7 @@ public:
 	bool GetHasBeenAttacked() const;
 
 	APROJCharacter* GetLatestDamageCauser();
-
 	
-
 	void KillMe();
 	
 protected:
@@ -49,14 +47,11 @@ protected:
 
 	void InitializeController();
 
-
 private:
 
 	APROJCharacter* LatestDamageCauser;
 
 	bool bHasBeenAttacked = false;
-
-	
 
 	UPROPERTY()
 	AGrid* PathfindingGrid;

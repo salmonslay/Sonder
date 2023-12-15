@@ -5,6 +5,7 @@
 
 #include "AIController.h"
 #include "FlyingEnemyCharacter.h"
+#include "ShadowCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "GameFramework/CharacterMovementComponent.h"
 
@@ -37,7 +38,10 @@ EBTNodeResult::Type UBTTask_DoStun::ExecuteTask(UBehaviorTreeComponent& OwnerCom
 		bNotifyTick = 1;
 		if(const auto FlyingEnemy = Cast<AFlyingEnemyCharacter>(OwnerCharacter))
 			FlyingEnemy->bSetFocusToPlayer = false;
-		
+
+		if(const auto ShadowChar = Cast<AShadowCharacter>(OwnerCharacter))
+			ShadowChar->ServerRPC_ToggleChargeEffect(false); 
+
 		return EBTNodeResult::InProgress;
 	}
 	return EBTNodeResult::Succeeded;
