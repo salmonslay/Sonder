@@ -49,9 +49,11 @@ APROJCharacter::APROJCharacter()
 	NewPlayerHealthComponent = CreateDefaultSubobject<UNewPlayerHealthComponent>("NewPlayerHealthComp");
 	//NewPlayerHealthComponent->SetIsReplicated(true);
 
-	BasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(FName("Basic Attack"));
+	BasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(FName("BasicAttack"));
 	BasicAttack->SetupAttachment(RootComponent);
-	BasicAttack->SetCollisionProfileName("Enemy");
+	BasicAttack->SetCollisionResponseToAllChannels(ECR_Overlap); 
+	//BasicAttack->SetCollisionProfileName("Enemy");
+	BasicAttack->SetRelativeScale3D(FVector(1.75,1.5,2.5));
 
 	bReplicates = true;
 }
