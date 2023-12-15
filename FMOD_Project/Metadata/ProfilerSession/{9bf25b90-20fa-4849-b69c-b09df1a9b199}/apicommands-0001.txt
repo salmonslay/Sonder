@@ -1,0 +1,303 @@
+Playback::frame, 0
+Playback::version, 2, 131609
+#
+# FMOD v2.02.19 command capture
+#   System::setSoftwareChannels(numsoftwarechannels: 64)
+#   System::setDSPBufferSize(bufferlength: 1024, numbuffers: 4)
+#   System::setSoftwareFormat(samplerate: 48000, speakermode: 6, numrawspeakers: 6)
+#   System::setAdvancedSettings(settings: {maxMPEGCodecs: 0, maxADPCMCodecs: 0, maxXMACodecs: 0, maxVorbisCodecs: 64, maxAT9Codecs: 0, maxFADPCMCodecs: 0, maxPCMCodecs: 0, maxOpusCodecs: 0
+#       ASIONumChannels: 0, vol0virtualvol: 0.001, defaultDecodeBufferSize: 400, geometryMaxFadeTime: 0,
+#       distanceFilterCenterFreq: 1500, reverb3Dinstance: 0, DSPBufferPoolSize: 8, resamplerMethod: 2, randomSeed: 9752})
+#   Studio::System::setAdvancedSettings(settings: {commandqueuesize: 32768, handleinitialsize: 65536, studioupdateperiod: 20, idlesampledatapoolsize: 262144})
+#   Studio::System::initialize(maxchannels: 512, studioflags: 0x00000001, flags: 0x00030000)
+#
+Playback::frame, 0
+# Printing initial instance state
+System::loadBankFile, ../../../../../../Users/GTSA - Infinity/Documents/GitHub/Proj/Content/FMOD/Desktop/Master.bank, 0, 2097248
+Playback::loadBankFinished, {c671b85a-2223-4ade-bb1a-23e1cacbaf7a}, 2097248, 0
+Bank::getEventListItem, 2097248, 0, {d8fc2001-aac7-4a5f-a226-7f73abc1dcfa}, 2102624
+Bank::getEventListItem, 2097248, 1, {5701bf06-b4a4-4841-ad60-9a386e88752e}, 2168928
+Bank::getEventListItem, 2097248, 2, {782fb090-7870-43ea-b735-fff43c06dd4b}, 2102368
+Bank::getEventListItem, 2097248, 3, {7dcd9d9c-bb8b-41fc-936a-22cc8dc6f369}, 2102112
+System::loadBankFile, ../../../../../../Users/GTSA - Infinity/Documents/GitHub/Proj/Content/FMOD/Desktop/Master.strings.bank, 0, 2097504
+Playback::loadBankFinished, {5e6c988e-5358-069c-3d53-a91f3b38a9e2}, 2097504, 0
+System::loadBankFile, ../../../../../../Users/GTSA - Infinity/Documents/GitHub/Proj/Content/FMOD/Desktop/OST.bank, 0, 2097760
+Playback::loadBankFinished, {b3221174-4d41-462b-ae3c-728b0bcfef54}, 2097760, 0
+Bank::getEventListItem, 2097760, 0, {88485212-78b2-49fd-93fd-504f891e1a0f}, 2162528
+Bank::getEventListItem, 2097760, 1, {aba8f8bb-c4ae-4a8d-9659-9cad64020b4f}, 2098272
+System::loadBankFile, ../../../../../../Users/GTSA - Infinity/Documents/GitHub/Proj/Content/FMOD/Desktop/SFX.bank, 0, 2098016
+Playback::loadBankFinished, {efafb6ac-edfc-4ade-b3d2-ba0708c5883d}, 2098016, 0
+Bank::getEventListItem, 2098016, 0, {dc37600c-6e08-470e-b44d-589b62812248}, 2141280
+Bank::getEventListItem, 2098016, 1, {12f9321a-aec4-47f3-ba8c-477f8d3bbc2a}, 2192480
+Bank::getEventListItem, 2098016, 2, {0413301c-63e9-42c5-adfc-2908a6d45e85}, 2099808
+Bank::getEventListItem, 2098016, 3, {6947a346-291e-4587-ae32-d7f878ef9894}, 2161760
+Bank::getEventListItem, 2098016, 4, {1351227e-2884-427e-8fad-fd66350cba06}, 2158944
+Bank::getEventListItem, 2098016, 5, {1f9ad97e-385c-4346-8b04-423801b7041c}, 2203744
+Bank::getEventListItem, 2098016, 6, {d361198a-5945-4f7b-b073-5859a959c08e}, 2187872
+Bank::getEventListItem, 2098016, 7, {318d8ba7-3fb2-4c9d-aa1e-66008fca7aee}, 2149472
+Bank::getEventListItem, 2098016, 8, {9883bea8-45b0-4785-9942-acee9cc6ca2b}, 2197856
+Bank::getEventListItem, 2098016, 9, {892801b1-ea3a-428b-aaa8-6a7b0b16b699}, 2098784
+Bank::getEventListItem, 2098016, 10, {3c91d1bc-cd9b-4845-9be5-942b0a78e1c8}, 2099296
+Bank::getEventListItem, 2098016, 11, {5463c4bf-d85a-4954-9343-d6fa3964764c}, 2101088
+Bank::getEventListItem, 2098016, 12, {3cdd2fc3-8691-405f-9e21-a0e14e19377c}, 2144864
+Bank::getEventListItem, 2098016, 13, {f822e2f1-3b2c-4a85-b9aa-736f771b6fb4}, 2142048
+Bank::getEventListItem, 2098016, 14, {4be223ff-584d-4c36-9b0a-372438fa01c5}, 2108512
+System::setNumListeners, 2
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {251.483,-63.4503,30.0148}, true
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {251.477,-63.4505,30.0148}, true
+EventDescription::createInstance, 2158944, 2165088
+EventInstance::set3DAttributes, 2165088, {{376.1,-60.4,36.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2165088, 62464
+EventInstance::start, 2165088
+EventDescription::createInstance, 2158944, 2161504
+EventInstance::set3DAttributes, 2161504, {{236.7,-65.2,36.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2161504, 62485
+EventInstance::start, 2161504
+EventDescription::createInstance, 2158944, 2165344
+EventInstance::set3DAttributes, 2165344, {{388.3,-60.4,36.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2165344, 62464
+EventInstance::start, 2165344
+EventDescription::createInstance, 2158944, 2159200
+EventInstance::set3DAttributes, 2159200, {{253.8,-65.2,36.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2159200, 62485
+EventInstance::start, 2159200
+EventDescription::createInstance, 2158944, 2165600
+EventInstance::set3DAttributes, 2165600, {{236.7,-65.2,36.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2165600, 62464
+EventInstance::start, 2165600
+EventDescription::createInstance, 2158944, 2159456
+EventInstance::set3DAttributes, 2159456, {{257.3,-60.4,36.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2159456, 62485
+EventInstance::start, 2159456
+EventDescription::createInstance, 2158944, 2163296
+EventInstance::set3DAttributes, 2163296, {{253.8,-65.2,36.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2163296, 62464
+EventInstance::start, 2163296
+EventDescription::createInstance, 2158944, 2159712
+EventInstance::set3DAttributes, 2159712, {{280.5,-60.4,36.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2159712, 62485
+EventInstance::start, 2159712
+EventDescription::createInstance, 2158944, 2163552
+EventInstance::set3DAttributes, 2163552, {{257.3,-60.4,36.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2163552, 62464
+EventInstance::start, 2163552
+EventDescription::createInstance, 2158944, 2159968
+EventInstance::set3DAttributes, 2159968, {{304.1,-60.4,36.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2159968, 62485
+EventInstance::start, 2159968
+EventDescription::createInstance, 2158944, 2163808
+EventInstance::set3DAttributes, 2163808, {{280.5,-60.4,36.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2163808, 62464
+EventInstance::start, 2163808
+EventDescription::createInstance, 2158944, 2160224
+EventInstance::set3DAttributes, 2160224, {{325.9,-60.4,36.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2160224, 62485
+EventInstance::start, 2160224
+EventDescription::createInstance, 2158944, 2164064
+EventInstance::set3DAttributes, 2164064, {{304.1,-60.4,36.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2164064, 62464
+EventInstance::start, 2164064
+EventDescription::createInstance, 2158944, 2160480
+EventInstance::set3DAttributes, 2160480, {{343.8,-60.4,36.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2160480, 62485
+EventInstance::start, 2160480
+EventDescription::createInstance, 2158944, 2164320
+EventInstance::set3DAttributes, 2164320, {{325.9,-60.4,36.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2164320, 62464
+EventInstance::start, 2164320
+EventDescription::createInstance, 2158944, 2160736
+EventInstance::set3DAttributes, 2160736, {{359.4,-60.4,36.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2160736, 62485
+EventInstance::start, 2160736
+EventDescription::createInstance, 2158944, 2164576
+EventInstance::set3DAttributes, 2164576, {{343.8,-60.4,36.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2164576, 62464
+EventInstance::start, 2164576
+EventDescription::createInstance, 2158944, 2160992
+EventInstance::set3DAttributes, 2160992, {{376.1,-60.4,36.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2160992, 62485
+EventInstance::start, 2160992
+EventDescription::createInstance, 2158944, 2164832
+EventInstance::set3DAttributes, 2164832, {{359.4,-60.4,36.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2164832, 62464
+EventInstance::start, 2164832
+EventDescription::createInstance, 2158944, 2161248
+EventInstance::set3DAttributes, 2161248, {{388.3,-60.4,36.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2161248, 62485
+EventInstance::start, 2161248
+EventDescription::createInstance, 2168928, 2169184
+EventInstance::setTimelinePosition, 2169184, 61973
+EventInstance::start, 2169184
+EventInstance::release, 2169184
+EventDescription::createInstance, 2168928, 2169440
+EventInstance::setTimelinePosition, 2169440, 61952
+EventInstance::start, 2169440
+EventInstance::release, 2169440
+EventDescription::createInstance, 2144864, 2208096
+EventInstance::set3DAttributes, 2208096, {{250.825,-67.3946,40.8},{0,0,0},{-2.22045e-16,0,-1},{0,1,0}}
+EventInstance::setTimelinePosition, 2208096, 234
+EventInstance::start, 2208096
+EventDescription::createInstance, 2142048, 2143328
+EventInstance::setParameterByName, 2143328, boxLanded, 1, false
+EventInstance::setParameterByName, 2143328, obstacleType, 6, false
+EventInstance::set3DAttributes, 2143328, {{220.314,-68.75,41.2365},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2143328, 77957
+EventInstance::start, 2143328
+EventDescription::createInstance, 2142048, 2144608
+EventInstance::setParameterByName, 2144608, boxLanded, 1, false
+EventInstance::setParameterByName, 2144608, obstacleType, 6, false
+EventInstance::set3DAttributes, 2144608, {{220.314,-68.75,41.2365},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2144608, 77936
+EventInstance::start, 2144608
+EventDescription::createInstance, 2142048, 2155360
+EventInstance::setParameterByName, 2155360, boxLanded, 1, false
+EventInstance::setParameterByName, 2155360, obstacleType, 1, false
+EventInstance::set3DAttributes, 2155360, {{231,-61.95,40.1},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2155360, 71877
+EventInstance::start, 2155360
+EventDescription::createInstance, 2142048, 2156640
+EventInstance::setParameterByName, 2156640, boxLanded, 1, false
+EventInstance::setParameterByName, 2156640, obstacleType, 1, false
+EventInstance::set3DAttributes, 2156640, {{231,-61.95,40.1},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2156640, 71856
+EventInstance::start, 2156640
+EventDescription::createInstance, 2099296, 2100576
+EventInstance::set3DAttributes, 2100576, {{9.90204,2,39},{0,0,0},{1,0,1.2168e-08},{0,1,0}}
+EventInstance::setTimelinePosition, 2100576, 118186
+EventInstance::start, 2100576
+EventDescription::createInstance, 2099296, 2099552
+EventInstance::set3DAttributes, 2099552, {{167.5,-18.4,40.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2099552, 118186
+EventInstance::start, 2099552
+EventDescription::createInstance, 2099296, 2100832
+EventInstance::set3DAttributes, 2100832, {{232.5,-67,39.8},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2100832, 118186
+EventInstance::start, 2100832
+EventDescription::createInstance, 2099296, 2104160
+EventInstance::set3DAttributes, 2104160, {{122.8,-6.6,40.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2104160, 116992
+EventInstance::start, 2104160
+EventDescription::createInstance, 2099296, 2104416
+EventInstance::set3DAttributes, 2104416, {{9.90204,2,39},{0,0,0},{1,0,1.2168e-08},{0,1,0}}
+EventInstance::setTimelinePosition, 2104416, 116992
+EventInstance::start, 2104416
+EventDescription::createInstance, 2099296, 2100320
+EventInstance::set3DAttributes, 2100320, {{122.8,-6.6,40.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2100320, 118186
+EventInstance::start, 2100320
+EventDescription::createInstance, 2099296, 2103648
+EventInstance::set3DAttributes, 2103648, {{167.5,-18.4,40.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2103648, 116992
+EventInstance::start, 2103648
+EventDescription::createInstance, 2099296, 2104672
+EventInstance::set3DAttributes, 2104672, {{232.5,-67,39.8},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2104672, 116992
+EventInstance::start, 2104672
+EventDescription::createInstance, 2098784, 2103392
+EventInstance::set3DAttributes, 2103392, {{126.2,-8.4,38.8},{0,0,0},{0.766044,0,-0.642788},{0,1,0}}
+EventInstance::setTimelinePosition, 2103392, 116992
+EventInstance::start, 2103392
+EventDescription::createInstance, 2098784, 2099040
+EventInstance::set3DAttributes, 2099040, {{126.2,-8.4,38.8},{0,0,0},{0.766044,0,-0.642788},{0,1,0}}
+EventInstance::setTimelinePosition, 2099040, 118186
+EventInstance::start, 2099040
+EventDescription::createInstance, 2162528, 2166624
+EventInstance::setTimelinePosition, 2166624, 62464
+EventInstance::start, 2166624
+EventDescription::createInstance, 2102368, 2175072
+EventInstance::setTimelinePosition, 2175072, 55232
+EventInstance::start, 2175072
+EventInstance::release, 2175072
+EventDescription::createInstance, 2099808, 2100064
+EventInstance::set3DAttributes, 2100064, {{126.2,-9.2,38.8},{0,0,0},{-0.642788,0,-0.766044},{0,1,0}}
+EventInstance::setTimelinePosition, 2100064, 118357
+EventInstance::start, 2100064
+EventDescription::createInstance, 2099808, 2103904
+EventInstance::set3DAttributes, 2103904, {{126.2,-9.2,38.8},{0,0,0},{-0.642788,0,-0.766044},{0,1,0}}
+EventInstance::setTimelinePosition, 2103904, 117162
+EventInstance::start, 2103904
+EventDescription::createInstance, 2161760, 2162016
+EventInstance::set3DAttributes, 2162016, {{280.3,-65.2,52.7},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2162016, 62485
+EventInstance::start, 2162016
+EventDescription::createInstance, 2161760, 2166112
+EventInstance::set3DAttributes, 2166112, {{332,-65.2,52.7},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2166112, 62464
+EventInstance::start, 2166112
+EventDescription::createInstance, 2161760, 2165856
+EventInstance::set3DAttributes, 2165856, {{280.3,-65.2,52.7},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2165856, 62464
+EventInstance::start, 2165856
+EventDescription::createInstance, 2161760, 2162272
+EventInstance::set3DAttributes, 2162272, {{332,-65.2,52.7},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2162272, 62485
+EventInstance::start, 2162272
+# Finished printing initial instance state
+Playback::frame, 3072
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 16384
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 15360
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 16384
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 15360
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 16384
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 16384
+EventInstance::stop, 2208096, 0
+EventInstance::release, 2208096
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 15360
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 16384
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 16384
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 15360
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 16384
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 16384
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 15360
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 16384
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 15360
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 16384
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 15360
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 16384
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 16384
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 15360
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
+Playback::frame, 16384
+System::setListenerAttributes, 0, {{251.483,-63.4503,30.0148},{0,0,0},{1.1134e-16,-2.73851e-06,1},{4.86153e-18,1,2.73851e-06}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{251.477,-63.4505,30.0148},{0,0,0},{1.11302e-16,-2.73851e-06,1},{4.85984e-18,1,2.73851e-06}}, {0,0,0}, false
