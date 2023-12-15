@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{ce40bd08-f281-43bf-9382-2eba44c7e331}">
+		<property name="assetPath">
+			<value>Glitch SFX.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>44.0999985</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>9.4499999999999993</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{542ff4ed-1b88-4c2c-98cc-a4f4c45c5308}</destination>
+		</relationship>
+	</object>
+</objects>
