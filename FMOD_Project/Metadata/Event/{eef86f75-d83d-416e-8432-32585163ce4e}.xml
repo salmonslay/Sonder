@@ -80,7 +80,7 @@
 	</object>
 	<object class="EventMixerMaster" id="{53509733-8fc7-4af8-b378-66fd18f5eff5}">
 		<property name="volume">
-			<value>-8</value>
+			<value>-2.5</value>
 		</property>
 		<relationship name="modulators">
 			<destination>{28d309eb-da00-47a5-bcd5-deffb6e99dcc}</destination>
@@ -130,9 +130,6 @@
 	<object class="SingleSound" id="{03fc1758-04fb-4053-9a59-f7e81e9fff88}">
 		<property name="startOffset">
 			<value>50</value>
-		</property>
-		<property name="volume">
-			<value>-5</value>
 		</property>
 		<property name="looping">
 			<value>true</value>
