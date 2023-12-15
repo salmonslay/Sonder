@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="ParameterPreset" id="{e13850e3-0037-4ba6-a5b7-0aa11da0411e}">
+		<property name="name">
+			<value>TimeToTick</value>
+		</property>
+		<relationship name="folder">
+			<destination>{fc4a5593-8a49-4f06-a150-12dbe6800661}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{d46ef531-2633-4909-95f4-bc5aa6613b73}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{d46ef531-2633-4909-95f4-bc5aa6613b73}">
+		<property name="maximum">
+			<value>15</value>
+		</property>
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>
