@@ -49,13 +49,17 @@ void UPlayerBasicAttack::Attack()
 		return; 
 	
 	if(GetWorld()->TimeSeconds - AttackCooldown >= LastTimeAttack)
+		bCanAttack = true;
+
+	if(!LastLevelName.Equals(UGameplayStatics::GetCurrentLevelName(this)))
 		bCanAttack = true; 
 	
 	// Ensure player cant spam attack and is locally controlled 
 	if(!bCanAttack || !Owner->IsLocallyControlled())
 		return;
 
-	LastTimeAttack = GetWorld()->TimeSeconds; 
+	LastTimeAttack = GetWorld()->TimeSeconds;
+	LastLevelName = UGameplayStatics::GetCurrentLevelName(this); 
 	
 	FTimerHandle TimerHandle; 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UPlayerBasicAttack::EnableCanAttack, AttackCooldown);
