@@ -51,6 +51,7 @@ void AShadowCharacter::Idle()
 	{
 		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
 		bIsPerformingJump = false;
+		bIsJumping = false;
 	}
 }
 

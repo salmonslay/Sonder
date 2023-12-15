@@ -65,6 +65,9 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 
 				else if (!bIsOverlappingWithMovingPlatform && Enemy->bCanBasicJump && Enemy->bHasLandedOnGround && !Enemy->bIsJumping && !Enemy->bIsPerformingJump)
 				{
+					// TODO: Check if is on platform, if is on platform it should jump to closest point to target but if its not it should jump to the point furthest away from it
+					// TODO: Go to closest movable platform in BT if hasnt path to player.
+
 					if (!IsLeveledWithJumpPoints(EnemyLocation))
 					{
 						Enemy->AvaliableJumpPoint = CalculatePointClosetsToTarget(EnemyLocation, Enemy->CurrentTargetLocation);
@@ -183,8 +186,8 @@ void AEnemyJumpTrigger::AllowJump() // runs on overlap begin with moving platfor
 	{
 		if (Enemy)
 		{
-			Enemy->bCanPlatformJump = true;
-			Enemy->bCanBasicJump = false;
+			//Enemy->bCanPlatformJump = true;
+			//Enemy->bCanBasicJump = false;
 			Enemy->JumpCoolDownTimer = Enemy->JumpCoolDownDuration;
 		}
 	}
@@ -198,8 +201,8 @@ void AEnemyJumpTrigger::DenyJump()  // runs on overlap end with moving platform,
 		{
 			if (Enemy)
 			{
-				Enemy->bCanPlatformJump = false;
-				Enemy->bCanBasicJump = true;
+				//Enemy->bCanPlatformJump = false;
+				//Enemy->bCanBasicJump = true;
 			}
 		}
 	}
@@ -226,6 +229,7 @@ bool AEnemyJumpTrigger::HasPathBetweenPoints() const
 
 bool AEnemyJumpTrigger::IsLeveledWithJumpPoints(const FVector &EnemyLoc) const
 {
-	return EnemyLoc.Y == JumpPoint1Loc.Y && EnemyLoc.Y == JumpPoint2Loc.Y;
+	
+	return FMath::IsNearlyEqual(EnemyLoc.Z, JumpPoint1Loc.Z, 5.f) && FMath::IsNearlyEqual(EnemyLoc.Z, JumpPoint2Loc.Z, 5.f);
 }
 
