@@ -51,7 +51,7 @@ FVector UBTService_MoveToJumpPoint::GetJumpPoint(const UBehaviorTreeComponent& O
 	TArray<UBoxComponent*> PossiblePoints; 
 	for(auto JumpPoint : JumpPoints)
 	{
-		if(JumpPoint->GetComponentLocation().Equals(Owner->GetActorLocation(), 10))
+		if(JumpPoint->GetComponentLocation().Equals(Owner->GetActorLocation(), 50))
 			continue; 
 		
 		if(FMath::Abs(JumpPoint->GetComponentLocation().Z - Owner->GetActorLocation().Z) > MaxHeightDiff)

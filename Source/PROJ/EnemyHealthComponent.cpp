@@ -45,6 +45,10 @@ float UEnemyHealthComponent::TakeDamage(float DamageAmount)
 {
 	const float DamageTaken = Super::TakeDamage(DamageAmount);
 
+	// No actual damage taken, do nothing 
+	if(DamageTaken <= 0)
+		return DamageTaken; 
+
 	ServerRPCDamageTaken(DamageTaken);
 
 	return DamageTaken; 
