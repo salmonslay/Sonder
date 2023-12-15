@@ -44,11 +44,9 @@ void ALightGrenade::BeginPlay()
 	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap); 
 	ExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	PulseExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
-
-	Player = Cast<ASoulCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ASoulCharacter::StaticClass()));
 	
 
-	PlayerBase = Cast<APROJCharacter>(Player);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::GetPlayer, 2.0f);
     
 	// Create the grenade indicator if not already created 
 	if(!Indicator)
@@ -103,7 +101,10 @@ void ALightGrenade::MulticastRPCThrow_Implementation(const float TimeHeld)
 {
 	if(bCanThrow)
 	{
-		
+		if (!Player || !PlayerBase)
+		{
+			GetPlayer();
+		}
 
 		if (PlayerBase)
 		{
@@ -118,8 +119,18 @@ void ALightGrenade::MulticastRPCThrow_Implementation(const float TimeHeld)
 		ThrowEvent();
 
 		bIsExploding = false;
+
 		
-		ExplosionArea->SetWorldLocation(Player->ThrowLoc->GetComponentLocation()); 
+		if(Player->GetActorForwardVector().X > 0)
+		{
+			ThrowLoc = Player->GetActorLocation() + FVector(80,0,50);
+		}
+		else
+		{
+			ThrowLoc = Player->GetActorLocation() + FVector(-80,-0,50);
+		}
+
+		ExplosionArea->SetWorldLocation(ThrowLoc); 
 		
 		ExplosionArea->AddImpulse(GetLaunchForce(TimeHeld));
 
@@ -211,7 +222,7 @@ void ALightGrenade::MulticastRPCExplosion_Implementation()
 FVector ALightGrenade::GetLaunchForce(const float TimeHeld)
 {
 	// Get the direction to throw the grenade in, check if depth movement is enabled 
-	FVector ThrowDir = Player->ThrowLoc->GetComponentLocation() - Player->GetActorLocation();
+	FVector ThrowDir = ThrowLoc - Player->GetActorLocation();
 	if(!Player->IsDepthMovementEnabled())
 		ThrowDir.X = 0; 
 		
@@ -246,6 +257,13 @@ void ALightGrenade::EnableGrenade()
 	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	GrenadeMesh->SetVisibility(true);
 	
+}
+
+void ALightGrenade::GetPlayer()
+{
+	Player = Cast<ASoulCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ASoulCharacter::StaticClass()));
+	
+	PlayerBase = Cast<APROJCharacter>(Player);
 }
 
 void ALightGrenade::StartCountdown(float TimeUntilExplosion)

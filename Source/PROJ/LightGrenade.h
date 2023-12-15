@@ -88,7 +88,10 @@ public:
 private:
 
 	UPROPERTY()
-	FTimerHandle TimerHandle; 
+	FTimerHandle TimerHandle;
+
+	UPROPERTY()
+	FVector ThrowLoc;
 
 	/** How much a second of hold time should add to the throw velocity */
 	UPROPERTY(EditAnywhere)
@@ -142,6 +145,8 @@ private:
 	void DisableGrenade();
 
 	void EnableGrenade();
+
+	void GetPlayer();
 
 	void StartCountdown(float TimeUntilExplosion);
 	
