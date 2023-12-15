@@ -4,6 +4,8 @@
 #include "EnemyJumpTrigger.h"
 
 #include "MovingPlatform.h"
+#include "NavigationPath.h"
+#include "NavigationSystem.h"
 #include "ShadowCharacter.h"
 #include "Components/BoxComponent.h"
 
@@ -26,6 +28,9 @@ AEnemyJumpTrigger::AEnemyJumpTrigger()
 void AEnemyJumpTrigger::BeginPlay()
 {
 	Super::BeginPlay();
+
+	JumpPoint1Loc = JumpPoint1->GetComponentLocation();
+	JumpPoint2Loc = JumpPoint2->GetComponentLocation();
 }
 
 // Called every frame
@@ -42,6 +47,9 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 	{
 		if (Enemy)
 		{
+			FVector EnemyLocation = Enemy->GetActorLocation();
+			
+			
 			if (Enemy->bHasLandedOnPlatform || Enemy->bHasLandedOnGround)
 			{
 				Enemy->bIsJumping = false;
@@ -50,22 +58,25 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 			
 			if (bTriggerJumpToMovablePlatform)
 			{
-				if (Enemy->bCanPlatformJump && !Enemy->bCanBasicJump && !Enemy->bHasLandedOnPlatform&& Enemy->bHasLandedOnGround && !Enemy->bIsJumping && !Enemy->bIsPerformingJump) // is not on moving platform
+				if (!IsLeveledWithJumpPoints(EnemyLocation))
 				{
-					Enemy->AvaliableJumpPoint = CalculateJumpToPlatform(Enemy->GetActorLocation(), Enemy->GetActorForwardVector());
-				}
+					if (Enemy->bCanPlatformJump && !Enemy->bCanBasicJump && !Enemy->bHasLandedOnPlatform&& Enemy->bHasLandedOnGround && !Enemy->bIsJumping && !Enemy->bIsPerformingJump) // is not on moving platform
+					{
+						Enemy->AvaliableJumpPoint = CalculateJumpToPlatform(EnemyLocation);
+					}
 
-				// TODO: det här är samma sak, onödig check
-				else if (Enemy->bCanPlatformJump && !Enemy->bCanBasicJump && Enemy->bHasLandedOnPlatform && !Enemy->bHasLandedOnGround &&  !Enemy->bIsJumping && !Enemy->bIsPerformingJump) // is on moving platform and wants to jump off it
-				{
-					//UE_LOG(LogTemp, Error, TEXT("On movable platform, wants jump to point"))
+					// TODO: det här är samma sak, onödig check
+					else if (Enemy->bCanPlatformJump && !Enemy->bCanBasicJump && Enemy->bHasLandedOnPlatform && !Enemy->bHasLandedOnGround &&  !Enemy->bIsJumping && !Enemy->bIsPerformingJump) // is on moving platform and wants to jump off it
+					{
+						//UE_LOG(LogTemp, Error, TEXT("On movable platform, wants jump to point"))
 
-					Enemy->AvaliableJumpPoint = CalculateJumpToPoint(Enemy);
-				}
-				else if (!Enemy->bCanPlatformJump && Enemy->bCanBasicJump && !Enemy->bHasLandedOnPlatform && Enemy->bHasLandedOnGround &&  !Enemy->bIsJumping && !Enemy->bIsPerformingJump)
-				{
-					//UE_LOG(LogTemp, Error, TEXT("No movable platform, wants jump to other point"))
-					Enemy->AvaliableJumpPoint = CalculateJumpToPoint(Enemy);
+						Enemy->AvaliableJumpPoint = CalculatePointClosetsToTarget(EnemyLocation, Enemy->CurrentTargetLocation);
+					}
+					else if (!Enemy->bCanPlatformJump && Enemy->bCanBasicJump && !Enemy->bHasLandedOnPlatform && Enemy->bHasLandedOnGround &&  !Enemy->bIsJumping && !Enemy->bIsPerformingJump)
+					{
+						//UE_LOG(LogTemp, Error, TEXT("No movable platform, wants jump to other point"))
+						Enemy->AvaliableJumpPoint = CalculatePointClosetsToTarget(EnemyLocation, Enemy->CurrentTargetLocation);;
+					}
 				}
 			}
 			else
@@ -73,7 +84,7 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 				//TODO: Should only happen when can make basic jump and is not a movable platform jump-trigger. 
 				if (Enemy->bCanBasicJump && Enemy->bHasLandedOnGround && !Enemy->bIsJumping && !Enemy->bIsPerformingJump) // ordinary jump to some point 
 				{
-					Enemy->AvaliableJumpPoint = CalculateJumpToPoint( Enemy);
+					Enemy->AvaliableJumpPoint = CalculatePointFurthestFromEnemy(EnemyLocation);
 				}
 			}
 		}
@@ -100,7 +111,7 @@ void AEnemyJumpTrigger::AddWaitingEnemy(AShadowCharacter* EnemyToAdd)
 	}
 }
 
-FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation, const FVector& EnemyForwardVector) // forward vector * Jumpdistance
+FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation) // forward vector * Jumpdistance
 {
 
 	// TODO: Check if platform is closer to player than enemy, only jump if that is true SHOULD NOT BE HERE; MAYBE IN SERVICE
@@ -119,16 +130,26 @@ FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation,
 	
 }
 
-FVector AEnemyJumpTrigger::CalculateJumpToPoint(AShadowCharacter* Enemy)
+FVector AEnemyJumpTrigger::CalculatePointClosetsToTarget(const FVector& EnemyLocation, const FVector& CurrentTargetLocation) const 
 {
-	
-	if (FVector::Distance(JumpPoint1->GetComponentLocation(), Enemy->CurrentTargetLocation) <=  FVector::Distance(JumpPoint2->GetComponentLocation(), Enemy->CurrentTargetLocation))
+	if (FVector::Distance(JumpPoint1->GetComponentLocation(), CurrentTargetLocation) <=  FVector::Distance(JumpPoint2->GetComponentLocation(), CurrentTargetLocation))
 	{
-		const float DirToJumpPointY = JumpPoint1->GetComponentLocation().Y < Enemy->GetActorLocation().Y ? -1 : 1;
-		return FVector(Enemy->GetActorLocation().X, Enemy->GetActorLocation().Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint1->GetComponentLocation().Z + BasicJumpZOffset);
+		const float DirToJumpPointY = JumpPoint1->GetComponentLocation().Y < EnemyLocation.Y ? -1 : 1;
+		return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint1->GetComponentLocation().Z + BasicJumpZOffset);
 	}
-	const float DirToJumpPointY = JumpPoint2->GetComponentLocation().Y < Enemy->GetActorLocation().Y ? -1 : 1;
-	return FVector(Enemy->GetActorLocation().X, Enemy->GetActorLocation().Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint2->GetComponentLocation().Z + BasicJumpZOffset);
+	const float DirToJumpPointY = JumpPoint2->GetComponentLocation().Y < EnemyLocation.Y ? -1 : 1;
+	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint2->GetComponentLocation().Z + BasicJumpZOffset);
+}
+
+FVector AEnemyJumpTrigger::CalculatePointFurthestFromEnemy(const FVector& EnemyLocation) const
+{
+	if (FVector::Distance(JumpPoint1->GetComponentLocation(), EnemyLocation) >=  FVector::Distance(JumpPoint2->GetComponentLocation(), EnemyLocation))
+	{
+		const float DirToJumpPointY = JumpPoint1->GetComponentLocation().Y < EnemyLocation.Y ? -1 : 1;
+		return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint1->GetComponentLocation().Z + BasicJumpZOffset);
+	}
+	const float DirToJumpPointY = JumpPoint2->GetComponentLocation().Y < EnemyLocation.Y ? -1 : 1;
+	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint2->GetComponentLocation().Z + BasicJumpZOffset);
 }
 
 
@@ -163,5 +184,29 @@ void AEnemyJumpTrigger::DenyJump()  // runs on overlap end with moving platform,
 			}
 		}
 	}
+}
+
+bool AEnemyJumpTrigger::HasPathBetweenPoints() const
+{
+	const UNavigationSystemV1* Navigation = UNavigationSystemV1::GetCurrent(GetWorld());
+
+	if (ensure(IsValid(Navigation))) {
+		const UNavigationPath* NavigationPath = Navigation->FindPathToLocationSynchronously(GetWorld(), JumpPoint1->GetComponentLocation(), JumpPoint2->GetComponentLocation());
+
+		if(ensure(NavigationPath != nullptr) == false)
+		{
+			return false;
+		}
+		const bool IsNavigationValid = NavigationPath->IsValid();
+		const bool IsNavigationNotPartial = NavigationPath->IsPartial() == false;
+		const bool IsNavigationSuccessful = IsNavigationValid && IsNavigationNotPartial;
+		return IsNavigationSuccessful;
+	}
+	return false;
+}
+
+bool AEnemyJumpTrigger::IsLeveledWithJumpPoints(const FVector &EnemyLoc)
+{
+	return EnemyLoc.Y == JumpPoint1->GetComponentLocation().Y && EnemyLoc.Y == JumpPoint2->GetComponentLocation().Y;
 }
 
