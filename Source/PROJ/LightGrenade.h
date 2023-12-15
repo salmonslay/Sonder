@@ -90,9 +90,6 @@ private:
 	UPROPERTY()
 	FTimerHandle TimerHandle;
 
-	UPROPERTY()
-	FVector ThrowLoc;
-
 	/** How much a second of hold time should add to the throw velocity */
 	UPROPERTY(EditAnywhere)
 	float FireSpeedPerSecondHeld = 300000.0f;
