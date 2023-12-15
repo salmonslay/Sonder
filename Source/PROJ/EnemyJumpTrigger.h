@@ -92,6 +92,6 @@ private:
 	UFUNCTION(BlueprintCallable)
 	bool HasPathBetweenPoints() const;
 
-	bool IsLeveledWithJumpPoints(const FVector &EnemyLoc);
+	bool IsLeveledWithJumpPoints(const FVector &EnemyLoc) const;
 	
 };
