@@ -108,11 +108,20 @@
 		<property name="length">
 			<value>59.904000000000003</value>
 		</property>
+		<property name="volume">
+			<value>-3</value>
+		</property>
+		<relationship name="modulators">
+			<destination>{55d9faf9-5512-41ab-b55b-ec441a7dd779}</destination>
+		</relationship>
 		<relationship name="audioFile">
 			<destination>{b3cadbe6-fbf3-4eb2-b69b-00f2eb82ee94}</destination>
 		</relationship>
 	</object>
 	<object class="EventMixerGroup" id="{8939df61-5f62-4467-860e-3521667522b9}">
+		<property name="volume">
+			<value>-3.5</value>
+		</property>
 		<property name="name">
 			<value>Audio 1</value>
 		</property>
@@ -144,10 +153,25 @@
 		<relationship name="effects">
 			<destination>{b003ab3e-ef15-477b-a1c9-9d20bb31e523}</destination>
 			<destination>{c5c288c0-ec2c-4ffc-b5e6-07d1885f2479}</destination>
+			<destination>{71d3b22e-4f6b-46a3-b87a-33e379e6234c}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{bb9488b7-17e9-4053-b017-359b5f3e44f2}" />
 	<object class="MixerBusFader" id="{c967e7c1-338e-463d-9e23-8a33736a4535}" />
+	<object class="ADSRModulator" id="{55d9faf9-5512-41ab-b55b-ec441a7dd779}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>pitch</value>
+		</property>
+		<property name="initialValue">
+			<value>-25</value>
+		</property>
+		<property name="attackTime">
+			<value>5800</value>
+		</property>
+		<property name="releaseTime">
+			<value>0</value>
+		</property>
+	</object>
 	<object class="MixerBusEffectChain" id="{3de2ecf6-358b-4f6d-8667-baa06bdc5023}">
 		<relationship name="effects">
 			<destination>{45b1aca5-1928-40de-a74a-beeb83d356f8}</destination>
@@ -158,6 +182,11 @@
 	<object class="SpatialiserEffect" id="{c5c288c0-ec2c-4ffc-b5e6-07d1885f2479}">
 		<property name="distanceRolloffType">
 			<value>1</value>
+		</property>
+	</object>
+	<object class="ThreeEQEffect" id="{71d3b22e-4f6b-46a3-b87a-33e379e6234c}">
+		<property name="lowGain">
+			<value>-36</value>
 		</property>
 	</object>
 	<object class="MixerBusFader" id="{45b1aca5-1928-40de-a74a-beeb83d356f8}" />

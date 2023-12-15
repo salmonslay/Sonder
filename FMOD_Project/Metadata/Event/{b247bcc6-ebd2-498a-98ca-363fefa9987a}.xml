@@ -531,6 +531,7 @@
 			<destination>{a28d013e-f297-4bd0-996e-1d33911e3fe9}</destination>
 			<destination>{ff28bc8f-11b3-4e70-94e8-9cfbe5f85ffe}</destination>
 			<destination>{eec4a324-73ad-42fa-b9e2-8b5d3a6de23e}</destination>
+			<destination>{12ddbe82-d00e-4316-8b86-514b8366638d}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{b3fd0dc8-20ea-4552-bba1-e0576414f48d}" />
@@ -968,6 +969,11 @@
 		<relationship name="automators">
 			<destination>{f60e718d-5954-4363-b7d4-b8c4a055371e}</destination>
 		</relationship>
+	</object>
+	<object class="ThreeEQEffect" id="{12ddbe82-d00e-4316-8b86-514b8366638d}">
+		<property name="lowGain">
+			<value>-8.5</value>
+		</property>
 	</object>
 	<object class="AutomationCurve" id="{62a8ae58-7f39-4363-b45d-8acb2699ef0e}">
 		<relationship name="parameter">
