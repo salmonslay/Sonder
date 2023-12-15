@@ -7,6 +7,7 @@
 #include "PROJCharacter.h"
 #include "ShadowCharacter.h"
 #include "Engine/DamageEvents.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values for this component's properties
@@ -28,26 +29,37 @@ void UPlayerBasicAttack::BeginPlay()
 
 	Owner = Cast<ACharacter>(GetOwner());
 
-	bCanAttack = true; 
+	bCanAttack = true;
+	LastTimeAttack = 0; 
 }
 
 void UPlayerBasicAttack::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
+	LastTimeAttack = 0;
+	bCanAttack = true; 
+
 	GetWorld()->GetTimerManager().ClearAllTimersForObject(this); 
 }
 
 void UPlayerBasicAttack::Attack()
 {
+	if(!GetWorld())
+		return; 
+	
 	if(GetWorld()->TimeSeconds - AttackCooldown >= LastTimeAttack)
+		bCanAttack = true;
+
+	if(!LastLevelName.Equals(UGameplayStatics::GetCurrentLevelName(this)))
 		bCanAttack = true; 
 	
 	// Ensure player cant spam attack and is locally controlled 
 	if(!bCanAttack || !Owner->IsLocallyControlled())
 		return;
 
-	LastTimeAttack = GetWorld()->TimeSeconds; 
+	LastTimeAttack = GetWorld()->TimeSeconds;
+	LastLevelName = UGameplayStatics::GetCurrentLevelName(this); 
 	
 	FTimerHandle TimerHandle; 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UPlayerBasicAttack::EnableCanAttack, AttackCooldown);

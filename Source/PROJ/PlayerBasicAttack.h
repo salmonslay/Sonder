@@ -68,6 +68,8 @@ private:
 
 	void EnableCanAttack();
 
-	bool ShouldCallHitEvent(AActor* OverlappingActor) const; 
+	bool ShouldCallHitEvent(AActor* OverlappingActor) const;
+	
+	FString LastLevelName = "none"; 
 	
 };
