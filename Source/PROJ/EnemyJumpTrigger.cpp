@@ -56,12 +56,33 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 				Enemy->bIsPerformingJump = false;
 			}
 			
-			if (bTriggerJumpToMovablePlatform)
+			if (bTriggerJumpToMovablePlatform) // TODO:Doesnt need this, can be same trigger for both after fix
 			{
+				if (bIsOverlappingWithMovingPlatform && Enemy->bCanBasicJump && Enemy->bHasLandedOnGround && !Enemy->bIsJumping && !Enemy->bIsPerformingJump)
+				{
+					Enemy->AvaliableJumpPoint = CalculateJumpToPlatform(EnemyLocation);
+				}
+
+				else if (!bIsOverlappingWithMovingPlatform && Enemy->bCanBasicJump && Enemy->bHasLandedOnGround && !Enemy->bIsJumping && !Enemy->bIsPerformingJump)
+				{
+					if (!IsLeveledWithJumpPoints(EnemyLocation))
+					{
+						Enemy->AvaliableJumpPoint = CalculatePointClosetsToTarget(EnemyLocation, Enemy->CurrentTargetLocation);
+					}
+					else
+					{
+						Enemy->AvaliableJumpPoint = CalculatePointFurthestFromEnemy(EnemyLocation);
+					}
+				}
+				// TODO: If is overlapping with moving platform, and is grounded, and is not jumping/performing jump
+					/*
 				if (Enemy->bCanPlatformJump && !Enemy->bCanBasicJump && !Enemy->bHasLandedOnPlatform&& Enemy->bHasLandedOnGround && !Enemy->bIsJumping && !Enemy->bIsPerformingJump) // is not on moving platform
 				{
 					Enemy->AvaliableJumpPoint = CalculateJumpToPlatform(EnemyLocation);
 				}
+				
+
+				
 				
 				else if((Enemy->bCanPlatformJump || Enemy->bCanBasicJump) && (Enemy->bHasLandedOnPlatform || Enemy->bHasLandedOnGround) &&  !Enemy->bIsJumping && !Enemy->bIsPerformingJump)
 				{
@@ -74,16 +95,7 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 						Enemy->AvaliableJumpPoint = CalculatePointFurthestFromEnemy(EnemyLocation);
 					}
 				}
-				/*
-				else if (Enemy->bCanPlatformJump && !Enemy->bCanBasicJump && Enemy->bHasLandedOnPlatform && !Enemy->bHasLandedOnGround &&  !Enemy->bIsJumping && !Enemy->bIsPerformingJump) // is on moving platform and wants to jump off it
-				{
-					Enemy->AvaliableJumpPoint = CalculatePointClosetsToTarget(EnemyLocation, Enemy->CurrentTargetLocation);
-				}
-				else if (!Enemy->bCanPlatformJump && Enemy->bCanBasicJump && !Enemy->bHasLandedOnPlatform && Enemy->bHasLandedOnGround &&  !Enemy->bIsJumping && !Enemy->bIsPerformingJump)
-				{
-					//UE_LOG(LogTemp, Error, TEXT("No movable platform, wants jump to other point"))
-					Enemy->AvaliableJumpPoint = CalculatePointClosetsToTarget(EnemyLocation, Enemy->CurrentTargetLocation);;
-				}*/
+				*/
 			}
 			
 			else

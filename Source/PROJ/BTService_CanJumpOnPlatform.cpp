@@ -36,10 +36,11 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 
 	OwnerLocation = OwnerCharacter->GetActorLocation();
 
-	OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
 
 	// TESTING
 	// this should really not be here and its horrid but there are a lot of things that needs to change
+
+	/*
 	if (!OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsBool("bHasValidPath") && OwnerCharacter->bHasLandedOnPlatform
 		&& !FMath::IsNearlyEqual(OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsVector("CurrentMoveTarget").Y,OwnerLocation.Y, 3 ))
 	{
@@ -50,11 +51,22 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 		UE_LOG(LogTemp, Error, TEXT("IsOnPlatform"));
 		OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsOnPlatform", true);
 	}
-	else
+	
+	if
 	{
 		OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsOnPlatform", false);
 		OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue("bIsOnPlatform");
 	}
+	*/
+	if (OwnerCharacter->bIsJumping || OwnerCharacter->bIsPerformingJump )
+	{
+		// this feels wrong but its right, should rename the bb-key
+		OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", false);
+		OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue("bIsJumping");
+		return;
+	}
+	OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
+
 	
 	if (!OwnerCharacter->bCanPlatformJump && !OwnerCharacter->bCanBasicJump)
 	{
@@ -63,15 +75,9 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 		return;
 	}
 
-	if (OwnerCharacter->bIsJumping || OwnerCharacter->bIsPerformingJump )
-	{
-		// this feels wrong but its right, should rename the bb-key
-		OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", false);
-		OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue("bIsJumping");
-		return;
-	}
+	
 
-	if ((OwnerCharacter->bCanPlatformJump || OwnerCharacter->bCanBasicJump) && !OwnerCharacter->bIsJumping) // check if can jump || can jump to platform
+	if (OwnerCharacter->bCanBasicJump && !OwnerCharacter->bIsJumping) // removed check can jump to platform
 	{
 		if (OwnerCharacter->JumpCoolDownTimer >= OwnerCharacter->JumpCoolDownDuration)
 		{
