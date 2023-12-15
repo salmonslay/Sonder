@@ -37,6 +37,24 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	OwnerLocation = OwnerCharacter->GetActorLocation();
 
 	OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
+
+	// TESTING
+	// this should really not be here and its horrid but there are a lot of things that needs to change
+	if (!OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsBool("bHasValidPath") && OwnerCharacter->bHasLandedOnPlatform
+		&& !FMath::IsNearlyEqual(OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsVector("CurrentMoveTarget").Y,OwnerLocation.Y, 3 ))
+	{
+		if (OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsBool("bHasValidPath"))
+		{
+			UE_LOG(LogTemp, Error, TEXT("Has valid path"));
+		}
+		UE_LOG(LogTemp, Error, TEXT("IsOnPlatform"));
+		OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsOnPlatform", true);
+	}
+	else
+	{
+		OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsOnPlatform", false);
+		OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue("bIsOnPlatform");
+	}
 	
 	if (!OwnerCharacter->bCanPlatformJump && !OwnerCharacter->bCanBasicJump)
 	{

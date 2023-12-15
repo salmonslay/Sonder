@@ -27,35 +27,33 @@ void UPlayerBasicAttack::BeginPlay()
 	Super::BeginPlay();
 
 	Owner = Cast<ACharacter>(GetOwner());
+
+	bCanAttack = true; 
 }
 
 void UPlayerBasicAttack::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	bCanAttack = true; 
-
 	GetWorld()->GetTimerManager().ClearAllTimersForObject(this); 
 }
 
 void UPlayerBasicAttack::Attack()
 {
+	if(GetWorld()->TimeSeconds - AttackCooldown >= LastTimeAttack)
+		bCanAttack = true; 
+	
 	// Ensure player cant spam attack and is locally controlled 
 	if(!bCanAttack || !Owner->IsLocallyControlled())
-		return; 
+		return;
+
+	LastTimeAttack = GetWorld()->TimeSeconds; 
 	
 	FTimerHandle TimerHandle; 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UPlayerBasicAttack::EnableCanAttack, AttackCooldown);
 
 	// Run server function which will update each client and itself 
 	ServerRPCAttack(); 
-}
-
-void UPlayerBasicAttack::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
-{
-	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
-
-	DOREPLIFETIME(UPlayerBasicAttack,  bCanAttack);
 }
 
 void UPlayerBasicAttack::ServerRPCAttack_Implementation()
@@ -71,7 +69,10 @@ void UPlayerBasicAttack::MulticastRPCAttack_Implementation()
 {
 	// Sometimes attack is fired before player is set when loading new level, ensure player is set 
 	if(!Owner)
+	{
+		Owner = Cast<ACharacter>(GetOwner());
 		return;
+	}
 
 	bool bCalledHitEvent = false;
 
@@ -85,34 +86,26 @@ void UPlayerBasicAttack::MulticastRPCAttack_Implementation()
 		bCalledHitEvent = true; 
 	}
 	
-	// Code here is run on each player (client and server)
 	TArray<AActor*> OverlappingActors; 
-	GetOverlappingActors(OverlappingActors, AActor::StaticClass()); // TODO: Replace the class filter with eventual better class (if it exists)
+	GetOverlappingActors(OverlappingActors, AActor::StaticClass()); 
 
-	// calls take damage on every overlapping actor except itself
 	// TODO: When the attack animation in in place, we prob want to delay this so it times with when the animation hits 
 	for(const auto Actor : OverlappingActors)
 	{
-		// Player, damage all but other players 
-		if(Owner->IsPlayerControlled() && !Actor->ActorHasTag(FName("Player")))
+		const bool bDamagingPlayer = Actor->IsA(APROJCharacter::StaticClass()); 
+		
+		// Player: damage all but other players, AI controlled: damage only players 
+		if((Owner->IsPlayerControlled() && !bDamagingPlayer) || (!Owner->IsPlayerControlled() && bDamagingPlayer)) 
 		{
 			Actor->TakeDamage(Damage, FDamageEvent(), GetOwner()->GetInstigatorController(), GetOwner());
 			
 			if(!bCalledHitEvent && ShouldCallHitEvent(Actor)) 
 			{
-				Cast<APROJCharacter>(Owner)->OnBasicAttackHit();
-				bCalledHitEvent = true; 
-			}
-		}
-
-		// AI controlled, damage only players 
-		else if(!Owner->IsPlayerControlled() && Actor->IsA(APROJCharacter::StaticClass()))
-		{
-			Actor->TakeDamage(Damage, FDamageEvent(), GetOwner()->GetInstigatorController(), GetOwner());
-
-			if(!bCalledHitEvent && ShouldCallHitEvent(Actor)) 
-			{
-				Cast<AShadowCharacter>(Owner)->OnBasicAttackHit();
+				if(Owner->IsPlayerControlled())
+					Cast<APROJCharacter>(Owner)->OnBasicAttackHit();
+				if(!Owner->IsPlayerControlled())
+					Cast<AShadowCharacter>(Owner)->OnBasicAttackHit();
+				
 				bCalledHitEvent = true; 
 			}
 		}
