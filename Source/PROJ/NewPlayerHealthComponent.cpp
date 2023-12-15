@@ -15,6 +15,10 @@ float UNewPlayerHealthComponent::TakeDamage(float DamageAmount)
 {
 	const float DamageTaken = Super::TakeDamage(DamageAmount);
 
+	// No actual damage taken, dont do anything 
+	if(DamageTaken <= 0)
+		return DamageTaken; 
+
 	ServerRPCDamageTaken(DamageAmount); 
 
 	return DamageTaken; 
