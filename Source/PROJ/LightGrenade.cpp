@@ -7,6 +7,7 @@
 #include "EnhancedInputComponent.h"
 #include "PressurePlateBase.h"
 #include "PROJCharacter.h"
+#include "SonderGameState.h"
 #include "SoulCharacter.h"
 #include "Engine/DamageEvents.h"
 #include "Kismet/GameplayStatics.h"
@@ -44,11 +45,9 @@ void ALightGrenade::BeginPlay()
 	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap); 
 	ExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	PulseExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
-
-	Player = Cast<ASoulCharacter>(UGameplayStatics::GetActorOfClass(GetWorld(), ASoulCharacter::StaticClass()));
 	
 
-	PlayerBase = Cast<APROJCharacter>(Player);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::GetPlayer, 2.0f);
     
 	// Create the grenade indicator if not already created 
 	if(!Indicator)
@@ -103,7 +102,10 @@ void ALightGrenade::MulticastRPCThrow_Implementation(const float TimeHeld)
 {
 	if(bCanThrow)
 	{
-		
+		if (!Player || !PlayerBase)
+		{
+			GetPlayer();
+		}
 
 		if (PlayerBase)
 		{
@@ -119,6 +121,7 @@ void ALightGrenade::MulticastRPCThrow_Implementation(const float TimeHeld)
 
 		bIsExploding = false;
 		
+
 		ExplosionArea->SetWorldLocation(Player->ThrowLoc->GetComponentLocation()); 
 		
 		ExplosionArea->AddImpulse(GetLaunchForce(TimeHeld));
@@ -210,6 +213,10 @@ void ALightGrenade::MulticastRPCExplosion_Implementation()
 
 FVector ALightGrenade::GetLaunchForce(const float TimeHeld)
 {
+	if (!Player)
+	{
+		GetPlayer();
+	}
 	// Get the direction to throw the grenade in, check if depth movement is enabled 
 	FVector ThrowDir = Player->ThrowLoc->GetComponentLocation() - Player->GetActorLocation();
 	if(!Player->IsDepthMovementEnabled())
@@ -246,6 +253,18 @@ void ALightGrenade::EnableGrenade()
 	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	GrenadeMesh->SetVisibility(true);
 	
+}
+
+void ALightGrenade::GetPlayer()
+{
+	Player = Cast<ASoulCharacter>(Cast<ASonderGameState>(UGameplayStatics::GetGameState(this))->GetServerPlayer());
+	if (!Player)
+	{
+		UE_LOG(LogTemp, Warning, TEXT("No Player"));
+		Player = Cast<ASoulCharacter>(Cast<ASonderGameState>(UGameplayStatics::GetGameState(this))->GetClientPlayer());
+	}
+	
+	PlayerBase = Cast<APROJCharacter>(Player);
 }
 
 void ALightGrenade::StartCountdown(float TimeUntilExplosion)
