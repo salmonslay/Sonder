@@ -43,7 +43,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	float AttackCooldown = 0.5f; 
 
-	UPROPERTY(Replicated)
 	bool bCanAttack = true;
 
 	/** How far forwards to see if something is blocking and thus call the hit event */
@@ -51,7 +50,10 @@ private:
 	float HitEventLengthCheck = 100.f; 
 
 	UPROPERTY()
-	class ACharacter* Owner; 
+	class ACharacter* Owner;
+
+	// Hopefully temporary, possible fix for attack 
+	float LastTimeAttack;
 	
 	/**
 	 * Function executed on server ONLY when client attacks, called from client. This function will probably only call
@@ -65,8 +67,6 @@ private:
 	void MulticastRPCAttack();
 
 	void EnableCanAttack();
-	
-	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	bool ShouldCallHitEvent(AActor* OverlappingActor) const; 
 	

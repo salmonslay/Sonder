@@ -59,6 +59,11 @@ public:
 	bool bTriggerJumpToMovablePlatform = false;
 	
 private:
+
+	FVector JumpPoint1Loc = FVector::ZeroVector;
+
+	FVector JumpPoint2Loc = FVector::ZeroVector;
+	
 	UPROPERTY(EditAnywhere)
 	float EnemyJumpDistance = 200.f;
 
@@ -70,9 +75,11 @@ private:
 	
 	TArray<AShadowCharacter*> WaitingEnemies = TArray<AShadowCharacter*>();
 
-	FVector CalculateJumpToPlatform(const FVector& EnemyLocation, const FVector& EnemyForwardVector);
+	FVector CalculateJumpToPlatform(const FVector& EnemyLocation);
 
-	FVector CalculateJumpToPoint(AShadowCharacter* Enemy);
+	FVector CalculatePointClosetsToTarget(const FVector& EnemyLocation, const FVector& CurrentTargetLocation) const;
+
+	FVector CalculatePointFurthestFromEnemy(const FVector& EnemyLocation) const;
 
 	/** Runs on overlap begin with moving platform, enemies on moving platform are allowed to jump to ground, enemies on ground are allowed to jump on platform*/
 	UFUNCTION(BlueprintCallable)
@@ -81,5 +88,10 @@ private:
 	/** Runs on overlap end with moving platform, enemies on moving platform are denied to jump to ground, enemies on ground are denied to jump on platform*/
 	UFUNCTION(BlueprintCallable)
 	void DenyJump();
+
+	UFUNCTION(BlueprintCallable)
+	bool HasPathBetweenPoints() const;
+
+	bool IsLeveledWithJumpPoints(const FVector &EnemyLoc) const;
 	
 };

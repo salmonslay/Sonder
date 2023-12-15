@@ -24,7 +24,7 @@ EBTNodeResult::Type UBTTask_ToggleChargeSpecialAttack::ExecuteTask(UBehaviorTree
 	// Set we are charging the attack BB Key 
 	OwnerComp.GetBlackboardComponent()->SetValueAsBool(BBKeyChargingSpecialAttack.SelectedKeyName, bActivateCharge); 
 
-	Cast<AShadowCharacter>(OwnerComp.GetAIOwner()->GetPawn())->ServerRPC_ToggleChargeEffect(bActivateCharge); 
+	Cast<AShadowCharacter>(OwnerComp.GetAIOwner()->GetPawn())->ServerRPC_ToggleChargeEffect(bActivateCharge);
 	
 	return EBTNodeResult::Succeeded; 
 }
