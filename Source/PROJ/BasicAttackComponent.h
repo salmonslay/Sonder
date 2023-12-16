@@ -4,25 +4,27 @@
 
 #include "CoreMinimal.h"
 #include "Components/BoxComponent.h"
-#include "PlayerBasicAttack.generated.h"
+#include "BasicAttackComponent.generated.h"
 
-UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
-class PROJ_API UPlayerBasicAttack : public UBoxComponent
+/**
+ * 
+ */
+UCLASS()
+class PROJ_API UBasicAttackComponent : public UBoxComponent
 {
 	GENERATED_BODY()
 
 public:
 	
 	// Sets default values for this component's properties
-	UPlayerBasicAttack();
+	UBasicAttackComponent();
 
-	/** Called to connect input to attack function */
-	void SetUpInput(UEnhancedInputComponent* InputComp);
-
-	/** Locally run function called when player presses attack button */
-	void Attack();
+	/** Locally run function called when player presses attack button, returns true if attack could be performed */
+	bool Attack();
 
 	bool CanAttack() const { return bCanAttack; }
+
+	void EnableAttack() { bCanAttack = true; }
 
 protected:
 
@@ -31,9 +33,6 @@ protected:
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 private:
-
-	UPROPERTY(EditAnywhere)
-	class UInputAction* AttackInputAction; 
 
 	/** Damage inflicted on enemies */
 	UPROPERTY(EditAnywhere)
@@ -52,13 +51,10 @@ private:
 	UPROPERTY()
 	class ACharacter* Owner;
 
-	// Hopefully temporary, possible fix for attack 
+	// Hopefully temporary, possible fixes for attack 
 	float LastTimeAttack;
 	
-	/**
-	 * Function executed on server ONLY when client attacks, called from client. This function will probably only call
-	 * the multicast function unless we will have some functionality that should only be run on the server 
-	 */ 
+	/** Function executed on server ONLY on attacks, called from client */ 
 	UFUNCTION(Server, Reliable)
 	void ServerRPCAttack(); 
 
@@ -69,7 +65,5 @@ private:
 	void EnableCanAttack();
 
 	bool ShouldCallHitEvent(AActor* OverlappingActor) const;
-	
-	FString LastLevelName = "none"; 
 	
 };

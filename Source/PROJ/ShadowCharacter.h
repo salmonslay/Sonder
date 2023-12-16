@@ -111,14 +111,14 @@ private:
 	UPROPERTY(EditAnywhere)
 	class UDummyPlayerState* DummyState;
 
-	UPROPERTY(EditAnywhere)
-	class UPlayerBasicAttack* EnemyBasicAttack;
-
 	UPROPERTY(EditDefaultsOnly)
 	class UNiagaraSystem* ChargeEffect;
 
 	UPROPERTY()
-	class UNiagaraComponent* ChargeEffectComp; 
+	class UNiagaraComponent* ChargeEffectComp;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UBasicAttackComponent* EnemyAttackComp; 
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPC_ToggleChargeEffect(const bool bActive); 
