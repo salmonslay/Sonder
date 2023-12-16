@@ -233,10 +233,7 @@ void APROJCharacter::Tick(float DeltaSeconds)
 
 	// Probably not and should not be necessary but attack comp has been in its rebellious phase lately
 	if(IsLocallyControlled())
-	{
 		AttackTimer += DeltaSeconds;
-		UE_LOG(LogTemp, Warning, TEXT("AttackTimer: %f"), AttackTimer)
-	}
 }
 
 bool APROJCharacter::IsAlive()
