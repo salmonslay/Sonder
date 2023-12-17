@@ -32,6 +32,7 @@ void UBTService_SetValidPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 
 	if(FMath::Abs(OwnerLocation.Z - CurrentTarget.Z) > HeightDifferenceToMarkInvalid)
 	{
+		UE_LOG(LogTemp, Error, TEXT("Height Difference is invalid"));
 		SetPathIsInvalid(OwnerComp);
 		return; 
 	}
