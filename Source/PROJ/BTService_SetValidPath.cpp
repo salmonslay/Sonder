@@ -35,10 +35,14 @@ void UBTService_SetValidPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 		SetPathIsInvalid(OwnerComp);
 		return; 
 	}
-	else
+	if (HasLineOfSightToPlayer(OwnerCharacter, CurrentTarget))
 	{
-		UE_LOG(LogTemp, Error, TEXT("Height Difference is valid, not jumping and is at same height ish"));
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool("bHasLineOfSightToCurrentTarget", true);
+		SetPathIsInvalid(OwnerComp);
+		return; 
 	}
+	OwnerComp.GetBlackboardComponent()->SetValueAsBool("bHasLineOfSightToCurrentTarget", false);
+	OwnerComp.GetBlackboardComponent()->ClearValue("bHasLineOfSightToCurrentTarget");
 	
 	if (!OwnerCharacter->HasNavigationToTarget(CurrentTarget))
 	{
@@ -50,18 +54,17 @@ void UBTService_SetValidPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 	OwnerComp.GetBlackboardComponent()->SetValueAsBool(BlackboardKey.SelectedKeyName, true);
 }
 
-bool UBTService_SetValidPath::HasLineOfSightToPlayer(AShadowCharacter* Owner, APROJCharacter* CurrentPlayerTarget) const
+bool UBTService_SetValidPath::HasLineOfSightToPlayer(AShadowCharacter* Owner, const FVector &CurrentPlayerTarget) const
 {
 	FHitResult HitResult;
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(Owner);
-	ActorsToIgnore.Add(CurrentPlayerTarget);
 		
 	if (bDebug)
 	{
-		return !UKismetSystemLibrary::LineTraceSingleForObjects(this, Owner->GetActorLocation(), CurrentPlayerTarget->GetActorLocation(), LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true, FColor::Red, FColor::Blue, 2.f);
+		return !UKismetSystemLibrary::LineTraceSingleForObjects(this, Owner->GetActorLocation(), CurrentPlayerTarget, LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true, FColor::Red, FColor::Blue, 10.f);
 	}
-	return !UKismetSystemLibrary::LineTraceSingleForObjects(this, Owner->GetActorLocation(), CurrentPlayerTarget->GetActorLocation(), LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
+	return !UKismetSystemLibrary::LineTraceSingleForObjects(this, Owner->GetActorLocation(), CurrentPlayerTarget, LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
 
 }
 

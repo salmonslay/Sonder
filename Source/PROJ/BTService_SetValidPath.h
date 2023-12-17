@@ -37,7 +37,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	float HeightDifferenceToMarkInvalid = 150.f;
 
-	bool HasLineOfSightToPlayer(AShadowCharacter* Owner,APROJCharacter* CurrentPlayerTarget) const;
+	bool HasLineOfSightToPlayer(AShadowCharacter* Owner, const FVector &CurrentPlayerTarget) const;
 
 	void SetPathIsInvalid(UBehaviorTreeComponent& OwnerComp) const;
 
