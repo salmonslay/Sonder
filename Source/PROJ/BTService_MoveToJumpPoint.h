@@ -28,9 +28,11 @@ private:
 	float MaxHeightDiff = 150.f;
 
 	UPROPERTY()
-	TArray<UBoxComponent*> JumpPoints;
+	TArray<FVector> JumpPoints;
 
 	UPROPERTY(EditAnywhere)
-	FBlackboardKeySelector BBKeyCurrentTarget; 
+	FBlackboardKeySelector BBKeyCurrentTarget;
+
+	FVector OwnerLocation = FVector::ZeroVector;
 	
 };

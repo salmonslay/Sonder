@@ -52,17 +52,27 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool IsOverlappingWithEnemies() {	return !WaitingEnemies.IsEmpty();	}
 
+	UFUNCTION(BlueprintCallable)
+	bool IsOverlappingWithPlatform() { return bIsOverlappingWithMovingPlatform; }
+
 	UPROPERTY(BlueprintReadWrite)
 	AMovingPlatform* OverlappingPlatform = nullptr;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bTriggerJumpToMovablePlatform = false;
-	
-private:
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool HasPathBetweenJumpPoints = false;
+
+	FVector RequestJumpLocation(const FVector &EnemyLoc, const FVector &CurrentTargetLocation, const bool bIsOnPlatform);
+	
 	FVector JumpPoint1Loc = FVector::ZeroVector;
 
 	FVector JumpPoint2Loc = FVector::ZeroVector;
+	
+private:
+
+	
 	
 	UPROPERTY(EditAnywhere)
 	float EnemyJumpDistance = 200.f;

@@ -4,6 +4,7 @@
 
 #include "BasicAttackComponent.h"
 #include "DummyPlayerState.h"
+#include "EnemyJumpTrigger.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
 #include "NiagaraComponent.h"
@@ -31,14 +32,37 @@ void AShadowCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(AShadowCharacter, bIsPerformingJump)
 }
 
+bool AShadowCharacter::CheckIfJumpNeeded()
+{
+	if (CurrentJumpTrigger == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Has set overlapping trigger but does not have pointer to that trigger"))
+		return false;
+	}
+	
+	if (CurrentJumpTrigger->HasPathBetweenJumpPoints)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Has path between points and is a static jump trigger, no need for jump"))
+		return false;
+	}
+
+	if (bHasLandedOnPlatform || bHasLandedOnGround)
+	{
+		return true;
+	}
+	return false;
+}
+
 void AShadowCharacter::MakeJump()
 {
 	if(GetLocalRole() == ROLE_Authority && !bIsStunned)
 	{
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 		UE_LOG(LogTemp, Error, TEXT("MovementMode falling"));
-		
+		bCanBasicJump = false;
 		bIsPerformingJump = true;
+		bHasLandedOnPlatform = false;
+		bHasLandedOnGround = false;
 		OnJumpEvent();
 	}
 }
@@ -50,6 +74,7 @@ void AShadowCharacter::Idle()
 	if(GetLocalRole() == ROLE_Authority && !bIsStunned)
 	{
 		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		UE_LOG(LogTemp, Error, TEXT("MovementMode walking"));
 		bIsPerformingJump = false;
 		bIsJumping = false;
 	}
@@ -100,6 +125,8 @@ void AShadowCharacter::BeginPlay()
 
 	if(CurrentState)
 		CurrentState->Enter();
+
+	JumpCoolDownTimer = JumpCoolDownDuration;
 }
 
 void AShadowCharacter::Tick(const float DeltaSeconds)
@@ -111,6 +138,18 @@ void AShadowCharacter::Tick(const float DeltaSeconds)
 
 	if(CurrentState)
 		CurrentState->Update(DeltaSeconds);
+	
+	if (IsOverlappingWithTrigger && JumpCoolDownTimer >= JumpCoolDownDuration)
+	{
+		if (CheckIfJumpNeeded())
+		{
+			if (!bIsPerformingJump)
+			{
+				bCanBasicJump = true;
+				AvaliableJumpPoint = CurrentJumpTrigger->RequestJumpLocation(GetActorLocation(), CurrentTargetLocation, bHasLandedOnPlatform);
+			}
+		}
+	}
 }
 
 UPlayerCharState* AShadowCharacter::GetStartingState() const

@@ -29,8 +29,8 @@ EBTNodeResult::Type UBTService_MoveToJumpPoint::ExecuteTask(UBehaviorTreeCompone
 
 		for(const auto JumpPoint : TempArray)
 		{
-			JumpPoints.Add(Cast<AEnemyJumpTrigger>(JumpPoint)->JumpPoint1);  
-			JumpPoints.Add(Cast<AEnemyJumpTrigger>(JumpPoint)->JumpPoint2);  
+			JumpPoints.Add(Cast<AEnemyJumpTrigger>(JumpPoint)->JumpPoint1Loc);  
+			JumpPoints.Add(Cast<AEnemyJumpTrigger>(JumpPoint)->JumpPoint2Loc);  
 		}
 	}
 		
@@ -46,21 +46,22 @@ FVector UBTService_MoveToJumpPoint::GetJumpPoint(const UBehaviorTreeComponent& O
 	if(!Owner)
 		return FVector::ZeroVector; 
 
+	OwnerLocation = Owner->GetActorLocation();
 	const FVector CurrentTarget = OwnerComp.GetBlackboardComponent()->GetValueAsVector(BBKeyCurrentTarget.SelectedKeyName); 
 
-	TArray<UBoxComponent*> PossiblePoints; 
-	for(auto JumpPoint : JumpPoints)
+	TArray<FVector> PossiblePoints; 
+	for(auto JumpPointLocation : JumpPoints)
 	{
-		if(JumpPoint->GetComponentLocation().Equals(Owner->GetActorLocation(), 50))
+		if(JumpPointLocation.Equals(OwnerLocation, 50))
 			continue; 
 		
-		if(FMath::Abs(JumpPoint->GetComponentLocation().Z - Owner->GetActorLocation().Z) > MaxHeightDiff)
+		if(FMath::Abs(JumpPointLocation.Z - OwnerLocation.Z) > MaxHeightDiff)
 			continue;
 
-		if(!Owner->HasNavigationToTarget(JumpPoint->GetComponentLocation()))
+		if(!Owner->HasNavigationToTarget(JumpPointLocation))
 			continue; 
 
-		PossiblePoints.Add(JumpPoint); 
+		PossiblePoints.Add(JumpPointLocation); 
 	}
 
 	// float DistToPoint = 0;
@@ -70,14 +71,14 @@ FVector UBTService_MoveToJumpPoint::GetJumpPoint(const UBehaviorTreeComponent& O
 	if(PossiblePoints.IsEmpty())
 		return FVector::ZeroVector;
 	
-	FVector ClosestPoint = PossiblePoints[0]->GetComponentLocation();
+	FVector ClosestPoint = PossiblePoints[0];
 	float ClosestDist = FVector::Dist(ClosestPoint, CurrentTarget); 
 	for(int i = 1; i < PossiblePoints.Num(); i++)
 	{
-		if(FVector::Dist(PossiblePoints[i]->GetComponentLocation(), CurrentTarget) < ClosestDist)
+		if(FVector::Dist(PossiblePoints[i], CurrentTarget) < ClosestDist)
 		{
-			ClosestDist = FVector::Dist(PossiblePoints[i]->GetComponentLocation(), CurrentTarget);
-			ClosestPoint = PossiblePoints[i]->GetComponentLocation(); 
+			ClosestDist = FVector::Dist(PossiblePoints[i], CurrentTarget);
+			ClosestPoint = PossiblePoints[i]; 
 		}
 	}
 
