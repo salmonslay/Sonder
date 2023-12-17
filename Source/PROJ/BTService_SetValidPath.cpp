@@ -4,10 +4,10 @@
 #include "BTService_SetValidPath.h"
 
 #include "AIController.h"
-#include "NavigationPath.h"
-#include "NavigationSystem.h"
+#include "PROJCharacter.h"
 #include "ShadowCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 UBTService_SetValidPath::UBTService_SetValidPath()
 {
@@ -32,9 +32,12 @@ void UBTService_SetValidPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 
 	if(FMath::Abs(OwnerLocation.Z - CurrentTarget.Z) > HeightDifferenceToMarkInvalid)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Height Difference is invalid"));
 		SetPathIsInvalid(OwnerComp);
 		return; 
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("Height Difference is valid, not jumping and is at same height ish"));
 	}
 	
 	if (!OwnerCharacter->HasNavigationToTarget(CurrentTarget))
@@ -46,6 +49,22 @@ void UBTService_SetValidPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 	// Path valid 
 	OwnerComp.GetBlackboardComponent()->SetValueAsBool(BlackboardKey.SelectedKeyName, true);
 }
+
+bool UBTService_SetValidPath::HasLineOfSightToPlayer(AShadowCharacter* Owner, APROJCharacter* CurrentPlayerTarget) const
+{
+	FHitResult HitResult;
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(Owner);
+	ActorsToIgnore.Add(CurrentPlayerTarget);
+		
+	if (bDebug)
+	{
+		return !UKismetSystemLibrary::LineTraceSingleForObjects(this, Owner->GetActorLocation(), CurrentPlayerTarget->GetActorLocation(), LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true, FColor::Red, FColor::Blue, 2.f);
+	}
+	return !UKismetSystemLibrary::LineTraceSingleForObjects(this, Owner->GetActorLocation(), CurrentPlayerTarget->GetActorLocation(), LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
+
+}
+
 
 void UBTService_SetValidPath::SetPathIsInvalid(UBehaviorTreeComponent& OwnerComp) const
 {
