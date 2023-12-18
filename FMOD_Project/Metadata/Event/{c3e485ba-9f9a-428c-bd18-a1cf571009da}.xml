@@ -59,7 +59,11 @@
 			<destination>{c520824e-10d4-4926-b2e9-4ebb6eee7e5f}</destination>
 		</relationship>
 	</object>
-	<object class="EventAutomatableProperties" id="{ee102f6c-296d-4dac-9673-590510e34b4a}" />
+	<object class="EventAutomatableProperties" id="{ee102f6c-296d-4dac-9673-590510e34b4a}">
+		<property name="maximumDistance">
+			<value>40</value>
+		</property>
+	</object>
 	<object class="MarkerTrack" id="{512a92fa-f08b-43f2-b21c-fc9e5dbae5aa}" />
 	<object class="Timeline" id="{c495c522-4cc6-4af9-85fd-cd5c7592f7e8}">
 		<property name="isProxyEnabled">
@@ -73,10 +77,13 @@
 	</object>
 	<object class="EventMixerMaster" id="{f618b023-4f20-4e8d-925e-d7f8ced00122}">
 		<property name="volume">
-			<value>-24</value>
+			<value>-19.5</value>
 		</property>
 		<relationship name="automators">
 			<destination>{e1071352-24d9-40f8-b123-a6d50f23d0bf}</destination>
+		</relationship>
+		<relationship name="modulators">
+			<destination>{c27a9b30-4b58-40d2-b389-f6d247f658ee}</destination>
 		</relationship>
 		<relationship name="effectChain">
 			<destination>{272235d6-9092-43b0-a423-037f73f8bbb7}</destination>
@@ -102,6 +109,14 @@
 	<object class="Automator" id="{e1071352-24d9-40f8-b123-a6d50f23d0bf}">
 		<property name="nameOfPropertyBeingAutomated">
 			<value>pitch</value>
+		</property>
+	</object>
+	<object class="RandomizerModulator" id="{c27a9b30-4b58-40d2-b389-f6d247f658ee}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>pitch</value>
+		</property>
+		<property name="amount">
+			<value>4.5</value>
 		</property>
 	</object>
 	<object class="MixerBusEffectChain" id="{272235d6-9092-43b0-a423-037f73f8bbb7}">
