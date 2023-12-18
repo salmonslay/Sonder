@@ -6,6 +6,7 @@
 #include "EnemyCharacter.h"
 #include "ShadowCharacter.generated.h"
 
+class AEnemyJumpTrigger;
 class UPlayerCharState; 
 
 /**
@@ -62,6 +63,15 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	float JumpCoolDownTimer = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool IsOverlappingWithTrigger = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	AEnemyJumpTrigger* CurrentJumpTrigger = nullptr;
+
+	UFUNCTION(BlueprintCallable)
+	bool CheckIfJumpNeeded();
 	
 	UFUNCTION(Server, Reliable) 
 	void ServerRPC_ToggleChargeEffect(const bool bActive);
@@ -111,14 +121,14 @@ private:
 	UPROPERTY(EditAnywhere)
 	class UDummyPlayerState* DummyState;
 
-	UPROPERTY(EditAnywhere)
-	class UPlayerBasicAttack* EnemyBasicAttack;
-
 	UPROPERTY(EditDefaultsOnly)
 	class UNiagaraSystem* ChargeEffect;
 
 	UPROPERTY()
-	class UNiagaraComponent* ChargeEffectComp; 
+	class UNiagaraComponent* ChargeEffectComp;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UBasicAttackComponent* EnemyAttackComp; 
 	
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPC_ToggleChargeEffect(const bool bActive); 

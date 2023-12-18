@@ -2,6 +2,7 @@
 
 #include "PROJCharacter.h"
 
+#include "BasicAttackComponent.h"
 #include "CharactersCamera.h"
 #include "Engine/LocalPlayer.h"
 #include "Components/CapsuleComponent.h"
@@ -11,7 +12,6 @@
 #include "EnhancedInputSubsystems.h"
 #include "InputActionValue.h"
 #include "NewPlayerHealthComponent.h"
-#include "PlayerBasicAttack.h"
 #include "ProjPlayerController.h"
 #include "RobotBaseState.h"
 #include "SonderSaveGame.h"
@@ -47,13 +47,9 @@ APROJCharacter::APROJCharacter()
 	GetCharacterMovement()->BrakingDecelerationFalling = 1500.0f;
 
 	NewPlayerHealthComponent = CreateDefaultSubobject<UNewPlayerHealthComponent>("NewPlayerHealthComp");
-	//NewPlayerHealthComponent->SetIsReplicated(true);
 
-	BasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(FName("BasicAttack"));
-	BasicAttack->SetupAttachment(RootComponent);
-	BasicAttack->SetCollisionResponseToAllChannels(ECR_Overlap); 
-	//BasicAttack->SetCollisionProfileName("Enemy");
-	BasicAttack->SetRelativeScale3D(FVector(1.75,1.5,2.5));
+	AttackComponent = CreateDefaultSubobject<UBasicAttackComponent>(FName("Basic Attack Comp"));
+	AttackComponent->SetupAttachment(RootComponent);
 
 	bReplicates = true;
 }
@@ -116,7 +112,7 @@ void APROJCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputCompo
 		EnhancedInputComponent->BindAction(MoveAction, ETriggerEvent::Triggered, this, &APROJCharacter::Move);
 
 		// Attack 
-		FindComponentByClass<UPlayerBasicAttack>()->SetUpInput(EnhancedInputComponent);
+		EnhancedInputComponent->BindAction(AttackInputAction, ETriggerEvent::Triggered, this, &APROJCharacter::DoBasicAttack); 
 	}
 	else
 	{
@@ -233,7 +229,11 @@ void APROJCharacter::Tick(float DeltaSeconds)
 	GetCharacterMovement()->SetPlaneConstraintAxisSetting(EPlaneConstraintAxisSetting::X);
 	GetCharacterMovement()->SetPlaneConstraintEnabled(!bDepthMovementEnabled);
 
-	RotatePlayer(GetLastMovementInputVector().Y); 
+	RotatePlayer(GetLastMovementInputVector().Y);
+
+	// Probably not and should not be necessary but attack comp has been in its rebellious phase lately
+	if(IsLocallyControlled())
+		AttackTimer += DeltaSeconds;
 }
 
 bool APROJCharacter::IsAlive()
@@ -386,6 +386,22 @@ float APROJCharacter::GetDesiredYawRot() const
 		return bFacingTowardsCamera ? -270 : 90; 
 	
 	return bFacingTowardsCamera ? -90 : -180; 
+}
+
+void APROJCharacter::DoBasicAttack()
+{
+	if(AttackTimer > 0.5f)
+		AttackComponent->EnableAttack(); 
+	
+	if(IsValid(AttackComponent)) {
+		if(AttackComponent->Attack()) // Reset timer if could attack 
+			AttackTimer = 0; 
+	}
+	else
+	{
+		UE_LOG(LogTemp, Error, TEXT("No attack component, trying to find one..."))
+		AttackComponent = FindComponentByClass<UBasicAttackComponent>();
+	}
 }
 
 void APROJCharacter::ServerRPC_SetMovementMode_Implementation(const EMovementMode NewMode)

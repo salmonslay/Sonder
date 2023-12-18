@@ -4,7 +4,7 @@
 #include "BTService_ChooseAttack.h"
 
 #include "AIController.h"
-#include "PlayerBasicAttack.h"
+#include "BasicAttackComponent.h"
 #include "RobotBaseState.h"
 #include "ShadowRobotCharacter.h"
 #include "ShadowSoulCharacter.h"
@@ -90,7 +90,7 @@ bool UBTService_ChooseAttack::IsSpecialAttackOnCooldown(APawn* Owner) const
 
 bool UBTService_ChooseAttack::CanBasicAttack(const APawn* Owner) const
 {
-	if(const auto BasicAttack = Owner->FindComponentByClass<UPlayerBasicAttack>())
+	if(const auto BasicAttack = Owner->FindComponentByClass<UBasicAttackComponent>())
 		return BasicAttack->CanAttack();
 
 	return false; 

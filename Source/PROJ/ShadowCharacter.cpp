@@ -2,12 +2,13 @@
 
 #include "ShadowCharacter.h"
 
+#include "BasicAttackComponent.h"
 #include "DummyPlayerState.h"
+#include "EnemyJumpTrigger.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
-#include "PlayerBasicAttack.h"
 #include "PlayerCharState.h"
 #include "RobotBaseState.h"
 #include "SoulBaseStateNew.h"
@@ -19,13 +20,8 @@ AShadowCharacter::AShadowCharacter()
 	// Create the states 
 	DummyState = CreateDefaultSubobject<UDummyPlayerState>(TEXT("DummyStateNew"));
 
-	EnemyBasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(TEXT("BasicAttack"));
-	EnemyBasicAttack->SetupAttachment(RootComponent);
-
-	EnemyBasicAttack->SetRelativeLocation(FVector(50, 0, 0)); 
-	EnemyBasicAttack->SetRelativeScale3D(FVector(1.5f, 1.5f, 2.f));
-	EnemyBasicAttack->SetCollisionEnabled(ECollisionEnabled::QueryOnly); 
-
+	EnemyAttackComp = CreateDefaultSubobject<UBasicAttackComponent>(TEXT("Basic Attack Comp"));
+	EnemyAttackComp->SetupAttachment(RootComponent);
 }
 
 void AShadowCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -36,14 +32,37 @@ void AShadowCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& Out
 	DOREPLIFETIME(AShadowCharacter, bIsPerformingJump)
 }
 
+bool AShadowCharacter::CheckIfJumpNeeded()
+{
+	if (CurrentJumpTrigger == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Has set overlapping trigger but does not have pointer to that trigger"))
+		return false;
+	}
+	
+	if (CurrentJumpTrigger->HasPathBetweenJumpPoints)
+	{
+		UE_LOG(LogTemp, Error, TEXT("Has path between points and is a static jump trigger, no need for jump"))
+		return false;
+	}
+
+	if (bHasLandedOnPlatform || bHasLandedOnGround)
+	{
+		return true;
+	}
+	return false;
+}
+
 void AShadowCharacter::MakeJump()
 {
 	if(GetLocalRole() == ROLE_Authority && !bIsStunned)
 	{
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
-		UE_LOG(LogTemp, Error, TEXT("MovementMode falling"));
-		
+		//UE_LOG(LogTemp, Error, TEXT("MovementMode falling"));
+		bCanBasicJump = false;
 		bIsPerformingJump = true;
+		bHasLandedOnPlatform = false;
+		bHasLandedOnGround = false;
 		OnJumpEvent();
 	}
 }
@@ -55,7 +74,9 @@ void AShadowCharacter::Idle()
 	if(GetLocalRole() == ROLE_Authority && !bIsStunned)
 	{
 		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
+		//UE_LOG(LogTemp, Error, TEXT("MovementMode walking"));
 		bIsPerformingJump = false;
+		bIsJumping = false;
 	}
 }
 
@@ -104,6 +125,8 @@ void AShadowCharacter::BeginPlay()
 
 	if(CurrentState)
 		CurrentState->Enter();
+
+	JumpCoolDownTimer = JumpCoolDownDuration;
 }
 
 void AShadowCharacter::Tick(const float DeltaSeconds)
@@ -115,6 +138,18 @@ void AShadowCharacter::Tick(const float DeltaSeconds)
 
 	if(CurrentState)
 		CurrentState->Update(DeltaSeconds);
+	
+	if (IsOverlappingWithTrigger && JumpCoolDownTimer >= JumpCoolDownDuration)
+	{
+		if (CheckIfJumpNeeded())
+		{
+			if (!bIsPerformingJump)
+			{
+				bCanBasicJump = true;
+				AvaliableJumpPoint = CurrentJumpTrigger->RequestJumpLocation(GetActorLocation(), CurrentTargetLocation, bHasLandedOnPlatform);
+			}
+		}
+	}
 }
 
 UPlayerCharState* AShadowCharacter::GetStartingState() const
