@@ -79,6 +79,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{210e4e5f-b8fb-474b-abc9-8cf2c47bc660}">
+		<property name="volume">
+			<value>-7</value>
+		</property>
 		<relationship name="effectChain">
 			<destination>{e85c33be-0e5f-4313-a72a-ea62d62cf0d8}</destination>
 		</relationship>
@@ -117,6 +120,12 @@
 	<object class="SpatialiserEffect" id="{9c1a2fc5-b417-478f-bb09-46caf479dca2}">
 		<property name="distanceRolloffType">
 			<value>1</value>
+		</property>
+		<property name="extentMode">
+			<value>1</value>
+		</property>
+		<property name="soundSize">
+			<value>0.75</value>
 		</property>
 	</object>
 </objects>
