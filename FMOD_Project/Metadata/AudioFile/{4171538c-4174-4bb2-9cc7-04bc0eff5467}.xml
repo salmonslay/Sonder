@@ -1,0 +1,23 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{4171538c-4174-4bb2-9cc7-04bc0eff5467}">
+		<property name="assetPath">
+			<value>WaterMovement UWT03_55.2.wav</value>
+		</property>
+		<property name="isStreaming">
+			<value>true</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>48</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>22.783999999999999</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{542ff4ed-1b88-4c2c-98cc-a4f4c45c5308}</destination>
+		</relationship>
+	</object>
+</objects>
