@@ -2,7 +2,7 @@
 <objects serializationModel="Studio.02.02.00">
 	<object class="Event" id="{365514ba-5ac0-4f2d-92c9-d4bbd067b7f3}">
 		<property name="name">
-			<value>Punch2</value>
+			<value>PostPunchSoul</value>
 		</property>
 		<property name="outputFormat">
 			<value>2</value>
@@ -78,11 +78,8 @@
 		<property name="volume">
 			<value>-12</value>
 		</property>
-		<property name="pitch">
-			<value>10</value>
-		</property>
-		<relationship name="automators">
-			<destination>{424b8163-ed54-4856-aebb-2caabcc12cb0}</destination>
+		<relationship name="modulators">
+			<destination>{f69eee91-40e3-4602-9443-3d1e4e9e5e5a}</destination>
 		</relationship>
 		<relationship name="effectChain">
 			<destination>{0d0116a7-452e-433b-b555-c9add9e5dbe0}</destination>
@@ -96,7 +93,7 @@
 	</object>
 	<object class="MultiSound" id="{fa701c67-3b0b-4149-b9c1-a0ceaa35f093}">
 		<relationship name="sounds">
-			<destination>{2cb685a5-ffe4-4f70-898d-1e3bb7d7daca}</destination>
+			<destination>{fcb34ee2-709f-49d3-b4e4-d0be4b764525}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusEffectChain" id="{68f6c526-c133-494f-ac7c-dd7ec6e29993}">
@@ -105,9 +102,12 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{b4d11ffd-6804-43e3-891a-ee35241cfed7}" />
-	<object class="Automator" id="{424b8163-ed54-4856-aebb-2caabcc12cb0}">
-		<property name="nameOfPropertyBeingAutomated">
+	<object class="RandomizerModulator" id="{f69eee91-40e3-4602-9443-3d1e4e9e5e5a}">
+		<property name="nameOfPropertyBeingModulated">
 			<value>pitch</value>
+		</property>
+		<property name="amount">
+			<value>6.5</value>
 		</property>
 	</object>
 	<object class="MixerBusEffectChain" id="{0d0116a7-452e-433b-b555-c9add9e5dbe0}">
@@ -117,12 +117,9 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{1762c2db-0fef-45f4-abf1-8ec1f166c19f}" />
-	<object class="SingleSound" id="{2cb685a5-ffe4-4f70-898d-1e3bb7d7daca}">
-		<property name="startOffset">
-			<value>7</value>
-		</property>
+	<object class="SingleSound" id="{fcb34ee2-709f-49d3-b4e4-d0be4b764525}">
 		<relationship name="audioFile">
-			<destination>{415fb5d9-480d-478e-9de1-53c78a861ccb}</destination>
+			<destination>{183a50b5-9300-4c6b-acfe-f5eab9eecc6f}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusFader" id="{b6b3272e-c1d8-4d44-a686-446fd3b046e6}" />
@@ -136,6 +133,9 @@
 		</property>
 		<property name="extentMode">
 			<value>1</value>
+		</property>
+		<property name="soundSize">
+			<value>4.4000001</value>
 		</property>
 		<property name="LFEUpmixEnabled">
 			<value>true</value>
