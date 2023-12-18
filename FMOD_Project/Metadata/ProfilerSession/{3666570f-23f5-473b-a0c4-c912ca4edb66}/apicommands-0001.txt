@@ -1,0 +1,317 @@
+Playback::frame, 0
+Playback::version, 2, 131609
+#
+# FMOD v2.02.19 command capture
+#   System::setSoftwareChannels(numsoftwarechannels: 64)
+#   System::setDSPBufferSize(bufferlength: 1024, numbuffers: 4)
+#   System::setSoftwareFormat(samplerate: 48000, speakermode: 6, numrawspeakers: 6)
+#   System::setAdvancedSettings(settings: {maxMPEGCodecs: 0, maxADPCMCodecs: 0, maxXMACodecs: 0, maxVorbisCodecs: 64, maxAT9Codecs: 0, maxFADPCMCodecs: 0, maxPCMCodecs: 0, maxOpusCodecs: 0
+#       ASIONumChannels: 0, vol0virtualvol: 0.001, defaultDecodeBufferSize: 400, geometryMaxFadeTime: 0,
+#       distanceFilterCenterFreq: 1500, reverb3Dinstance: 0, DSPBufferPoolSize: 8, resamplerMethod: 2, randomSeed: 19404})
+#   Studio::System::setAdvancedSettings(settings: {commandqueuesize: 32768, handleinitialsize: 65536, studioupdateperiod: 20, idlesampledatapoolsize: 262144})
+#   Studio::System::initialize(maxchannels: 512, studioflags: 0x00000001, flags: 0x00030000)
+#
+Playback::frame, 0
+# Printing initial instance state
+System::loadBankFile, ../../../../../../Users/frce6549/Documents/GitHub/Sonder/Content/FMOD/Desktop/Master.bank, 0, 2097280
+Playback::loadBankFinished, {c671b85a-2223-4ade-bb1a-23e1cacbaf7a}, 2097280, 0
+Bank::getEventListItem, 2097280, 0, {d3708bbb-6cea-4c83-af43-823fa7955593}, 2098304
+Bank::getEventListItem, 2097280, 1, {662ac5cc-65a8-48fb-9a4a-fe41ef6d2fd0}, 2113920
+System::loadBankFile, ../../../../../../Users/frce6549/Documents/GitHub/Sonder/Content/FMOD/Desktop/Master.strings.bank, 0, 2097536
+Playback::loadBankFinished, {5e6c988e-5358-069c-3d53-a91f3b38a9e2}, 2097536, 0
+System::loadBankFile, ../../../../../../Users/frce6549/Documents/GitHub/Sonder/Content/FMOD/Desktop/OST.bank, 0, 2097792
+Playback::loadBankFinished, {b3221174-4d41-462b-ae3c-728b0bcfef54}, 2097792, 0
+Bank::getEventListItem, 2097792, 0, {647b1f06-d1fb-4223-8878-6e2d1deefc39}, 2102912
+Bank::getEventListItem, 2097792, 1, {bf616e96-a4f6-4976-a1ff-d1092017e9a9}, 2265984
+System::loadBankFile, ../../../../../../Users/frce6549/Documents/GitHub/Sonder/Content/FMOD/Desktop/SFX.bank, 0, 2098048
+Playback::loadBankFinished, {efafb6ac-edfc-4ade-b3d2-ba0708c5883d}, 2098048, 0
+Bank::getEventListItem, 2098048, 0, {dc37600c-6e08-470e-b44d-589b62812248}, 2262656
+Bank::getEventListItem, 2098048, 1, {12f9321a-aec4-47f3-ba8c-477f8d3bbc2a}, 2224512
+Bank::getEventListItem, 2098048, 2, {b2d0c32a-d6f1-45bc-af1e-e547fb777917}, 2141312
+Bank::getEventListItem, 2098048, 3, {177aeb2c-da99-4d2b-9a1b-ae43d26f696a}, 2149504
+Bank::getEventListItem, 2098048, 4, {e82bcc31-be92-40d5-a542-ffaa729f2e62}, 2122368
+Bank::getEventListItem, 2098048, 5, {2117045d-ac15-42aa-9dd9-2dc3b0181ab4}, 2280832
+Bank::getEventListItem, 2098048, 6, {d361198a-5945-4f7b-b073-5859a959c08e}, 2121344
+Bank::getEventListItem, 2098048, 7, {33c19d8d-6584-4d71-8539-528af9307a9a}, 2142848
+Bank::getEventListItem, 2098048, 8, {2dd12098-de5e-4eef-8111-60150c006df2}, 2180224
+Bank::getEventListItem, 2098048, 9, {58aba79d-7d49-4b67-97d9-3a2f8bdacff3}, 2269568
+Bank::getEventListItem, 2098048, 10, {318d8ba7-3fb2-4c9d-aa1e-66008fca7aee}, 2263168
+Bank::getEventListItem, 2098048, 11, {9883bea8-45b0-4785-9942-acee9cc6ca2b}, 2296448
+Bank::getEventListItem, 2098048, 12, {3c91d1bc-cd9b-4845-9be5-942b0a78e1c8}, 2098816
+Bank::getEventListItem, 2098048, 13, {5463c4bf-d85a-4954-9343-d6fa3964764c}, 2099328
+Bank::getEventListItem, 2098048, 14, {3cdd2fc3-8691-405f-9e21-a0e14e19377c}, 2116480
+Bank::getEventListItem, 2098048, 15, {0c6548c4-ae68-4941-af55-253f7e45bf52}, 2111872
+Bank::getEventListItem, 2098048, 16, {14a238c9-6c4b-48dc-895b-36d58ff79f2e}, 2141824
+Bank::getEventListItem, 2098048, 17, {ae8f44d1-fada-4a86-b9b3-5644d66db4bd}, 2123904
+Bank::getEventListItem, 2098048, 18, {2e4900e2-2547-49de-a270-71f6ab6f72e8}, 2179712
+Bank::getEventListItem, 2098048, 19, {f822e2f1-3b2c-4a85-b9aa-736f771b6fb4}, 2103936
+Bank::getEventListItem, 2098048, 20, {63110af5-3c0d-4b0a-bc08-4b0f41adb802}, 2103424
+Bank::getEventListItem, 2098048, 21, {4be223ff-584d-4c36-9b0a-372438fa01c5}, 2101632
+System::setNumListeners, 2
+System::setListenerAttributes, 0, {{12.2268,6.73605,-4.7252},{0,0,0},{1.86679e-15,-0.173638,0.98481},{3.29145e-16,0.98481,0.173638}}, {12.2268,6.73605,-4.7252}, true
+System::setListenerAttributes, 1, {{12.2268,6.73605,-4.7252},{0,0,0},{1.8668e-15,-0.17364,0.984809},{3.2915e-16,0.984809,0.17364}}, {12.2268,6.73605,-4.7252}, true
+EventDescription::createInstance, 2113920, 2120832
+EventInstance::setTimelinePosition, 2120832, 112000
+EventInstance::start, 2120832
+EventInstance::release, 2120832
+EventDescription::createInstance, 2113920, 2114176
+EventInstance::setTimelinePosition, 2114176, 113472
+EventInstance::start, 2114176
+EventInstance::release, 2114176
+EventDescription::createInstance, 2103936, 2105216
+EventInstance::setParameterByName, 2105216, boxLanded, 1, false
+EventInstance::setParameterByName, 2105216, obstacleType, 9, false
+EventInstance::set3DAttributes, 2105216, {{30.6,6.925,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2105216, 14088
+EventInstance::start, 2105216
+EventDescription::createInstance, 2103936, 2409088
+EventInstance::setParameterByName, 2409088, boxLanded, 1, false
+EventInstance::setParameterByName, 2409088, obstacleType, 1, false
+EventInstance::set3DAttributes, 2409088, {{3.04363,12.152,8.26864},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2409088, 83127
+EventInstance::start, 2409088
+EventDescription::createInstance, 2103936, 2181760
+EventInstance::setParameterByName, 2181760, boxLanded, 1, false
+EventInstance::setParameterByName, 2181760, obstacleType, 1, false
+EventInstance::set3DAttributes, 2181760, {{36.2965,8.63793,8.46864},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2181760, 119457
+EventInstance::start, 2181760
+EventDescription::createInstance, 2103936, 2106496
+EventInstance::setParameterByName, 2106496, boxLanded, 1, false
+EventInstance::setParameterByName, 2106496, obstacleType, 4, false
+EventInstance::set3DAttributes, 2106496, {{11.4697,6.925,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2106496, 14057
+EventInstance::start, 2106496
+EventDescription::createInstance, 2103936, 2109824
+EventInstance::setParameterByName, 2109824, boxLanded, 1, false
+EventInstance::setParameterByName, 2109824, obstacleType, 9, false
+EventInstance::set3DAttributes, 2109824, {{30.6,6.925,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2109824, 14150
+EventInstance::start, 2109824
+EventDescription::createInstance, 2103936, 2184832
+EventInstance::setParameterByName, 2184832, boxLanded, 1, false
+EventInstance::setParameterByName, 2184832, obstacleType, 1, false
+EventInstance::set3DAttributes, 2184832, {{36.2965,8.63793,8.46864},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2184832, 123836
+EventInstance::start, 2184832
+EventDescription::createInstance, 2103936, 2108032
+EventInstance::setParameterByName, 2108032, boxLanded, 1, false
+EventInstance::setParameterByName, 2108032, obstacleType, 4, false
+EventInstance::set3DAttributes, 2108032, {{11.4697,6.925,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2108032, 14138
+EventInstance::start, 2108032
+EventDescription::createInstance, 2103936, 2404992
+EventInstance::setParameterByName, 2404992, boxLanded, 1, false
+EventInstance::setParameterByName, 2404992, obstacleType, 1, false
+EventInstance::set3DAttributes, 2404992, {{3.04363,12.152,8.26864},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2404992, 74842
+EventInstance::start, 2404992
+EventDescription::createInstance, 2098816, 2100608
+EventInstance::set3DAttributes, 2100608, {{20.45,0.45,8.4},{0,0,0},{0,0,1},{1,1.2168e-08,0}}
+EventInstance::setTimelinePosition, 2100608, 115008
+EventInstance::start, 2100608
+EventDescription::createInstance, 2098816, 2099072
+EventInstance::set3DAttributes, 2099072, {{20.45,0.45,8.4},{0,0,0},{0,0,1},{1,1.2168e-08,0}}
+EventInstance::setTimelinePosition, 2099072, 116074
+EventInstance::start, 2099072
+EventDescription::createInstance, 2098304, 2098560
+EventInstance::setTimelinePosition, 2098560, 116245
+EventInstance::start, 2098560
+EventDescription::createInstance, 2098304, 2100352
+EventInstance::setTimelinePosition, 2100352, 115178
+EventInstance::start, 2100352
+# Finished printing initial instance state
+Playback::frame, 10240
+EventInstance::setParameterByName, 2105216, boxLanded, 0, false
+EventInstance::setParameterByName, 2105216, obstacleType, 9, false
+EventInstance::setTimelinePosition, 2105216, 0
+EventInstance::stop, 2105216, 0
+System::getEventByID, {f822e2f1-3b2c-4a85-b9aa-736f771b6fb4}, 2103936
+EventInstance::set3DAttributes, 2105216, {{30.6,6.925,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setParameterByName, 2105216, boxLanded, 0, false
+EventInstance::setParameterByName, 2105216, InWater, 0, false
+EventInstance::setParameterByName, 2105216, obstacleWaiting, 0, false
+EventInstance::setParameterByName, 2105216, obstacleType, 9, false
+EventInstance::start, 2105216
+EventInstance::setParameterByName, 2106496, boxLanded, 0, false
+EventInstance::setParameterByName, 2106496, obstacleType, 4, false
+EventInstance::setTimelinePosition, 2106496, 0
+EventInstance::stop, 2106496, 0
+System::getEventByID, {f822e2f1-3b2c-4a85-b9aa-736f771b6fb4}, 2103936
+EventInstance::set3DAttributes, 2106496, {{11.4697,6.925,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setParameterByName, 2106496, boxLanded, 0, false
+EventInstance::setParameterByName, 2106496, InWater, 0, false
+EventInstance::setParameterByName, 2106496, obstacleWaiting, 0, false
+EventInstance::setParameterByName, 2106496, obstacleType, 4, false
+EventInstance::start, 2106496
+EventInstance::set3DAttributes, 2105216, {{30.6,6.14524,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2106496, {{11.4697,6.14524,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setParameterByName, 2108032, boxLanded, 0, false
+EventInstance::setParameterByName, 2108032, obstacleType, 4, false
+EventInstance::setTimelinePosition, 2108032, 0
+EventInstance::stop, 2108032, 0
+System::getEventByID, {f822e2f1-3b2c-4a85-b9aa-736f771b6fb4}, 2103936
+EventInstance::set3DAttributes, 2108032, {{11.4697,6.925,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setParameterByName, 2108032, boxLanded, 0, false
+EventInstance::setParameterByName, 2108032, InWater, 0, false
+EventInstance::setParameterByName, 2108032, obstacleWaiting, 0, false
+EventInstance::setParameterByName, 2108032, obstacleType, 4, false
+EventInstance::start, 2108032
+EventInstance::set3DAttributes, 2108032, {{11.469,6.145,8.31},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setParameterByName, 2109824, boxLanded, 0, false
+EventInstance::setParameterByName, 2109824, obstacleType, 9, false
+EventInstance::setTimelinePosition, 2109824, 0
+EventInstance::stop, 2109824, 0
+System::getEventByID, {f822e2f1-3b2c-4a85-b9aa-736f771b6fb4}, 2103936
+EventInstance::set3DAttributes, 2109824, {{30.6,6.925,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setParameterByName, 2109824, boxLanded, 0, false
+EventInstance::setParameterByName, 2109824, InWater, 0, false
+EventInstance::setParameterByName, 2109824, obstacleWaiting, 0, false
+EventInstance::setParameterByName, 2109824, obstacleType, 9, false
+EventInstance::start, 2109824
+EventInstance::set3DAttributes, 2109824, {{30.6,6.145,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2109824, {{30.6,6.14524,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2108032, {{11.4697,6.14524,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+System::setListenerAttributes, 0, {{12.2268,6.73605,-4.7252},{0,0,0},{1.86679e-15,-0.173638,0.98481},{3.29145e-16,0.98481,0.173638}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{12.2268,6.73605,-4.7252},{0,0,0},{1.8668e-15,-0.17364,0.984809},{3.2915e-16,0.984809,0.17364}}, {0,0,0}, false
+Playback::frame, 15360
+EventInstance::set3DAttributes, 2106496, {{11.4697,5.35137,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2105216, {{30.6,5.35137,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2108032, {{11.469,5.355,8.31},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2109824, {{30.6,5.355,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2109824, {{30.6,5.35137,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2108032, {{11.4697,5.35137,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+System::setListenerAttributes, 0, {{12.2268,6.73605,-4.7252},{0,0,0},{1.86679e-15,-0.173638,0.98481},{3.29145e-16,0.98481,0.173638}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{12.2268,6.73605,-4.7252},{0,0,0},{1.8668e-15,-0.17364,0.984809},{3.2915e-16,0.984809,0.17364}}, {0,0,0}, false
+Playback::frame, 16384
+EventInstance::set3DAttributes, 2106496, {{11.4697,4.56634,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2105216, {{30.6,4.56634,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2108032, {{11.469,4.565,8.31},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2109824, {{30.6,4.565,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2109824, {{30.6,4.56634,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2108032, {{11.4697,4.56634,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+System::setListenerAttributes, 0, {{12.2268,6.73605,-4.7252},{0,0,0},{1.86679e-15,-0.173638,0.98481},{3.29145e-16,0.98481,0.173638}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{12.2268,6.73605,-4.7252},{0,0,0},{1.8668e-15,-0.17364,0.984809},{3.2915e-16,0.984809,0.17364}}, {0,0,0}, false
+Playback::frame, 15360
+EventInstance::set3DAttributes, 2106496, {{11.4697,3.7735,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2105216, {{30.6,3.7735,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2108032, {{11.469,3.775,8.31},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2109824, {{30.6,3.775,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2109824, {{30.6,3.7735,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2108032, {{11.4697,3.7735,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+System::setListenerAttributes, 0, {{12.2268,6.73605,-4.7252},{0,0,0},{1.86679e-15,-0.173638,0.98481},{3.29145e-16,0.98481,0.173638}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{12.2268,6.73605,-4.7252},{0,0,0},{1.8668e-15,-0.17364,0.984809},{3.2915e-16,0.984809,0.17364}}, {0,0,0}, false
+Playback::frame, 16384
+EventInstance::set3DAttributes, 2106496, {{11.4697,2.97645,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2105216, {{30.6,2.97645,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2108032, {{11.469,2.975,8.31},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2109824, {{30.6,2.975,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2109824, {{30.6,2.97645,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2108032, {{11.4697,2.97645,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+System::setListenerAttributes, 0, {{12.2268,6.73605,-4.7252},{0,0,0},{1.86679e-15,-0.173638,0.98481},{3.29145e-16,0.98481,0.173638}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{12.2268,6.73605,-4.7252},{0,0,0},{1.8668e-15,-0.17364,0.984809},{3.2915e-16,0.984809,0.17364}}, {0,0,0}, false
+Playback::frame, 16384
+EventInstance::set3DAttributes, 2106496, {{11.4697,2.18361,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2105216, {{30.6,2.18361,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2108032, {{11.469,2.185,8.31},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2109824, {{30.6,2.185,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2109824, {{30.6,2.18361,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2108032, {{11.4697,2.18361,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+System::setListenerAttributes, 0, {{12.2268,6.73605,-4.7252},{0,0,0},{1.86679e-15,-0.173638,0.98481},{3.29145e-16,0.98481,0.173638}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{12.2268,6.73605,-4.7252},{0,0,0},{1.8668e-15,-0.17364,0.984809},{3.2915e-16,0.984809,0.17364}}, {0,0,0}, false
+Playback::frame, 15360
+EventInstance::set3DAttributes, 2106496, {{11.4697,1.39858,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2105216, {{30.6,1.39858,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2108032, {{11.469,1.395,8.31},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2109824, {{30.6,1.395,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2109824, {{30.6,1.39858,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2108032, {{11.4697,1.39858,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+System::setListenerAttributes, 0, {{12.2268,6.73605,-4.7252},{0,0,0},{1.86679e-15,-0.173638,0.98481},{3.29145e-16,0.98481,0.173638}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{12.2268,6.73605,-4.7252},{0,0,0},{1.8668e-15,-0.17364,0.984809},{3.2915e-16,0.984809,0.17364}}, {0,0,0}, false
+Playback::frame, 16384
+EventInstance::set3DAttributes, 2106496, {{11.4697,0.604684,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2105216, {{30.6,0.604684,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2108032, {{11.469,0.605,8.31},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2109824, {{30.6,0.604684,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2108032, {{11.4697,0.604684,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+System::setListenerAttributes, 0, {{12.2268,6.73605,-4.7252},{0,0,0},{1.86679e-15,-0.173638,0.98481},{3.29145e-16,0.98481,0.173638}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{12.2268,6.73605,-4.7252},{0,0,0},{1.8668e-15,-0.17364,0.984809},{3.2915e-16,0.984809,0.17364}}, {0,0,0}, false
+Playback::frame, 16384
+EventInstance::set3DAttributes, 2106496, {{11.4697,-0.175,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setParameterByName, 2106496, boxLanded, 1, false
+EventInstance::set3DAttributes, 2105216, {{30.6,-0.175,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setParameterByName, 2105216, boxLanded, 1, false
+EventInstance::set3DAttributes, 2108032, {{11.469,-0.175,8.31},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2109824, {{30.6,-0.175,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setParameterByName, 2109824, boxLanded, 1, false
+EventInstance::set3DAttributes, 2108032, {{11.4697,-0.175,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setParameterByName, 2108032, boxLanded, 1, false
+System::setListenerAttributes, 0, {{12.2268,6.73605,-4.7252},{0,0,0},{1.86679e-15,-0.173638,0.98481},{3.29145e-16,0.98481,0.173638}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{12.2268,6.73605,-4.7252},{0,0,0},{1.8668e-15,-0.17364,0.984809},{3.2915e-16,0.984809,0.17364}}, {0,0,0}, false
+Playback::frame, 15360
+System::setListenerAttributes, 0, {{12.2268,6.73605,-4.7252},{0,0,0},{1.86679e-15,-0.173638,0.98481},{3.29145e-16,0.98481,0.173638}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{12.2268,6.73605,-4.7252},{0,0,0},{1.8668e-15,-0.17364,0.984809},{3.2915e-16,0.984809,0.17364}}, {0,0,0}, false
+Playback::frame, 16384
+EventInstance::setParameterByName, 2105216, boxLanded, 0, false
+EventInstance::setParameterByName, 2105216, obstacleType, 9, false
+EventInstance::setTimelinePosition, 2105216, 0
+EventInstance::stop, 2105216, 0
+System::getEventByID, {f822e2f1-3b2c-4a85-b9aa-736f771b6fb4}, 2103936
+EventInstance::set3DAttributes, 2105216, {{30.6,-0.175,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setParameterByName, 2105216, boxLanded, 0, false
+EventInstance::setParameterByName, 2105216, InWater, 0, false
+EventInstance::setParameterByName, 2105216, obstacleWaiting, 0, false
+EventInstance::setParameterByName, 2105216, obstacleType, 9, false
+EventInstance::start, 2105216
+EventInstance::setParameterByName, 2106496, boxLanded, 0, false
+EventInstance::setParameterByName, 2106496, obstacleType, 4, false
+EventInstance::setTimelinePosition, 2106496, 0
+EventInstance::stop, 2106496, 0
+System::getEventByID, {f822e2f1-3b2c-4a85-b9aa-736f771b6fb4}, 2103936
+EventInstance::set3DAttributes, 2106496, {{11.4697,-0.175,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setParameterByName, 2106496, boxLanded, 0, false
+EventInstance::setParameterByName, 2106496, InWater, 0, false
+EventInstance::setParameterByName, 2106496, obstacleWaiting, 0, false
+EventInstance::setParameterByName, 2106496, obstacleType, 4, false
+EventInstance::start, 2106496
+EventInstance::set3DAttributes, 2105216, {{30.6,0.60476,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2106496, {{11.4697,0.60476,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setParameterByName, 2108032, boxLanded, 0, false
+EventInstance::setParameterByName, 2108032, obstacleType, 4, false
+EventInstance::setTimelinePosition, 2108032, 0
+EventInstance::stop, 2108032, 0
+System::getEventByID, {f822e2f1-3b2c-4a85-b9aa-736f771b6fb4}, 2103936
+EventInstance::set3DAttributes, 2108032, {{11.4697,-0.175,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setParameterByName, 2108032, boxLanded, 0, false
+EventInstance::setParameterByName, 2108032, InWater, 0, false
+EventInstance::setParameterByName, 2108032, obstacleWaiting, 0, false
+EventInstance::setParameterByName, 2108032, obstacleType, 4, false
+EventInstance::start, 2108032
+EventInstance::set3DAttributes, 2108032, {{11.469,0.605,8.31},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setParameterByName, 2109824, boxLanded, 0, false
+EventInstance::setParameterByName, 2109824, obstacleType, 9, false
+EventInstance::setTimelinePosition, 2109824, 0
+EventInstance::stop, 2109824, 0
+System::getEventByID, {f822e2f1-3b2c-4a85-b9aa-736f771b6fb4}, 2103936
+EventInstance::set3DAttributes, 2109824, {{30.6,-0.175,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setParameterByName, 2109824, boxLanded, 0, false
+EventInstance::setParameterByName, 2109824, InWater, 0, false
+EventInstance::setParameterByName, 2109824, obstacleWaiting, 0, false
+EventInstance::setParameterByName, 2109824, obstacleType, 9, false
+EventInstance::start, 2109824
+EventInstance::set3DAttributes, 2109824, {{30.6,0.605,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2109824, {{30.6,-0.175,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2108032, {{11.4697,-0.175,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2109824, {{30.6,0.60476,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2108032, {{11.4697,0.60476,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+System::setListenerAttributes, 0, {{12.2268,6.73605,-4.7252},{0,0,0},{1.86679e-15,-0.173638,0.98481},{3.29145e-16,0.98481,0.173638}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{12.2268,6.73605,-4.7252},{0,0,0},{1.8668e-15,-0.17364,0.984809},{3.2915e-16,0.984809,0.17364}}, {0,0,0}, false
+Playback::frame, 16384
+EventInstance::set3DAttributes, 2106496, {{11.4697,1.39863,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2105216, {{30.6,1.39863,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2108032, {{11.469,1.395,8.31},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2109824, {{30.6,1.395,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2109824, {{30.6,1.39863,8.35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2108032, {{11.4697,1.39863,8.30927},{0,0,0},{0,0,1},{0,1,0}}
+System::setListenerAttributes, 0, {{12.2268,6.73605,-4.7252},{0,0,0},{1.86679e-15,-0.173638,0.98481},{3.29145e-16,0.98481,0.173638}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{12.2268,6.73605,-4.7252},{0,0,0},{1.8668e-15,-0.17364,0.984809},{3.2915e-16,0.984809,0.17364}}, {0,0,0}, false

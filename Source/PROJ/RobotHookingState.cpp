@@ -221,9 +221,11 @@ void URobotHookingState::MulticastRPCHookShotStart_Implementation(const FVector&
 	
 	if(CurrentTargetActor) // If there is a valid target 
 	{
+		if(CharOwner->GetCharacterMovement()->Velocity.Z < 0.f) 
+			CharOwner->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+		
 		CharOwner->GetCharacterMovement()->GravityScale = 0;
-		CharOwner->GetCharacterMovement()->Velocity = FVector::ZeroVector; 
-		CharOwner->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying); 
+		CharOwner->GetCharacterMovement()->Velocity = FVector::ZeroVector;
 	}
 
 	RobotChar->OnHookShotStart(); 
@@ -289,6 +291,8 @@ void URobotHookingState::MulticastRPCStartTravel_Implementation()
 	if(HookShotTravelEffect)
 		HookShotTravelComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(HookShotTravelEffect, GetOwner()->GetRootComponent(), NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false);
 
+	CharOwner->GetCharacterMovement()->SetMovementMode(MOVE_Flying); 
+	
 	Cast<ARobotStateMachine>(CharOwner)->OnHookShotTravelStart(); 
 }
 
