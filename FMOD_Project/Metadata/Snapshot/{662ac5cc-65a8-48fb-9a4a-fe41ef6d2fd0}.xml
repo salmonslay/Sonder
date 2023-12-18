@@ -298,7 +298,7 @@
 			<value>100</value>
 		</property>
 		<property name="releaseTime">
-			<value>2000</value>
+			<value>0</value>
 		</property>
 	</object>
 </objects>
