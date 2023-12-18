@@ -881,6 +881,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerGroup" id="{d7d90205-90da-4bf7-bcc3-a75c4ff17c2a}">
+		<property name="volume">
+			<value>-6</value>
+		</property>
 		<property name="name">
 			<value>4. RollingSound</value>
 		</property>
