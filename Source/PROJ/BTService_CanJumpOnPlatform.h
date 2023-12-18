@@ -46,9 +46,10 @@ private:
 	/** Calculates force to jump on platform if jump is possible, and performs jump */ 
 	void JumpToPoint(const FVector &StartPoint, const FVector &JumpPoint) const;
 
-	
+	UPROPERTY(EditAnywhere)
+	FBlackboardKeySelector BBKeyIsJumping;
 
-	// Currently not in use
-	//bool CheckPathToPlayer(const FVector &StartPoint, const FVector &CurrentTargetPoint);
+	UPROPERTY()
+	UBlackboardComponent* BlackboardComponent;
 
 };
