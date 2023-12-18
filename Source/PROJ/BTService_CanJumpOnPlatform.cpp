@@ -43,6 +43,7 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	// TESTING SHOULD LOOK FOR Z on locations
 	// this should really not be here and its horrid but there are a lot of things that needs to change
 
+	/*
 	if (OwnerCharacter->bHasLandedOnPlatform && !FMath::IsNearlyEqual(BlackboardComponent->GetValueAsVector("CurrentMoveTarget").Z,OwnerLocation.Z, 3 ))
 	{
 		BlackboardComponent->SetValueAsBool("bIsOnPlatform", true);
@@ -52,6 +53,7 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 		BlackboardComponent->SetValueAsBool("bIsOnPlatform", false);
 		BlackboardComponent->ClearValue("bIsOnPlatform");
 	}
+	*/
 	
 	if (OwnerCharacter->bIsJumping || OwnerCharacter->bIsPerformingJump )
 	{
