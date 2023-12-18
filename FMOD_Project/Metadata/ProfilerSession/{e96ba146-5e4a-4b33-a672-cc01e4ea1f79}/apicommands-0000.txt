@@ -1,0 +1,510 @@
+Playback::frame, 0
+Playback::version, 2, 131609
+#
+# FMOD v2.02.19 command capture
+#   System::setSoftwareChannels(numsoftwarechannels: 64)
+#   System::setDSPBufferSize(bufferlength: 1024, numbuffers: 4)
+#   System::setSoftwareFormat(samplerate: 48000, speakermode: 6, numrawspeakers: 6)
+#   System::setAdvancedSettings(settings: {maxMPEGCodecs: 0, maxADPCMCodecs: 0, maxXMACodecs: 0, maxVorbisCodecs: 64, maxAT9Codecs: 0, maxFADPCMCodecs: 0, maxPCMCodecs: 0, maxOpusCodecs: 0
+#       ASIONumChannels: 0, vol0virtualvol: 0.001, defaultDecodeBufferSize: 400, geometryMaxFadeTime: 0,
+#       distanceFilterCenterFreq: 1500, reverb3Dinstance: 0, DSPBufferPoolSize: 8, resamplerMethod: 2, randomSeed: 7475})
+#   Studio::System::setAdvancedSettings(settings: {commandqueuesize: 32768, handleinitialsize: 65536, studioupdateperiod: 20, idlesampledatapoolsize: 262144})
+#   Studio::System::initialize(maxchannels: 512, studioflags: 0x00000001, flags: 0x00030000)
+#
+Playback::frame, 0
+# Printing initial instance state
+System::loadBankFile, ../../../../../../Users/frce6549/Documents/GitHub/Sonder/Content/FMOD/Desktop/Master.bank, 0, 2097248
+Playback::loadBankFinished, {c671b85a-2223-4ade-bb1a-23e1cacbaf7a}, 2097248, 0
+Bank::getEventListItem, 2097248, 0, {d8fc2001-aac7-4a5f-a226-7f73abc1dcfa}, 2112608
+Bank::getEventListItem, 2097248, 1, {782fb090-7870-43ea-b735-fff43c06dd4b}, 2112352
+Bank::getEventListItem, 2097248, 2, {7dcd9d9c-bb8b-41fc-936a-22cc8dc6f369}, 2112096
+Bank::getEventListItem, 2097248, 3, {662ac5cc-65a8-48fb-9a4a-fe41ef6d2fd0}, 2113376
+System::loadBankFile, ../../../../../../Users/frce6549/Documents/GitHub/Sonder/Content/FMOD/Desktop/Master.strings.bank, 0, 2097504
+Playback::loadBankFinished, {5e6c988e-5358-069c-3d53-a91f3b38a9e2}, 2097504, 0
+System::loadBankFile, ../../../../../../Users/frce6549/Documents/GitHub/Sonder/Content/FMOD/Desktop/OST.bank, 0, 2097760
+Playback::loadBankFinished, {b3221174-4d41-462b-ae3c-728b0bcfef54}, 2097760, 0
+Bank::getEventListItem, 2097760, 0, {3120f816-b8bd-46dc-84b9-22d0c6383c16}, 2108256
+System::loadBankFile, ../../../../../../Users/frce6549/Documents/GitHub/Sonder/Content/FMOD/Desktop/SFX.bank, 0, 2098016
+Playback::loadBankFinished, {efafb6ac-edfc-4ade-b3d2-ba0708c5883d}, 2098016, 0
+Bank::getEventListItem, 2098016, 0, {6fbd9304-77d3-4eb7-a949-813df5dafb90}, 2100320
+Bank::getEventListItem, 2098016, 1, {a347be19-9512-428f-a978-8d8880318f82}, 2099296
+Bank::getEventListItem, 2098016, 2, {f4d93b28-c06b-4e60-989e-bf2069d57a4a}, 2113888
+Bank::getEventListItem, 2098016, 3, {caded74f-cacf-4576-93f3-ed6e50ed8160}, 2099808
+Bank::getEventListItem, 2098016, 4, {9e487554-7c51-4e2f-9603-2e067e76bf15}, 2104928
+Bank::getEventListItem, 2098016, 5, {3bd7357b-4173-4182-b04d-b272465981cf}, 2103904
+Bank::getEventListItem, 2098016, 6, {2ba288ae-7a70-4dca-8289-ce2a8712fe0a}, 2131296
+Bank::getEventListItem, 2098016, 7, {892801b1-ea3a-428b-aaa8-6a7b0b16b699}, 2098784
+Bank::getEventListItem, 2098016, 8, {3c91d1bc-cd9b-4845-9be5-942b0a78e1c8}, 2106720
+Bank::getEventListItem, 2098016, 9, {b247bcc6-ebd2-498a-98ca-363fefa9987a}, 2108768
+Bank::getEventListItem, 2098016, 10, {267454c7-9e92-4764-8be8-eda98717f1f5}, 2101088
+Bank::getEventListItem, 2098016, 11, {cad10ce3-be36-426a-967d-5f718db15119}, 2098272
+System::setNumListeners, 2
+System::setListenerAttributes, 0, {{8.1,4.1,0.1},{0,0,0},{0,0,1},{0,1,0}}, {8.1,4.1,0.1}, true
+System::setListenerAttributes, 1, {{8.1,4.1,0.100345},{0,0,-0.00340125},{0,0,1},{0,1,0}}, {8.1,4.1,0.100345}, true
+System::setParameterByName, EnvironmentIntensity, 1, false
+EventDescription::createInstance, 2113376, 2113632
+EventInstance::setTimelinePosition, 2113632, 4906
+EventInstance::start, 2113632
+EventInstance::release, 2113632
+EventDescription::createInstance, 2113376, 2128480
+EventInstance::setTimelinePosition, 2128480, 1408
+EventInstance::start, 2128480
+EventInstance::release, 2128480
+EventDescription::createInstance, 2099296, 2117216
+EventInstance::set3DAttributes, 2117216, {{287.3,-12.1,25.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2117216, 1642
+EventInstance::start, 2117216
+EventDescription::createInstance, 2099296, 2119776
+EventInstance::set3DAttributes, 2119776, {{204.6,-7.2,29},{0,0,0},{-1,0,1.74533e-08},{0,1,0}}
+EventInstance::setTimelinePosition, 2119776, 1642
+EventInstance::start, 2119776
+EventDescription::createInstance, 2099296, 2122848
+EventInstance::set3DAttributes, 2122848, {{294.3,-10.4,29},{0,0,0},{-1,0,1.74533e-08},{0,1,0}}
+EventInstance::setTimelinePosition, 2122848, 1642
+EventInstance::start, 2122848
+EventDescription::createInstance, 2099296, 2102624
+EventInstance::set3DAttributes, 2102624, {{282.3,-10.4,29},{0,0,0},{-1,0,1.74533e-08},{0,1,0}}
+EventInstance::setTimelinePosition, 2102624, 4714
+EventInstance::start, 2102624
+EventDescription::createInstance, 2099296, 2107744
+EventInstance::set3DAttributes, 2107744, {{216.6,-7.2,29},{0,0,0},{-1,0,1.74533e-08},{0,1,0}}
+EventInstance::setTimelinePosition, 2107744, 4714
+EventInstance::start, 2107744
+EventDescription::createInstance, 2099296, 2099552
+EventInstance::set3DAttributes, 2099552, {{287.3,-12.1,25.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2099552, 4714
+EventInstance::start, 2099552
+EventDescription::createInstance, 2099296, 2102880
+EventInstance::set3DAttributes, 2102880, {{204.6,-7.2,29},{0,0,0},{-1,0,1.74533e-08},{0,1,0}}
+EventInstance::setTimelinePosition, 2102880, 4714
+EventInstance::start, 2102880
+EventDescription::createInstance, 2099296, 2106464
+EventInstance::set3DAttributes, 2106464, {{294.3,-10.4,29},{0,0,0},{-1,0,1.74533e-08},{0,1,0}}
+EventInstance::setTimelinePosition, 2106464, 4714
+EventInstance::start, 2106464
+EventDescription::createInstance, 2099296, 2119520
+EventInstance::set3DAttributes, 2119520, {{282.3,-10.4,29},{0,0,0},{-1,0,1.74533e-08},{0,1,0}}
+EventInstance::setTimelinePosition, 2119520, 1642
+EventInstance::start, 2119520
+EventDescription::createInstance, 2099296, 2123872
+EventInstance::set3DAttributes, 2123872, {{216.6,-7.2,29},{0,0,0},{-1,0,1.74533e-08},{0,1,0}}
+EventInstance::setTimelinePosition, 2123872, 1642
+EventInstance::start, 2123872
+EventDescription::createInstance, 2113888, 2129760
+EventInstance::setParameterByName, 2129760, hitForce, 0.0428765, false
+EventInstance::set3DAttributes, 2129760, {{335.947,-3.54565,39.0606},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2129760, 618
+EventInstance::start, 2129760
+EventInstance::release, 2129760
+EventDescription::createInstance, 2113888, 2131040
+EventInstance::setParameterByName, 2131040, hitForce, 0.291596, false
+EventInstance::set3DAttributes, 2131040, {{354.044,-6.30339,35.3606},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2131040, 382
+EventInstance::start, 2131040
+EventInstance::release, 2131040
+EventDescription::createInstance, 2099808, 2118496
+EventInstance::set3DAttributes, 2118496, {{363.5,-4.9,37.5},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2118496, 1642
+EventInstance::start, 2118496
+EventDescription::createInstance, 2099808, 2124128
+EventInstance::set3DAttributes, 2124128, {{363.5,-4.9,35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2124128, 1642
+EventInstance::start, 2124128
+EventDescription::createInstance, 2099808, 2101600
+EventInstance::set3DAttributes, 2101600, {{363.5,-4.9,37.5},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2101600, 4714
+EventInstance::start, 2101600
+EventDescription::createInstance, 2099808, 2108000
+EventInstance::set3DAttributes, 2108000, {{363.5,-4.9,35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2108000, 4714
+EventInstance::start, 2108000
+EventDescription::createInstance, 2099808, 2117472
+EventInstance::set3DAttributes, 2117472, {{370,-4.9,35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2117472, 1642
+EventInstance::start, 2117472
+EventDescription::createInstance, 2099808, 2100064
+EventInstance::set3DAttributes, 2100064, {{370,-4.9,35},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2100064, 4714
+EventInstance::start, 2100064
+EventDescription::createInstance, 2108768, 2127456
+EventInstance::set3DAttributes, 2127456, {{336.8,-2.66871,39.9},{0,-1.84877,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2127456, 1596
+EventInstance::start, 2127456
+EventDescription::createInstance, 2108768, 2111840
+EventInstance::setParameterByName, 2111840, slideVelocity, 0.00750244, false
+EventInstance::set3DAttributes, 2111840, {{336.803,-2.77601,39.9},{0.00217224,9.90431e-05,-0.000745439},{-2.31458e-12,6.43421e-11,1},{0.000166304,1,-6.43417e-11}}
+EventInstance::setTimelinePosition, 2111840, 1633
+EventInstance::start, 2111840
+EventDescription::createInstance, 2108768, 2125152
+EventInstance::set3DAttributes, 2125152, {{154.44,-6.34238,19.9},{0.00144486,-5.8267,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2125152, 1596
+EventInstance::start, 2125152
+EventDescription::createInstance, 2108768, 2109536
+EventInstance::set3DAttributes, 2109536, {{154.439,-6.53119,19.9},{0,-4.1052,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2109536, 1633
+EventInstance::start, 2109536
+EventDescription::createInstance, 2108768, 2126688
+EventInstance::set3DAttributes, 2126688, {{354.9,-4.86871,36.2},{0,-1.84877,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2126688, 1596
+EventInstance::start, 2126688
+EventDescription::createInstance, 2108768, 2111072
+EventInstance::set3DAttributes, 2111072, {{354.9,-5.4567,36.2},{-0.000248086,0.813962,-0.000716758},{0,0,1},{-7.55581e-06,1,0}}
+EventInstance::setTimelinePosition, 2111072, 1633
+EventInstance::start, 2111072
+EventDescription::createInstance, 2108768, 2125920
+EventInstance::set3DAttributes, 2125920, {{75.2122,4.28714,7.8},{0.0319304,-0.865284,0},{0,0,1},{-0.00362516,0.999993,0}}
+EventInstance::setTimelinePosition, 2125920, 1596
+EventInstance::start, 2125920
+EventDescription::createInstance, 2108768, 2110304
+EventInstance::setParameterByName, 2110304, slideVelocity, 0.0249032, false
+EventInstance::set3DAttributes, 2110304, {{75.2091,4.14853,7.80009},{0.0426352,0.00176318,0.00146938},{8.11545e-07,-0.000190907,1},{-0.000190383,1,0.000190907}}
+EventInstance::setTimelinePosition, 2110304, 1634
+EventInstance::start, 2110304
+EventDescription::createInstance, 2106720, 2123104
+EventInstance::set3DAttributes, 2123104, {{108.6,-8.7,8.1},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2123104, 1642
+EventInstance::start, 2123104
+EventDescription::createInstance, 2106720, 2106976
+EventInstance::set3DAttributes, 2106976, {{108.6,-8.7,8.1},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2106976, 4736
+EventInstance::start, 2106976
+EventDescription::createInstance, 2101088, 2118240
+EventInstance::set3DAttributes, 2118240, {{208.5,-2.6,25.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2118240, 1642
+EventInstance::start, 2118240
+EventDescription::createInstance, 2101088, 2101344
+EventInstance::set3DAttributes, 2101344, {{208.5,-2.6,25.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2101344, 4736
+EventInstance::start, 2101344
+EventDescription::createInstance, 2101088, 2122592
+EventInstance::set3DAttributes, 2122592, {{232.8,-2.6,25.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2122592, 1642
+EventInstance::start, 2122592
+EventDescription::createInstance, 2101088, 2106208
+EventInstance::set3DAttributes, 2106208, {{232.8,-2.6,25.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2106208, 4736
+EventInstance::start, 2106208
+EventDescription::createInstance, 2101088, 2122080
+EventInstance::set3DAttributes, 2122080, {{221.5,-2.6,25.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2122080, 1642
+EventInstance::start, 2122080
+EventDescription::createInstance, 2101088, 2105696
+EventInstance::set3DAttributes, 2105696, {{221.5,-2.6,25.9},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2105696, 4736
+EventInstance::start, 2105696
+EventDescription::createInstance, 2108256, 2124384
+EventInstance::setTimelinePosition, 2124384, 1642
+EventInstance::start, 2124384
+EventDescription::createInstance, 2108256, 2108512
+EventInstance::setTimelinePosition, 2108512, 4736
+EventInstance::start, 2108512
+EventDescription::createInstance, 2098784, 2099040
+EventInstance::set3DAttributes, 2099040, {{47.8841,-0.65,4.88853},{0,0,0},{0.707107,0,-0.707107},{0,1,0}}
+EventInstance::setTimelinePosition, 2099040, 4736
+EventInstance::start, 2099040
+EventDescription::createInstance, 2098784, 2120544
+EventInstance::set3DAttributes, 2120544, {{42.6521,-0.65,3.63219},{0,0,0},{0.819152,0,0.573576},{0,1,0}}
+EventInstance::setTimelinePosition, 2120544, 1642
+EventInstance::start, 2120544
+EventDescription::createInstance, 2098784, 2103648
+EventInstance::set3DAttributes, 2103648, {{42.6521,-0.65,3.63219},{0,0,0},{0.819152,0,0.573576},{0,1,0}}
+EventInstance::setTimelinePosition, 2103648, 4736
+EventInstance::start, 2103648
+EventDescription::createInstance, 2098784, 2121312
+EventInstance::set3DAttributes, 2121312, {{57.4,-0.9,3.6},{0,0,0},{1,0,1.74533e-08},{0,1,0}}
+EventInstance::setTimelinePosition, 2121312, 1642
+EventInstance::start, 2121312
+EventDescription::createInstance, 2098784, 2104672
+EventInstance::set3DAttributes, 2104672, {{57.4,-0.9,3.6},{0,0,0},{1,0,1.74533e-08},{0,1,0}}
+EventInstance::setTimelinePosition, 2104672, 4736
+EventInstance::start, 2104672
+EventDescription::createInstance, 2098784, 2116960
+EventInstance::set3DAttributes, 2116960, {{47.8841,-0.65,4.88853},{0,0,0},{0.707107,0,-0.707107},{0,1,0}}
+EventInstance::setTimelinePosition, 2116960, 1642
+EventInstance::start, 2116960
+EventDescription::createInstance, 2100320, 2101856
+EventInstance::set3DAttributes, 2101856, {{49.7,6.4,7.7},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2101856, 4736
+EventInstance::start, 2101856
+EventDescription::createInstance, 2100320, 2103392
+EventInstance::set3DAttributes, 2103392, {{32.8,6.4,4.5},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2103392, 4736
+EventInstance::start, 2103392
+EventDescription::createInstance, 2100320, 2100576
+EventInstance::set3DAttributes, 2100576, {{43.3,6.4,4.5},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2100576, 4736
+EventInstance::start, 2100576
+EventDescription::createInstance, 2100320, 2107488
+EventInstance::set3DAttributes, 2107488, {{15.7,6.4,4.5},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2107488, 4736
+EventInstance::start, 2107488
+EventDescription::createInstance, 2100320, 2100832
+EventInstance::set3DAttributes, 2100832, {{1.6,6.4,4.5},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2100832, 4736
+EventInstance::start, 2100832
+EventDescription::createInstance, 2100320, 2118752
+EventInstance::set3DAttributes, 2118752, {{49.7,6.4,7.7},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2118752, 1642
+EventInstance::start, 2118752
+EventDescription::createInstance, 2100320, 2120288
+EventInstance::set3DAttributes, 2120288, {{32.8,6.4,4.5},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2120288, 1642
+EventInstance::start, 2120288
+EventDescription::createInstance, 2100320, 2117728
+EventInstance::set3DAttributes, 2117728, {{43.3,6.4,4.5},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2117728, 1642
+EventInstance::start, 2117728
+EventDescription::createInstance, 2100320, 2123616
+EventInstance::set3DAttributes, 2123616, {{15.7,6.4,4.5},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2123616, 1642
+EventInstance::start, 2123616
+EventDescription::createInstance, 2100320, 2117984
+EventInstance::set3DAttributes, 2117984, {{1.6,6.4,4.5},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2117984, 1642
+EventInstance::start, 2117984
+EventDescription::createInstance, 2112352, 2127968
+EventInstance::setTimelinePosition, 2127968, 1408
+EventInstance::start, 2127968
+EventInstance::release, 2127968
+EventDescription::createInstance, 2112352, 2128224
+EventInstance::setTimelinePosition, 2128224, 1408
+EventInstance::start, 2128224
+EventInstance::release, 2128224
+EventDescription::createInstance, 2131296, 2131552
+EventInstance::set3DAttributes, 2131552, {{6.647,1.34175,8.1},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2131552, 92
+EventInstance::start, 2131552
+EventInstance::release, 2131552
+EventDescription::createInstance, 2104928, 2121568
+EventInstance::set3DAttributes, 2121568, {{350.5,1.4,48.1},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2121568, 1642
+EventInstance::start, 2121568
+EventDescription::createInstance, 2104928, 2105184
+EventInstance::set3DAttributes, 2105184, {{350.5,1.4,48.1},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2105184, 4736
+EventInstance::start, 2105184
+EventDescription::createInstance, 2098272, 2103136
+EventInstance::set3DAttributes, 2103136, {{18.3,6.4,22.2},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2103136, 4736
+EventInstance::start, 2103136
+EventDescription::createInstance, 2098272, 2122336
+EventInstance::set3DAttributes, 2122336, {{35.1,6.4,22.2},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2122336, 1642
+EventInstance::start, 2122336
+EventDescription::createInstance, 2098272, 2098528
+EventInstance::set3DAttributes, 2098528, {{31.5,6.4,22.2},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2098528, 4736
+EventInstance::start, 2098528
+EventDescription::createInstance, 2098272, 2107232
+EventInstance::set3DAttributes, 2107232, {{9.6,6.4,22.2},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2107232, 4736
+EventInstance::start, 2107232
+EventDescription::createInstance, 2098272, 2102112
+EventInstance::set3DAttributes, 2102112, {{44.5,6.4,22.2},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2102112, 4736
+EventInstance::start, 2102112
+EventDescription::createInstance, 2098272, 2121056
+EventInstance::set3DAttributes, 2121056, {{26.3,6.4,22.2},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2121056, 1642
+EventInstance::start, 2121056
+EventDescription::createInstance, 2098272, 2105440
+EventInstance::set3DAttributes, 2105440, {{48.7,6.4,22.2},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2105440, 4736
+EventInstance::start, 2105440
+EventDescription::createInstance, 2098272, 2102368
+EventInstance::set3DAttributes, 2102368, {{32.8,6.4,22.2},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2102368, 4736
+EventInstance::start, 2102368
+EventDescription::createInstance, 2098272, 2120032
+EventInstance::set3DAttributes, 2120032, {{18.3,6.4,22.2},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2120032, 1642
+EventInstance::start, 2120032
+EventDescription::createInstance, 2098272, 2105952
+EventInstance::set3DAttributes, 2105952, {{35.1,6.4,22.2},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2105952, 4736
+EventInstance::start, 2105952
+EventDescription::createInstance, 2098272, 2123360
+EventInstance::set3DAttributes, 2123360, {{9.6,6.4,22.2},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2123360, 1642
+EventInstance::start, 2123360
+EventDescription::createInstance, 2098272, 2119008
+EventInstance::set3DAttributes, 2119008, {{44.5,6.4,22.2},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2119008, 1642
+EventInstance::start, 2119008
+EventDescription::createInstance, 2098272, 2121824
+EventInstance::set3DAttributes, 2121824, {{48.7,6.4,22.2},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2121824, 1642
+EventInstance::start, 2121824
+EventDescription::createInstance, 2098272, 2104416
+EventInstance::set3DAttributes, 2104416, {{26.3,6.4,22.2},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2104416, 4736
+EventInstance::start, 2104416
+EventDescription::createInstance, 2098272, 2116704
+EventInstance::set3DAttributes, 2116704, {{31.5,6.4,22.2},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2116704, 1642
+EventInstance::start, 2116704
+EventDescription::createInstance, 2098272, 2119264
+EventInstance::set3DAttributes, 2119264, {{32.8,6.4,22.2},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2119264, 1642
+EventInstance::start, 2119264
+EventDescription::createInstance, 2103904, 2104160
+EventInstance::set3DAttributes, 2104160, {{34.4,6.4,16.1},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2104160, 4885
+EventInstance::start, 2104160
+EventDescription::createInstance, 2103904, 2120800
+EventInstance::set3DAttributes, 2120800, {{34.4,6.4,16.1},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::setTimelinePosition, 2120800, 1813
+EventInstance::start, 2120800
+# Finished printing initial instance state
+Playback::frame, 11264
+System::getEventByID, {2ba288ae-7a70-4dca-8289-ce2a8712fe0a}, 2131296
+EventDescription::createInstance, 2131296, 2131808
+EventInstance::set3DAttributes, 2131808, {{6.64673,1.34175,8.1},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::start, 2131808
+EventInstance::release, 2131808
+EventInstance::setParameterByName, 2109536, slideVelocity, 0, false
+EventInstance::setParameterByName, 2109536, slideVelocity, 0, false
+EventInstance::setParameterByName, 2110304, slideVelocity, 0.0110261, false
+EventInstance::setParameterByName, 2111072, slideVelocity, 0.000241211, false
+EventInstance::setParameterByName, 2111072, slideVelocity, 0, false
+EventInstance::setParameterByName, 2111840, slideVelocity, 0.000729419, false
+EventInstance::set3DAttributes, 2109536, {{154.439,-6.67645,19.9},{0,-4.358,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2110304, {{75.2091,4.14849,7.80006},{0.000520282,0.000858226,-0.000634778},{1.1005e-07,-0.000123272,1},{0.00030866,1,0.000123272}}
+EventInstance::set3DAttributes, 2111072, {{354.9,-5.44072,36.1999},{-0.000243951,0.479177,-0.000704812},{0,0,1},{-7.55581e-06,1,0}}
+EventInstance::set3DAttributes, 2111840, {{336.802,-2.77602,39.9},{-0.00480892,-0.000190221,-0.000261861},{-2.33442e-12,2.21925e-10,1},{4.306e-05,1,-2.21925e-10}}
+EventInstance::setParameterByName, 2125152, slideVelocity, 0.000361216, false
+EventInstance::setParameterByName, 2125152, slideVelocity, 0, false
+EventInstance::setParameterByName, 2125920, slideVelocity, 0.00798261, false
+EventInstance::setParameterByName, 2125920, slideVelocity, 0, false
+EventInstance::setParameterByName, 2126688, slideVelocity, 0, false
+EventInstance::setParameterByName, 2126688, slideVelocity, 0, false
+EventInstance::setParameterByName, 2127456, slideVelocity, 0, false
+EventInstance::setParameterByName, 2127456, slideVelocity, 0, false
+EventInstance::set3DAttributes, 2125152, {{154.44,-6.5404,19.9},{0.001287,-5.9405,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2125920, {{75.2124,4.26145,7.8},{-0.0128402,-0.770745,0},{0,0,1},{-0.00213482,0.999998,0}}
+EventInstance::set3DAttributes, 2126688, {{354.9,-4.94001,36.2},{0,-2.13918,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2127456, {{336.8,-2.74001,39.9},{0,-2.13918,0},{0,0,1},{0,1,0}}
+System::setListenerAttributes, 0, {{8.1,4.1,0.1},{0,0,0},{0,0,1},{0,1,0}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{8.1,4.1,0.100081},{0,0,-0.000793625},{0,0,1},{0,1,0}}, {0,0,0}, false
+Playback::frame, 15360
+EventInstance::setParameterByName, 2109536, slideVelocity, 0, false
+EventInstance::setParameterByName, 2109536, slideVelocity, 0, false
+EventInstance::setParameterByName, 2110304, slideVelocity, 0.000288765, false
+EventInstance::setParameterByName, 2111072, slideVelocity, 0.000237191, false
+EventInstance::setParameterByName, 2111840, slideVelocity, 0.00126769, false
+EventInstance::set3DAttributes, 2109536, {{154.439,-6.75914,19.9},{-3.25487e-05,1.38198,-8.41405e-06},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2110304, {{75.2089,4.14845,7.80004},{-0.00853212,-0.000866038,-0.000339455},{7.44262e-08,-8.71035e-05,1},{-9.45065e-05,1,8.71035e-05}}
+EventInstance::set3DAttributes, 2111072, {{354.9,-5.43573,36.1999},{-0.000239885,0.149971,-0.000693065},{0,0,1},{-5.16448e-06,1,0}}
+EventInstance::set3DAttributes, 2111840, {{336.802,-2.77603,39.9},{-0.00175973,-9.51749e-05,2.15818e-05},{-2.34335e-12,7.47605e-11,1},{-1.8539e-05,1,-7.47605e-11}}
+System::getEventByID, {f4d93b28-c06b-4e60-989e-bf2069d57a4a}, 2113888
+EventDescription::createInstance, 2113888, 2133088
+EventInstance::set3DAttributes, 2133088, {{153.926,-7.25315,19.3964},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::start, 2133088
+EventInstance::release, 2133088
+EventInstance::setParameterByName, 2133088, hitForce, 0.398942, false
+EventInstance::setParameterByName, 2125152, slideVelocity, 0.00032175, false
+EventInstance::setParameterByName, 2125152, slideVelocity, 0, false
+EventInstance::setParameterByName, 2125920, slideVelocity, 0.00321005, false
+EventInstance::setParameterByName, 2125920, slideVelocity, 0, false
+EventInstance::setParameterByName, 2126688, slideVelocity, 0, false
+EventInstance::setParameterByName, 2126688, slideVelocity, 0, false
+EventInstance::setParameterByName, 2127456, slideVelocity, 0, false
+EventInstance::setParameterByName, 2127456, slideVelocity, 0, false
+EventInstance::set3DAttributes, 2125152, {{154.44,-6.52749,19.9},{0.00114639,0.38729,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2125920, {{75.2121,4.23857,7.8},{-0.0217177,-0.686535,0},{0,0,1},{-0.00125717,0.999999,0}}
+EventInstance::set3DAttributes, 2126688, {{354.9,-5.02084,36.2},{0,-2.42475,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2127456, {{336.8,-2.77603,39.9},{-4.48208e-06,0.748076,-2.25057e-05},{0,0,1},{0,1,0}}
+System::getEventByID, {f4d93b28-c06b-4e60-989e-bf2069d57a4a}, 2113888
+EventDescription::createInstance, 2113888, 2134368
+EventInstance::set3DAttributes, 2134368, {{335.944,-3.56273,39.0606},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::start, 2134368
+EventInstance::release, 2134368
+EventInstance::setParameterByName, 2134368, hitForce, 0.188957, false
+System::setListenerAttributes, 0, {{8.1,4.1,0.1},{0,0,0},{0,0,1},{0,1,0}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{8.1,4.1,0.1},{0,0,-0.000241538},{0,0,1},{0,1,0}}, {0,0,0}, false
+Playback::frame, 16384
+EventInstance::setParameterByName, 2109536, slideVelocity, 1.02407e-05, false
+EventInstance::setParameterByName, 2109536, slideVelocity, 0, false
+EventInstance::setParameterByName, 2110304, slideVelocity, 0.00221789, false
+EventInstance::setParameterByName, 2111072, slideVelocity, 0.000233238, false
+EventInstance::setParameterByName, 2111840, slideVelocity, 0.000445328, false
+EventInstance::set3DAttributes, 2109536, {{154.439,-6.72455,19.9},{-3.20062e-05,1.03773,8.14858e-06},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2110304, {{75.2087,4.14853,7.80005},{-0.00459569,0.000985061,0.000122057},{1.21544e-07,-0.000100109,1},{-0.000340721,1,0.000100109}}
+EventInstance::set3DAttributes, 2111072, {{354.9,-5.44152,36.1999},{-0.000235887,-0.173747,-0.000681514},{0,0,1},{-5.16448e-06,1,0}}
+EventInstance::set3DAttributes, 2111840, {{336.802,-2.77603,39.9},{0.000695497,5.23098e-06,3.72187e-05},{-2.34335e-12,-1.77676e-11,1},{-1.51559e-05,1,1.77676e-11}}
+EventInstance::setParameterByName, 2125152, slideVelocity, 0.000286597, false
+EventInstance::setParameterByName, 2125920, slideVelocity, 0.00542942, false
+EventInstance::setParameterByName, 2126688, slideVelocity, 0, false
+EventInstance::setParameterByName, 2126688, slideVelocity, 0, false
+EventInstance::setParameterByName, 2127456, slideVelocity, 6.74695e-06, false
+EventInstance::setParameterByName, 2127456, slideVelocity, 0, false
+EventInstance::set3DAttributes, 2125152, {{154.44,-6.52331,19.9},{0.00102114,0.125289,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2125920, {{75.2121,4.21818,7.8},{-0.00895365,-0.611526,0},{0,0,1},{-0.000740336,1,0}}
+EventInstance::set3DAttributes, 2126688, {{354.9,-5.11102,36.2},{0,-2.70555,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2127456, {{336.8,-2.76222,39.9},{-4.40738e-06,0.414389,-2.21306e-05},{0,0,1},{-0.0012239,0.999999,0}}
+System::setListenerAttributes, 0, {{8.1,4.1,0.1},{0,0,0},{0,0,1},{0,1,0}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{8.1,4.1,0.1},{0,0,0},{0,0,1},{0,1,0}}, {0,0,0}, false
+Playback::frame, 15360
+EventInstance::setParameterByName, 2109536, slideVelocity, 1.00387e-05, false
+EventInstance::setParameterByName, 2109536, slideVelocity, 0, false
+EventInstance::setParameterByName, 2110304, slideVelocity, 0.00117944, false
+EventInstance::setParameterByName, 2111072, slideVelocity, 0.00022935, false
+EventInstance::setParameterByName, 2111840, slideVelocity, 0.000183179, false
+EventInstance::set3DAttributes, 2109536, {{154.439,-6.70125,19.9},{-3.14728e-05,0.699211,2.68153e-07},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2110304, {{75.2087,4.14853,7.80005},{-0.000237236,3.85878e-05,1.59129e-05},{1.37897e-07,-0.000101804,1},{-0.000350192,1,0.000101804}}
+EventInstance::set3DAttributes, 2111072, {{354.9,-5.45792,36.1999},{-0.000231956,-0.49207,-0.000670156},{0,0,1},{-5.16448e-06,1,0}}
+EventInstance::set3DAttributes, 2111840, {{336.802,-2.77603,39.9},{0.000269005,2.72949e-05,3.49856e-05},{-2.34335e-12,-2.13541e-11,1},{2.49651e-06,1,2.13541e-11}}
+EventInstance::setParameterByName, 2125152, slideVelocity, 0.000255284, false
+EventInstance::setParameterByName, 2125920, slideVelocity, 0.00223841, false
+EventInstance::setParameterByName, 2126688, slideVelocity, 0, false
+EventInstance::setParameterByName, 2126688, slideVelocity, 0, false
+EventInstance::setParameterByName, 2127456, slideVelocity, 6.6345e-06, false
+EventInstance::set3DAttributes, 2125152, {{154.44,-6.52915,19.9},{0.00090957,-0.175111,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2125920, {{75.2119,4.20003,7.8},{-0.0079512,-0.544713,0},{0,0,1},{-0.000435976,1,0}}
+EventInstance::set3DAttributes, 2126688, {{354.9,-5.21041,36.2},{0,-2.98168,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2127456, {{336.8,-2.75934,39.9},{-4.33392e-06,0.0862638,-2.17618e-05},{0,0,1},{-0.00244767,0.999997,0}}
+System::setListenerAttributes, 0, {{8.1,4.1,0.1},{0,0,0},{0,0,1},{0,1,0}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{8.1,4.1,0.1},{0,0,0},{0,0,1},{0,1,0}}, {0,0,0}, false
+Playback::frame, 16384
+EventInstance::setParameterByName, 2109536, slideVelocity, 7.93523e-06, false
+EventInstance::setParameterByName, 2110304, slideVelocity, 6.32872e-05, false
+EventInstance::setParameterByName, 2111072, slideVelocity, 0.000225528, false
+EventInstance::setParameterByName, 2111840, slideVelocity, 7.59978e-05, false
+EventInstance::set3DAttributes, 2109536, {{154.439,-6.68904,19.9},{-3.09482e-05,0.366339,-6.51014e-08},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2110304, {{75.2087,4.14851,7.80005},{0.00122126,4.45658e-05,-7.15392e-05},{1.22632e-07,-9.41816e-05,1},{-0.00029167,1,9.41816e-05}}
+EventInstance::set3DAttributes, 2111072, {{354.9,-5.48383,36.1999},{-0.000171532,0.241532,-0.000132227},{0,-3.57158e-14,1},{-3.5036e-07,1,3.57158e-14}}
+EventInstance::set3DAttributes, 2111840, {{336.802,-2.77603,39.9},{-0.000489016,3.25192e-06,-2.48286e-05},{-2.34335e-12,1.20007e-12,1},{4.60001e-06,1,-1.20006e-12}}
+System::getEventByID, {f4d93b28-c06b-4e60-989e-bf2069d57a4a}, 2113888
+EventDescription::createInstance, 2113888, 2135648
+EventInstance::set3DAttributes, 2135648, {{354.044,-6.24859,35.3605},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::start, 2135648
+EventInstance::release, 2135648
+EventInstance::setParameterByName, 2135648, hitForce, 0.0610087, false
+EventInstance::setParameterByName, 2125152, slideVelocity, 0.000227393, false
+EventInstance::setParameterByName, 2125920, slideVelocity, 0.0019878, false
+EventInstance::setParameterByName, 2126688, slideVelocity, 0, false
+EventInstance::setParameterByName, 2126688, slideVelocity, 0, false
+EventInstance::setParameterByName, 2127456, slideVelocity, 6.52393e-06, false
+EventInstance::set3DAttributes, 2125152, {{154.44,-6.54465,19.9},{0.000810193,-0.465107,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2125920, {{75.2118,4.18386,7.8},{-0.00706823,-0.485199,0},{0,0,1},{-0.000256742,1,0}}
+EventInstance::set3DAttributes, 2126688, {{354.9,-5.31885,36.2},{0,-3.2532,0},{0,0,1},{0,1,0}}
+EventInstance::set3DAttributes, 2127456, {{336.8,-2.76722,39.9},{-4.26169e-06,-0.236393,-2.13991e-05},{0,0,1},{-0.00367144,0.999993,0}}
+System::getEventByID, {7dcd9d9c-bb8b-41fc-936a-22cc8dc6f369}, 2112096
+EventDescription::getInstanceCount, 2112096, 0
+System::getEventByID, {782fb090-7870-43ea-b735-fff43c06dd4b}, 2112352
+EventDescription::getInstanceCount, 2112352, 2
+EventDescription::getInstanceList, 2112352, 2, 2
+EventDescription::getInstanceListItem, 2112352, 0, 2127968
+EventDescription::getInstanceListItem, 2112352, 1, 2128224
+EventInstance::stop, 2127968, 0
+EventInstance::stop, 2128224, 0
+System::getEventByID, {d8fc2001-aac7-4a5f-a226-7f73abc1dcfa}, 2112608
+EventDescription::getInstanceCount, 2112608, 0
+System::setParameterByName, EnvironmentIntensity, 0.13, false
+System::getEventByID, {782fb090-7870-43ea-b735-fff43c06dd4b}, 2112352
+EventDescription::createInstance, 2112352, 2135904
+EventInstance::set3DAttributes, 2135904, {{0,0,0},{0,0,0},{0,0,1},{0,1,0}}
+EventInstance::start, 2135904
+EventInstance::release, 2135904
+System::setListenerAttributes, 0, {{8.1,4.1,0.1},{0,0,0},{0,0,1},{0,1,0}}, {0,0,0}, false
+System::setListenerAttributes, 1, {{8.1,4.1,0.1},{0,0,0},{0,0,1},{0,1,0}}, {0,0,0}, false
