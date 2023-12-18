@@ -38,6 +38,7 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	/*
 	if (WaitingEnemies.IsEmpty())
 	{
 		return;
@@ -48,14 +49,8 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 		if (Enemy)
 		{
 			FVector EnemyLocation = Enemy->GetActorLocation();
-			
-			
-			if (Enemy->bHasLandedOnPlatform || Enemy->bHasLandedOnGround)
-			{
-				Enemy->bIsJumping = false;
-				Enemy->bIsPerformingJump = false;
-			}
-			
+
+	
 			if (bTriggerJumpToMovablePlatform) // TODO:Doesnt need this, can be same trigger for both after fix
 			{
 				if (bIsOverlappingWithMovingPlatform && Enemy->bCanBasicJump && Enemy->bHasLandedOnGround && !Enemy->bIsJumping && !Enemy->bIsPerformingJump)
@@ -65,37 +60,21 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 
 				else if (!bIsOverlappingWithMovingPlatform && Enemy->bCanBasicJump && Enemy->bHasLandedOnGround && !Enemy->bIsJumping && !Enemy->bIsPerformingJump)
 				{
+					// TODO: Check if is on platform, if is on platform it should jump to closest point to target but if its not it should jump to the point furthest away from it
+					// TODO: Go to closest movable platform in BT if hasnt path to player.
+
 					if (!IsLeveledWithJumpPoints(EnemyLocation))
 					{
+						//UE_LOG(LogTemp, Warning, TEXT("Not IsLeveled with platform, own location"));
 						Enemy->AvaliableJumpPoint = CalculatePointClosetsToTarget(EnemyLocation, Enemy->CurrentTargetLocation);
 					}
 					else
 					{
+						//UE_LOG(LogTemp, Warning, TEXT("IsLeveled with platform"));
 						Enemy->AvaliableJumpPoint = CalculatePointFurthestFromEnemy(EnemyLocation);
 					}
 				}
 				// TODO: If is overlapping with moving platform, and is grounded, and is not jumping/performing jump
-					/*
-				if (Enemy->bCanPlatformJump && !Enemy->bCanBasicJump && !Enemy->bHasLandedOnPlatform&& Enemy->bHasLandedOnGround && !Enemy->bIsJumping && !Enemy->bIsPerformingJump) // is not on moving platform
-				{
-					Enemy->AvaliableJumpPoint = CalculateJumpToPlatform(EnemyLocation);
-				}
-				
-
-				
-				
-				else if((Enemy->bCanPlatformJump || Enemy->bCanBasicJump) && (Enemy->bHasLandedOnPlatform || Enemy->bHasLandedOnGround) &&  !Enemy->bIsJumping && !Enemy->bIsPerformingJump)
-				{
-					if (!IsLeveledWithJumpPoints(EnemyLocation))
-					{
-						Enemy->AvaliableJumpPoint = CalculatePointClosetsToTarget(EnemyLocation, Enemy->CurrentTargetLocation);
-					}
-					else
-					{
-						Enemy->AvaliableJumpPoint = CalculatePointFurthestFromEnemy(EnemyLocation);
-					}
-				}
-				*/
 			}
 			
 			else
@@ -108,6 +87,8 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 			}
 		}
 	}
+	*/
+
 }
 
 void AEnemyJumpTrigger::RemoveWaitingEnemy(AShadowCharacter* EnemyToRemove)
@@ -128,6 +109,23 @@ void AEnemyJumpTrigger::AddWaitingEnemy(AShadowCharacter* EnemyToAdd)
 	{
 		WaitingEnemies.Add(EnemyToAdd);
 	}
+}
+
+FVector AEnemyJumpTrigger::RequestJumpLocation(const FVector &EnemyLoc, const FVector &CurrentTargetLocation, const bool bIsOnPlatform)
+{
+	if (bTriggerJumpToMovablePlatform)
+	{
+		if (bIsOverlappingWithMovingPlatform && !bIsOnPlatform)
+		{
+			return CalculateJumpToPlatform(EnemyLoc);
+			
+		}
+		if (bIsOverlappingWithMovingPlatform && bIsOnPlatform)
+		{
+			return CalculatePointClosetsToTarget(EnemyLoc, CurrentTargetLocation);
+		}
+	}
+	return CalculatePointFurthestFromEnemy(EnemyLoc);
 }
 
 FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation) // forward vector * Jumpdistance
@@ -154,10 +152,10 @@ FVector AEnemyJumpTrigger::CalculatePointClosetsToTarget(const FVector& EnemyLoc
 	if (FVector::Distance(JumpPoint1Loc, CurrentTargetLocation) <=  FVector::Distance(JumpPoint2Loc, CurrentTargetLocation))
 	{
 		const float DirToJumpPointY = JumpPoint1Loc.Y < EnemyLocation.Y ? -1 : 1;
-		return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint1Loc.Z + BasicJumpZOffset);
+		return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint1Loc.Z);
 	}
 	const float DirToJumpPointY = JumpPoint2Loc.Y < EnemyLocation.Y ? -1 : 1;
-	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint2Loc.Z + BasicJumpZOffset);
+	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint2Loc.Z);
 }
 
 FVector AEnemyJumpTrigger::CalculatePointFurthestFromEnemy(const FVector& EnemyLocation) const
@@ -183,8 +181,8 @@ void AEnemyJumpTrigger::AllowJump() // runs on overlap begin with moving platfor
 	{
 		if (Enemy)
 		{
-			Enemy->bCanPlatformJump = true;
-			Enemy->bCanBasicJump = false;
+			//Enemy->bCanPlatformJump = true;
+			//Enemy->bCanBasicJump = false;
 			Enemy->JumpCoolDownTimer = Enemy->JumpCoolDownDuration;
 		}
 	}
@@ -198,8 +196,8 @@ void AEnemyJumpTrigger::DenyJump()  // runs on overlap end with moving platform,
 		{
 			if (Enemy)
 			{
-				Enemy->bCanPlatformJump = false;
-				Enemy->bCanBasicJump = true;
+				//Enemy->bCanPlatformJump = false;
+				//Enemy->bCanBasicJump = true;
 			}
 		}
 	}
@@ -226,6 +224,7 @@ bool AEnemyJumpTrigger::HasPathBetweenPoints() const
 
 bool AEnemyJumpTrigger::IsLeveledWithJumpPoints(const FVector &EnemyLoc) const
 {
-	return EnemyLoc.Y == JumpPoint1Loc.Y && EnemyLoc.Y == JumpPoint2Loc.Y;
+	//UE_LOG(LogTemp, Error, TEXT(" EnemyLoc= %f, Jumppoints loc = %f, %f"), EnemyLoc.Z, JumpPoint1Loc.Z, JumpPoint2Loc.Z );
+	return FMath::IsNearlyEqual(EnemyLoc.Z, JumpPoint1Loc.Z, 5.f) && FMath::IsNearlyEqual(EnemyLoc.Z, JumpPoint2Loc.Z, 5.f);
 }
 
