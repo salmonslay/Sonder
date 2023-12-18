@@ -70,9 +70,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void SetSpawnTransform(const FTransform& NewTransform) { SpawnTransform = NewTransform; }
 
-	UPROPERTY(EditAnywhere)
-	class UPlayerBasicAttack* BasicAttack;
-
 	/** Overridden to enable notify jump apex */
 	virtual void Jump() override;
 
@@ -210,4 +207,16 @@ private:
 
 	UPROPERTY()
 	ACharactersCamera* Camera;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UBasicAttackComponent* AttackComponent;
+
+	UPROPERTY(EditDefaultsOnly)
+	class UInputAction* AttackInputAction;
+
+	void DoBasicAttack();
+
+	// Back up to the back up 
+	float AttackTimer = 0;
+	
 };

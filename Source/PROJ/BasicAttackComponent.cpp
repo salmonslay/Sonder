@@ -1,9 +1,8 @@
 // Fill out your copyright notice in the Description page of Project Settings.
 
 
-#include "PlayerBasicAttack.h"
+#include "BasicAttackComponent.h"
 
-#include "EnhancedInputComponent.h"
 #include "PROJCharacter.h"
 #include "ShadowCharacter.h"
 #include "Engine/DamageEvents.h"
@@ -11,19 +10,19 @@
 #include "Net/UnrealNetwork.h"
 
 // Sets default values for this component's properties
-UPlayerBasicAttack::UPlayerBasicAttack()
+UBasicAttackComponent::UBasicAttackComponent()
 {
-	PrimaryComponentTick.bCanEverTick = false; // Note tick is turned off 
-
+	PrimaryComponentTick.bCanEverTick = false; // Note Tick is turned off 
+	
+	SetRelativeLocation(FVector(50, 0, 0)); 
+	SetRelativeScale3D(FVector(1.5f, 1.5f, 2.f));
+	
+	SetCollisionEnabled(ECollisionEnabled::QueryOnly);
+	SetCollisionObjectType(ECC_Pawn);
+	SetCollisionResponseToAllChannels(ECR_Overlap); 
 }
 
-void UPlayerBasicAttack::SetUpInput(UEnhancedInputComponent* InputComp)
-{
-	if(Cast<ACharacter>(GetOwner())->IsPlayerControlled())
-		InputComp->BindAction(AttackInputAction, ETriggerEvent::Started, this, &UPlayerBasicAttack::Attack);
-}
-
-void UPlayerBasicAttack::BeginPlay()
+void UBasicAttackComponent::BeginPlay()
 {
 	Super::BeginPlay();
 
@@ -33,7 +32,7 @@ void UPlayerBasicAttack::BeginPlay()
 	LastTimeAttack = 0; 
 }
 
-void UPlayerBasicAttack::EndPlay(const EEndPlayReason::Type EndPlayReason)
+void UBasicAttackComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
@@ -43,32 +42,30 @@ void UPlayerBasicAttack::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	GetWorld()->GetTimerManager().ClearAllTimersForObject(this); 
 }
 
-void UPlayerBasicAttack::Attack()
+bool UBasicAttackComponent::Attack()
 {
 	if(!GetWorld())
-		return; 
+		return false; 
 	
 	if(GetWorld()->TimeSeconds - AttackCooldown >= LastTimeAttack)
 		bCanAttack = true;
-
-	if(!LastLevelName.Equals(UGameplayStatics::GetCurrentLevelName(this)))
-		bCanAttack = true; 
 	
 	// Ensure player cant spam attack and is locally controlled 
 	if(!bCanAttack || !Owner->IsLocallyControlled())
-		return;
+		return false;
 
 	LastTimeAttack = GetWorld()->TimeSeconds;
-	LastLevelName = UGameplayStatics::GetCurrentLevelName(this); 
 	
 	FTimerHandle TimerHandle; 
-	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UPlayerBasicAttack::EnableCanAttack, AttackCooldown);
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UBasicAttackComponent::EnableCanAttack, AttackCooldown);
 
 	// Run server function which will update each client and itself 
-	ServerRPCAttack(); 
+	ServerRPCAttack();
+
+	return true; 
 }
 
-void UPlayerBasicAttack::ServerRPCAttack_Implementation()
+void UBasicAttackComponent::ServerRPCAttack_Implementation()
 {
 	// Should only run on server 
 	if(!GetOwner()->HasAuthority())
@@ -77,14 +74,11 @@ void UPlayerBasicAttack::ServerRPCAttack_Implementation()
 	MulticastRPCAttack(); 
 }
 
-void UPlayerBasicAttack::MulticastRPCAttack_Implementation()
+void UBasicAttackComponent::MulticastRPCAttack_Implementation()
 {
 	// Sometimes attack is fired before player is set when loading new level, ensure player is set 
 	if(!Owner)
-	{
-		Owner = Cast<ACharacter>(GetOwner());
 		return;
-	}
 
 	bool bCalledHitEvent = false;
 
@@ -101,7 +95,7 @@ void UPlayerBasicAttack::MulticastRPCAttack_Implementation()
 	TArray<AActor*> OverlappingActors; 
 	GetOverlappingActors(OverlappingActors, AActor::StaticClass()); 
 
-	// TODO: When the attack animation in in place, we prob want to delay this so it times with when the animation hits 
+	// TODO: When the attack animation in in place, we may want to delay this so it times with when the animation hits 
 	for(const auto Actor : OverlappingActors)
 	{
 		const bool bDamagingPlayer = Actor->IsA(APROJCharacter::StaticClass()); 
@@ -131,7 +125,7 @@ void UPlayerBasicAttack::MulticastRPCAttack_Implementation()
 		Cast<AShadowCharacter>(Owner)->OnBasicAttack(); 
 }
 
-bool UPlayerBasicAttack::ShouldCallHitEvent(AActor* OverlappingActor) const
+bool UBasicAttackComponent::ShouldCallHitEvent(AActor* OverlappingActor) const
 {
 	// Pawns are considered hits even though they dont physically collide 
 	if(OverlappingActor && OverlappingActor->IsA(APawn::StaticClass()))
@@ -146,7 +140,7 @@ bool UPlayerBasicAttack::ShouldCallHitEvent(AActor* OverlappingActor) const
 	return GetWorld()->LineTraceSingleByChannel(HitResult, Owner->GetActorLocation(), EndLoc, ECC_Pawn, Params); 
 }
 
-void UPlayerBasicAttack::EnableCanAttack()
+void UBasicAttackComponent::EnableCanAttack()
 {
 	bCanAttack = true; 
 }

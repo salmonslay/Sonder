@@ -2,12 +2,12 @@
 
 #include "ShadowCharacter.h"
 
+#include "BasicAttackComponent.h"
 #include "DummyPlayerState.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
 #include "NiagaraComponent.h"
 #include "NiagaraFunctionLibrary.h"
-#include "PlayerBasicAttack.h"
 #include "PlayerCharState.h"
 #include "RobotBaseState.h"
 #include "SoulBaseStateNew.h"
@@ -19,13 +19,8 @@ AShadowCharacter::AShadowCharacter()
 	// Create the states 
 	DummyState = CreateDefaultSubobject<UDummyPlayerState>(TEXT("DummyStateNew"));
 
-	EnemyBasicAttack = CreateDefaultSubobject<UPlayerBasicAttack>(TEXT("BasicAttack"));
-	EnemyBasicAttack->SetupAttachment(RootComponent);
-
-	EnemyBasicAttack->SetRelativeLocation(FVector(50, 0, 0)); 
-	EnemyBasicAttack->SetRelativeScale3D(FVector(1.5f, 1.5f, 2.f));
-	EnemyBasicAttack->SetCollisionEnabled(ECollisionEnabled::QueryOnly); 
-
+	EnemyAttackComp = CreateDefaultSubobject<UBasicAttackComponent>(TEXT("Basic Attack Comp"));
+	EnemyAttackComp->SetupAttachment(RootComponent);
 }
 
 void AShadowCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
