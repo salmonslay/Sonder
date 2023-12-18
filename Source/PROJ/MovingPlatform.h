@@ -39,4 +39,12 @@ public:
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	AGrid* CurrentGrid;
+	
+	float GetMoveDirectionZ() const;
+
+private:
+	
+	FVector MoveDelta = FVector::ZeroVector;
+
+	FVector LastKnownLocation = FVector::ZeroVector;
 };

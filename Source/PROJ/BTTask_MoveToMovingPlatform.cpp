@@ -45,7 +45,7 @@ EBTNodeResult::Type UBTTask_MoveToMovingPlatform::ExecuteTask(UBehaviorTreeCompo
 	// TODO: Check exactly which heights work to check if is on same level as player
 
 
-	BlackboardComponent->SetValueAsVector(BlackboardKey.SelectedKeyName, FVector(GetMovingPlatform(OwnerComp).X, GetMovingPlatform(OwnerComp).Y, OwnerLocation.Z ));
+	BlackboardComponent->SetValueAsVector(BlackboardKey.SelectedKeyName, FVector(OwnerLocation.X, GetMovingPlatform(OwnerComp).Y + 20, OwnerLocation.Z ));
 	if (bDebug)
 	{
 		DrawDebugSphere(GetWorld(), BlackboardComponent->GetValueAsVector(BlackboardKey.SelectedKeyName), 30.f, 30, FColor::Green, false, 5.f );
@@ -80,7 +80,7 @@ FVector UBTTask_MoveToMovingPlatform::GetMovingPlatform(const UBehaviorTreeCompo
 	FVector LocationToCheck;
 
 	// if is in approximately same height as current move target, choose the moving platform that is closest to enemy
-	if(OwnerComp.GetBlackboardComponent()->GetValueAsBool("bIsLeveledWithCurrentTarget"))
+	if(OwnerLocation.Z >= CurrentTarget.Z)
 	{
 		LocationToCheck = OwnerLocation;
 	}

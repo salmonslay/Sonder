@@ -6,6 +6,7 @@
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
 #include "BTService_SetValidPath.generated.h"
 
+class AMovingPlatform;
 class APROJCharacter;
 class AShadowCharacter;
 /**
@@ -41,6 +42,8 @@ private:
 
 	void SetPathIsInvalid(UBehaviorTreeComponent& OwnerComp) const;
 
+	void VerifyGroundStatus(AShadowCharacter* Owner);
+
 	UPROPERTY(EditAnywhere)
 	TArray<TEnumAsByte<EObjectTypeQuery>> LineTraceObjects;
 
@@ -49,6 +52,9 @@ private:
 
 	UPROPERTY()
 	UBlackboardComponent* BlackboardComponent;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AMovingPlatform> MovingPlatformClass;
 
 	
 	
