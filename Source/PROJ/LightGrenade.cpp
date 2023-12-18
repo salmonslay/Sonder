@@ -211,26 +211,47 @@ void ALightGrenade::MulticastRPCExplosion_Implementation()
 	
 }
 
+void ALightGrenade::IncreaseMaxThrowIterations()
+{
+	if(bCanThrow)
+	{
+		MaxThrowIterations++;
+		bIncreasingCharge = !bIncreasingCharge; 
+	}
+}
+
 FVector ALightGrenade::GetLaunchForce(const float TimeHeld)
 {
 	if (!Player)
 	{
 		GetPlayer();
 	}
+	
 	// Get the direction to throw the grenade in, check if depth movement is enabled 
 	FVector ThrowDir = Player->ThrowLoc->GetComponentLocation() - Player->GetActorLocation();
 	if(!Player->IsDepthMovementEnabled())
 		ThrowDir.X = 0; 
-		
-	// Calculate the force and clamp it to ensure it is between set bounds and adjust to looping throw force 
-	const FVector ThrowImpulse = ThrowDir.GetSafeNormal() *
-		(StartThrowImpulse + TimeHeld * FireSpeedPerSecondHeld - MaxThrowImpulse * MaxThrowIterations); 
+
+	FVector ThrowImpulse; 
+	// Calculate the force and clamp it to ensure it is between set bounds and adjust to looping throw force
+	if(bIncreasingCharge)
+	{
+		ThrowImpulse = ThrowDir.GetSafeNormal() *
+			(StartThrowImpulse + TimeHeld * FireSpeedPerSecondHeld - MaxThrowImpulse * MaxThrowIterations);
+	} else
+	{
+		ThrowImpulse = ThrowDir.GetSafeNormal() *
+			(MaxThrowImpulse - (TimeHeld * FireSpeedPerSecondHeld - MaxThrowImpulse * MaxThrowIterations));
+	}
 
 	// Impulse greater than max force, call timer to increase throw loops after set delay if not already called 
-	if(ThrowImpulse.Size() >= MaxThrowImpulse && !GetWorldTimerManager().IsTimerActive(ThrowIterTimerHandle))
-		GetWorldTimerManager().SetTimer(ThrowIterTimerHandle, this, &ALightGrenade::IncreaseMaxThrowIterations, TimeAtMaxThrowForce); 
+	if(!GetWorldTimerManager().IsTimerActive(ThrowIterTimerHandle))
+	{
+		if((ThrowImpulse.Size() >= MaxThrowImpulse && bIncreasingCharge) || (ThrowImpulse.Size() <= StartThrowImpulse && !bIncreasingCharge))
+			GetWorldTimerManager().SetTimer(ThrowIterTimerHandle, this, &ALightGrenade::IncreaseMaxThrowIterations, TimeAtMaxThrowForce);
+	}
 	
-	return ThrowImpulse.GetClampedToMaxSize(MaxThrowImpulse); 
+	return ThrowImpulse.GetClampedToSize(StartThrowImpulse, MaxThrowImpulse); 
 }
 
 void ALightGrenade::EnableCanThrow()
