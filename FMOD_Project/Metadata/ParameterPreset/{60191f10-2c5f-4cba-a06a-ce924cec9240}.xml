@@ -1,0 +1,29 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="ParameterPreset" id="{60191f10-2c5f-4cba-a06a-ce924cec9240}">
+		<property name="name">
+			<value>Shadow</value>
+		</property>
+		<relationship name="folder">
+			<destination>{fc4a5593-8a49-4f06-a150-12dbe6800661}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{9f09acb9-de8f-4746-a59f-36b00f2ed38a}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{9f09acb9-de8f-4746-a59f-36b00f2ed38a}">
+		<property name="parameterType">
+			<value>2</value>
+		</property>
+		<property name="maximum">
+			<value>2</value>
+		</property>
+		<property name="enumerationLabels">
+			<value>Good</value>
+			<value>Evil</value>
+		</property>
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>
