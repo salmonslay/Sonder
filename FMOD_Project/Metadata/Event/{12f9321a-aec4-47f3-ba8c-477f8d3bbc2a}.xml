@@ -8,7 +8,7 @@
 			<value>2</value>
 		</property>
 		<relationship name="folder">
-			<destination>{f29c3ef4-1edc-4a98-860d-49acaea3f324}</destination>
+			<destination>{0a58a489-8f5a-4c9a-a43a-ee5c619ca6a8}</destination>
 		</relationship>
 		<relationship name="mixer">
 			<destination>{0b5d663d-5409-4fcd-aa5b-c08e7b98ac6d}</destination>
@@ -112,6 +112,9 @@
 		<property name="volume">
 			<value>-7</value>
 		</property>
+		<relationship name="automators">
+			<destination>{26fe1008-aed7-4ed8-b1e4-88afb6a36acc}</destination>
+		</relationship>
 		<relationship name="effectChain">
 			<destination>{85b7e9a0-65b1-4c28-b26f-c5d0a1f14531}</destination>
 		</relationship>
@@ -236,6 +239,11 @@
 		<relationship name="output">
 			<destination>{1377421a-24b0-4888-b1b2-235efbe0dc36}</destination>
 		</relationship>
+	</object>
+	<object class="Automator" id="{26fe1008-aed7-4ed8-b1e4-88afb6a36acc}">
+		<property name="nameOfPropertyBeingAutomated">
+			<value>pitch</value>
+		</property>
 	</object>
 	<object class="MixerBusEffectChain" id="{85b7e9a0-65b1-4c28-b26f-c5d0a1f14531}">
 		<relationship name="effects">
