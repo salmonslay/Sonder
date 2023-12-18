@@ -133,7 +133,10 @@ private:
 
 	FTimerHandle ThrowIterTimerHandle; 
 
-	void IncreaseMaxThrowIterations() { if(bCanThrow) MaxThrowIterations++; } 
+	// Charge moving up or down 
+	bool bIncreasingCharge = true; 
+
+	void IncreaseMaxThrowIterations(); 
 
 	FVector GetLaunchForce(const float TimeHeld); 
 
