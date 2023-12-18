@@ -9,6 +9,7 @@
 #include "LevelSequencePlayer.h"
 #include "PROJCharacter.h"
 #include "Blueprint/UserWidget.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
 ACutsceneManager::ACutsceneManager()
@@ -46,6 +47,7 @@ void ACutsceneManager::BeginPlay()
 	
 		// Disable input immediately so player cannot move during level load (delayed because race conditions)
 		GetWorldTimerManager().SetTimerForNextTick(this, &ACutsceneManager::DisablePlayerInput); 
+		GetWorldTimerManager().SetTimerForNextTick(this, &ACutsceneManager::RemoveHUD); 
 
 		// Trigger play on server so it syncs 
 		if(HasAuthority())
@@ -171,6 +173,8 @@ void ACutsceneManager::StopCutscene()
 	if(!LevelToLoadOnCutsceneEnd.IsNone() && HasAuthority())
 		GetWorld()->ServerTravel("/Game/Maps/" + LevelToLoadOnCutsceneEnd.ToString());
 
+	ShowHud(); 
+	
 	// if(!IsCutscenePlaying())
 	// 	Destroy(); // TODO: Destroy? 
 }
@@ -197,8 +201,21 @@ void ACutsceneManager::ServerRPC_StopCutscene_Implementation()
 	MulticastRPC_StopCutscene();
 }
 
-void ACutsceneManager::RemoveHUD() const
+void ACutsceneManager::RemoveHUD()
 {
 	if(AutoPlayWidget)
-		AutoPlayWidget->RemoveFromParent(); 
+		AutoPlayWidget->RemoveFromParent();
+
+	WidgetsHidden.Empty(); 
+
+	UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), WidgetsHidden, WidgetsToHide);
+
+	for(const auto Widget : WidgetsHidden)
+		Widget->SetVisibility(ESlateVisibility::Hidden);
+}
+
+void ACutsceneManager::ShowHud()
+{
+	for(const auto Widget : WidgetsHidden)
+		Widget->SetVisibility(ESlateVisibility::Visible); 
 }

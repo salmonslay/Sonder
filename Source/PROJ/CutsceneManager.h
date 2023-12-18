@@ -98,7 +98,14 @@ private:
 
 	/** The widget created which will be removed when cutscene starts */
 	UPROPERTY()
-	class UUserWidget* AutoPlayWidget; 
+	class UUserWidget* AutoPlayWidget;
+
+	/** Stores the widgets that were hidden when cutscene began */
+	TArray<UUserWidget*> WidgetsHidden;
+
+	/** Widget classes to hide during cutscenes */
+	UPROPERTY(EditDefaultsOnly)
+	TSubclassOf<UUserWidget> WidgetsToHide; 
 
 	/** Plays the assigned cutscene */
 	void PlayCutscene();
@@ -115,7 +122,9 @@ private:
 	void BindSkipCutsceneButton(); 
 
 	/** Removes the HUD for the player */
-	void RemoveHUD() const;
+	void RemoveHUD();
+
+	void ShowHud(); 
 	
 	/** Stops the cutscene and resets everything. Called either by skipping or when cutscene finished naturally */
 	void StopCutscene();
