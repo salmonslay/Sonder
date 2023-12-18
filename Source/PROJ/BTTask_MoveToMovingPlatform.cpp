@@ -33,7 +33,7 @@ EBTNodeResult::Type UBTTask_MoveToMovingPlatform::ExecuteTask(UBehaviorTreeCompo
 	if(MovingPlatforms.IsEmpty())
 	{
 		TArray<AActor*> TempArray; 
-		UGameplayStatics::GetAllActorsOfClass(this, AMovingPlatform::StaticClass(), TempArray);
+		UGameplayStatics::GetAllActorsOfClass(this, PlatformClass, TempArray);
 
 		for(const auto Platform : TempArray)
 		{
@@ -43,8 +43,14 @@ EBTNodeResult::Type UBTTask_MoveToMovingPlatform::ExecuteTask(UBehaviorTreeCompo
 
 	// TODO: Check if tree needs balancing, might have to about all other move-to-tasks when enemy is missing line of sight
 	// TODO: Check exactly which heights work to check if is on same level as player
+
+
+	BlackboardComponent->SetValueAsVector(BlackboardKey.SelectedKeyName, FVector(GetMovingPlatform(OwnerComp).X, GetMovingPlatform(OwnerComp).Y, OwnerLocation.Z ));
+	if (bDebug)
+	{
+		DrawDebugSphere(GetWorld(), BlackboardComponent->GetValueAsVector(BlackboardKey.SelectedKeyName), 30.f, 30, FColor::Green, false, 5.f );
+	}
 		
-	BlackboardComponent->SetValueAsVector(BlackboardKey.SelectedKeyName, GetMovingPlatform(OwnerComp));
 	return Result;
 }
 
@@ -74,7 +80,7 @@ FVector UBTTask_MoveToMovingPlatform::GetMovingPlatform(const UBehaviorTreeCompo
 	FVector LocationToCheck;
 
 	// if is in approximately same height as current move target, choose the moving platform that is closest to enemy
-	if(FMath::Abs(OwnerLocation.Z - CurrentTarget.Z) <= MaxHeightDifferenceToMarkAsSameHeight)
+	if(OwnerComp.GetBlackboardComponent()->GetValueAsBool("bIsLeveledWithCurrentTarget"))
 	{
 		LocationToCheck = OwnerLocation;
 	}

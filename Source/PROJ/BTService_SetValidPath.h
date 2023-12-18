@@ -47,6 +47,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;
 
+	UPROPERTY()
+	UBlackboardComponent* BlackboardComponent;
+
 	
 	
 };

@@ -58,7 +58,7 @@ void AShadowCharacter::MakeJump()
 	if(GetLocalRole() == ROLE_Authority && !bIsStunned)
 	{
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
-		UE_LOG(LogTemp, Error, TEXT("MovementMode falling"));
+		//UE_LOG(LogTemp, Error, TEXT("MovementMode falling"));
 		bCanBasicJump = false;
 		bIsPerformingJump = true;
 		bHasLandedOnPlatform = false;
@@ -74,7 +74,7 @@ void AShadowCharacter::Idle()
 	if(GetLocalRole() == ROLE_Authority && !bIsStunned)
 	{
 		GetCharacterMovement()->SetMovementMode(MOVE_Walking);
-		UE_LOG(LogTemp, Error, TEXT("MovementMode walking"));
+		//UE_LOG(LogTemp, Error, TEXT("MovementMode walking"));
 		bIsPerformingJump = false;
 		bIsJumping = false;
 	}

@@ -30,19 +30,48 @@ void UBTService_SetValidPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 	
 	OwnerLocation = OwnerCharacter->GetActorLocation();
 
+	BlackboardComponent = OwnerComp.GetAIOwner()->GetBlackboardComponent();
+	
+	if (BlackboardComponent == nullptr) return;
+
+	if (bDebug)
+	{
+		DrawDebugSphere(GetWorld(), FVector(OwnerLocation.X, OwnerLocation.Y, OwnerLocation.Z + HeightDifferenceToMarkInvalid), 30.f, 30, FColor::Red, false, 1.f );
+		DrawDebugSphere(GetWorld(), FVector(OwnerLocation.X, OwnerLocation.Y, OwnerLocation.Z - HeightDifferenceToMarkInvalid), 30.f, 30, FColor::Red, false, 1.f );
+
+	}
+	if (FMath::Abs(OwnerLocation.Z - CurrentTarget.Z) <=HeightDifferenceToMarkInvalid)
+	{
+		BlackboardComponent->SetValueAsBool("bIsLeveledWithCurrentTarget", true);
+		if (HasLineOfSightToPlayer(OwnerCharacter, CurrentTarget))
+		{
+			BlackboardComponent->SetValueAsBool("bHasLineOfSightToCurrentTarget", true);
+		}
+		else
+		{
+			BlackboardComponent->SetValueAsBool("bHasLineOfSightToCurrentTarget", false);
+			BlackboardComponent->ClearValue("bHasLineOfSightToCurrentTarget");
+		}
+		OwnerComp.GetBlackboardComponent()->SetValueAsBool(BlackboardKey.SelectedKeyName, true); 
+		return;
+	}
+	
 	if(FMath::Abs(OwnerLocation.Z - CurrentTarget.Z) > HeightDifferenceToMarkInvalid)
 	{
+		BlackboardComponent->SetValueAsBool("bIsLeveledWithCurrentTarget", false);
+		OwnerComp.GetBlackboardComponent()->ClearValue("bIsLeveledWithCurrentTarget");
+		if (HasLineOfSightToPlayer(OwnerCharacter, CurrentTarget))
+		{
+			BlackboardComponent->SetValueAsBool("bHasLineOfSightToCurrentTarget", true);
+		}
+		else
+		{
+			BlackboardComponent->SetValueAsBool("bHasLineOfSightToCurrentTarget", false);
+			BlackboardComponent->ClearValue("bHasLineOfSightToCurrentTarget");
+		}
 		SetPathIsInvalid(OwnerComp);
 		return; 
 	}
-	if (HasLineOfSightToPlayer(OwnerCharacter, CurrentTarget))
-	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsBool("bHasLineOfSightToCurrentTarget", true);
-		SetPathIsInvalid(OwnerComp);
-		return; 
-	}
-	OwnerComp.GetBlackboardComponent()->SetValueAsBool("bHasLineOfSightToCurrentTarget", false);
-	OwnerComp.GetBlackboardComponent()->ClearValue("bHasLineOfSightToCurrentTarget");
 	
 	if (!OwnerCharacter->HasNavigationToTarget(CurrentTarget))
 	{
@@ -51,7 +80,11 @@ void UBTService_SetValidPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 	}
 	
 	// Path valid 
-	OwnerComp.GetBlackboardComponent()->SetValueAsBool(BlackboardKey.SelectedKeyName, true);
+	BlackboardComponent->SetValueAsBool(BlackboardKey.SelectedKeyName, true);
+
+	//Has line of sight to player
+	BlackboardComponent->SetValueAsBool("bHasLineOfSightToCurrentTarget", false);
+	BlackboardComponent->ClearValue("bHasLineOfSightToCurrentTarget");
 }
 
 bool UBTService_SetValidPath::HasLineOfSightToPlayer(AShadowCharacter* Owner, const FVector &CurrentPlayerTarget) const

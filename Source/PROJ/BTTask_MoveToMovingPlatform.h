@@ -6,6 +6,7 @@
 #include "BehaviorTree/Tasks/BTTask_MoveTo.h"
 #include "BTTask_MoveToMovingPlatform.generated.h"
 
+class AMovingPlatform;
 /**
  * 
  */
@@ -36,5 +37,11 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float MaxHeightDifferenceToMarkAsSameHeight = 100.f;
+
+	UPROPERTY(EditAnywhere)
+	bool bDebug = false;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AMovingPlatform> PlatformClass;
 	
 };
