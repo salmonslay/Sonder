@@ -72,6 +72,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{1d7c4010-426d-4d36-98c0-6d6173d586b7}">
+		<relationship name="automators">
+			<destination>{2bbe36b9-2092-494f-ae9b-c16fdd821a3f}</destination>
+		</relationship>
 		<relationship name="effectChain">
 			<destination>{5677c64d-840e-4fe5-a393-f40f393175ac}</destination>
 		</relationship>
@@ -93,6 +96,11 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{25fa6185-6eea-4cbc-b4c5-25fddeec21d1}" />
+	<object class="Automator" id="{2bbe36b9-2092-494f-ae9b-c16fdd821a3f}">
+		<property name="nameOfPropertyBeingAutomated">
+			<value>pitch</value>
+		</property>
+	</object>
 	<object class="MixerBusEffectChain" id="{5677c64d-840e-4fe5-a393-f40f393175ac}">
 		<relationship name="effects">
 			<destination>{0e9eb6c7-01b2-4c34-9ba4-0cfc77cb54af}</destination>
