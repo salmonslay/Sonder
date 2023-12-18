@@ -117,6 +117,7 @@ bool AShadowCharacter::PointCloserToPlayer(const FVector &CurrentTargetPoint) co
 	return FVector::Distance(AvaliableJumpPoint, CurrentTargetPoint) < FVector::Distance(GetActorLocation(),CurrentTargetPoint);
 }
 
+
 void AShadowCharacter::BeginPlay()
 {
 	Super::BeginPlay();
