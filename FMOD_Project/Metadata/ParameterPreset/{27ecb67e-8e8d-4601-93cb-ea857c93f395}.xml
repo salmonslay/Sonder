@@ -16,7 +16,7 @@
 			<value>2</value>
 		</property>
 		<property name="maximum">
-			<value>10</value>
+			<value>11</value>
 		</property>
 		<property name="enumerationLabels">
 			<value>metalDoor</value>
@@ -29,6 +29,7 @@
 			<value>Oil</value>
 			<value>AlarmWalls</value>
 			<value>Gas</value>
+			<value>LargeVault</value>
 		</property>
 		<property name="initialValue">
 			<value>0</value>
