@@ -36,48 +36,36 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 
 	OwnerLocation = OwnerCharacter->GetActorLocation();
 
+	BlackboardComponent = OwnerComp.GetAIOwner()->GetBlackboardComponent();
+	
+	if (BlackboardComponent == nullptr) return;
 
-	// TESTING
+	// TESTING SHOULD LOOK FOR Z on locations
 	// this should really not be here and its horrid but there are a lot of things that needs to change
 
 	/*
-	if (!OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsBool("bHasValidPath") && OwnerCharacter->bHasLandedOnPlatform
-		&& !FMath::IsNearlyEqual(OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsVector("CurrentMoveTarget").Y,OwnerLocation.Y, 3 ))
+	if (OwnerCharacter->bHasLandedOnPlatform && !FMath::IsNearlyEqual(BlackboardComponent->GetValueAsVector("CurrentMoveTarget").Z,OwnerLocation.Z, 3 ))
 	{
-		if (OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsBool("bHasValidPath"))
-		{
-			UE_LOG(LogTemp, Error, TEXT("Has valid path"));
-		}
-		UE_LOG(LogTemp, Error, TEXT("IsOnPlatform"));
-		OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsOnPlatform", true);
+		BlackboardComponent->SetValueAsBool("bIsOnPlatform", true);
 	}
-	
-	if
+	else
 	{
-		OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsOnPlatform", false);
-		OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue("bIsOnPlatform");
+		BlackboardComponent->SetValueAsBool("bIsOnPlatform", false);
+		BlackboardComponent->ClearValue("bIsOnPlatform");
 	}
 	*/
+	
 	if (OwnerCharacter->bIsJumping || OwnerCharacter->bIsPerformingJump )
 	{
 		// this feels wrong but its right, should rename the bb-key
-		OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", false);
-		OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue("bIsJumping");
-		return;
+		BlackboardComponent->SetValueAsBool("bIsJumping", true);
+		//OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue("bIsJumping");
+		//return;
 	}
+	
 	OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
-
 	
-	if (!OwnerCharacter->bCanPlatformJump && !OwnerCharacter->bCanBasicJump)
-	{
-		OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", false);
-		OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue("bIsJumping");
-		return;
-	}
-
-	
-
-	if (OwnerCharacter->bCanBasicJump && !OwnerCharacter->bIsJumping) // removed check can jump to platform
+	if (OwnerCharacter->bCanBasicJump) // removed check can jump to platform
 	{
 		if (OwnerCharacter->JumpCoolDownTimer >= OwnerCharacter->JumpCoolDownDuration)
 		{
@@ -85,57 +73,29 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 			if (OwnerCharacter->AvaliableJumpPoint != FVector::ZeroVector)
 			{
 				//  && OwnerCharacter->PointCloserToPlayer(OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsVector("CurrentMoveTarget"))
-				if (!OwnerCharacter->HasNavigationToTarget(OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsVector("CurrentMoveTarget")))
+				if (!OwnerCharacter->HasNavigationToTarget(BlackboardComponent->GetValueAsVector("CurrentMoveTarget")))
 				{
-					//UE_LOG(LogTemp, Error, TEXT("Wants to jump from service"))
-					OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", true);
+					BlackboardComponent->SetValueAsBool("bIsJumping", true);
 					JumpToPoint(OwnerLocation, OwnerCharacter->AvaliableJumpPoint);
 					OwnerCharacter->JumpCoolDownTimer = 0;
 					OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
 				}
-				else
-				{
-					//UE_LOG(LogTemp, Error, TEXT("Wants to jump but has navigation"))
-					OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", false);
-					OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue("bIsJumping");
-				}
-			}
-			else
-			{
-				//UE_LOG(LogTemp, Error, TEXT("Wants to jump but jump point is zero"))
-				OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", false);
-				OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue("bIsJumping");
 			}
 		}
-		else
-		{
-			OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", false);
-			OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue("bIsJumping");
-		}
 	}
-	else
-	{
-		OwnerComp.GetAIOwner()->GetBlackboardComponent()->SetValueAsBool("bIsJumping", false);
-		OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue("bIsJumping");
-	}
+	BlackboardComponent->SetValueAsBool("bIsJumping", false);
+	BlackboardComponent->ClearValue("bIsJumping");
 }
 
 
 void UBTService_CanJumpOnPlatform::JumpToPoint(const FVector &StartPoint, const FVector &JumpPoint) const 
 {
 	OwnerCharacter->bIsJumping = true;
-	OwnerCharacter->bIsPerformingJump = true;
 	FVector OutVel;
 	OwnerCharacter->GetMovementComponent()->Velocity = FVector(0.f, 0.f, 0.f);
 	UGameplayStatics::SuggestProjectileVelocity_CustomArc(GetWorld(), OutVel, StartPoint, JumpPoint, 0, 0.6);
 	OwnerCharacter->GetCharacterMovement()->AddImpulse(OutVel.GetSafeNormal() * JumpBoost);
 	OwnerCharacter->MakeJump();
-
-	if (bDebug)
-	{
-		DrawDebugSphere(GetWorld(),JumpPoint, 30.f, 24, FColor::Blue, false, 2.f);
-		UE_LOG(LogTemp, Error, TEXT("Doing jump "));
-	}
 }
 
 /*

@@ -6,6 +6,7 @@
 #include "EnemyCharacter.h"
 #include "ShadowCharacter.generated.h"
 
+class AEnemyJumpTrigger;
 class UPlayerCharState; 
 
 /**
@@ -62,6 +63,15 @@ public:
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	float JumpCoolDownTimer = 0.f;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	bool IsOverlappingWithTrigger = false;
+
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	AEnemyJumpTrigger* CurrentJumpTrigger = nullptr;
+
+	UFUNCTION(BlueprintCallable)
+	bool CheckIfJumpNeeded();
 	
 	UFUNCTION(Server, Reliable) 
 	void ServerRPC_ToggleChargeEffect(const bool bActive);
@@ -88,6 +98,7 @@ public:
 
 	/** Calculates if jump point is closer to player than enemy*/
 	bool PointCloserToPlayer(const FVector &CurrentTargetPoint) const;
+
 	
 protected:
 

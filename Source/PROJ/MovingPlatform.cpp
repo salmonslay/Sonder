@@ -16,7 +16,8 @@ AMovingPlatform::AMovingPlatform()
 void AMovingPlatform::BeginPlay()
 {
 	Super::BeginPlay();
-	
+
+	LastKnownLocation = GetActorLocation();
 }
 
 // Called every frame
@@ -24,6 +25,14 @@ void AMovingPlatform::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	MoveDelta = GetActorLocation() - LastKnownLocation;
+	LastKnownLocation = GetActorLocation();
+
+}
+
+float AMovingPlatform::GetMoveDirectionZ() const 
+{
+	return MoveDelta.Z;
 }
 
 

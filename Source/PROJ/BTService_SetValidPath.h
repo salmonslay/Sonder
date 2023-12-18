@@ -6,6 +6,8 @@
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
 #include "BTService_SetValidPath.generated.h"
 
+class AMovingPlatform;
+class APROJCharacter;
 class AShadowCharacter;
 /**
  * 
@@ -36,6 +38,24 @@ private:
 	UPROPERTY(EditAnywhere)
 	float HeightDifferenceToMarkInvalid = 150.f;
 
-	void SetPathIsInvalid(UBehaviorTreeComponent& OwnerComp) const; 
+	bool HasLineOfSightToPlayer(AShadowCharacter* Owner, const FVector &CurrentPlayerTarget) const;
+
+	void SetPathIsInvalid(UBehaviorTreeComponent& OwnerComp) const;
+
+	void VerifyGroundStatus(AShadowCharacter* Owner);
+
+	UPROPERTY(EditAnywhere)
+	TArray<TEnumAsByte<EObjectTypeQuery>> LineTraceObjects;
+
+	UPROPERTY(EditAnywhere)
+	bool bDebug = false;
+
+	UPROPERTY()
+	UBlackboardComponent* BlackboardComponent;
+
+	UPROPERTY(EditAnywhere)
+	TSubclassOf<AMovingPlatform> MovingPlatformClass;
+
+	
 	
 };

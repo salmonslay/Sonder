@@ -1,6 +1,9 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <objects serializationModel="Studio.02.02.00">
 	<object class="MixerReturn" id="{b17035c1-d66f-454a-8a4c-14fedaf6640f}">
+		<property name="volume">
+			<value>3.5</value>
+		</property>
 		<property name="name">
 			<value>Cave</value>
 		</property>
@@ -51,9 +54,6 @@
 		</relationship>
 	</object>
 	<object class="SFXReverbEffect" id="{56b219ad-e347-437f-9c38-f897984c9611}">
-		<property name="bypass">
-			<value>true</value>
-		</property>
 		<property name="decayTime">
 			<value>7000</value>
 		</property>
@@ -73,10 +73,13 @@
 			<value>9</value>
 		</property>
 		<property name="frequencyA">
-			<value>1287.26733</value>
+			<value>3338.7666</value>
 		</property>
 		<property name="frequencyB">
 			<value>98.6033401</value>
+		</property>
+		<property name="qualityA">
+			<value>0.840758622</value>
 		</property>
 		<property name="qualityB">
 			<value>0.239999995</value>
