@@ -4,6 +4,7 @@
 #include "BTService_SetValidPath.h"
 
 #include "AIController.h"
+#include "MovingPlatform.h"
 #include "PROJCharacter.h"
 #include "ShadowCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -40,6 +41,19 @@ void UBTService_SetValidPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 		DrawDebugSphere(GetWorld(), FVector(OwnerLocation.X, OwnerLocation.Y, OwnerLocation.Z - HeightDifferenceToMarkInvalid), 30.f, 30, FColor::Red, false, 1.f );
 
 	}
+
+	VerifyGroundStatus(OwnerCharacter);
+
+	if (OwnerCharacter->bHasLandedOnPlatform && !FMath::IsNearlyEqual(BlackboardComponent->GetValueAsVector("CurrentMoveTarget").Z,OwnerLocation.Z, 3 ))
+	{
+		BlackboardComponent->SetValueAsBool("bIsOnPlatform", true);
+	}
+	else
+	{
+		BlackboardComponent->SetValueAsBool("bIsOnPlatform", false);
+		BlackboardComponent->ClearValue("bIsOnPlatform");
+	}
+	
 	if (FMath::Abs(OwnerLocation.Z - CurrentTarget.Z) <=HeightDifferenceToMarkInvalid)
 	{
 		BlackboardComponent->SetValueAsBool("bIsLeveledWithCurrentTarget", true);
@@ -60,7 +74,7 @@ void UBTService_SetValidPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 	{
 		BlackboardComponent->SetValueAsBool("bIsLeveledWithCurrentTarget", false);
 		OwnerComp.GetBlackboardComponent()->ClearValue("bIsLeveledWithCurrentTarget");
-		if (HasLineOfSightToPlayer(OwnerCharacter, CurrentTarget))
+		if (!OwnerCharacter->bIsPerformingJump && HasLineOfSightToPlayer(OwnerCharacter, CurrentTarget))
 		{
 			BlackboardComponent->SetValueAsBool("bHasLineOfSightToCurrentTarget", true);
 		}
@@ -106,4 +120,43 @@ void UBTService_SetValidPath::SetPathIsInvalid(UBehaviorTreeComponent& OwnerComp
 {
 	OwnerComp.GetBlackboardComponent()->SetValueAsBool(BlackboardKey.SelectedKeyName, false); 
 	OwnerComp.GetBlackboardComponent()->ClearValue(BlackboardKey.SelectedKeyName);
+}
+
+void UBTService_SetValidPath::VerifyGroundStatus(AShadowCharacter* Owner)
+{
+	FHitResult HitResult;
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(Owner);
+
+	bool bHit;
+	if (bDebug)
+	{
+		bHit = UKismetSystemLibrary::LineTraceSingleForObjects(this, OwnerLocation, FVector(OwnerLocation.X, OwnerLocation.Y, OwnerLocation.Z - 90.f), LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true, FColor::Red, FColor::Blue, 10.f);
+	}
+	bHit = UKismetSystemLibrary::LineTraceSingleForObjects(this, OwnerLocation, FVector(OwnerLocation.X, OwnerLocation.Y, OwnerLocation.Z - 90.f), LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
+
+	if (bHit)
+	{
+		if (AMovingPlatform* Other = Cast<AMovingPlatform>(HitResult.GetActor()))
+		{
+			if(Other->GetClass() == MovingPlatformClass)
+			{
+				UE_LOG(LogTemp, Error, TEXT("Supposed hit on platform hit = %s"), * HitResult.GetActor()->GetActorNameOrLabel());
+				OwnerCharacter->bHasLandedOnPlatform = true;
+				OwnerCharacter->bHasLandedOnGround = true;
+			}
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Hit something thats not a platform, Hit = %s"), * HitResult.GetActor()->GetActorNameOrLabel());
+			OwnerCharacter->bHasLandedOnPlatform = false;
+			OwnerCharacter->bHasLandedOnGround = true;
+		}
+	}
+	else
+	{
+		OwnerCharacter->bHasLandedOnPlatform = false;
+		OwnerCharacter->bHasLandedOnGround = false;
+		//OwnerCharacter->bIsPerformingJump = true;
+	}
 }

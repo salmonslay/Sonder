@@ -98,6 +98,7 @@ public:
 
 	/** Calculates if jump point is closer to player than enemy*/
 	bool PointCloserToPlayer(const FVector &CurrentTargetPoint) const;
+
 	
 protected:
 

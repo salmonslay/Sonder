@@ -13,6 +13,8 @@ void UBTService_SetCurrentTarget::TickNode(UBehaviorTreeComponent& OwnerComp, ui
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
 
+	if (!IsValid(OwnerComp.GetAIOwner())) return;
+
 	OwnerComp.GetBlackboardComponent()->SetValueAsVector(BlackboardKey.SelectedKeyName, GetTargetLocation(OwnerComp.GetAIOwner())); 
 }
 
