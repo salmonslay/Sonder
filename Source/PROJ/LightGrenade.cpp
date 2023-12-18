@@ -86,6 +86,7 @@ void ALightGrenade::Throw(const float TimeHeld)
 
 		Indicator->SetActorHiddenInGame(true);
 		MaxThrowIterations = 0;
+		bIncreasingCharge = true; 
 		GetWorld()->GetTimerManager().ClearTimer(ThrowIterTimerHandle); 
 	}
 }

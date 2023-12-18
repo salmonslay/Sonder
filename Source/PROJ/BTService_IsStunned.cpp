@@ -20,6 +20,8 @@ void UBTService_IsStunned::OnGameplayTaskActivated(UGameplayTask& Task)
 void UBTService_IsStunned::OnGameplayTaskDeactivated(UGameplayTask& Task)
 {
 	Super::OnGameplayTaskDeactivated(Task);
+
+	GetWorld()->GetTimerManager().ClearAllTimersForObject(this); 
 }
 
 void UBTService_IsStunned::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -53,7 +55,9 @@ void UBTService_IsStunned::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 
 void UBTService_IsStunned::StopRepositioning()
 {
-
+	if(!IsValid(TreeComponent))
+		return; 
+	
 	TreeComponent->GetBlackboardComponent()->SetValueAsBool("bIsRepositioning", false);
 	TreeComponent->GetBlackboardComponent()->ClearValue("bIsRepositioning");
 
