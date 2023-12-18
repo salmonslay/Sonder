@@ -149,13 +149,13 @@ void ALightGrenade::ActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 		}else if (APressurePlateBase* Plate = Cast<APressurePlateBase>(OtherActor))
 		{
 			Plate->StartMove();		
-		}
+		}/*
 		else if (OtherActor || OtherComp || OverlappedComponent)
 		{
 
 			StartCountdown(ExplodeTimeSlow);
 			
-		} 
+		} */
 	
 }
 
