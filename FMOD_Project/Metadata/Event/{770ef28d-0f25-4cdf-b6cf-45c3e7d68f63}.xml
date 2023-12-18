@@ -134,16 +134,16 @@
 			<value>2</value>
 		</property>
 		<property name="frequencyA">
-			<value>356.270752</value>
+			<value>162.124435</value>
 		</property>
 		<property name="frequencyD">
-			<value>7647.40625</value>
+			<value>18257.3887</value>
 		</property>
 		<property name="qualityA">
-			<value>0.56048274</value>
+			<value>0.665137947</value>
 		</property>
 		<property name="qualityD">
-			<value>0.100000001</value>
+			<value>0.20465517</value>
 		</property>
 	</object>
 	<object class="DistortionEffect" id="{3308700c-1b4d-48a5-9c6a-6594b22b9691}">
