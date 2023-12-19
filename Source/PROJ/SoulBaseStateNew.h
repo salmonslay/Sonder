@@ -35,6 +35,8 @@ public:
 
 	/** Run locally */
 	void Dash();
+	
+	void NewMat();
 
 private:
 	UPROPERTY(EditAnywhere)
