@@ -16,6 +16,9 @@ class PROJ_API USonderGameInstance : public UAdvancedFriendsGameInstance
 	GENERATED_BODY()
 
 public:
+
+	USonderGameInstance(const FObjectInitializer& ObjectInitializer);
+	
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsPlayingLocal = false;
 
@@ -25,4 +28,10 @@ public:
 	 */
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsCurrentlyJoining = false;
+
+	UFUNCTION(BlueprintCallable)
+	void AddToLog(FString TextToLog);
+
+private:
+	FString FilePath;
 };
