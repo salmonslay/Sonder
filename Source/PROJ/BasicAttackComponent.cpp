@@ -44,7 +44,7 @@ void UBasicAttackComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 bool UBasicAttackComponent::Attack()
 {
-	if(!GetWorld())
+	if(!GetWorld() || !bAttackEnabled)
 		return false; 
 	
 	if(GetWorld()->TimeSeconds - AttackCooldown >= LastTimeAttack)
