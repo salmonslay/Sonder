@@ -26,7 +26,7 @@ void USoulBaseStateNew::Enter()
 		SoulCharacter = Cast<ASoulCharacter>(CharOwner);
 
 	if(!LightGrenade)
-		LightGrenade = Cast<ALightGrenade>(UGameplayStatics::GetActorOfClass(this, ALightGrenade::StaticClass())); 
+		LightGrenade = Cast<ALightGrenade>(UGameplayStatics::GetActorOfClass(this, ALightGrenade::StaticClass()));
 }
 
 void USoulBaseStateNew::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
