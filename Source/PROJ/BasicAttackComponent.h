@@ -26,6 +26,8 @@ public:
 
 	void EnableAttack() { bCanAttack = true; }
 
+	void ToggleAttackEnable(const bool bEnabled) { bAttackEnabled = bEnabled; }
+
 protected:
 
 	virtual void BeginPlay() override;
@@ -53,6 +55,9 @@ private:
 
 	// Hopefully temporary, possible fixes for attack 
 	float LastTimeAttack;
+
+	// Completely disabled, not cooldown (e.g. when throwing grenade)
+	bool bAttackEnabled = true; 
 	
 	/** Function executed on server ONLY on attacks, called from client */ 
 	UFUNCTION(Server, Reliable)
