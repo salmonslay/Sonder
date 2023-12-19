@@ -4,6 +4,7 @@
 
 #include "NewPlayerHealthComponent.h"
 #include "PROJCharacter.h"
+#include "SonderGameInstance.h"
 #include "Engine/DamageEvents.h"
 
 ADamageZone::ADamageZone()
@@ -42,7 +43,7 @@ void ADamageZone::NotifyActorEndOverlap(AActor* OtherActor)
 	{
 		PlayerActors.Remove(OtherActor);
 		UE_LOG(LogTemp, Warning, TEXT("Removed %s from %s"), *OtherActor->GetName(), *GetName())
-
+		Cast<USonderGameInstance>(GetGameInstance())->AddToLog("Player " + OtherActor->GetName() + " died from kill zone.");
 		PlayersDamagedThisOverlap.Remove(OtherActor);
 	}
 }
