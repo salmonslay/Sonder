@@ -108,9 +108,21 @@ void UBasicAttackComponent::MulticastRPCAttack_Implementation()
 			if(!bCalledHitEvent && ShouldCallHitEvent(Actor)) 
 			{
 				if(Owner->IsPlayerControlled())
-					Cast<APROJCharacter>(Owner)->OnBasicAttackHit();
+				{
+					APROJCharacter* PlayerChar = Cast<APROJCharacter>(Owner);
+					if (PlayerChar)
+					{
+						PlayerChar->OnBasicAttackHit();
+					}
+				}
 				if(!Owner->IsPlayerControlled())
-					Cast<AShadowCharacter>(Owner)->OnBasicAttackHit();
+				{
+					AShadowCharacter* ShadowChar = Cast<AShadowCharacter>(Owner);
+					if (ShadowChar)
+					{
+						ShadowChar->OnBasicAttackHit();
+					}
+				}
 				
 				bCalledHitEvent = true; 
 			}
