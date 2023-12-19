@@ -79,6 +79,7 @@ public:
 	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, ReplicatedUsing=OnRep_Jump)
 	bool bIsPerformingJump = false;
 
+	UFUNCTION(BlueprintCallable)
 	void MakeJump();
 
 	UFUNCTION(BlueprintCallable)
