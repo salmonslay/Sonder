@@ -103,10 +103,33 @@
 	</object>
 	<object class="MixerBusPanner" id="{9cf14e87-17ae-448d-96ca-9d3a7a9e2f3b}" />
 	<object class="SingleSound" id="{81e40a80-0c61-4470-94d0-6883b22eaa5b}">
+		<property name="startOffset">
+			<value>15</value>
+		</property>
+		<relationship name="modulators">
+			<destination>{2465a33c-3a5d-4850-86af-20bff8442811}</destination>
+		</relationship>
 		<relationship name="audioFile">
 			<destination>{8a5cfc87-3211-4914-9be1-d2e20c8bcc27}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusFader" id="{664165d4-d358-463c-80cf-69cdcccb7056}" />
 	<object class="MixerBusFader" id="{43d1ccc0-adbd-4e15-8eae-36b47a18aab9}" />
+	<object class="ADSRModulator" id="{2465a33c-3a5d-4850-86af-20bff8442811}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>volume</value>
+		</property>
+		<property name="initialValue">
+			<value>-80</value>
+		</property>
+		<property name="attackTime">
+			<value>4800</value>
+		</property>
+		<property name="releaseTime">
+			<value>0</value>
+		</property>
+		<property name="finalValue">
+			<value>-80</value>
+		</property>
+	</object>
 </objects>
