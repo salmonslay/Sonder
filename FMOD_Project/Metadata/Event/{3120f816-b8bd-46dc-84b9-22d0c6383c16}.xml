@@ -5,7 +5,7 @@
 			<value>SpookyDrone</value>
 		</property>
 		<property name="outputFormat">
-			<value>1</value>
+			<value>2</value>
 		</property>
 		<relationship name="folder">
 			<destination>{cb45a59a-a0b9-4f29-92a6-8680f40d0dd9}</destination>
@@ -59,7 +59,11 @@
 			<destination>{089e1bfd-ec44-423e-adf6-037dcccf1a44}</destination>
 		</relationship>
 	</object>
-	<object class="EventAutomatableProperties" id="{b113d250-9df7-48d0-b083-48a8188111f6}" />
+	<object class="EventAutomatableProperties" id="{b113d250-9df7-48d0-b083-48a8188111f6}">
+		<property name="maximumDistance">
+			<value>15</value>
+		</property>
+	</object>
 	<object class="MarkerTrack" id="{439284d7-59ea-4080-bff7-756e0d87d131}" />
 	<object class="Timeline" id="{8457bfa9-ad96-4a52-b3d2-997ec21db271}">
 		<property name="isProxyEnabled">
@@ -73,8 +77,11 @@
 	</object>
 	<object class="EventMixerMaster" id="{12fd77db-c814-4ba3-a719-1fb83c3e067b}">
 		<property name="volume">
-			<value>-15</value>
+			<value>-11</value>
 		</property>
+		<relationship name="modulators">
+			<destination>{a14d33aa-9ec1-4dce-a2d6-04444f4b7c8d}</destination>
+		</relationship>
 		<relationship name="effectChain">
 			<destination>{13828e68-b6ec-4006-9971-e85e184b5f54}</destination>
 		</relationship>
@@ -96,9 +103,27 @@
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{590583b6-df76-4956-ab02-a60f72b7a6c5}" />
+	<object class="ADSRModulator" id="{a14d33aa-9ec1-4dce-a2d6-04444f4b7c8d}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>volume</value>
+		</property>
+		<property name="initialValue">
+			<value>-80</value>
+		</property>
+		<property name="attackTime">
+			<value>220</value>
+		</property>
+		<property name="releaseTime">
+			<value>3000</value>
+		</property>
+		<property name="finalValue">
+			<value>-80</value>
+		</property>
+	</object>
 	<object class="MixerBusEffectChain" id="{13828e68-b6ec-4006-9971-e85e184b5f54}">
 		<relationship name="effects">
 			<destination>{abb30fc5-64fe-46b3-b2a3-d391d1be3be5}</destination>
+			<destination>{e5970ed6-a0f2-4d26-9b06-00f474b177a7}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{35e0c1cf-d321-4402-9ea9-607c900a4905}" />
@@ -115,6 +140,14 @@
 	</object>
 	<object class="MixerBusFader" id="{e762e910-6906-40b2-8f56-9f05c003c178}" />
 	<object class="MixerBusFader" id="{abb30fc5-64fe-46b3-b2a3-d391d1be3be5}" />
+	<object class="SpatialiserEffect" id="{e5970ed6-a0f2-4d26-9b06-00f474b177a7}">
+		<property name="extentMode">
+			<value>1</value>
+		</property>
+		<property name="soundSize">
+			<value>4.5999999</value>
+		</property>
+	</object>
 	<object class="ADSRModulator" id="{93ab241d-d510-4a95-aa04-1bcf335bf7e9}">
 		<property name="nameOfPropertyBeingModulated">
 			<value>volume</value>
@@ -123,10 +156,10 @@
 			<value>-80</value>
 		</property>
 		<property name="attackTime">
-			<value>5000</value>
+			<value>0</value>
 		</property>
 		<property name="releaseTime">
-			<value>5000</value>
+			<value>0</value>
 		</property>
 		<property name="finalValue">
 			<value>-80</value>
