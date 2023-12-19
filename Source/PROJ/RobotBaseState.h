@@ -76,9 +76,10 @@ public:
 	UPROPERTY(EditAnywhere)
 	float Damage = 5.0f;
 
-private:
-	UPROPERTY(EditAnywhere)
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	float PulseCooldown = 1.f;
+
+private:
 
 	/** Pulse Cooldown */
 	UPROPERTY(Replicated)
