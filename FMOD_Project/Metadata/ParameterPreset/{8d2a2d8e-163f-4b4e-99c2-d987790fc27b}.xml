@@ -1,0 +1,25 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="ParameterPreset" id="{8d2a2d8e-163f-4b4e-99c2-d987790fc27b}">
+		<property name="name">
+			<value>NotPanBirds</value>
+		</property>
+		<relationship name="folder">
+			<destination>{fc4a5593-8a49-4f06-a150-12dbe6800661}</destination>
+		</relationship>
+		<relationship name="parameter">
+			<destination>{d07eaa6a-7136-46d6-8add-2e20d76aa65c}</destination>
+		</relationship>
+	</object>
+	<object class="GameParameter" id="{d07eaa6a-7136-46d6-8add-2e20d76aa65c}">
+		<property name="parameterType">
+			<value>1</value>
+		</property>
+		<property name="maximum">
+			<value>2</value>
+		</property>
+		<property name="initialValue">
+			<value>0</value>
+		</property>
+	</object>
+</objects>
