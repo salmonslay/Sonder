@@ -86,7 +86,7 @@ void UBasicAttackComponent::MulticastRPCAttack_Implementation()
 	bool bCalledHitEvent = false;
 
 	const auto PlayerOwner = Cast<APROJCharacter>(Owner);
-	const auto EnemyOwner = Cast<APROJCharacter>(Owner); 
+	const auto EnemyOwner = Cast<AShadowCharacter>(Owner); 
 
 	if(ShouldCallHitEvent(nullptr))
 	{
