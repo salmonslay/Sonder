@@ -78,16 +78,22 @@ void UBasicAttackComponent::MulticastRPCAttack_Implementation()
 {
 	// Sometimes attack is fired before player is set when loading new level, ensure player is set 
 	if(!Owner)
+	{
+		Owner = Cast<ACharacter>(GetOwner()); 
 		return;
+	}
 
 	bool bCalledHitEvent = false;
 
+	const auto PlayerOwner = Cast<APROJCharacter>(Owner);
+	const auto EnemyOwner = Cast<AShadowCharacter>(Owner); 
+
 	if(ShouldCallHitEvent(nullptr))
 	{
-		if(Owner->IsPlayerControlled())
-			Cast<APROJCharacter>(Owner)->OnBasicAttackHit();
-		else
-			Cast<AShadowCharacter>(Owner)->OnBasicAttackHit();
+		if(PlayerOwner)
+			PlayerOwner->OnBasicAttackHit();
+		else if(EnemyOwner)
+			EnemyOwner->OnBasicAttackHit();
 		
 		bCalledHitEvent = true; 
 	}
@@ -107,10 +113,11 @@ void UBasicAttackComponent::MulticastRPCAttack_Implementation()
 			
 			if(!bCalledHitEvent && ShouldCallHitEvent(Actor)) 
 			{
-				if(Owner->IsPlayerControlled())
-					Cast<APROJCharacter>(Owner)->OnBasicAttackHit();
-				if(!Owner->IsPlayerControlled())
-					Cast<AShadowCharacter>(Owner)->OnBasicAttackHit();
+				if(Owner->IsPlayerControlled() && PlayerOwner)
+					PlayerOwner->OnBasicAttackHit();
+				
+				else if(!Owner->IsPlayerControlled() && EnemyOwner)
+					EnemyOwner->OnBasicAttackHit();
 				
 				bCalledHitEvent = true; 
 			}
@@ -119,10 +126,10 @@ void UBasicAttackComponent::MulticastRPCAttack_Implementation()
 
 	bCanAttack = false; 
 
-	if(Owner->IsPlayerControlled())
-		Cast<APROJCharacter>(Owner)->OnBasicAttack();
-	else
-		Cast<AShadowCharacter>(Owner)->OnBasicAttack(); 
+	if(Owner->IsPlayerControlled() && PlayerOwner)
+		PlayerOwner->OnBasicAttack();
+	else if(!Owner->IsPlayerControlled() && EnemyOwner)
+		EnemyOwner->OnBasicAttack();
 }
 
 bool UBasicAttackComponent::ShouldCallHitEvent(AActor* OverlappingActor) const
