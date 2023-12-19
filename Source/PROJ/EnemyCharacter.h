@@ -121,6 +121,9 @@ public:
 	float StunnedDuration = 0.5f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	float StunMultiplier = 1.f;
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
 	float StaggeredDuration = 0.3f;
 
 	UPROPERTY(EditDefaultsOnly)
@@ -138,7 +141,7 @@ public:
 	UFUNCTION()
 	void OnRep_Attack();
 	
-	void Stun(const float Duration);
+	void Stun(float Duration);
 
 	virtual void ChargeAttack();
 
