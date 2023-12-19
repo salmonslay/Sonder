@@ -17,6 +17,7 @@
 #include "SonderSaveGame.h"
 #include "RobotHookingState.h"
 #include "ShadowRobotCharacter.h"
+#include "SonderGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -433,7 +434,11 @@ float APROJCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	if (NewPlayerHealthComponent != nullptr)
 	{
 		DamageApplied = NewPlayerHealthComponent->TakeDamage(DamageApplied);
-		UE_LOG(LogTemp, Warning, TEXT("Player %s damaged with %f"), *GetName(), DamageApplied);
+
+		if(DamageApplied >= NewPlayerHealthComponent->GetHealth() && NewPlayerHealthComponent->GetHealth() > 0)
+		{
+			Cast<USonderGameInstance>(GetGameInstance())->AddToLog("Player " + GetName() + " died from " + DamageCauser->GetName());
+		}
 	}
 
 	return DamageApplied;

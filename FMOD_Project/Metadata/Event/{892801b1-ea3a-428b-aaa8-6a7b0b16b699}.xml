@@ -84,6 +84,7 @@
 	<object class="EventMixerMaster" id="{52a5e001-cdbd-48e5-9f51-fdd0bc766617}">
 		<relationship name="modulators">
 			<destination>{433ce869-4f3e-4037-9956-d6c00eae4f21}</destination>
+			<destination>{400bed8b-997a-4e06-84e0-c1644107ae8e}</destination>
 		</relationship>
 		<relationship name="effectChain">
 			<destination>{93d3de5c-de07-48b2-91c4-1917dfe29371}</destination>
@@ -120,6 +121,14 @@
 			<value>-80</value>
 		</property>
 	</object>
+	<object class="RandomizerModulator" id="{400bed8b-997a-4e06-84e0-c1644107ae8e}">
+		<property name="nameOfPropertyBeingModulated">
+			<value>pitch</value>
+		</property>
+		<property name="amount">
+			<value>11</value>
+		</property>
+	</object>
 	<object class="MixerBusEffectChain" id="{93d3de5c-de07-48b2-91c4-1917dfe29371}">
 		<relationship name="effects">
 			<destination>{483ddbee-8e71-44c9-86b0-3542137506f4}</destination>
@@ -150,6 +159,9 @@
 		</property>
 		<property name="extentMode">
 			<value>1</value>
+		</property>
+		<property name="soundSize">
+			<value>0.25</value>
 		</property>
 	</object>
 	<object class="ThreeEQEffect" id="{d37c353a-1f52-4102-a411-82938b7bb0ee}">
