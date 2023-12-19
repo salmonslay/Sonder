@@ -84,6 +84,9 @@ void ACutsceneManager::PlayCutscene()
 
 	DisablePlayerInput(); 
 
+	if(AutoPlayWidget)
+		AutoPlayWidget->RemoveFromParent();
+	
 	RemoveHUD();
 
 	if(bHidePlayersDuringCutscene)
@@ -203,15 +206,15 @@ void ACutsceneManager::ServerRPC_StopCutscene_Implementation()
 
 void ACutsceneManager::RemoveHUD()
 {
-	if(AutoPlayWidget)
-		AutoPlayWidget->RemoveFromParent();
-
 	WidgetsHidden.Empty(); 
 
 	UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), WidgetsHidden, WidgetsToHide);
 
 	for(const auto Widget : WidgetsHidden)
-		Widget->SetVisibility(ESlateVisibility::Hidden);
+	{
+		if(Widget != AutoPlayWidget)
+			Widget->SetVisibility(ESlateVisibility::Hidden);
+	}
 }
 
 void ACutsceneManager::ShowHud()
