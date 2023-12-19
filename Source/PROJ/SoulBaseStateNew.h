@@ -63,9 +63,19 @@ private:
 	UPROPERTY(Replicated)
 	float TimeHeld;
 
+	bool bHasBeganThrow = false; 
+
 	void GetTimeHeld(const FInputActionInstance& Instance);
 
 	void ThrowGrenade();
+
+	void BeginGrenadeThrow();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_BeginGrenadeThrow();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPC_BeginGrenadeThrow(); 
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPCThrowGrenade(const float TimeHeldGrenade);
