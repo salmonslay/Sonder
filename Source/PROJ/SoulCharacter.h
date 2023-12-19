@@ -38,6 +38,13 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDashEnd();
 
+	/** Called when Soul starts charging the grenade */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnGrenadeThrowStart();
+	
+	/** Called when Soul throws the grenade */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnGrenadeThrowEnd();
 
 #pragma endregion
 
