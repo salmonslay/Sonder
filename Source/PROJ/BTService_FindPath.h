@@ -37,6 +37,9 @@ protected:
 	FVector OwnerLocation;
 
 	UPROPERTY()
+	UBlackboardComponent* BlackboardComponent;
+
+	UPROPERTY()
 	AGrid* OwnerGrid = nullptr;
 
 	UPROPERTY(EditAnywhere)
