@@ -62,6 +62,8 @@ bool UBasicAttackComponent::Attack()
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UBasicAttackComponent::EnableCanAttack, AttackCooldown);
 
 	ServerRPC_StartAttack();
+	
+	bCanAttack = false; 
 
 	return true; 
 }
@@ -116,8 +118,6 @@ void UBasicAttackComponent::DoAttackDamage()
 			}
 		}
 	}
-
-	bCanAttack = false; 
 }
 
 bool UBasicAttackComponent::ShouldCallHitEvent(AActor* OverlappingActor) const
