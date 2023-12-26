@@ -44,39 +44,31 @@ void UBasicAttackComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 bool UBasicAttackComponent::Attack()
 {
-	if(!GetWorld() || !bAttackEnabled)
+	if(!Owner)
+	{
+		Owner = Cast<ACharacter>(GetOwner()); 
+		return false;
+	}
+	
+	if(!GetWorld() || !bAttackEnabled || !bCanAttack || !Owner->IsLocallyControlled())
 		return false; 
 	
 	if(GetWorld()->TimeSeconds - AttackCooldown >= LastTimeAttack)
 		bCanAttack = true;
-	
-	// Ensure player cant spam attack and is locally controlled 
-	if(!bCanAttack || !Owner->IsLocallyControlled())
-		return false;
 
 	LastTimeAttack = GetWorld()->TimeSeconds;
 	
 	FTimerHandle TimerHandle; 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UBasicAttackComponent::EnableCanAttack, AttackCooldown);
 
-	// Run server function which will update each client and itself 
-	ServerRPCAttack();
+	ServerRPC_StartAttack();
 
 	return true; 
 }
 
-void UBasicAttackComponent::ServerRPCAttack_Implementation()
+void UBasicAttackComponent::DoAttackDamage()
 {
-	// Should only run on server 
-	if(!GetOwner()->HasAuthority())
-		return; 
-	
-	MulticastRPCAttack(); 
-}
-
-void UBasicAttackComponent::MulticastRPCAttack_Implementation()
-{
-	// Sometimes attack is fired before player is set when loading new level, ensure player is set 
+	// Ensure player is set 
 	if(!Owner)
 	{
 		Owner = Cast<ACharacter>(GetOwner()); 
@@ -88,7 +80,7 @@ void UBasicAttackComponent::MulticastRPCAttack_Implementation()
 	const auto PlayerOwner = Cast<APROJCharacter>(Owner);
 	const auto EnemyOwner = Cast<AShadowCharacter>(Owner); 
 
-	if(ShouldCallHitEvent(nullptr))
+	if(ShouldCallHitEvent())
 	{
 		if(PlayerOwner)
 			PlayerOwner->OnBasicAttackHit();
@@ -99,24 +91,25 @@ void UBasicAttackComponent::MulticastRPCAttack_Implementation()
 	}
 	
 	TArray<AActor*> OverlappingActors; 
-	GetOverlappingActors(OverlappingActors, AActor::StaticClass()); 
+	GetOverlappingActors(OverlappingActors, AActor::StaticClass());
 
-	// TODO: When the attack animation in in place, we may want to delay this so it times with when the animation hits 
+	const bool bPlayerControlled = Owner->IsPlayerControlled(); 
+
 	for(const auto Actor : OverlappingActors)
 	{
 		const bool bDamagingPlayer = Actor->IsA(APROJCharacter::StaticClass()); 
 		
 		// Player: damage all but other players, AI controlled: damage only players 
-		if((Owner->IsPlayerControlled() && !bDamagingPlayer) || (!Owner->IsPlayerControlled() && bDamagingPlayer)) 
+		if((bPlayerControlled && !bDamagingPlayer) || (!bPlayerControlled && bDamagingPlayer)) 
 		{
 			Actor->TakeDamage(Damage, FDamageEvent(), GetOwner()->GetInstigatorController(), GetOwner());
 			
 			if(!bCalledHitEvent && ShouldCallHitEvent(Actor)) 
 			{
-				if(Owner->IsPlayerControlled() && PlayerOwner)
+				if(bPlayerControlled && PlayerOwner)
 					PlayerOwner->OnBasicAttackHit();
 				
-				else if(!Owner->IsPlayerControlled() && EnemyOwner)
+				else if(!bPlayerControlled && EnemyOwner)
 					EnemyOwner->OnBasicAttackHit();
 				
 				bCalledHitEvent = true; 
@@ -125,18 +118,13 @@ void UBasicAttackComponent::MulticastRPCAttack_Implementation()
 	}
 
 	bCanAttack = false; 
-
-	if(Owner->IsPlayerControlled() && PlayerOwner)
-		PlayerOwner->OnBasicAttack();
-	else if(!Owner->IsPlayerControlled() && EnemyOwner)
-		EnemyOwner->OnBasicAttack();
 }
 
 bool UBasicAttackComponent::ShouldCallHitEvent(AActor* OverlappingActor) const
 {
 	// Pawns are considered hits even though they dont physically collide 
-	if(OverlappingActor && OverlappingActor->IsA(APawn::StaticClass()))
-		return true; 
+	if(OverlappingActor)
+		return OverlappingActor->IsA(APawn::StaticClass()); 
 	
 	FHitResult HitResult;
 	FCollisionQueryParams Params;
@@ -145,6 +133,31 @@ bool UBasicAttackComponent::ShouldCallHitEvent(AActor* OverlappingActor) const
 	// Perform line trace forwards to see if something blocks/the punch hit something physical
 	FVector EndLoc = Owner->GetActorLocation() + Owner->GetActorForwardVector() * HitEventLengthCheck; 
 	return GetWorld()->LineTraceSingleByChannel(HitResult, Owner->GetActorLocation(), EndLoc, ECC_Pawn, Params); 
+}
+
+void UBasicAttackComponent::ServerRPC_StartAttack_Implementation()
+{
+	if(!Owner->HasAuthority())
+		return;
+
+	MulticastRPC_StartAttack(); 
+}
+
+void UBasicAttackComponent::MulticastRPC_StartAttack_Implementation()
+{
+	if(Owner->IsPlayerControlled())
+	{
+		if(const auto PlayerOwner = Cast<APROJCharacter>(Owner))
+			PlayerOwner->OnBasicAttack();
+	}
+	else if(!Owner->IsPlayerControlled())
+	{
+		if(const auto EnemyOwner = Cast<AShadowCharacter>(Owner))
+			EnemyOwner->OnBasicAttack();
+	}
+
+	FTimerHandle TimerHandle; 
+	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UBasicAttackComponent::DoAttackDamage, AttackAnimationDelay); 
 }
 
 void UBasicAttackComponent::EnableCanAttack()

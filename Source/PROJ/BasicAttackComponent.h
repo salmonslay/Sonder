@@ -57,18 +57,26 @@ private:
 	float LastTimeAttack;
 
 	// Completely disabled, not cooldown (e.g. when throwing grenade)
-	bool bAttackEnabled = true; 
-	
-	/** Function executed on server ONLY on attacks, called from client */ 
-	UFUNCTION(Server, Reliable)
-	void ServerRPCAttack(); 
+	bool bAttackEnabled = true;
 
-	/** Attack function run on each game instance, client and server */
+	/** How long to delay the attack after pressing attack button to sync with animation */
+	UPROPERTY(EditAnywhere)
+	float AttackAnimationDelay = 0.17f;
+
+	/** Initiates the attack and syncs it with the punch animation */
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_StartAttack(); 
+
+	/** Initiates the attack and syncs it with the punch animation */
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCAttack();
+	void MulticastRPC_StartAttack();
+
+	/** Performs the actual attack and deals damage */ 	
+	void DoAttackDamage();
 
 	void EnableCanAttack();
 
-	bool ShouldCallHitEvent(AActor* OverlappingActor) const;
+	/** If an actor is passed, then it is checked if it's a pawn. Otherwise a line trace is performed */
+	bool ShouldCallHitEvent(AActor* OverlappingActor = nullptr) const;
 	
 };
