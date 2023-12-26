@@ -4,6 +4,7 @@
 #include "NewPlayerHealthComponent.h"
 
 #include "PROJCharacter.h"
+#include "SoulBaseStateNew.h"
 
 
 UNewPlayerHealthComponent::UNewPlayerHealthComponent()
@@ -28,7 +29,8 @@ void UNewPlayerHealthComponent::BeginPlay()
 {
 	Super::BeginPlay();
 	
-	Player = Cast<APROJCharacter>(GetOwner()); 
+	Player = Cast<APROJCharacter>(GetOwner());
+	SoulState = Player->FindComponentByClass<USoulBaseStateNew>(); 
 }
 
 void UNewPlayerHealthComponent::ServerRPCDamageTaken_Implementation(const float DamageTaken)
@@ -49,27 +51,23 @@ void UNewPlayerHealthComponent::IDied()
 {
 	Super::IDied();
 
-	// Run only on the local player, place this before Super call?
-
-	UE_LOG(LogTemp, Error, TEXT("Dies On Server before super"));
-
-	//if(!Player->IsLocallyControlled())
-	{ // <- TODO: Cursed brackets why is this allowed 
-		//UE_LOG(LogTemp, Error, TEXT("Dies On Server"));
-		ServerRPCPlayerDied(); 
-	}
+	ServerRPCPlayerDied(); 
 }
 
 void UNewPlayerHealthComponent::ServerRPCPlayerDied_Implementation()
 {
-	// Run only on server 
-	UE_LOG(LogTemp, Error, TEXT("Dies On Server "));
-	Player->OnPlayerDied(); 
+	if(!Player->HasAuthority())
+		return;
+	
 	MulticastRPCPlayerDied(); 
 }
 
 void UNewPlayerHealthComponent::MulticastRPCPlayerDied_Implementation()
 {
 	Player->OnPlayerDied();
+
+	if(SoulState)
+		SoulState->EndGrenadeThrowWithoutThrowing(); 
+	
 	//CurrentHealth = MaxHealth;
 }

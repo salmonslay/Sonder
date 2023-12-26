@@ -106,12 +106,7 @@ void USoulBaseStateNew::GetTimeHeld(const FInputActionInstance& Instance)
 {
 	if (!CharOwner->IsLocallyControlled() || !SoulCharacter->AbilityTwo)
 	{
-		if(LightGrenade)
-			LightGrenade->DisableIndicator(); 
-
-		ServerRPCThrowGrenade(-1); // -1 will call make it so grenade is not thrown but animation is exited
-		AttackComponent->ToggleAttackEnable(true); 
-		bHasBeganThrow = false; 
+		EndGrenadeThrowWithoutThrowing(); 
 		return;	
 	}
 
@@ -186,4 +181,14 @@ void USoulBaseStateNew::ActivateAbilities()
 {
 	SoulCharacter->AbilityOne = true;
 	SoulCharacter->AbilityTwo = true;
+}
+
+void USoulBaseStateNew::EndGrenadeThrowWithoutThrowing()
+{
+	if(LightGrenade)
+		LightGrenade->DisableIndicator();
+	
+	ServerRPCThrowGrenade(-1); // -1 will call make it so grenade is not thrown but animation is exited
+	AttackComponent->ToggleAttackEnable(true); 
+	bHasBeganThrow = false; 
 }

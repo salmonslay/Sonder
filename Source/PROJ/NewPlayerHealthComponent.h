@@ -32,6 +32,10 @@ private:
 	UPROPERTY()
 	class APROJCharacter* Player;
 
+	// To cancel grenade throw on death 
+	UPROPERTY()
+	class USoulBaseStateNew* SoulState; 
+
 	/** Function run on server when a player takes damage */
 	UFUNCTION(Server, Reliable)
 	void ServerRPCDamageTaken(float DamageTaken);

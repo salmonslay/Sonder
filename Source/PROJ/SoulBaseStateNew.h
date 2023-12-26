@@ -38,6 +38,9 @@ public:
 	
 	void NewMat();
 
+	/** Ends the throw without actually throwing the grenade, for on death & meadow scene */
+	void EndGrenadeThrowWithoutThrowing(); 
+
 private:
 	UPROPERTY(EditAnywhere)
 	class UInputAction* DashInputAction;
@@ -97,4 +100,5 @@ private:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void ActivateAbilities();
+	
 };
