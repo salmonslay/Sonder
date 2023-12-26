@@ -191,11 +191,11 @@ private:
 	
 	/** Run on server when hook is shot regardless if it hits Soul or an obstacle */
 	UFUNCTION(Server, Reliable)
-	void ServerRPCHookShotStart(const FVector& HookTarget, ARobotStateMachine* RobotChar);
+	void ServerRPCHookShotStart(ARobotStateMachine* RobotChar, const bool bValidHookTarget);
 
 	/** Run for everyone when hook is shot regardless if it hits Soul or an obstacle */
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCHookShotStart(const FVector& HookTarget, ARobotStateMachine* RobotChar);
+	void MulticastRPCHookShotStart(ARobotStateMachine* RobotChar, const bool bValidHookTarget);
 
 	/** Run on server when hook is fully retracted regardless if it hit Soul or an obstacle */
 	UFUNCTION(Server, Reliable)
