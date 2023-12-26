@@ -53,8 +53,8 @@ void UBTService_FindPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 
 	if(BlackboardComponent->GetValueAsBool("bIsRepositioning"))
 	{
-		BlackboardComponent->SetValueAsVector(TEXT("SpawnPosition"), OwnerCharacter->SpawnPosition);
-		Path = OwnerGrid->RequestPath(OwnerLocation, BlackboardComponent->GetValueAsVector("SpawnPosition"), bDebug);
+		BlackboardComponent->SetValueAsVector(TEXT("RetreatLocation"), OwnerCharacter->RetreatLocation);
+		Path = OwnerGrid->RequestPath(OwnerLocation, BlackboardComponent->GetValueAsVector("RetreatLocation"), bDebug);
 		
 	}
 	else if (BlackboardComponent ->GetValueAsBool("bFoundPlayerWithinAttackRadius") &&
