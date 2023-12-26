@@ -28,6 +28,9 @@ void USoulBaseStateNew::Enter()
 
 	if(!LightGrenade)
 		LightGrenade = Cast<ALightGrenade>(UGameplayStatics::GetActorOfClass(this, ALightGrenade::StaticClass()));
+
+	if(!AttackComponent)
+		AttackComponent = CharOwner->FindComponentByClass<UBasicAttackComponent>(); 
 }
 
 void USoulBaseStateNew::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
@@ -105,7 +108,10 @@ void USoulBaseStateNew::GetTimeHeld(const FInputActionInstance& Instance)
 	{
 		if(LightGrenade)
 			LightGrenade->DisableIndicator(); 
-			
+
+		ServerRPCThrowGrenade(-1); // -1 will call make it so grenade is not thrown but animation is exited
+		AttackComponent->ToggleAttackEnable(true); 
+		bHasBeganThrow = false; 
 		return;	
 	}
 
@@ -130,7 +136,7 @@ void USoulBaseStateNew::ThrowGrenade()
 
 	bHasBeganThrow = false; 
 
-	SoulCharacter->FindComponentByClass<UBasicAttackComponent>()->ToggleAttackEnable(true); 
+	AttackComponent->ToggleAttackEnable(true); 
 
 	ServerRPCThrowGrenade(TimeHeld);
 }
@@ -141,7 +147,7 @@ void USoulBaseStateNew::BeginGrenadeThrow()
 		return; 
 
 	bHasBeganThrow = true; 
-	SoulCharacter->FindComponentByClass<UBasicAttackComponent>()->ToggleAttackEnable(false); 
+	AttackComponent->ToggleAttackEnable(false); 
 	ServerRPC_BeginGrenadeThrow(); 
 }
 
@@ -170,11 +176,10 @@ void USoulBaseStateNew::ServerRPCThrowGrenade_Implementation(const float TimeHel
 
 void USoulBaseStateNew::MulticastRPCThrowGrenade_Implementation(const float TimeHeldGrenade)
 {
-	if(LightGrenade)
-	{
+	if(LightGrenade && TimeHeldGrenade > 0)
 		LightGrenade->Throw(TimeHeldGrenade);
-		SoulCharacter->OnGrenadeThrowEnd(); 
-	}
+	
+	SoulCharacter->OnGrenadeThrowEnd(); 
 }
 
 void USoulBaseStateNew::ActivateAbilities()

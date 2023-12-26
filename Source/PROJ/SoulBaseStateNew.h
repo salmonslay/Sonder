@@ -63,7 +63,10 @@ private:
 	UPROPERTY(Replicated)
 	float TimeHeld;
 
-	bool bHasBeganThrow = false; 
+	bool bHasBeganThrow = false;
+
+	UPROPERTY()
+	class UBasicAttackComponent* AttackComponent; 
 
 	void GetTimeHeld(const FInputActionInstance& Instance);
 
