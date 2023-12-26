@@ -3,6 +3,7 @@
 
 #include "HookShotAttachment.h"
 
+#include "CutsceneManager.h"
 #include "PROJCharacter.h"
 #include "RobotBaseState.h"
 #include "RobotHookingState.h"
@@ -248,6 +249,7 @@ AHookShotAttachment* AHookShotAttachment::GetStaticHookToTarget() const
 
 void AHookShotAttachment::SetIndicatorWidget()
 {
+	// create widget if not already created  
 	if(!IndicatorWidget)
 	{
 		if(!Robot)
@@ -260,8 +262,10 @@ void AHookShotAttachment::SetIndicatorWidget()
 		
 		IndicatorWidget->AddToPlayerScreen(); 
 	}
-	
-	if(!Robot->AbilityTwo || !CurrentTarget || HookState->IsTravellingToTarget() || RobotBaseState->IsHookShotOnCooldown())
+
+	// check to see if it should be invisible 
+	if(!Robot->AbilityTwo || !CurrentTarget || HookState->IsTravellingToTarget() ||
+		RobotBaseState->IsHookShotOnCooldown() || ACutsceneManager::IsCutscenePlaying())
 	{
 		IndicatorWidget->SetVisibility(ESlateVisibility::Hidden);
 		return; 

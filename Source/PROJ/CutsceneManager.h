@@ -32,9 +32,10 @@ public:
 	void ServerRPC_PlayCutscene();
 
 protected:
-	
+
+	// local player controllers, 1 when playing online. 2 local 
 	UPROPERTY(BlueprintReadOnly)
-	APlayerController* PlayerController;
+	TArray<APlayerController*> PlayerControllers;
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bDisplayWidgetOnCutsceneEnd = true; 
