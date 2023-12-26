@@ -44,7 +44,7 @@ void AEnemyCharacter::BeginPlay()
 
 	CheckIfOverlappingWithGrid();
 
-	SpawnPosition = GetActorLocation();
+	RetreatLocation = GetActorLocation();
 }
 
 void AEnemyCharacter::InitializeController()

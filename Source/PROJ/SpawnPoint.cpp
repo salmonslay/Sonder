@@ -6,6 +6,7 @@
 #include "CombatManager.h"
 #include "EnemyCharacter.h"
 #include "Components/CapsuleComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 
 // Sets default values
@@ -64,7 +65,8 @@ void ASpawnPoint::TrySpawnNext()
 			if (!SpawnedEnemy->bIsControllerInitialized)
 			{
 				SpawnedEnemy->Manager = Manager;
-				SpawnedEnemy->SpawnPosition = GetActorLocation();
+				//SpawnedEnemy->RetreatLocation = GetActorLocation();
+				SpawnedEnemy->RetreatLocation = CalculateRetreatLocation();
 				SpawnedEnemy->InitializeControllerFromManager();
 			}
 			Manager->AddEnemy(SpawnedEnemy);
@@ -74,6 +76,27 @@ void ASpawnPoint::TrySpawnNext()
 	{
 		GetWorldTimerManager().ClearTimer(SpawnCheckTimerHandle);
 	}
+}
+
+FVector ASpawnPoint::CalculateRetreatLocation()
+{
+	FHitResult HitResult;
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(this);
+
+	const FVector StartLocation = GetActorLocation();
+	const FVector EndLocation = FVector(StartLocation.X, StartLocation.Y , StartLocation.Z- RetreatLocationTraceDistance);
+
+	TArray<TEnumAsByte<EObjectTypeQuery>> LineTraceObjects;
+	LineTraceObjects.Add(UEngineTypes::ConvertToObjectType(ECC_WorldStatic));
+		
+	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(this, StartLocation, EndLocation, LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true, FColor::Red, FColor::Blue, 10.f);
+
+	if (bHit)
+	{
+		return HitResult.GetActor()->GetActorLocation();
+	}
+	return GetActorLocation();
 }
 
 void ASpawnPoint::DoSpawnEvent_Implementation()
