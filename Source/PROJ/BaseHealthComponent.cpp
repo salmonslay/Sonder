@@ -47,12 +47,6 @@ void UBaseHealthComponent::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>&
 	DOREPLIFETIME(UBaseHealthComponent, CurrentHealth);
 }
 
-void UBaseHealthComponent::IDied()
-{
-	// TODO: Everything that should happen when the owner dies 
-	UE_LOG(LogTemp, Warning, TEXT("%s died"), *GetOwner()->GetActorNameOrLabel()) 
-}
-
 float UBaseHealthComponent::GetHealth() const
 {
 	return CurrentHealth;

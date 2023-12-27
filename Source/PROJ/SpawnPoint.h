@@ -59,4 +59,9 @@ private:
 	TQueue<FEnemyToSpawn> EnemiesToSpawn = TQueue<FEnemyToSpawn>();
 
 	FTimerHandle SpawnCheckTimerHandle;
+
+	FVector CalculateRetreatLocation();
+
+	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess = true))
+	float RetreatLocationTraceDistance = 600.f;
 };

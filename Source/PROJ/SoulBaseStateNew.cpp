@@ -3,6 +3,7 @@
 
 #include "SoulBaseStateNew.h"
 
+#include "BasicAttackComponent.h"
 #include "CharacterStateMachine.h"
 #include "EnhancedInputComponent.h"
 #include "LightGrenade.h"
@@ -26,7 +27,10 @@ void USoulBaseStateNew::Enter()
 		SoulCharacter = Cast<ASoulCharacter>(CharOwner);
 
 	if(!LightGrenade)
-		LightGrenade = Cast<ALightGrenade>(UGameplayStatics::GetActorOfClass(this, ALightGrenade::StaticClass())); 
+		LightGrenade = Cast<ALightGrenade>(UGameplayStatics::GetActorOfClass(this, ALightGrenade::StaticClass()));
+
+	if(!AttackComponent)
+		AttackComponent = CharOwner->FindComponentByClass<UBasicAttackComponent>(); 
 }
 
 void USoulBaseStateNew::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
@@ -37,8 +41,11 @@ void USoulBaseStateNew::UpdateInputCompOnEnter(UEnhancedInputComponent* InputCom
 	if(InputComp->GetActionEventBindings().Num() < 8) 
 	{
 		InputComp->BindAction(DashInputAction, ETriggerEvent::Started, this, &USoulBaseStateNew::Dash);
+		
 		InputComp->BindAction(ThrowGrenadeInputAction,ETriggerEvent::Completed,this,&USoulBaseStateNew::ThrowGrenade);
 		InputComp->BindAction(ThrowGrenadeInputAction,ETriggerEvent::Ongoing,this,&USoulBaseStateNew::GetTimeHeld);
+		InputComp->BindAction(ThrowGrenadeInputAction, ETriggerEvent::Started, this, &USoulBaseStateNew::BeginGrenadeThrow);
+		
 		InputComp->BindAction(AbilityInputAction,ETriggerEvent::Started,this,&USoulBaseStateNew::ActivateAbilities);
 	}
 }
@@ -99,11 +106,12 @@ void USoulBaseStateNew::GetTimeHeld(const FInputActionInstance& Instance)
 {
 	if (!CharOwner->IsLocallyControlled() || !SoulCharacter->AbilityTwo)
 	{
-		if(LightGrenade)
-			LightGrenade->DisableIndicator(); 
-			
+		EndGrenadeThrowWithoutThrowing(); 
 		return;	
 	}
+
+	if(!bHasBeganThrow)
+		return; 
 
 	// UE_LOG(LogTemp, Warning, TEXT("TimeHeld() local - OnGoing IA: Time: %f"), Instance.GetElapsedTime())
 
@@ -116,13 +124,39 @@ void USoulBaseStateNew::GetTimeHeld(const FInputActionInstance& Instance)
 
 void USoulBaseStateNew::ThrowGrenade()
 {
-	if (!CharOwner->IsLocallyControlled() || !SoulCharacter->AbilityTwo)
+	if (!CharOwner->IsLocallyControlled() || !SoulCharacter->AbilityTwo || !bHasBeganThrow)
 	{
 		return;	
 	}
 
+	bHasBeganThrow = false; 
+
+	AttackComponent->ToggleAttackEnable(true); 
+
 	ServerRPCThrowGrenade(TimeHeld);
-	
+}
+
+void USoulBaseStateNew::BeginGrenadeThrow()
+{
+	if(!LightGrenade || !LightGrenade->bCanThrow || !SoulCharacter->AbilityTwo)
+		return; 
+
+	bHasBeganThrow = true; 
+	AttackComponent->ToggleAttackEnable(false); 
+	ServerRPC_BeginGrenadeThrow(); 
+}
+
+void USoulBaseStateNew::MulticastRPC_BeginGrenadeThrow_Implementation()
+{
+	SoulCharacter->OnGrenadeThrowStart();
+}
+
+void USoulBaseStateNew::ServerRPC_BeginGrenadeThrow_Implementation()
+{
+	if(!CharOwner->HasAuthority())
+		return;
+
+	MulticastRPC_BeginGrenadeThrow(); 
 }
 
 void USoulBaseStateNew::ServerRPCThrowGrenade_Implementation(const float TimeHeldGrenade)
@@ -137,12 +171,24 @@ void USoulBaseStateNew::ServerRPCThrowGrenade_Implementation(const float TimeHel
 
 void USoulBaseStateNew::MulticastRPCThrowGrenade_Implementation(const float TimeHeldGrenade)
 {
-	if(LightGrenade)
+	if(LightGrenade && TimeHeldGrenade > 0)
 		LightGrenade->Throw(TimeHeldGrenade);
+	
+	SoulCharacter->OnGrenadeThrowEnd(); 
 }
 
 void USoulBaseStateNew::ActivateAbilities()
 {
 	SoulCharacter->AbilityOne = true;
 	SoulCharacter->AbilityTwo = true;
+}
+
+void USoulBaseStateNew::EndGrenadeThrowWithoutThrowing()
+{
+	if(LightGrenade)
+		LightGrenade->DisableIndicator();
+	
+	ServerRPCThrowGrenade(-1); // -1 will call make it so grenade is not thrown but animation is exited
+	AttackComponent->ToggleAttackEnable(true); 
+	bHasBeganThrow = false; 
 }

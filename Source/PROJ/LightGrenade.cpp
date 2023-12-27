@@ -80,12 +80,13 @@ void ALightGrenade::Throw(const float TimeHeld)
 {
 	if(bCanThrow)
 	{
-		Damage = 5.0f;
+		Damage = 15.0f;
 		PulseExplosionArea->Deactivate();
 		ServerRPCThrow(TimeHeld);
 
 		Indicator->SetActorHiddenInGame(true);
 		MaxThrowIterations = 0;
+		bIncreasingCharge = true; 
 		GetWorld()->GetTimerManager().ClearTimer(ThrowIterTimerHandle); 
 	}
 }
@@ -296,7 +297,7 @@ void ALightGrenade::StartCountdown(float TimeUntilExplosion)
 
 void ALightGrenade::PulseExplosion()
 {
-	Damage = 10.0f;
+	Damage = 20.0f;
 	PulseExplosionArea->Activate();
 }
 

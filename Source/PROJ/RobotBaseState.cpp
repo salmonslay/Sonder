@@ -213,7 +213,7 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 
 		else if (const auto Enemy = Cast<AEnemyCharacter>(Actor))
 		{
-			Enemy->Stun(3.0f);
+			Enemy->Stun(2.0f);
 			Enemy->TakeDamage(Damage, FDamageEvent(), Controller, CharOwner);
 			UE_LOG(LogTemp, Warning, TEXT("Stun"));
 		}

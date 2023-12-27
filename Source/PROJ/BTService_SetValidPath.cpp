@@ -141,22 +141,20 @@ void UBTService_SetValidPath::VerifyGroundStatus(AShadowCharacter* Owner)
 		{
 			if(Other->GetClass() == MovingPlatformClass)
 			{
-				UE_LOG(LogTemp, Error, TEXT("Supposed hit on platform hit = %s"), * HitResult.GetActor()->GetActorNameOrLabel());
 				OwnerCharacter->bHasLandedOnPlatform = true;
 				OwnerCharacter->bHasLandedOnGround = true;
 			}
 		}
 		else
 		{
-			UE_LOG(LogTemp, Error, TEXT("Hit something thats not a platform, Hit = %s"), * HitResult.GetActor()->GetActorNameOrLabel());
 			OwnerCharacter->bHasLandedOnPlatform = false;
 			OwnerCharacter->bHasLandedOnGround = true;
 		}
 	}
 	else
 	{
-		OwnerCharacter->bHasLandedOnPlatform = false;
-		OwnerCharacter->bHasLandedOnGround = false;
+		//OwnerCharacter->bHasLandedOnPlatform = false;
+		//	OwnerCharacter->bHasLandedOnGround = false;
 		//OwnerCharacter->bIsPerformingJump = true;
 	}
 }

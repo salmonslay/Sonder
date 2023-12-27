@@ -35,6 +35,11 @@ public:
 
 	/** Run locally */
 	void Dash();
+	
+	void NewMat();
+
+	/** Ends the throw without actually throwing the grenade, for on death & meadow scene */
+	void EndGrenadeThrowWithoutThrowing(); 
 
 private:
 	UPROPERTY(EditAnywhere)
@@ -61,9 +66,22 @@ private:
 	UPROPERTY(Replicated)
 	float TimeHeld;
 
+	bool bHasBeganThrow = false;
+
+	UPROPERTY()
+	class UBasicAttackComponent* AttackComponent; 
+
 	void GetTimeHeld(const FInputActionInstance& Instance);
 
 	void ThrowGrenade();
+
+	void BeginGrenadeThrow();
+
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_BeginGrenadeThrow();
+
+	UFUNCTION(NetMulticast, Reliable)
+	void MulticastRPC_BeginGrenadeThrow(); 
 
 	UFUNCTION(Server, Reliable)
 	void ServerRPCThrowGrenade(const float TimeHeldGrenade);
@@ -82,4 +100,5 @@ private:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void ActivateAbilities();
+	
 };

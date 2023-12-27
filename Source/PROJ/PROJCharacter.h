@@ -122,7 +122,7 @@ public:
 #pragma region Events
 	// Components seem to not be able to create events (easily), which is why most events are declared here 
 
-	/** Event called when player performs a basic attack */
+	/** Event called when player initiates a basic attack */
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnBasicAttack();
 
@@ -134,7 +134,7 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnPlayerDied();
 
-	/** Called when the basic attack actually lands a hit */
+	/** Called when the basic attack actually lands a hit, is checked after slight delay to sync with animation */
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnBasicAttackHit(); 
 

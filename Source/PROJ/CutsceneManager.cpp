@@ -9,6 +9,7 @@
 #include "LevelSequencePlayer.h"
 #include "PROJCharacter.h"
 #include "Blueprint/UserWidget.h"
+#include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Kismet/GameplayStatics.h"
 
 ACutsceneManager::ACutsceneManager()
@@ -31,7 +32,9 @@ void ACutsceneManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	PlayerController = UGameplayStatics::GetPlayerController(this, 0);
+	// will only be on if playing online, 2 if playing local 
+	for(int i = 0; i < UGameplayStatics::GetNumLocalPlayerControllers(this); i++)
+		PlayerControllers.Add(UGameplayStatics::GetPlayerController(this, i)); 
 
 	GetWorldTimerManager().SetTimerForNextTick(this, &ACutsceneManager::BindSkipCutsceneButton); 
 
@@ -39,13 +42,15 @@ void ACutsceneManager::BeginPlay()
 	{
 		if(AutoPlayBlackScreenWidget)
 		{
-			AutoPlayWidget = CreateWidget(PlayerController, AutoPlayBlackScreenWidget);
+			// widget only needs to be created for ctrl 0 (only one online and local doesn't matter who gets the widget)
+			AutoPlayWidget = CreateWidget(PlayerControllers[0], AutoPlayBlackScreenWidget);
 
 			AutoPlayWidget->AddToPlayerScreen(); 
 		}
 	
 		// Disable input immediately so player cannot move during level load (delayed because race conditions)
 		GetWorldTimerManager().SetTimerForNextTick(this, &ACutsceneManager::DisablePlayerInput); 
+		GetWorldTimerManager().SetTimerForNextTick(this, &ACutsceneManager::RemoveHUD); 
 
 		// Trigger play on server so it syncs 
 		if(HasAuthority())
@@ -82,6 +87,9 @@ void ACutsceneManager::PlayCutscene()
 
 	DisablePlayerInput(); 
 
+	if(AutoPlayWidget)
+		AutoPlayWidget->RemoveFromParent();
+	
 	RemoveHUD();
 
 	if(bHidePlayersDuringCutscene)
@@ -115,29 +123,41 @@ void ACutsceneManager::MulticastRPC_PlayCutscene_Implementation()
 
 void ACutsceneManager::DisablePlayerInput() const
 {
-	if(!PlayerController)
+	if(PlayerControllers.IsEmpty())
 	{
 		UE_LOG(LogTemp, Warning, TEXT("No player ctrl in cutscene"))
 		return; 
 	}
-	
-	// Set the action mapping to Cutscene action mapping 
-	if (const auto InputSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+
+	for(const auto Controller : PlayerControllers)
 	{
-		// Switches the action mapping 
-		InputSystem->RemoveMappingContext(DefaultInputMap); 
-		InputSystem->AddMappingContext(CutsceneInputMap, 1);
-	} 
+		if(!IsValid(Controller))
+			return; 
+		
+		// Set the action mapping to Cutscene action mapping 
+		if (const auto InputSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(Controller->GetLocalPlayer()))
+		{
+			// Switches the action mapping 
+			InputSystem->RemoveMappingContext(DefaultInputMap); 
+			InputSystem->AddMappingContext(CutsceneInputMap, 1);
+		} 	
+	}
 }
 
 void ACutsceneManager::EnablePlayerInput() const
 {
-	// Set the action mapping to the default action mapping 
-	if (const auto InputSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
+	for(const auto Controller : PlayerControllers)
 	{
-		// Switches the action mapping 
-		InputSystem->RemoveMappingContext(CutsceneInputMap); 
-		InputSystem->AddMappingContext(DefaultInputMap, 1);
+		if(!IsValid(Controller))
+			return; 
+		
+		// Set the action mapping to the default action mapping 
+		if (const auto InputSystem = ULocalPlayer::GetSubsystem<UEnhancedInputLocalPlayerSubsystem>(Controller->GetLocalPlayer()))
+		{
+			// Switches the action mapping 
+			InputSystem->RemoveMappingContext(CutsceneInputMap); 
+			InputSystem->AddMappingContext(DefaultInputMap, 1);
+		}
 	}
 }
 
@@ -145,10 +165,17 @@ void ACutsceneManager::BindSkipCutsceneButton()
 {
 	// TODO: Cant skip on client rn. I think it needs to be passed through the player controller, i.e make a server rpc
 	// TODO: function on the player controller class which is called when pressing skip https://cedric-neukirchen.net/docs/multiplayer-compendium/ownership/ 
+
+	for(const auto Controller : PlayerControllers)
+	{
+		if(!IsValid(Controller))
+			return; 
 	
-	// Bind skip cutscene button (is "activated" first when cutscene plays)
-	if(const auto InputComp = Cast<UEnhancedInputComponent>(PlayerController->InputComponent))
-		InputComp->BindAction(SkipInputAction, ETriggerEvent::Started, this, &ACutsceneManager::ServerRPC_StopCutscene); 
+		// Bind skip cutscene button (is "activated" first when cutscene plays)
+		if(const auto InputComp = Cast<UEnhancedInputComponent>(Controller->InputComponent))
+			InputComp->BindAction(SkipInputAction, ETriggerEvent::Started, this, &ACutsceneManager::ServerRPC_StopCutscene);
+		
+	}
 }
 
 void ACutsceneManager::StopCutscene()
@@ -171,6 +198,8 @@ void ACutsceneManager::StopCutscene()
 	if(!LevelToLoadOnCutsceneEnd.IsNone() && HasAuthority())
 		GetWorld()->ServerTravel("/Game/Maps/" + LevelToLoadOnCutsceneEnd.ToString());
 
+	ShowHud(); 
+	
 	// if(!IsCutscenePlaying())
 	// 	Destroy(); // TODO: Destroy? 
 }
@@ -197,8 +226,21 @@ void ACutsceneManager::ServerRPC_StopCutscene_Implementation()
 	MulticastRPC_StopCutscene();
 }
 
-void ACutsceneManager::RemoveHUD() const
+void ACutsceneManager::RemoveHUD()
 {
-	if(AutoPlayWidget)
-		AutoPlayWidget->RemoveFromParent(); 
+	WidgetsHidden.Empty(); 
+
+	UWidgetBlueprintLibrary::GetAllWidgetsOfClass(GetWorld(), WidgetsHidden, WidgetsToHide);
+
+	for(const auto Widget : WidgetsHidden)
+	{
+		if(Widget != AutoPlayWidget)
+			Widget->SetVisibility(ESlateVisibility::Hidden);
+	}
+}
+
+void ACutsceneManager::ShowHud()
+{
+	for(const auto Widget : WidgetsHidden)
+		Widget->SetVisibility(ESlateVisibility::Visible); 
 }

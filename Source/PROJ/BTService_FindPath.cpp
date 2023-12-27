@@ -44,20 +44,27 @@ void UBTService_FindPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 		return;
 	}
 
-	if(OwnerComp.GetBlackboardComponent()->GetValueAsBool("bIsRepositioning"))
+	BlackboardComponent = OwnerComp.GetAIOwner()->GetBlackboardComponent();
+	
+	if (BlackboardComponent == nullptr)
 	{
-		OwnerComp.GetBlackboardComponent()->SetValueAsVector(TEXT("SpawnPosition"), OwnerCharacter->SpawnPosition);
-		Path = OwnerGrid->RequestPath(OwnerLocation, OwnerComp.GetBlackboardComponent()->GetValueAsVector("SpawnPosition"), bDebug);
+		return;
+	}
+
+	if(BlackboardComponent->GetValueAsBool("bIsRepositioning"))
+	{
+		BlackboardComponent->SetValueAsVector(TEXT("RetreatLocation"), OwnerCharacter->RetreatLocation);
+		Path = OwnerGrid->RequestPath(OwnerLocation, BlackboardComponent->GetValueAsVector("RetreatLocation"), bDebug);
 		
 	}
-	else if (OwnerComp.GetBlackboardComponent()->GetValueAsBool("bFoundPlayerWithinAttackRadius") &&
-		!OwnerComp.GetBlackboardComponent()->GetValueAsBool("bIsInRangeToAttack"))
+	else if (BlackboardComponent ->GetValueAsBool("bFoundPlayerWithinAttackRadius") &&
+		!BlackboardComponent ->GetValueAsBool("bIsInRangeToAttack"))
 	{
-		Path = OwnerGrid->RequestPath(OwnerLocation, OwnerComp.GetBlackboardComponent()->GetValueAsVector("StartAttackPosition"), bDebug);
+		Path = OwnerGrid->RequestPath(OwnerLocation, BlackboardComponent->GetValueAsVector("StartAttackPosition"), bDebug);
 	}
 	else
 	{
-		UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("CurrentTargetPlayer");
+		UObject* PlayerObject = BlackboardComponent->GetValueAsObject("CurrentTargetPlayer");
 
 		if (PlayerObject == nullptr)
 		{
@@ -67,7 +74,6 @@ void UBTService_FindPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* Nod
 		{
 			CurrentTargetLocation = PlayerToAttack->GetActorLocation();
 		}
-		
 		Path = OwnerGrid->RequestPath(OwnerLocation, CurrentTargetLocation, bDebug);
 	}
 	if (Path.IsEmpty())

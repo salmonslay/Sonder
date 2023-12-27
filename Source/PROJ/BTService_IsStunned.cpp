@@ -6,6 +6,7 @@
 #include "AIController.h"
 #include "FlyingEnemyCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
 
 UBTService_IsStunned::UBTService_IsStunned()
 {
@@ -20,6 +21,8 @@ void UBTService_IsStunned::OnGameplayTaskActivated(UGameplayTask& Task)
 void UBTService_IsStunned::OnGameplayTaskDeactivated(UGameplayTask& Task)
 {
 	Super::OnGameplayTaskDeactivated(Task);
+
+	GetWorld()->GetTimerManager().ClearAllTimersForObject(this); 
 }
 
 void UBTService_IsStunned::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
@@ -44,6 +47,7 @@ void UBTService_IsStunned::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 	if (OwnerCharacter->bIsStunned && /*OwnerCharacter->StunnedDuration > OwnerCharacter->StaggeredDuration OwnerCharacter->StunnedDuration > 0 &&*/
 		!OwnerComp.GetBlackboardComponent()->GetValueAsBool("bIsRepositioning"))
 	{
+		OwnerCharacter->GetMovementComponent()->Velocity = FVector::ZeroVector;
 		OwnerComp.GetBlackboardComponent()->SetValueAsBool("bIsRepositioning", true);
 		GetWorld()->GetTimerManager().SetTimer(StopRepositioningTimerHandle, this, &UBTService_IsStunned::StopRepositioning,
 			OwnerCharacter->RepositioningDuration + OwnerCharacter->StunnedDuration, false);
@@ -53,7 +57,9 @@ void UBTService_IsStunned::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* No
 
 void UBTService_IsStunned::StopRepositioning()
 {
-
+	if(!IsValid(TreeComponent))
+		return; 
+	
 	TreeComponent->GetBlackboardComponent()->SetValueAsBool("bIsRepositioning", false);
 	TreeComponent->GetBlackboardComponent()->ClearValue("bIsRepositioning");
 

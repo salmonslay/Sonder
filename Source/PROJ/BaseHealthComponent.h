@@ -35,7 +35,7 @@ public:
 
 	/** Called when damage taken was enough to reach health <= 0 */
 	UFUNCTION(BlueprintCallable)
-	virtual void IDied(); 
+	virtual void IDied() {} 
 
 	/** Returns true if owner is dead */
 	UFUNCTION(BlueprintPure)

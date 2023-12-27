@@ -17,6 +17,7 @@
 #include "SonderSaveGame.h"
 #include "RobotHookingState.h"
 #include "ShadowRobotCharacter.h"
+#include "SonderGameInstance.h"
 #include "Kismet/GameplayStatics.h"
 #include "Kismet/KismetMathLibrary.h"
 #include "Net/UnrealNetwork.h"
@@ -192,30 +193,32 @@ void APROJCharacter::OnMovementModeChanged(EMovementMode PrevMovementMode, uint8
 {
 	Super::OnMovementModeChanged(PrevMovementMode, PreviousCustomMode);
 
+	UCharacterMovementComponent* Movement = GetCharacterMovement();
+
 	// if Robot, check if player is in hook shot, then don't update 
 	if(const auto HookState = FindComponentByClass<URobotHookingState>())
 	{
 		if(HookState->IsHookShotting() && HookState->HasValidTarget())
 		{
-			GetCharacterMovement()->SetMovementMode(MOVE_Flying);
+			Movement->SetMovementMode(MOVE_Flying);
 			ServerRPC_SetMovementMode(MOVE_Flying);
 			return;
 		}
 	}
 
-	const EMovementMode CurrentMovementMode = GetCharacterMovement()->MovementMode;
+	const EMovementMode CurrentMovementMode = Movement->MovementMode;
 
 	// Reset gravity scale when player becomes grounded 
 	if (CurrentMovementMode == MOVE_Walking)
 	{
 		bHasJumped = false;
 		bCanCoyoteJump = true;
-		GetCharacterMovement()->GravityScale = DefaultGravityScale;
+		Movement->GravityScale = DefaultGravityScale;
 	}
 	else if (CurrentMovementMode == MOVE_Falling && !bHasJumped)
 	{
 		// Started falling without jumping 
-		GetCharacterMovement()->GravityScale = GravityScaleWhileFalling;
+		Movement->GravityScale = GravityScaleWhileFalling;
 
 		GetWorld()->GetTimerManager().ClearTimer(CoyoteJumpTimer);
 		GetWorld()->GetTimerManager().SetTimer(CoyoteJumpTimer, this, &APROJCharacter::DisableCoyoteJump, CoyoteJumpPeriod);
@@ -433,7 +436,11 @@ float APROJCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	if (NewPlayerHealthComponent != nullptr)
 	{
 		DamageApplied = NewPlayerHealthComponent->TakeDamage(DamageApplied);
-		UE_LOG(LogTemp, Warning, TEXT("Player %s damaged with %f"), *GetName(), DamageApplied);
+
+		if(DamageApplied >= NewPlayerHealthComponent->GetHealth() && NewPlayerHealthComponent->GetHealth() > 0)
+		{
+			Cast<USonderGameInstance>(GetGameInstance())->AddToLog("Player " + GetName() + " died from " + DamageCauser->GetName());
+		}
 	}
 
 	return DamageApplied;

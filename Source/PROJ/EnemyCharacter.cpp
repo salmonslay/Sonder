@@ -44,7 +44,7 @@ void AEnemyCharacter::BeginPlay()
 
 	CheckIfOverlappingWithGrid();
 
-	SpawnPosition = GetActorLocation();
+	RetreatLocation = GetActorLocation();
 }
 
 void AEnemyCharacter::InitializeController()
@@ -104,10 +104,11 @@ void AEnemyCharacter::OnRep_Attack()
 	}
 }
 
-void AEnemyCharacter::Stun(const float Duration)
+void AEnemyCharacter::Stun(float Duration)
 {
 	if (GetLocalRole() == ROLE_Authority)
 	{
+		Duration *= StunMultiplier;
 		if(bIsStunned)
 		{
 			if(Duration > StunnedDuration)

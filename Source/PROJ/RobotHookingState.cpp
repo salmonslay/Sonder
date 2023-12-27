@@ -196,10 +196,10 @@ void URobotHookingState::StartShootHook()
 	
 	HookArmLocation = CharOwner->GetActorLocation(); 
 	
-	ServerRPCHookShotStart(CurrentHookTargetLocation, RobotCharacter); 
+	ServerRPCHookShotStart(RobotCharacter, IsValid(CurrentTargetActor)); 
 }
 
-void URobotHookingState::ServerRPCHookShotStart_Implementation(const FVector& HookTarget, ARobotStateMachine* RobotChar)
+void URobotHookingState::ServerRPCHookShotStart_Implementation(ARobotStateMachine* RobotChar, const bool bValidHookTarget)
 {
 	if(!CharOwner->HasAuthority())
 		return;
@@ -208,10 +208,10 @@ void URobotHookingState::ServerRPCHookShotStart_Implementation(const FVector& Ho
 
 	bHookShotActive = true; 
 
-	MulticastRPCHookShotStart(HookTarget, RobotChar); 
+	MulticastRPCHookShotStart(RobotChar, bValidHookTarget); 
 }
 
-void URobotHookingState::MulticastRPCHookShotStart_Implementation(const FVector& HookTarget, ARobotStateMachine* RobotChar)
+void URobotHookingState::MulticastRPCHookShotStart_Implementation(ARobotStateMachine* RobotChar, const bool bValidHookTarget)
 {
 	if(!GetOwner())
 	{
@@ -219,11 +219,11 @@ void URobotHookingState::MulticastRPCHookShotStart_Implementation(const FVector&
 		return; 
 	}
 	
-	if(CurrentTargetActor) // If there is a valid target 
+	if(bValidHookTarget) 
 	{
 		if(CharOwner->GetCharacterMovement()->Velocity.Z < 0.f) 
 			CharOwner->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
-		
+
 		CharOwner->GetCharacterMovement()->GravityScale = 0;
 		CharOwner->GetCharacterMovement()->Velocity = FVector::ZeroVector;
 	}
