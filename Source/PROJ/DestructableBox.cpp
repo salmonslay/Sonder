@@ -90,8 +90,6 @@ void ADestructableBox::MulticastRPC_Crumble_Implementation()
 	// triggers destruction 
 	DestructibleBox->CrumbleActiveClusters();
 
-	DestructibleBox->AddImpulse(FVector(FMath::FRand(), FMath::FRand(), FMath::FRand()) * DestroyedForce);
-
 	bDestroyed = true;
 
 	OnDeath();
