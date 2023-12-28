@@ -12,13 +12,13 @@ class PROJ_API ADestructableBox : public AActor
 	GENERATED_BODY()
 	
 public:	
+
 	// Sets default values for this actor's properties
 	ADestructableBox();
 
 	/** Property replication */
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	
 	virtual float TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator, AActor* DamageCauser) override;
 
 	UFUNCTION(BlueprintImplementableEvent)
@@ -44,10 +44,6 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	float ShrinkSpeed = 10.f;
-
-	/** Force to apply to the box when it is destroyed, determines how much the pieces scatter */
-	UPROPERTY(EditAnywhere)
-	float DestroyedForce = 20000.f; 
 
 	/** Local crumble */
 	void Crumble();
