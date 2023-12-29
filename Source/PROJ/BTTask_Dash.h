@@ -16,8 +16,6 @@ class PROJ_API UBTTask_Dash : public UBTTask_BlackboardBase
 
 public:
 
-	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;
-
 	/** Execute task is called once every time this task is activated */
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 

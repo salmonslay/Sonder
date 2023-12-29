@@ -8,12 +8,6 @@
 #include "SoulBaseStateNew.h"
 #include "SoulDashingState.h"
 
-void UBTTask_Dash::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-	
-}
-
 EBTNodeResult::Type UBTTask_Dash::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);

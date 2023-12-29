@@ -11,11 +11,6 @@ UBTTask_DoPulse::UBTTask_DoPulse()
 	NodeName = TEXT("DoPulse");
 }
 
-void UBTTask_DoPulse::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-}
-
 EBTNodeResult::Type UBTTask_DoPulse::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);

@@ -14,11 +14,6 @@ UBTTask_AttackPlayer::UBTTask_AttackPlayer()
 	NodeName = TEXT("AttackPlayer");
 }
 
-void UBTTask_AttackPlayer::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-}
-
 EBTNodeResult::Type UBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);

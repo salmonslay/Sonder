@@ -13,11 +13,6 @@ UBTTask_ChargeLaserAttack::UBTTask_ChargeLaserAttack()
 	NodeName = TEXT("ChargeLaserAttack");
 }
 
-void UBTTask_ChargeLaserAttack::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-}
-
 EBTNodeResult::Type UBTTask_ChargeLaserAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);

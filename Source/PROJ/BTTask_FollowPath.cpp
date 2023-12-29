@@ -17,11 +17,6 @@ UBTTask_FollowPath::UBTTask_FollowPath()
 	NodeName = TEXT("FollowPath");
 }
 
-void UBTTask_FollowPath::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-}
-
 EBTNodeResult::Type UBTTask_FollowPath::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);

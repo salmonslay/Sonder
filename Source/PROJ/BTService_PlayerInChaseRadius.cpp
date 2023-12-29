@@ -13,16 +13,6 @@ UBTService_PlayerInChaseRadius::UBTService_PlayerInChaseRadius()
 	NodeName = TEXT("PlayerInChaseRadius");
 }
 
-void UBTService_PlayerInChaseRadius::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-}
-
-void UBTService_PlayerInChaseRadius::OnGameplayTaskDeactivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskDeactivated(Task);
-}
-
 void UBTService_PlayerInChaseRadius::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);

@@ -19,9 +19,6 @@ class PROJ_API UBTTask_Patrol : public UBTTask_BlackboardBase
 	
 	/** Constructor*/
 	UBTTask_Patrol();
-	
-	/** I have no idea when this is called but it is needed */
-	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;
 
 	/** Execute task is called once every time this task is activated */
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;

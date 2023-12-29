@@ -13,11 +13,6 @@ UBTService_IsStunned::UBTService_IsStunned()
 	NodeName = TEXT("IsStunned");
 }
 
-void UBTService_IsStunned::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-}
-
 void UBTService_IsStunned::OnGameplayTaskDeactivated(UGameplayTask& Task)
 {
 	Super::OnGameplayTaskDeactivated(Task);

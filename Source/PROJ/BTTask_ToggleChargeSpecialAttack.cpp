@@ -12,11 +12,6 @@ UBTTask_ToggleChargeSpecialAttack::UBTTask_ToggleChargeSpecialAttack()
 	NodeName = TEXT("Special Attack Toggle"); 
 }
 
-void UBTTask_ToggleChargeSpecialAttack::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-}
-
 EBTNodeResult::Type UBTTask_ToggleChargeSpecialAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);

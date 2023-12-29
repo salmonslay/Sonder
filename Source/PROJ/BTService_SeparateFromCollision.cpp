@@ -24,11 +24,6 @@ void UBTService_SeparateFromCollision::OnGameplayTaskActivated(UGameplayTask& Ta
 	}
 }
 
-void UBTService_SeparateFromCollision::OnGameplayTaskDeactivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskDeactivated(Task);
-}
-
 void UBTService_SeparateFromCollision::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 	float DeltaSeconds)
 {

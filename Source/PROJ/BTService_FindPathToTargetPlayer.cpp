@@ -15,16 +15,6 @@ UBTService_FindPathToTargetPlayer::UBTService_FindPathToTargetPlayer()
 	NodeName = TEXT("FindPathToTargetPlayer");
 }
 
-void UBTService_FindPathToTargetPlayer::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-}
-
-void UBTService_FindPathToTargetPlayer::OnGameplayTaskDeactivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskDeactivated(Task);
-}
-
 void UBTService_FindPathToTargetPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 	float DeltaSeconds)
 {

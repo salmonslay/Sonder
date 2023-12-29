@@ -17,8 +17,6 @@ class PROJ_API UBTTask_DoPulse : public UBTTask_BlackboardBase
 public:
 
 	UBTTask_DoPulse();
-	
-	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;
 
 	/** Execute task is called once every time this task is activated */
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;

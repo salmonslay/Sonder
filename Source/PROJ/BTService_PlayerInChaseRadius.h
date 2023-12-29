@@ -18,12 +18,6 @@ public:
 
 	UBTService_PlayerInChaseRadius();
 	
-	/** I have no idea when this is called but it is needed */
-	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;
-
-	/** I have no idea when this is called but it is needed as well */
-	virtual void OnGameplayTaskDeactivated(UGameplayTask& Task) override;
-	
 protected:
 	/** Tick node is called every tick service is in progress*/
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;

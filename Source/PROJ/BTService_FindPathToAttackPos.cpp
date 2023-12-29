@@ -14,16 +14,6 @@ UBTService_FindPathToAttackPos::UBTService_FindPathToAttackPos()
 	NodeName = TEXT("FindPathToAttackPosition");
 }
 
-void UBTService_FindPathToAttackPos::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-}
-
-void UBTService_FindPathToAttackPos::OnGameplayTaskDeactivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskDeactivated(Task);
-}
-
 void UBTService_FindPathToAttackPos::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);

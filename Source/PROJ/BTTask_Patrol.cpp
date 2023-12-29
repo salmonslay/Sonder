@@ -14,12 +14,6 @@ UBTTask_Patrol::UBTTask_Patrol()
 	NodeName = TEXT("Patrol");
 }
 
-void UBTTask_Patrol::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-	
-}
-
 EBTNodeResult::Type UBTTask_Patrol::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);

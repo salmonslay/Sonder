@@ -14,16 +14,6 @@ UBTService_CalculateAttackPos::UBTService_CalculateAttackPos()
 	NodeName = TEXT("CalculateAttackPosition");
 }
 
-void UBTService_CalculateAttackPos::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-}
-
-void UBTService_CalculateAttackPos::OnGameplayTaskDeactivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskDeactivated(Task);
-}
-
 void UBTService_CalculateAttackPos::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);

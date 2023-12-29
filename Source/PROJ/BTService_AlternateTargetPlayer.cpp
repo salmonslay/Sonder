@@ -22,11 +22,6 @@ void UBTService_AlternateTargetPlayer::OnGameplayTaskActivated(UGameplayTask& Ta
 	SGS = Cast<ASonderGameState>(GetWorld()->GetGameState());
 }
 
-void UBTService_AlternateTargetPlayer::OnGameplayTaskDeactivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskDeactivated(Task);
-}
-
 void UBTService_AlternateTargetPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 	float DeltaSeconds)
 {
@@ -70,7 +65,7 @@ void UBTService_AlternateTargetPlayer::TickNode(UBehaviorTreeComponent& OwnerCom
 	}
 	
 	FVector CurrentTargetLocation;
-	FVector OwnerLocation = OwnerCharacter->GetActorLocation();
+	const FVector OwnerLocation = OwnerCharacter->GetActorLocation();
 
 	// check if both players are alive
 	if(!ClientPlayer->bIsSafe && !ServerPlayer->bIsSafe && !OwnerComp.GetBlackboardComponent()->GetValueAsBool("bIsInRangeToAttack"))

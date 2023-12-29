@@ -16,16 +16,6 @@ UBTService_IsInAttackRange::UBTService_IsInAttackRange()
 	NodeName = TEXT("IsInAttackRange");
 }
 
-void UBTService_IsInAttackRange::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-}
-
-void UBTService_IsInAttackRange::OnGameplayTaskDeactivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskDeactivated(Task);
-}
-
 void UBTService_IsInAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
