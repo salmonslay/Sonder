@@ -6,7 +6,6 @@
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
 #include "BTService_IsInCameraFOV.generated.h"
 
-
 class ASonderGameState;
 class AEnemyCharacter;
 /**
@@ -38,6 +37,7 @@ protected:
 
 	FVector OwnerLocation = FVector::ZeroVector;
 
+	UPROPERTY()
 	ASonderGameState* SGS;
 	
 	float FieldOfViewAngle = 0.f;

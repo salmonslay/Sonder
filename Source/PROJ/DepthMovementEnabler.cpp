@@ -31,17 +31,12 @@ void ADepthMovementEnabler::OnComponentBeginOverlapped(UPrimitiveComponent* Over
 	UPrimitiveComponent* OtherComponent, int OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	if(const auto Player = Cast<APROJCharacter>(OtherActor))
-		ToggleDepthMovement(Player, true); 
+		Player->SetDepthMovementEnabled(true); 
 }
 
 void ADepthMovementEnabler::OnComponentStopOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComponent, int OtherBodyIndex)
 {
 	if(const auto Player = Cast<APROJCharacter>(OtherActor))
-		ToggleDepthMovement(Player, false); 
-}
-
-void ADepthMovementEnabler::ToggleDepthMovement(APROJCharacter* Player, const bool bNewToggle) const
-{
-	Player->SetDepthMovementEnabled(bNewToggle); 
+		Player->SetDepthMovementEnabled(false); 
 }

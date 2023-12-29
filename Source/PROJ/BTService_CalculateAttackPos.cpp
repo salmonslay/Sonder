@@ -36,28 +36,24 @@ void UBTService_CalculateAttackPos::TickNode(UBehaviorTreeComponent& OwnerComp, 
 
 	OwnerLocation = OwnerCharacter->GetActorLocation();
 
-	APROJCharacter* PlayerToAttack;
-	UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("CurrentTargetPlayer");
+	const APROJCharacter* PlayerToAttack = Cast<APROJCharacter>(OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("CurrentTargetPlayer"));
 
-	if (PlayerObject == nullptr)
+	if (PlayerToAttack == nullptr)
 	{
 		return;
 	}
-	PlayerToAttack = Cast<APROJCharacter>(PlayerObject);
-	if (PlayerToAttack)
-	{
-		PlayerToAttackPosition = PlayerToAttack->GetActorLocation();
-	}
+	
+	PlayerToAttackPosition = PlayerToAttack->GetActorLocation();
 
 	if (!IsStartAttackPositionValid(OwnerComp.GetBlackboardComponent()->GetValueAsVector("StartAttackPosition")))
 	{
 		// Generate a random height within the specified bounds around player's Z-coordinate
-		float AllowedAttackHeightDiff = FMath::Min(FMath::Abs(FMath::Tan(OwnerCharacter->MaxAngleToAttack) * FVector::Distance(OwnerLocation, PlayerToAttackPosition)), OwnerCharacter->MaxAttackHeightDifference);
-		float RandomHeight = FMath::FRandRange(PlayerToAttackPosition.Z - AllowedAttackHeightDiff, PlayerToAttackPosition.Z + AllowedAttackHeightDiff);
+		const float AllowedAttackHeightDiff = FMath::Min(FMath::Abs(FMath::Tan(OwnerCharacter->MaxAngleToAttack) * FVector::Distance(OwnerLocation, PlayerToAttackPosition)), OwnerCharacter->MaxAttackHeightDifference);
+		const float RandomHeight = FMath::FRandRange(PlayerToAttackPosition.Z - AllowedAttackHeightDiff, PlayerToAttackPosition.Z + AllowedAttackHeightDiff);
 		//float RandomAngle = FMath::FRandRange(0.0f, 2 * PI);
         
 		// Calculate rand new position
-		FVector NewPosition = FVector(PlayerToAttackPosition.X, OwnerLocation.Y , PlayerToAttackPosition.Z +RandomHeight);
+		const FVector NewPosition = FVector(PlayerToAttackPosition.X, OwnerLocation.Y , PlayerToAttackPosition.Z +RandomHeight);
 		OwnerComp.GetBlackboardComponent()->SetValueAsVector("StartAttackPosition", NewPosition);
 		if (bDebug)
 		{
@@ -66,10 +62,10 @@ void UBTService_CalculateAttackPos::TickNode(UBehaviorTreeComponent& OwnerComp, 
 	}
 }
 
-bool UBTService_CalculateAttackPos::IsStartAttackPositionValid(const FVector& PosToCheck)
+bool UBTService_CalculateAttackPos::IsStartAttackPositionValid(const FVector& PosToCheck) const
 {
 	// Calculate AllowedAttackHeightDiff
-	float AllowedAttackHeightDiff = FMath::Min(FMath::Abs(FMath::Tan(OwnerCharacter->MaxAngleToAttack) * FVector::Distance(OwnerLocation, PlayerToAttackPosition)), OwnerCharacter->MaxAttackHeightDifference);
+	const float AllowedAttackHeightDiff = FMath::Min(FMath::Abs(FMath::Tan(OwnerCharacter->MaxAngleToAttack) * FVector::Distance(OwnerLocation, PlayerToAttackPosition)), OwnerCharacter->MaxAttackHeightDifference);
 
 	// Check if GeneratedPosition is within the allowed attack height difference
 	if (PosToCheck.Z < PlayerToAttackPosition.Z - AllowedAttackHeightDiff || PosToCheck.Z > PlayerToAttackPosition.Z + AllowedAttackHeightDiff) {

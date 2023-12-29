@@ -38,14 +38,9 @@ void UBTTask_AttackPlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 
 	if (OwnerCharacter == nullptr) return;
 
-
-	APROJCharacter* PlayerToAttack = nullptr;
-	UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("PlayerToAttack");
-	if (PlayerObject)
-	{
-		PlayerToAttack = Cast<APROJCharacter>(PlayerObject);
-	}
-	if (PlayerToAttack && IsValid(PlayerToAttack))
+	APROJCharacter* PlayerToAttack = Cast<APROJCharacter>(OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("PlayerToAttack"));
+	
+	if (IsValid(PlayerToAttack))
 	{
 		OwnerCharacter->Attack();
 	

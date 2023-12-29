@@ -16,7 +16,7 @@ void USonderGameInstance::AddToLog(FString TextToLog)
 {
 	UE_LOG(LogTemp, Warning, TEXT("%s"), *FString(FilePath));
 
-	FDateTime Now = FDateTime::UtcNow();
+	const FDateTime Now = FDateTime::UtcNow();
 	FFileHelper::SaveStringToFile(Now.ToString() + TextToLog + "\n", *FilePath ,FFileHelper::EEncodingOptions::ForceUTF8, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);
 }
 

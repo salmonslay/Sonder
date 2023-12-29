@@ -15,7 +15,6 @@ UCLASS()
 class PROJ_API UBTService_CanAttackPlayer : public UBTService_BlackboardBase
 {
 	GENERATED_BODY()
-
 			
 public: /** Constructor*/
 	UBTService_CanAttackPlayer();
@@ -33,10 +32,8 @@ protected:
 	UPROPERTY(VisibleAnywhere)
 	AEnemyCharacter* OwnerCharacter = nullptr;
 	
-	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float RadiusToDetectPlayer = 0.f;
-
 
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;

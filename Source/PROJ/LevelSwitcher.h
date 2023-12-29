@@ -23,6 +23,7 @@ private:
 	bool bIsSwitching = false;
 
 	// An array of actors currently overlapping this trigger
+	UPROPERTY()
 	TArray<AActor*> OverlappingActors;
 
 	// The name (path) of the level to switch to

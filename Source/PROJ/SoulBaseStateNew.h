@@ -35,8 +35,6 @@ public:
 
 	/** Run locally */
 	void Dash();
-	
-	void NewMat();
 
 	/** Ends the throw without actually throwing the grenade, for on death & meadow scene */
 	void EndGrenadeThrowWithoutThrowing(); 

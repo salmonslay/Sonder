@@ -20,12 +20,3 @@ APressurePlateBase::APressurePlateBase()
 	PressurePlateMesh->SetupAttachment(TriggerArea);	
 
 }
-
-// Called when the game starts or when spawned
-void APressurePlateBase::BeginPlay()
-{
-	Super::BeginPlay();
-	
-	
-}
-

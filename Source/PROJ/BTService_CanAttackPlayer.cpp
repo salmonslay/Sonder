@@ -45,7 +45,7 @@ void UBTService_CanAttackPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 	if (bDebug) DrawDebugSphere(GetWorld(), MyLocation, RadiusToDetectPlayer, 24, FColor::Black, false, .5f);
 
 	// check if sphere overlaps with any rats
-	bool bOverlaps = GetWorld()->OverlapMultiByObjectType(
+	const bool bOverlaps = GetWorld()->OverlapMultiByObjectType(
 		OverlapResults,
 		MyLocation,
 		FQuat::Identity,

@@ -30,5 +30,8 @@ private:
 	
 	UPROPERTY(EditAnywhere)
 	bool bActivateCharge = true;
+
+	UPROPERTY()
+	class AShadowCharacter* ShadowOwner; 
 	
 };

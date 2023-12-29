@@ -29,8 +29,7 @@ public:
 protected:
 	/** Tick node is called every tick service is in progress*/
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
-
-
+	
 	UPROPERTY()
 	AFlyingEnemyCharacter* OwnerCharacter;
 

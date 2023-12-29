@@ -64,10 +64,6 @@ FVector UBTService_MoveToJumpPoint::GetJumpPoint(const UBehaviorTreeComponent& O
 		PossiblePoints.Add(JumpPointLocation); 
 	}
 
-	// float DistToPoint = 0;
-	// if(const auto NearestActor = UGameplayStatics::FindNearestActor(CurrentTarget, PossiblePoints, DistToPoint))
-	// 	return NearestActor->GetActorLocation();
-
 	if(PossiblePoints.IsEmpty())
 		return FVector::ZeroVector;
 	

@@ -15,7 +15,6 @@ class PROJ_API UBTTask_DoLaserAttack : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
 
-	
 public:
 	/** Constructor*/
 	UBTTask_DoLaserAttack();

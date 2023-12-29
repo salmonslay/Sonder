@@ -15,19 +15,15 @@ class PROJ_API UBTService_CanJumpOnPlatform : public UBTService_BlackboardBase
 {
 	GENERATED_BODY()
 
-
 public:
 
 	UBTService_CanJumpOnPlatform();
 
 	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;
-
 	
 	virtual void OnGameplayTaskDeactivated(UGameplayTask& Task) override;
-	
 
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
-	
 
 private:
 

@@ -19,8 +19,6 @@ class PROJ_API ACharacterStateMachine : public APROJCharacter
 
 public:
 
-	ACharacterStateMachine(); 
-
 	/** Switches the current state to the new one */
 	void SwitchState(UPlayerCharState* NewState);
 
@@ -50,9 +48,5 @@ private:
 
 	UFUNCTION(Server, Reliable) 
 	void ServerRPC_SwitchState(UPlayerCharState* NewState); 
-
-	/** This is an example of how a state can be added and created in the constructor, will be removed */
-	UPROPERTY(EditAnywhere)
-	class UDummyPlayerState* DummyState;
 	
 };

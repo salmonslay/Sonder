@@ -58,7 +58,7 @@ void ACombatManager::Tick(float DeltaTime)
 	if(bCombatStarted && !bCombatEnded && GetLocalRole() == ROLE_Authority && !WavesQueue.IsEmpty() && !bWaitingForWave
 		&& (NumActiveEnemies <= WavesQueue[0].AllowedRemainingEnemiesForWave || WavesQueue[0].AllowedRemainingEnemiesForWave == -1))
 	{
-		float Wait = WavesQueue[0].TimeToWaveAfterEnemiesKilled;
+		const float Wait = WavesQueue[0].TimeToWaveAfterEnemiesKilled;
 		if (Wait <= 0)
 		{
 			HandleSpawn();

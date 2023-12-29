@@ -5,8 +5,6 @@
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 
-
-
 void ALevelSwitcher::NotifyActorBeginOverlap(AActor* OtherActor)
 {
 	Super::NotifyActorBeginOverlap(OtherActor);
@@ -15,10 +13,10 @@ void ALevelSwitcher::NotifyActorBeginOverlap(AActor* OtherActor)
 	if (!HasAuthority())
 		return;
 
-	ACharacter* character = Cast<ACharacter>(OtherActor);
-	if (character)
+	ACharacter* Character = Cast<ACharacter>(OtherActor);
+	if (Character)
 	{
-		OverlappingActors.Add(character);
+		OverlappingActors.Add(Character);
 
 		if (OverlappingActors.Num() >= 2 && !bIsSwitching)
 		{

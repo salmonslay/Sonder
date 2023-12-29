@@ -24,9 +24,6 @@ public:
 	/** Execute task is called once every time this task is activated */
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
-	/** Tick task is called every tick this task is in progress, set up in execute task */
-	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
-
 	UPROPERTY()
 	class AFlyingEnemyCharacter* OwnerCharacter;
 
@@ -34,7 +31,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;
-
 
 	FTimerHandle EnableMovementTimerHandle;
 

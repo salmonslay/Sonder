@@ -29,7 +29,6 @@ public:
 	UPROPERTY(EditAnywhere,BlueprintReadWrite)
 	USphereComponent* ThrowLoc;
 
-
 #pragma region Events
 
 	UFUNCTION(BlueprintImplementableEvent)
@@ -48,5 +47,4 @@ public:
 
 #pragma endregion
 
-private:
 };

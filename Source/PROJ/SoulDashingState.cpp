@@ -152,12 +152,8 @@ void USoulDashingState::ServerRPC_CancelHookShot_Implementation()
 void USoulDashingState::EndHookShot()
 {
 	if(!HookState)
-	{
 		if(const auto Robot = UGameplayStatics::GetActorOfClass(this, ARobotStateMachine::StaticClass()))
 			HookState = Robot->FindComponentByClass<URobotHookingState>();
-		else
-			return; 
-	}
 
 	if(HookState)
 		HookState->EndHookShot(true);

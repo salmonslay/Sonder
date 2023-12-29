@@ -45,7 +45,7 @@ protected:
 
 private:
 
-	/** Auto plays the cutscene on level load, TODO: after loading screen? */
+	/** Auto plays the cutscene on level load */
 	UPROPERTY(EditAnywhere)
 	bool bAutoPlay = false;
 
@@ -81,7 +81,7 @@ private:
 	/** Keeps track of how many cutscenes are playing to account for multiple players */
 	inline static int CutscenesPlayingCounter = 0;
 
-	bool bHasPlayed = false; // TODO: Temp bool until destroy works correctly (can keep)
+	bool bHasPlayed = false; 
 
 	/** Should players be hidden during cutscene? */
 	UPROPERTY(EditAnywhere)

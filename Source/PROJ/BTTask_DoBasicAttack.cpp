@@ -20,7 +20,10 @@ EBTNodeResult::Type UBTTask_DoBasicAttack::ExecuteTask(UBehaviorTreeComponent& O
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
-	if(const auto BasicAttackComp = OwnerComp.GetAIOwner()->GetPawn()->FindComponentByClass<UBasicAttackComponent>())
+	if(!BasicAttackComp)
+		BasicAttackComp = OwnerComp.GetAIOwner()->GetPawn()->FindComponentByClass<UBasicAttackComponent>(); 
+
+	if(BasicAttackComp)
 	{
 		BasicAttackComp->Attack();
 		return EBTNodeResult::Succeeded; 

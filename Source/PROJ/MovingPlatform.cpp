@@ -27,13 +27,9 @@ void AMovingPlatform::Tick(float DeltaTime)
 
 	MoveDelta = GetActorLocation() - LastKnownLocation;
 	LastKnownLocation = GetActorLocation();
-
 }
 
 float AMovingPlatform::GetMoveDirectionZ() const 
 {
 	return MoveDelta.Z;
 }
-
-
-

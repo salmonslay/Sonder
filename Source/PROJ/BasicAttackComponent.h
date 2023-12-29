@@ -51,7 +51,7 @@ private:
 	float HitEventLengthCheck = 100.f; 
 
 	UPROPERTY()
-	class ACharacter* Owner;
+	ACharacter* Owner;
 
 	// Hopefully temporary, possible fixes for attack 
 	float LastTimeAttack;

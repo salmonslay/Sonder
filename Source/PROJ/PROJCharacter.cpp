@@ -76,7 +76,7 @@ void APROJCharacter::BeginPlay()
 	//Add Input Mapping Context
 
 	if (!IsLocallyControlled()) return;
-	if (APlayerController* PlayerController = Cast<APlayerController>(Controller))
+	if (const APlayerController* PlayerController = Cast<APlayerController>(Controller))
 	{
 		if (UEnhancedInputLocalPlayerSubsystem* Subsystem = ULocalPlayer::GetSubsystem<
 			UEnhancedInputLocalPlayerSubsystem>(PlayerController->GetLocalPlayer()))
@@ -239,51 +239,6 @@ void APROJCharacter::Tick(float DeltaSeconds)
 		AttackTimer += DeltaSeconds;
 }
 
-bool APROJCharacter::IsAlive()
-{
-	// TODO: This should be removed. Health is handled by the health component. This was temporary for playtesting arena 
-	return GetMesh()->GetRelativeScale3D().GetMax() > 0.5f;
-}
-
-void APROJCharacter::SaveGame() const
-{
-	USonderSaveGame* SaveGameInstance = Cast<USonderSaveGame>(
-	UGameplayStatics::LoadGameFromSlot("Sonder", 0));
-
-	if (!SaveGameInstance)
-	{
-		UE_LOG(LogTemp, Display, TEXT("Creating new save file"))
-		SaveGameInstance = Cast<USonderSaveGame>(
-			UGameplayStatics::CreateSaveGameObject(USonderSaveGame::StaticClass()));
-	}
-
-	if (SaveGameInstance == nullptr)
-	{
-		UE_LOG(LogTemp, Display, TEXT("No save game instance found!"));
-		return;
-	}
-
-	// todo: save stuff here
-
-	UE_LOG(LogTemp, Display, TEXT("Saved game!"))
-
-	UGameplayStatics::SaveGameToSlot(SaveGameInstance, "SpaceLeek Save", 0);
-}
-
-USonderSaveGame* APROJCharacter::LoadGame() const
-{
-	USonderSaveGame* SaveGameInstance = Cast<USonderSaveGame>(
-	UGameplayStatics::LoadGameFromSlot("Sonder", 0));
-
-	if (SaveGameInstance == nullptr)
-	{
-		UE_LOG(LogTemp, Warning, TEXT("No save game instance found! Not loading anything"));
-		return nullptr;
-	}
-	
-	return SaveGameInstance;
-}
-
 USonderSaveGame* APROJCharacter::GetSaveGameSafe()
 {
 	USonderSaveGame* SaveGameInstance = Cast<USonderSaveGame>(
@@ -308,7 +263,7 @@ void APROJCharacter::SetSaveGame(USonderSaveGame* SaveGame)
 void APROJCharacter::Move(const FInputActionValue& Value)
 {
 	// input is a Vector2D
-	FVector2D MovementVector = Value.Get<FVector2D>();
+	const FVector2D MovementVector = Value.Get<FVector2D>();
 
 	if (Controller != nullptr)
 	{
@@ -432,7 +387,6 @@ float APROJCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageE
 	
 	float DamageApplied = Super::TakeDamage(DamageAmount, DamageEvent, EventInstigator, DamageCauser);
 
-	//ensure (HealthComponent != nullptr);
 	if (NewPlayerHealthComponent != nullptr)
 	{
 		DamageApplied = NewPlayerHealthComponent->TakeDamage(DamageApplied);

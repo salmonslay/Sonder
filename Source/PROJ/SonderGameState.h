@@ -25,7 +25,6 @@ class PROJ_API ASonderGameState : public AGameState
 {
 	GENERATED_BODY()
 
-
 public:
 
 	UFUNCTION(BlueprintCallable)

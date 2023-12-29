@@ -15,15 +15,11 @@ UCLASS()
 class PROJ_API ACombatTrigger : public AActor
 {
 	GENERATED_BODY()
+	
 public:
 	ACombatTrigger();
 
-protected:
-	virtual void BeginPlay() override;
-
-public:
-	virtual void Tick(float DeltaSeconds) override;
-	
+	UPROPERTY()
 	UBoxComponent* Bounds;
 
 	UPROPERTY(BlueprintReadOnly)

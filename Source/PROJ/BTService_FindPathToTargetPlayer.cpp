@@ -45,19 +45,15 @@ void UBTService_FindPathToTargetPlayer::TickNode(UBehaviorTreeComponent& OwnerCo
 	{
 		return;
 	}
-	
-	APROJCharacter* PlayerToAttack;
-	UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("CurrentTargetPlayer");
 
-	if (PlayerObject == nullptr)
+	const APROJCharacter* PlayerToAttack = Cast<APROJCharacter>(OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("CurrentTargetPlayer"));
+
+	if (PlayerToAttack == nullptr)
 	{
 		return;
 	}
-	PlayerToAttack = Cast<APROJCharacter>(PlayerObject);
-	if (PlayerToAttack)
-	{
-		CurrentTargetLocation = PlayerToAttack->GetActorLocation();
-	}
+	
+	CurrentTargetLocation = PlayerToAttack->GetActorLocation();
 
 	OwnerGrid->TargetLocation = CurrentTargetLocation;
 	OwnerGrid->StartLocation = OwnerLocation;

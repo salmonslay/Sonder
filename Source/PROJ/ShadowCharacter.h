@@ -100,7 +100,6 @@ public:
 	/** Calculates if jump point is closer to player than enemy*/
 	bool PointCloserToPlayer(const FVector &CurrentTargetPoint) const;
 
-	
 protected:
 
 	virtual void BeginPlay() override;
@@ -118,10 +117,6 @@ private:
 
 	UFUNCTION(Server, Reliable) 
 	void ServerRPC_SwitchState(UPlayerCharState* NewState); 
-
-	/** This is an example of how a state can be added and created in the constructor, will be removed */
-	UPROPERTY(EditAnywhere)
-	class UDummyPlayerState* DummyState;
 
 	UPROPERTY(EditDefaultsOnly)
 	class UNiagaraSystem* ChargeEffect;

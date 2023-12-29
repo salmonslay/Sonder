@@ -18,12 +18,6 @@ public:
 	// Sets default values for this actor's properties
 	APressurePlateBase();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UBoxComponent* TriggerArea = nullptr;
 
@@ -35,6 +29,5 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void StartReverse();
-	
 	
 };

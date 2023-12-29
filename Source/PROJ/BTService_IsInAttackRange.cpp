@@ -38,18 +38,14 @@ void UBTService_IsInAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 
 	OwnerLocation = OwnerCharacter->GetActorLocation();
 
-	APROJCharacter* PlayerToAttack;
-	UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("PlayerToAttack");
+	const APROJCharacter* PlayerToAttack = Cast<APROJCharacter>(OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("PlayerToAttack"));
 
-	if (PlayerObject == nullptr)
+	if (PlayerToAttack == nullptr)
 	{
 		return;
 	}
-	PlayerToAttack = Cast<APROJCharacter>(PlayerObject);
-	if (PlayerToAttack)
-	{
-		PlayerToAttackLocation = PlayerToAttack->GetActorLocation();
-	}
+	
+	PlayerToAttackLocation = PlayerToAttack->GetActorLocation();
 	
 	const float HeightDiff = FMath::Abs(OwnerLocation.Z - PlayerToAttackLocation.Z);
 	FVector VectorToPlayer = OwnerLocation - PlayerToAttackLocation;
@@ -88,7 +84,7 @@ void UBTService_IsInAttackRange::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 
 		if (bHit)
 		{
-			APROJCharacter* PlayerHit = Cast<APROJCharacter>(Hit.GetActor());
+			const APROJCharacter* PlayerHit = Cast<APROJCharacter>(Hit.GetActor());
 			if (PlayerHit)
 			{
 				OwnerComp.GetBlackboardComponent()->SetValueAsBool("bIsInRangeToAttack", true);

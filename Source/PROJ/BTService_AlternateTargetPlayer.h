@@ -40,11 +40,13 @@ protected:
 	UPROPERTY()
 	ASonderGameState* SGS;
 
+	UPROPERTY()
 	APROJCharacter* ServerPlayer;
+
+	UPROPERTY()
 	APROJCharacter* ClientPlayer;
 
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;
-	
 
 };

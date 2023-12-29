@@ -14,7 +14,6 @@ UCLASS()
 class PROJ_API UBTService_IsInAttackRange : public UBTService_BlackboardBase
 {
 	GENERATED_BODY()
-
 				
 public: /** Constructor*/
 	UBTService_IsInAttackRange();
@@ -28,7 +27,6 @@ public: /** Constructor*/
 protected:
 	/** Tick node is called every tick service is in progress*/
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
-
 
 	UPROPERTY(VisibleAnywhere)
 	AFlyingEnemyCharacter* OwnerCharacter = nullptr;

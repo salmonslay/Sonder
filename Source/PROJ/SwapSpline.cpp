@@ -10,41 +10,24 @@
 ASwapSpline::ASwapSpline()
 {
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	TriggerZone = CreateDefaultSubobject<UBoxComponent>(TEXT("TriggerZone"));
 
 	TriggerZone->SetupAttachment(RootComponent);
-	
-
 }
-
-// Called when the game starts or when spawned
-void ASwapSpline::BeginPlay()
-{
-	Super::BeginPlay();
-	
-}
-
-
 
 void ASwapSpline::SplineSwap()
 {
-	
 	if (CharactersCamera && NextCameraSpline)
 	{
 		ServerRPCSwap();
-		
-		
 	}
-
-	
 }
-
 
 void ASwapSpline::ServerRPCSwap_Implementation()
 {
-    if(!this->HasAuthority())
+    if(!HasAuthority())
 		return;
 		
 	MulticastRPCSwap();

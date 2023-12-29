@@ -42,8 +42,7 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;
-
-
+	
 	UPROPERTY(EditAnywhere)
 	float PathFollowingSpeed = 100.f;
 };

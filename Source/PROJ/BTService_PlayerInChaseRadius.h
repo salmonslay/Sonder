@@ -6,7 +6,6 @@
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
 #include "BTService_PlayerInChaseRadius.generated.h"
 
-class AEnemyCharacter;
 /**
  * 
  */
@@ -30,7 +29,7 @@ protected:
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 	
 	UPROPERTY(VisibleAnywhere)
-	AEnemyCharacter* OwnerCharacter = nullptr;
+	ACharacter* OwnerCharacter = nullptr;
 	
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	float RadiusToChasePlayer = 0.f;

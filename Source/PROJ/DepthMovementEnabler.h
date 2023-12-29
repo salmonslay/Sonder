@@ -32,8 +32,6 @@ private:
 
 	UFUNCTION() 
 	void OnComponentStopOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
-								   UPrimitiveComponent* OtherComponent, int OtherBodyIndex); 
-
-	void ToggleDepthMovement(APROJCharacter* Player, const bool bNewToggle) const; 
+								   UPrimitiveComponent* OtherComponent, int OtherBodyIndex);
 
 };

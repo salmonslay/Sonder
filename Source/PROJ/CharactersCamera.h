@@ -18,8 +18,6 @@ class PROJ_API ACharactersCamera : public ACameraActor
 
 	ACharactersCamera();
 
-	
-
 protected:
 	virtual void BeginPlay() override;
 
@@ -52,36 +50,29 @@ public:
 	UFUNCTION(BlueprintCallable)
 	bool SetAllowWallsMovement( bool bValue);
 
-
 private:
 	virtual void Tick(float DeltaSeconds) override;
-
 	
 	void MoveCamera();
 
-	
+	void RotateCamera() const;
 
-	void RotateCamera();
+	void MoveWalls(FVector MiddlePoint) const;
 
-	void MoveWalls(FVector MiddlePoint);
-
-	void SetWallCollision();
-
+	void SetWallCollision() const;
 	
 	bool bAllowWallsMovement = true;
 
 	bool bAllowMovement;
 
-	
-	UCameraComponent* CameraComponent;
+	UPROPERTY()
+	UCameraComponent* CameraComp;
 
 	UPROPERTY(EditAnywhere)
 	double InterpSpeedLocation;
 
 	UPROPERTY(EditAnywhere)
 	double InterpSpeedRotation;
-
-	
 	
 	UPROPERTY()
 	APROJCharacter* PlayerOne = nullptr;
@@ -91,9 +82,5 @@ private:
 
 	UPROPERTY()
 	USplineComponent* CameraSpline;
-
-	
-
-	
 	
 };

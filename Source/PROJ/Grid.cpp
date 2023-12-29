@@ -9,8 +9,6 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
-
-
 // Sets default values
 AGrid::AGrid()
 {
@@ -31,7 +29,6 @@ void AGrid::BeginPlay()
 	NodeDiameter = NodeRadius * 2;
 
 	CreateGrid();
-	
 	
 	if(bDebug)
 	{
@@ -118,8 +115,8 @@ TArray<FVector> AGrid::RequestPath(const FVector &Start, const FVector &End, con
 {
 	TArray<FVector> NewPath;
 
-	GridNode* StartNode = GetNodeFromWorldLocation(Start);
-	GridNode* EndNode = GetNodeFromWorldLocation(End);
+	const GridNode* StartNode = GetNodeFromWorldLocation(Start);
+	const GridNode* EndNode = GetNodeFromWorldLocation(End);
 	
 	if (EnemyPathfinder->FindPath(StartNode->GetWorldCoordinate(), EndNode->GetWorldCoordinate()))
 	{
@@ -139,8 +136,6 @@ TArray<FVector> AGrid::RequestPath(const FVector &Start, const FVector &End, con
 	return NewPath;
 }
 
-
-
 void AGrid::OnUpdatedPathFound()
 {
 	if (EnemyPathfinder->bHasPath)
@@ -156,7 +151,6 @@ void AGrid::OnUpdatedPathFound()
 	}
 }
 
-
 void AGrid::OnNoNeedUpdate()
 {
 	bHasUpdatedPath = false;
@@ -166,8 +160,6 @@ float AGrid::GetNodeRadius() const
 {
 	return NodeRadius;
 }
-
-
 
 void AGrid::CreateGrid()
 {
@@ -190,8 +182,6 @@ void AGrid::CreateGrid()
 	}
 	
 	// The grid's pivot is in the center, need its position as if pivot was in the bottom left corner
-
-	
 
 	FVector GridBottomLeft = GetActorLocation();
 	GridBottomLeft.X -= GridSize.X / 2;
@@ -228,8 +218,8 @@ void AGrid::CreateGrid()
 				TArray<AActor*> OverlappingActors;
 				
 				UKismetSystemLibrary::SphereOverlapActors(GetWorld(), NodePos, NodeRadius, ObjectTypeQueries, nullptr, ActorsToIgnore, OverlappingActors );
-				
-				int NewMovementPenalty = OverlappingActors.IsEmpty() ? 0 : MovementPenalty;
+
+				const int NewMovementPenalty = OverlappingActors.IsEmpty() ? 0 : MovementPenalty;
 				AddToArray(x, y, z, GridNode(OverlappingActors.IsEmpty(), NodePos,  x, y, z, NewMovementPenalty));
 			}
 		}
@@ -241,7 +231,7 @@ void AGrid::CreateGrid()
 	}
 }
 
-void AGrid::AddToArray(const int IndexX, const int IndexY, const int IndexZ, const GridNode Node)  
+void AGrid::AddToArray(const int IndexX, const int IndexY, const int IndexZ, const GridNode Node) const
 {
 	Nodes[GetIndex(IndexX, IndexY, IndexZ)] = Node;
 	if (!Node.bWalkable)
@@ -287,8 +277,6 @@ int AGrid::GetIndex(const int IndexX, const int IndexY, const int IndexZ) const
 	return (IndexX * (GridLengthY * GridLengthZ)) + (IndexY * GridLengthZ) + IndexZ;
 }
 
-
-
 GridNode* AGrid::GetNodeFromWorldLocation(const FVector &NodeWorldLocation) const
 {
 	// position relative to grids bottom left corner 
@@ -318,12 +306,12 @@ void AGrid::CalculateMovingActor(const AActor* OtherActor)
 	FVector Extent;
 	OtherActor->GetActorBounds(true, Origin, Extent);
 
-	int XStart = FMath::Max(Origin.X - Extent.X, GridTopLeftLocation.X);
-	int XEnd = FMath::Min(Origin.X + Extent.X, GridTopLeftLocation.X + GridSize.X);
-	int YStart = FMath::Max(Origin.Y - Extent.Y, GridTopLeftLocation.Y);
-	int YEnd = FMath::Min(Origin.Y + Extent.Y, GridTopLeftLocation.Y + GridSize.Y);
-	int ZStart = FMath::Min(Origin.Z + Extent.Z, GridTopLeftLocation.Z);
-	int ZEnd = FMath::Max(Origin.Z - Extent.Z, GridTopLeftLocation.Z - GridSize.Z);
+	const int XStart = FMath::Max(Origin.X - Extent.X, GridTopLeftLocation.X);
+	const int XEnd = FMath::Min(Origin.X + Extent.X, GridTopLeftLocation.X + GridSize.X);
+	const int YStart = FMath::Max(Origin.Y - Extent.Y, GridTopLeftLocation.Y);
+	const int YEnd = FMath::Min(Origin.Y + Extent.Y, GridTopLeftLocation.Y + GridSize.Y);
+	const int ZStart = FMath::Min(Origin.Z + Extent.Z, GridTopLeftLocation.Z);
+	const int ZEnd = FMath::Max(Origin.Z - Extent.Z, GridTopLeftLocation.Z - GridSize.Z);
 	
 	for (int x = XStart; x < XEnd; x += NodeDiameter)
 	{

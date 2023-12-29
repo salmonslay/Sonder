@@ -14,7 +14,7 @@ EDifficulty ASonderGameState::GetDifficulty()
 	return Difficulty;
 }
 
-void ASonderGameState::SetDifficulty(EDifficulty DiffToSet)
+void ASonderGameState::SetDifficulty(const EDifficulty DiffToSet)
 {
 	Difficulty = DiffToSet;
 }
@@ -67,7 +67,7 @@ bool ASonderGameState::IsInCameraFieldOfView(const FVector& Location) const
 	const float Angle = FMath::RadiansToDegrees(acosf(FVector::DotProduct(CameraForwardVector, DirectionToLocation)));
 
 	// Check if the angle is within the field of view, set true if yes
-	if (Angle <= PlayerCam->GetFOVAngle() /2 )
+	if (Angle <= PlayerCam->GetFOVAngle() / 2)
 	{
 		return true;
 	}

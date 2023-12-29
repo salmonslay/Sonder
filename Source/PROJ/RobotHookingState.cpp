@@ -89,8 +89,6 @@ void URobotHookingState::Exit()
 {
 	Super::Exit();
 
-	// UE_LOG(LogTemp, Warning, TEXT("Exited hook state"))
-
 	if(!RobotCharacter->InputEnabled())
 		RobotCharacter->EnableInput(RobotCharacter->GetLocalViewingPlayerController());
 
@@ -298,8 +296,6 @@ void URobotHookingState::MulticastRPCStartTravel_Implementation()
 
 void URobotHookingState::TravelTowardsTarget(const float DeltaTime)
 {
-	// UE_LOG(LogTemp, Warning, TEXT("Travelling towards player"))
-
 	if(FVector::Dist(CharOwner->GetActorLocation(), CurrentHookTargetLocation) < ReachedTargetDistTolerance)
 	{
 		// Check if Soul and trigger explosion event 
@@ -326,8 +322,6 @@ void URobotHookingState::ServerTravelTowardsTarget_Implementation(const float De
 void URobotHookingState::CollidedWithSoul()
 {
 	MovementComponent->Velocity = FVector::ZeroVector; 
-	
-	// UE_LOG(LogTemp, Warning, TEXT("Big explosion"))
 
 	ServerRPCHookCollision(); 
 }

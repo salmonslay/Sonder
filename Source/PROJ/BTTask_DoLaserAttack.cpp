@@ -57,7 +57,7 @@ EBTNodeResult::Type UBTTask_DoLaserAttack::ExecuteTask(UBehaviorTreeComponent& O
 		APROJCharacter* PlayerHit = Cast<APROJCharacter>(Hit.GetActor());
 		if (PlayerHit)
 		{
-			FDamageEvent DamageEvent;
+			const FDamageEvent DamageEvent;
 			PlayerHit->TakeDamage(OwnerCharacter->DamageToPlayer, DamageEvent, OwnerComp.GetAIOwner(), OwnerCharacter);
 		}
 	}

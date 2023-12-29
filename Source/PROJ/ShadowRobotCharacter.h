@@ -22,12 +22,6 @@ public:
 	class URobotHookingState* RobotHookState;
 
 	UFUNCTION(BlueprintImplementableEvent)
-	void OnHookStart();
-
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnHookEnd();
-
-	UFUNCTION(BlueprintImplementableEvent)
 	void OnPulse();
 
 	UFUNCTION(BlueprintImplementableEvent)

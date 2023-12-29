@@ -8,7 +8,6 @@
 #include "EnhancedInputComponent.h"
 #include "LightGrenade.h"
 #include "RobotHookingState.h"
-#include "PulseObjectComponent.h"
 #include "RobotStateMachine.h"
 #include "ShadowRobotCharacter.h"
 #include "SoulCharacter.h"
@@ -125,11 +124,8 @@ void URobotBaseState::ShootHook()
 	if (bHookShotOnCooldown || !RobotCharacter->AbilityTwo)
 		return;
 
-	// UE_LOG(LogTemp, Warning, TEXT("Fired hook"))
-
 	bHookShotOnCooldown = true;
 
-	// Enable hook shot after set time 
 	FTimerHandle TimerHandle;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &URobotBaseState::DisableHookShotCooldown,
 	                                       HookShotCooldownDelay);
@@ -157,7 +153,6 @@ void URobotBaseState::Pulse()
 
 void URobotBaseState::ServerRPCPulse_Implementation()
 {
-	// Should only run on server 
 	if (!GetOwner()->HasAuthority())
 		return;
 
@@ -166,7 +161,6 @@ void URobotBaseState::ServerRPCPulse_Implementation()
 
 void URobotBaseState::MulticastRPCPulse_Implementation()
 {
-	// Code here is run on each player (client and server)
 	TArray<AActor*> OverlappingActors;
 	CharOwner->GetOverlappingActors(OverlappingActors, AActor::StaticClass());
 
@@ -234,17 +228,13 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 			Actor->TakeDamage(Damage, FDamageEvent(), Controller, CharOwner);
 	}
 	
-	
 	if (CharOwner->IsPlayerControlled())
 	{
 		RobotCharacter->OnPulse();
 	}
-	else
+	else if(const auto ShadowRobot = Cast<AShadowRobotCharacter>(CharOwner))
 	{
-		if (const auto ShadowRobot = Cast<AShadowRobotCharacter>(CharOwner))
-		{
-			ShadowRobot->OnPulse();
-		}
+		ShadowRobot->OnPulse();
 	}
 }
 

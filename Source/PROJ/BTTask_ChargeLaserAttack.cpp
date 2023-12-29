@@ -47,13 +47,6 @@ EBTNodeResult::Type UBTTask_ChargeLaserAttack::ExecuteTask(UBehaviorTreeComponen
 	return EBTNodeResult::Succeeded;
 }
 
-void UBTTask_ChargeLaserAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
-{
-	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
-
-	
-}
-
 void UBTTask_ChargeLaserAttack::EnableMovement()
 {
 	OwnerCharacter->GetCharacterMovement()->SetMovementMode(MOVE_Flying);

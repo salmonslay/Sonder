@@ -47,6 +47,7 @@ public:
 
 	bool bSetFocusToPlayer = true;
 
+	UPROPERTY()
 	ACharacter* CurrentTargetPlayer;
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)

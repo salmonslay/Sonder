@@ -21,8 +21,6 @@ ACameraSpline::ACameraSpline()
 	CameraEnterBox = CreateDefaultSubobject<UBoxComponent>("CameraEnterBox");
 
 	CameraEnterBox->SetupAttachment(CameraSpline);
-	
-
 }
 
 void ACameraSpline::BeginPlay()
@@ -44,6 +42,3 @@ void ACameraSpline::ActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 		
 	}
 }
-
-
-

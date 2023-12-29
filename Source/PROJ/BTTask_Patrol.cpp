@@ -52,13 +52,10 @@ void UBTTask_Patrol::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 		Player1 = OwnerController->GetPlayerFromController(0);
 		Player2 = OwnerController->GetPlayerFromController(1);
 	}
-
 	
-
 	FVector ForwardPoint = OwnerCharacterLocation + (OwnerCharacter->GetActorForwardVector() * DistanceToCheck);
 	FVector ForwardDownPoint = OwnerCharacterLocation + (OwnerCharacter->GetActorForwardVector() * DownForwardDistanceToCheck) + FVector(0, 0, -DownDistanceToCheck);
-
-
+	
 	//OwnerComp.GetBlackboardComponent()->SetValueAsVector("ForwardPoint", ForwardPoint);
 
 	if (bDebug)
@@ -73,8 +70,6 @@ void UBTTask_Patrol::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemo
 	CollisionParams.AddIgnoredActor(OwnerCharacter);
 	CollisionParams.AddIgnoredActor(ECC_Pawn);
 
-	
-	
 	// Perform the line trace
 	if (GetWorld()->LineTraceSingleByChannel(HitResult, OwnerCharacterLocation, ForwardPoint, ECC_Visibility, CollisionParams)
 		||!(GetWorld()->LineTraceSingleByChannel(HitResult, OwnerCharacterLocation, ForwardDownPoint, ECC_Visibility, CollisionParams)))

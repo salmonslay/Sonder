@@ -14,8 +14,6 @@ public:
 
 	Pathfinder(APROJCharacter* ServerPlayer, APROJCharacter* ClientPlayer, AGrid* MapGrid);
 	
-	
-
 	/** Method for A*, calculating path from a start location to target location
 	 * Attempts to find a path from a given start location to an end location. Uses A* algorithm, and if a path is found, it stores the path's waypoints and returns true.
 	 */
@@ -33,8 +31,8 @@ public:
 	bool bIsOldPathStillValid = false;
 
 	FVector TargetLocation = FVector::ZeroVector;
-private:
 	
+private:
 
 	APROJCharacter* ServerPlayerCharacter;
 

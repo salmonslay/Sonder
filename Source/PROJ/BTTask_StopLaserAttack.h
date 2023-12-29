@@ -37,6 +37,7 @@ public:
 
 	void StopRepositioning();
 
+	UPROPERTY()
 	UBehaviorTreeComponent* TreeComponent;
 	FTimerHandle StopRepositioningTimerHandle;
 	
