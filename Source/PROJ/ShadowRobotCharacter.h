@@ -17,9 +17,6 @@ public:
 
 	UPROPERTY(EditAnywhere)
 	class URobotBaseState* RobotBaseState;
-	
-	UPROPERTY(EditAnywhere)
-	class URobotHookingState* RobotHookState;
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnPulse();

@@ -11,5 +11,4 @@
 AShadowRobotCharacter::AShadowRobotCharacter()
 {
 	RobotBaseState = CreateDefaultSubobject<URobotBaseState>(TEXT("Robot Base State"));
-	RobotHookState = CreateDefaultSubobject<URobotHookingState>(TEXT("Robot Hook State")); 
 }

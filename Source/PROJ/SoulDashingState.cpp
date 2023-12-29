@@ -24,7 +24,7 @@ void USoulDashingState::Enter()
 	if(!CharOwner->IsLocallyControlled())
 		return;
 	
-	CharOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Ignore); 
+	CapsuleComponent->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Ignore); 
 		
 	// Set dash direction to input vector if player is moving, otherwise the forward vector 
 	FVector DashDir = CharOwner->GetLastMovementInputVector().IsNearlyZero() ? CharOwner->GetActorForwardVector() : CharOwner->GetLastMovementInputVector(); 
@@ -37,8 +37,8 @@ void USoulDashingState::Enter()
 	DashDir.Normalize(); 
 
 	// Dash locally 
-	CharOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Ignore); 
-	CharOwner->GetCharacterMovement()->AddImpulse(DashForce * DashDir);
+	CapsuleComponent->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Ignore); 
+	MovementComponent->AddImpulse(DashForce * DashDir);
 
 	// Dash on server so it does not override the dash 
 	ServerRPCDash(DashDir);
@@ -48,11 +48,11 @@ void USoulDashingState::Enter()
 
 	StartLoc = CharOwner->GetActorLocation();
 
-	CharOwner->GetCapsuleComponent()->OnComponentBeginOverlap.AddDynamic(this, &USoulDashingState::ActorOverlap);
+	CapsuleComponent->OnComponentBeginOverlap.AddDynamic(this, &USoulDashingState::ActorOverlap);
 
 	// Deal damage or buff appropriate character that are already colliding 
 	TArray<AActor*> OverlappingActors;
-	CharOwner->GetCapsuleComponent()->GetOverlappingActors(OverlappingActors, ACharacter::StaticClass());
+	CapsuleComponent->GetOverlappingActors(OverlappingActors, ACharacter::StaticClass());
 
 	for(const auto OverlapActor : OverlappingActors)
 		DashOverlap(OverlapActor); 
@@ -61,17 +61,28 @@ void USoulDashingState::Enter()
 		CancelHookShot();
 }
 
+void USoulDashingState::BeginPlay()
+{
+	Super::BeginPlay();
+
+	MovementComponent = CharOwner->GetCharacterMovement();
+	CapsuleComponent = CharOwner->GetCapsuleComponent();
+
+	PlayerOwner = Cast<ASoulCharacter>(CharOwner); 
+	ShadowOwner = Cast<AShadowSoulCharacter>(CharOwner); 
+}
+
 void USoulDashingState::Update(const float DeltaTime)
 {
 	Super::Update(DeltaTime);
 
 	// Change state/stop dash when velocity is 0 (collided) or travelled max distance 
-	if(CharOwner->GetCharacterMovement()->Velocity.IsNearlyZero() || FVector::Dist(StartLoc, CharOwner->GetActorLocation()) > MaxDashDistance)
+	if(MovementComponent->Velocity.IsNearlyZero() || FVector::Dist(StartLoc, CharOwner->GetActorLocation()) > MaxDashDistance)
 	{
 		if(CharOwner->IsPlayerControlled()) // Player 
-			Cast<ACharacterStateMachine>(CharOwner)->SwitchState(Cast<ASoulCharacter>(CharOwner)->BaseStateNew);
+			PlayerOwner->SwitchState(PlayerOwner->BaseStateNew);
 		else // AI 
-			Cast<AShadowCharacter>(CharOwner)->SwitchState(Cast<AShadowSoulCharacter>(CharOwner)->SoulBaseState); 
+			ShadowOwner->SwitchState(ShadowOwner->SoulBaseState); 
 	}
 }
 
@@ -84,7 +95,7 @@ void USoulDashingState::Exit()
 	
 	CharOwner->EnableInput(CharOwner->GetLocalViewingPlayerController());
 
-	CharOwner->GetCapsuleComponent()->OnComponentBeginOverlap.RemoveDynamic(this, &USoulDashingState::ActorOverlap); 
+	CapsuleComponent->OnComponentBeginOverlap.RemoveDynamic(this, &USoulDashingState::ActorOverlap); 
 
 	ServerExit(CharOwner->GetCharacterMovement()->GetLastInputVector()); 
 }
@@ -110,8 +121,8 @@ void USoulDashingState::ActorOverlap(UPrimitiveComponent* OverlappedComp, AActor
 void USoulDashingState::DashOverlap(AActor* OtherActor)
 {
 	// Player dashing through player or AI dashing through AI 
-	if((CharOwner->IsPlayerControlled() && OtherActor->IsA(ARobotStateMachine::StaticClass()) ||
-		(!CharOwner->IsPlayerControlled() && OtherActor->IsA(AShadowRobotCharacter::StaticClass()))))
+	if((CharOwner->IsPlayerControlled() && OtherActor->IsA(ARobotStateMachine::StaticClass())) ||
+		(!CharOwner->IsPlayerControlled() && OtherActor->IsA(AShadowRobotCharacter::StaticClass())))
 	{
 		if(const auto RobotState = OtherActor->FindComponentByClass<URobotBaseState>())
 		{
@@ -161,12 +172,12 @@ void USoulDashingState::EndHookShot()
 
 void USoulDashingState::MulticastExit_Implementation()
 {
-	CharOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Block);
+	CapsuleComponent->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Block);
 
 	if(CharOwner->IsPlayerControlled()) 
-		Cast<ASoulCharacter>(CharOwner)->OnDashEnd();
+		PlayerOwner->OnDashEnd();
 	else
-		Cast<AShadowSoulCharacter>(CharOwner)->OnDashEnd(); 
+		ShadowOwner->OnDashEnd(); 
 }
 
 void USoulDashingState::ServerExit_Implementation(const FVector InputVec)
@@ -175,15 +186,15 @@ void USoulDashingState::ServerExit_Implementation(const FVector InputVec)
 		return;
 
 	// Set velocity to max walk speed 
-	FVector VelDir = CharOwner->GetCharacterMovement()->Velocity;
+	FVector VelDir = MovementComponent->Velocity;
 	VelDir.Z = 0;
 	
-	if(CharOwner->IsPlayerControlled() && !Cast<ACharacterStateMachine>(CharOwner)->IsDepthMovementEnabled())
+	if(CharOwner->IsPlayerControlled() && !PlayerOwner->IsDepthMovementEnabled())
 		VelDir.X = 0;
 
 	CharOwner->SetCanBeDamaged(true); 
 	
-	CharOwner->GetCharacterMovement()->Velocity = CharOwner->GetCharacterMovement()->MaxWalkSpeed * VelDir.GetSafeNormal();
+	MovementComponent->Velocity = MovementComponent->MaxWalkSpeed * VelDir.GetSafeNormal();
 
 	MulticastExit(); 
 }
@@ -191,9 +202,9 @@ void USoulDashingState::ServerExit_Implementation(const FVector InputVec)
 void USoulDashingState::MulticastRPCDash_Implementation()
 {
 	if(CharOwner->IsPlayerControlled())
-		Cast<ASoulCharacter>(CharOwner)->OnDash();
+		PlayerOwner->OnDash();
 	else
-		Cast<AShadowSoulCharacter>(CharOwner)->OnDash(); 
+		ShadowOwner->OnDash(); 
 }
 
 void USoulDashingState::ServerRPCDash_Implementation(const FVector DashDir)
@@ -203,10 +214,9 @@ void USoulDashingState::ServerRPCDash_Implementation(const FVector DashDir)
 
 	CharOwner->SetCanBeDamaged(false); // Needs to be set on server 
 
-	CharOwner->GetCapsuleComponent()->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Ignore);
+	CapsuleComponent->SetCollisionResponseToChannel(DashBarCollisionChannel, ECR_Ignore);
 	
-	CharOwner->GetCharacterMovement()->AddImpulse(DashForce * DashDir);
+	MovementComponent->AddImpulse(DashForce * DashDir);
 
 	MulticastRPCDash(); 
 }
-
