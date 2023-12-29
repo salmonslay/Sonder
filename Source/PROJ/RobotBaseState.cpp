@@ -21,15 +21,18 @@ URobotBaseState::URobotBaseState()
 	SetIsReplicatedByDefault(true);
 }
 
-void URobotBaseState::Enter()
+void URobotBaseState::BeginPlay()
 {
-	Super::Enter();
+	Super::BeginPlay();
 
-	if (!RobotCharacter)
+	if(CharOwner->IsPlayerControlled())
 		RobotCharacter = Cast<ARobotStateMachine>(CharOwner);
-
-	if(CharOwner->GetCharacterMovement()->MaxWalkSpeed != WalkSpeedWhenBuffed)
-		DefaultWalkSpeed = CharOwner->GetCharacterMovement()->MaxWalkSpeed;
+	else 
+		ShadowRobot = Cast<AShadowRobotCharacter>(CharOwner); 
+	
+	DefaultWalkSpeed = CharOwner->GetCharacterMovement()->MaxWalkSpeed;
+	
+	MovementComponent = CharOwner->GetCharacterMovement(); 
 }
 
 void URobotBaseState::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
@@ -70,12 +73,12 @@ void URobotBaseState::ServerRPC_DashBuffStart_Implementation()
 
 void URobotBaseState::MulticastRPC_DashBuffStart_Implementation()
 {
-	CharOwner->GetCharacterMovement()->MaxWalkSpeed = WalkSpeedWhenBuffed;
+	MovementComponent->MaxWalkSpeed = WalkSpeedWhenBuffed;
 
 	if(CharOwner->IsPlayerControlled())
 		RobotCharacter->OnDashBuffStart();
 	else
-		Cast<AShadowRobotCharacter>(CharOwner)->OnDashBuffStart(); 
+		ShadowRobot->OnDashBuffStart(); 
 }
 
 void URobotBaseState::ResetDashBuff()
@@ -95,12 +98,12 @@ void URobotBaseState::ServerRPC_DashBuffEnd_Implementation()
 
 void URobotBaseState::MulticastRPC_DashBuffEnd_Implementation()
 {
-	CharOwner->GetCharacterMovement()->MaxWalkSpeed = DefaultWalkSpeed;
+	MovementComponent->MaxWalkSpeed = DefaultWalkSpeed;
 
 	if(CharOwner->IsPlayerControlled())
 		RobotCharacter->OnDashBuffEnd();
 	else
-		Cast<AShadowRobotCharacter>(CharOwner)->OnDashBuffEnd(); 
+		ShadowRobot->OnDashBuffEnd(); 
 }
 
 void URobotBaseState::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -130,7 +133,7 @@ void URobotBaseState::ShootHook()
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &URobotBaseState::DisableHookShotCooldown,
 	                                       HookShotCooldownDelay);
 
-	Cast<ACharacterStateMachine>(CharOwner)->SwitchState(RobotCharacter->HookState);
+	RobotCharacter->SwitchState(RobotCharacter->HookState);
 }
 
 void URobotBaseState::Pulse()
@@ -191,11 +194,11 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 					GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f);
 				}
 
-				else if (Actor->GetActorLocation().Z + 20 < CharOwner->GetActorLocation().Z && CharOwner->GetCharacterMovement()->IsMovingOnGround() == false)
+				else if (Actor->GetActorLocation().Z + 20 < CharOwner->GetActorLocation().Z && MovementComponent->IsMovingOnGround() == false)
 				{
 					PlayerActor = RobotCharacter; 
 
-					CharOwner->GetCharacterMovement()->Velocity.Z = 0;
+					MovementComponent->Velocity.Z = 0;
 					CharOwner->JumpMaxCount = 2;
 					CharOwner->Jump();
 
@@ -229,13 +232,9 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 	}
 	
 	if (CharOwner->IsPlayerControlled())
-	{
 		RobotCharacter->OnPulse();
-	}
-	else if(const auto ShadowRobot = Cast<AShadowRobotCharacter>(CharOwner))
-	{
+	else 
 		ShadowRobot->OnPulse();
-	}
 }
 
 void URobotBaseState::ActivateAbilities()

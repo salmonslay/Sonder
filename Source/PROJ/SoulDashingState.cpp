@@ -66,10 +66,13 @@ void USoulDashingState::BeginPlay()
 	Super::BeginPlay();
 
 	MovementComponent = CharOwner->GetCharacterMovement();
+	
 	CapsuleComponent = CharOwner->GetCapsuleComponent();
 
-	PlayerOwner = Cast<ASoulCharacter>(CharOwner); 
-	ShadowOwner = Cast<AShadowSoulCharacter>(CharOwner); 
+	if(CharOwner->IsPlayerControlled())
+		PlayerOwner = Cast<ASoulCharacter>(CharOwner);
+	else 
+		ShadowOwner = Cast<AShadowSoulCharacter>(CharOwner); 
 }
 
 void USoulDashingState::Update(const float DeltaTime)

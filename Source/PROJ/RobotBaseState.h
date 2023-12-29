@@ -19,8 +19,6 @@ class PROJ_API URobotBaseState : public UPlayerCharState
 public:
 	URobotBaseState();
 
-	virtual void Enter() override;
-
 	virtual void UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp) override;
 
 	void ApplySoulDashBuff();
@@ -28,7 +26,30 @@ public:
 	/** Returns the multiplier to increase damage with if buffed, will return 1 if not buffed */
 	float GetDamageBoostMultiplier() const { return bHasDashBuff ? BuffedDamageMultiplier : 1; }
 
+	UFUNCTION(BlueprintPure)
+	bool IsCanPulse() const { return bCanPulse; }
+
+	UFUNCTION(BlueprintPure)
+	bool IsHookShotOnCooldown() const { return bHookShotOnCooldown; }
+
+	UFUNCTION(BlueprintPure)
+	bool IsPulseCoolDownActive() const { return bPulseCoolDownActive; }
+
+	void Pulse();
+	
+	UPROPERTY()
+	AController* Controller;
+
+	UPROPERTY(EditAnywhere)
+	float Damage = 5.0f;
+
+	UPROPERTY(EditAnywhere, BlueprintReadWrite)
+	float PulseCooldown = 1.f;
+
 protected:
+	
+	virtual void BeginPlay() override;
+	
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
@@ -51,35 +72,15 @@ private:
 	UPROPERTY()
 	class ARobotStateMachine* RobotCharacter;
 
+	UPROPERTY()
+	class AShadowRobotCharacter* ShadowRobot; 
+
 	/** Time needed between hook shots */
 	UPROPERTY(EditAnywhere)
 	float HookShotCooldownDelay = 2.f;
 
 	UPROPERTY(Replicated)
 	bool bHookShotOnCooldown = false;
-
-public:
-	UFUNCTION(BlueprintPure)
-	bool IsCanPulse() const { return bCanPulse; }
-
-	UFUNCTION(BlueprintPure)
-	bool IsHookShotOnCooldown() const { return bHookShotOnCooldown; }
-
-	UFUNCTION(BlueprintPure)
-	bool IsPulseCoolDownActive() const { return bPulseCoolDownActive; }
-
-	void Pulse();
-	
-	UPROPERTY()
-	AController* Controller;
-
-	UPROPERTY(EditAnywhere)
-	float Damage = 5.0f;
-
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float PulseCooldown = 1.f;
-
-private:
 
 	/** Pulse Cooldown */
 	UPROPERTY(Replicated)
@@ -105,6 +106,9 @@ private:
 	/** Multiplier to damage when Robot has been buffed by Soul's dash */
 	UPROPERTY(EditAnywhere)
 	float BuffedDamageMultiplier = 2.f;
+
+	UPROPERTY()
+	class UCharacterMovementComponent* MovementComponent; 
 
 	/** Function firing when player presses button to request hook shot */
 	void ShootHook();

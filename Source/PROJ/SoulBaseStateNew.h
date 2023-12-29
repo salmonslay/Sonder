@@ -19,7 +19,7 @@ class PROJ_API USoulBaseStateNew : public UPlayerCharState
 public:
 	USoulBaseStateNew();
 
-	virtual void Enter() override;
+	virtual void BeginPlay() override;
 
 	virtual void UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp) override;
 
@@ -57,6 +57,9 @@ private:
 
 	UPROPERTY()
 	class ASoulCharacter* SoulCharacter;
+
+	UPROPERTY()
+	class AShadowSoulCharacter* ShadowSoul; 
 
 	UPROPERTY(EditAnywhere)
 	float DashCooldown = 1.f;
