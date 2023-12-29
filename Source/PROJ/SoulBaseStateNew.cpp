@@ -23,10 +23,8 @@ void USoulBaseStateNew::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if(CharOwner->IsPlayerControlled())
-		SoulCharacter = Cast<ASoulCharacter>(CharOwner);
-	else
-		ShadowSoul = Cast<AShadowSoulCharacter>(CharOwner); 
+	SoulCharacter = Cast<ASoulCharacter>(CharOwner);
+	ShadowSoul = Cast<AShadowSoulCharacter>(CharOwner); 
 
 	LightGrenade = Cast<ALightGrenade>(UGameplayStatics::GetActorOfClass(this, ALightGrenade::StaticClass()));
 

@@ -31,7 +31,7 @@ void USoulDashingState::Enter()
 
 	DashDir.Z = 0; // Disable dash in Z axis (up/down)
 
-	if(!CharOwner->IsPlayerControlled() || (CharOwner->IsPlayerControlled() && !Cast<APROJCharacter>(CharOwner)->IsDepthMovementEnabled()))
+	if(!CharOwner->IsPlayerControlled() || (CharOwner->IsPlayerControlled() && !PlayerOwner->IsDepthMovementEnabled()))
 		DashDir.X = 0; 
 	
 	DashDir.Normalize(); 
@@ -69,10 +69,8 @@ void USoulDashingState::BeginPlay()
 	
 	CapsuleComponent = CharOwner->GetCapsuleComponent();
 
-	if(CharOwner->IsPlayerControlled())
-		PlayerOwner = Cast<ASoulCharacter>(CharOwner);
-	else 
-		ShadowOwner = Cast<AShadowSoulCharacter>(CharOwner); 
+	PlayerOwner = Cast<ASoulCharacter>(CharOwner);
+	ShadowOwner = Cast<AShadowSoulCharacter>(CharOwner); 
 }
 
 void USoulDashingState::Update(const float DeltaTime)

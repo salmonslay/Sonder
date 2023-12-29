@@ -28,8 +28,6 @@ void URobotHookingState::Enter()
 {
 	Super::Enter();
 
-	DefaultGravityScale = MovementComponent->GravityScale;
-
 	FailSafeTimer = 0;
 
 	StartLocation = CharOwner->GetActorLocation();
@@ -50,6 +48,8 @@ void URobotHookingState::BeginPlay()
 	RobotCharacter = Cast<ARobotStateMachine>(GetOwner());
 
 	MovementComponent = RobotCharacter->GetCharacterMovement();
+
+	DefaultGravityScale = MovementComponent->GravityScale;
 }
 
 void URobotHookingState::Update(const float DeltaTime)
@@ -58,7 +58,10 @@ void URobotHookingState::Update(const float DeltaTime)
 
 	// Fail safe to ensure player does not get stuck while using hook shot. Can prob be removed 
 	if((FailSafeTimer += DeltaTime) >= FailSafeLength)
+	{
 		EndHookShot();
+		return; 
+	}
 
 	// Shooting the hook towards its target, does not need to do anything else 
 	if(bShootingHookOutwards)

@@ -25,11 +25,9 @@ void URobotBaseState::BeginPlay()
 {
 	Super::BeginPlay();
 
-	if(CharOwner->IsPlayerControlled())
-		RobotCharacter = Cast<ARobotStateMachine>(CharOwner);
-	else 
-		ShadowRobot = Cast<AShadowRobotCharacter>(CharOwner); 
-	
+	RobotCharacter = Cast<ARobotStateMachine>(CharOwner);
+	ShadowRobot = Cast<AShadowRobotCharacter>(CharOwner);
+
 	DefaultWalkSpeed = CharOwner->GetCharacterMovement()->MaxWalkSpeed;
 	
 	MovementComponent = CharOwner->GetCharacterMovement(); 
