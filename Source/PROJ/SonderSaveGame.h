@@ -3,6 +3,7 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "EnhancedActionKeyMapping.h"
 #include "GameFramework/SaveGame.h"
 #include "SonderSaveGame.generated.h"
 
@@ -74,4 +75,8 @@ public:
 	
 	UFUNCTION(BlueprintPure)
 	static bool CanPlayLevel(const ESonderLevel LevelToPlay);
+
+	UPROPERTY(BlueprintReadWrite)
+	TArray<FEnhancedActionKeyMapping> InputMappings;
+	
 };
