@@ -14,13 +14,7 @@
 
 UBTTask_FollowPath::UBTTask_FollowPath()
 {
-
 	NodeName = TEXT("FollowPath");
-}
-
-void UBTTask_FollowPath::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
 }
 
 EBTNodeResult::Type UBTTask_FollowPath::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
@@ -49,7 +43,7 @@ void UBTTask_FollowPath::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	// Check if the entity has reached the current waypoint.
 	if (OwnerCharacter->CurrentPath.IsEmpty()) 
 	{
-		if(AActor* PlayerOne = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("PlayerOne")))
+		if(const AActor* PlayerOne = Cast<AActor>(OwnerComp.GetBlackboardComponent()->GetValueAsObject("PlayerOne")))
 		{
 			OwnerCharacter->CurrentPath = OwnerCharacter->GetGridPointer()->RequestPath(OwnerLocation, PlayerOne->GetActorLocation(), false);
 			if(OwnerCharacter->CurrentPath.IsEmpty()) { return; }
@@ -68,21 +62,15 @@ void UBTTask_FollowPath::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	}
 	FVector DirectionToWaypoint = (CurrentWaypoint - OwnerLocation).GetSafeNormal();
 	const float DistanceToWaypoint = DirectionToWaypoint.Length();
+	
+	APROJCharacter* PlayerToAttack = Cast<APROJCharacter>(OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("CurrentTargetPlayer"));
 
-
-	APROJCharacter* PlayerToAttack;
-	UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("CurrentTargetPlayer");
-
-	if (PlayerObject == nullptr)
+	if (PlayerToAttack == nullptr)
 	{
 		return;
 	}
-	PlayerToAttack = Cast<APROJCharacter>(PlayerObject);
-	if (PlayerToAttack)
-	{
-		
-		OwnerCharacter->CurrentTargetPlayer = PlayerToAttack;
-	}
+	
+	OwnerCharacter->CurrentTargetPlayer = PlayerToAttack;
 	
 	// Entity has reached the current waypoint
 	if (DistanceToWaypoint > 1.f)

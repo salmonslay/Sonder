@@ -8,7 +8,7 @@
 
 class AShadowCharacter;
 /**
- * Sets the current target to the closest player which is passed as the blackboard key 
+ * Sets the current target to the most appropriate player which is passed as the blackboard key 
  */
 UCLASS()
 class PROJ_API UBTService_SetCurrentTarget : public UBTService_BlackboardBase
@@ -21,6 +21,7 @@ public:
 
 private:
 
+	UPROPERTY()
 	AShadowCharacter* OwnerCharacter = nullptr;
 
 	/** Returns the closest player's location */ 

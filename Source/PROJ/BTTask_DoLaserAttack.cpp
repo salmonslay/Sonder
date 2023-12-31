@@ -15,11 +15,6 @@ UBTTask_DoLaserAttack::UBTTask_DoLaserAttack()
 	NodeName = TEXT("DoLaserAttack");
 }
 
-void UBTTask_DoLaserAttack::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-}
-
 EBTNodeResult::Type UBTTask_DoLaserAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
@@ -57,7 +52,7 @@ EBTNodeResult::Type UBTTask_DoLaserAttack::ExecuteTask(UBehaviorTreeComponent& O
 		APROJCharacter* PlayerHit = Cast<APROJCharacter>(Hit.GetActor());
 		if (PlayerHit)
 		{
-			FDamageEvent DamageEvent;
+			const FDamageEvent DamageEvent;
 			PlayerHit->TakeDamage(OwnerCharacter->DamageToPlayer, DamageEvent, OwnerComp.GetAIOwner(), OwnerCharacter);
 		}
 	}

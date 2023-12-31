@@ -9,26 +9,13 @@
 ANetworkManager::ANetworkManager()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 }
-
-// Called when the game starts or when spawned
-void ANetworkManager::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-// Called every frame
-void ANetworkManager::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
 
 FString ANetworkManager::GetLocalAddress()
 {
 	bool bCanBindAll;
-	TSharedPtr<class FInternetAddr> Addr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->GetLocalHostAddr(
+	const TSharedPtr<class FInternetAddr> Addr = ISocketSubsystem::Get(PLATFORM_SOCKETSUBSYSTEM)->GetLocalHostAddr(
 		*GLog, bCanBindAll);
 	FString MyIP = Addr->ToString(false);
 

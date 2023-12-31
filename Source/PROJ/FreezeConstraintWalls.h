@@ -20,33 +20,27 @@ public:
 	AFreezeConstraintWalls();
 
 	UFUNCTION(BlueprintCallable)
-	void MoveWallsToLoc();
+	void MoveWallsToLoc() const;
 	
 	UFUNCTION(BlueprintCallable)
-	void RemoveWallsFromLoc();
-	
+	void RemoveWallsFromLoc() const;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	UBoxComponent* TriggerArea;
 	
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	USphereComponent* RightWallLocation;
-	
 
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	USphereComponent* LeftWallLocation;
-
 
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
 
-
 private:
 
 	UPROPERTY()
 	ACharactersCamera* CharactersCamera;
-
-	
 	
 };

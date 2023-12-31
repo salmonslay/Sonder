@@ -18,8 +18,6 @@ public:
 
 	UBTTask_ToggleChargeSpecialAttack(); 
 
-	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;
-
 	/** Execute task is called once every time this task is activated */
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
@@ -30,5 +28,8 @@ private:
 	
 	UPROPERTY(EditAnywhere)
 	bool bActivateCharge = true;
+
+	UPROPERTY()
+	class AShadowCharacter* ShadowOwner; 
 	
 };

@@ -19,16 +19,6 @@ public:
 	// Sets default values for this actor's properties
 	ASwapSpline();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:	
-	
-
-	//UPROPERTY(EditAnywhere)
-	//ACameraSpline* CurrentCameraSpline;
-
 	UPROPERTY(EditAnywhere)
 	ACameraSpline* NextCameraSpline;
 
@@ -37,7 +27,6 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void SplineSwap();
-	
 
 	UPROPERTY(BlueprintReadWrite,EditAnywhere)
 	UBoxComponent* TriggerZone;
@@ -54,8 +43,4 @@ private:
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPCSwap();
 	
-	//virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-	
-
-
 };

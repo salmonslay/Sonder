@@ -42,7 +42,7 @@ private:
 
 	void SetPathIsInvalid(UBehaviorTreeComponent& OwnerComp) const;
 
-	void VerifyGroundStatus(AShadowCharacter* Owner);
+	void VerifyGroundStatus(AShadowCharacter* Owner) const;
 
 	UPROPERTY(EditAnywhere)
 	TArray<TEnumAsByte<EObjectTypeQuery>> LineTraceObjects;
@@ -55,7 +55,5 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AMovingPlatform> MovingPlatformClass;
-
-	
 	
 };

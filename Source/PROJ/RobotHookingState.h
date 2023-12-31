@@ -20,6 +20,9 @@ public:
 
 	virtual void Enter() override;
 
+	// Sets variables that are meant to be set once. Also ensures they are set for client and server as opposed to Enter 
+	virtual void BeginPlay() override;
+
 	virtual void Update(const float DeltaTime) override;
 
 	virtual void Exit() override;
@@ -191,19 +194,19 @@ private:
 	
 	/** Run on server when hook is shot regardless if it hits Soul or an obstacle */
 	UFUNCTION(Server, Reliable)
-	void ServerRPCHookShotStart(ARobotStateMachine* RobotChar, const bool bValidHookTarget);
+	void ServerRPCHookShotStart(const bool bValidHookTarget);
 
 	/** Run for everyone when hook is shot regardless if it hits Soul or an obstacle */
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCHookShotStart(ARobotStateMachine* RobotChar, const bool bValidHookTarget);
+	void MulticastRPCHookShotStart(const bool bValidHookTarget);
 
 	/** Run on server when hook is fully retracted regardless if it hit Soul or an obstacle */
 	UFUNCTION(Server, Reliable)
-	void ServerRPCHookShotEnd(ARobotStateMachine* RobotChar, const FVector& NewVel);
+	void ServerRPCHookShotEnd(const FVector& NewVel);
 
 	/** Run for everyone when hook is fully retracted regardless if it hit Soul or an obstacle */
 	UFUNCTION(NetMulticast, Reliable)
-	void MulticastRPCHookShotEnd(ARobotStateMachine* RobotChar);
+	void MulticastRPCHookShotEnd();
 
 	UFUNCTION()
 	void ActorOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult); 

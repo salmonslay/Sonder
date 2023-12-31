@@ -8,18 +8,18 @@
 #include "SoulBaseStateNew.h"
 #include "SoulDashingState.h"
 
-void UBTTask_Dash::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-	
-}
-
 EBTNodeResult::Type UBTTask_Dash::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
 
+	if(!ShadowSoul)
+		ShadowSoul = Cast<AShadowSoulCharacter>(OwnerComp.GetAIOwner()->GetPawn());
+
+	if(ShadowSoul && !SoulBaseState)
+		SoulBaseState = ShadowSoul->FindComponentByClass<USoulBaseStateNew>(); 
+
 	// Starting dash
-	if(const auto SoulBaseState = OwnerComp.GetAIOwner()->GetPawn()->FindComponentByClass<USoulBaseStateNew>())
+	if(SoulBaseState)
 	{
 		SoulBaseState->Dash();
 		
@@ -35,9 +35,9 @@ void UBTTask_Dash::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory
 	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
 
 	// Check if still dashing 
-	if(const auto Soul = Cast<AShadowSoulCharacter>(OwnerComp.GetAIOwner()->GetPawn()))
+	if(ShadowSoul)
 	{
-		if(Soul->GetCurrentState()->IsA(USoulDashingState::StaticClass()))
+		if(ShadowSoul->GetCurrentState()->IsA(USoulDashingState::StaticClass()))
 			return FinishLatentTask(OwnerComp, EBTNodeResult::InProgress);
 
 		return FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded); 

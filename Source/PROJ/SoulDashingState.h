@@ -18,6 +18,8 @@ public:
 
 	virtual void Enter() override;
 
+	virtual void BeginPlay() override;
+
 	virtual void Update(const float DeltaTime) override;
 
 	virtual void Exit() override;
@@ -43,7 +45,19 @@ private:
 	class URobotHookingState* HookState;
 
 	UPROPERTY(EditAnywhere)
-	float DashDamageAmount = 3.f; 
+	float DashDamageAmount = 3.f;
+
+	UPROPERTY()
+	class UCharacterMovementComponent* MovementComponent;
+
+	UPROPERTY()
+	class UCapsuleComponent* CapsuleComponent;
+
+	UPROPERTY()
+	class AShadowSoulCharacter* ShadowOwner;
+
+	UPROPERTY()
+	class ASoulCharacter* PlayerOwner; 
 	
 	/** The impulse/force need to be applied on the server */
 	UFUNCTION(Server, Reliable)

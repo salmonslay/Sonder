@@ -16,11 +16,17 @@ class PROJ_API UBTTask_Dash : public UBTTask_BlackboardBase
 
 public:
 
-	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;
-
 	/** Execute task is called once every time this task is activated */
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
+
+private:
+
+	UPROPERTY()
+	class AShadowSoulCharacter* ShadowSoul;
+
+	UPROPERTY()
+	class USoulBaseStateNew* SoulBaseState; 
 	
 };

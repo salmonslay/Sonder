@@ -28,17 +28,6 @@ void URobotHookingState::Enter()
 {
 	Super::Enter();
 
-	if(!SoulCharacter)
-		SoulCharacter = UGameplayStatics::GetActorOfClass(this, ASoulCharacter::StaticClass()); 
-	
-	if(!RobotCharacter)
-		RobotCharacter = Cast<ARobotStateMachine>(CharOwner);
-
-	if(!MovementComponent)
-		MovementComponent = RobotCharacter->GetCharacterMovement();
-
-	DefaultGravityScale = MovementComponent->GravityScale;
-
 	FailSafeTimer = 0;
 
 	StartLocation = CharOwner->GetActorLocation();
@@ -50,13 +39,29 @@ void URobotHookingState::Enter()
 	StartShootHook(); 
 }
 
+void URobotHookingState::BeginPlay()
+{
+	Super::BeginPlay();
+
+	SoulCharacter = UGameplayStatics::GetActorOfClass(this, ASoulCharacter::StaticClass()); 
+	
+	RobotCharacter = Cast<ARobotStateMachine>(GetOwner());
+
+	MovementComponent = RobotCharacter->GetCharacterMovement();
+
+	DefaultGravityScale = MovementComponent->GravityScale;
+}
+
 void URobotHookingState::Update(const float DeltaTime)
 {
 	Super::Update(DeltaTime);
 
 	// Fail safe to ensure player does not get stuck while using hook shot. Can prob be removed 
 	if((FailSafeTimer += DeltaTime) >= FailSafeLength)
+	{
 		EndHookShot();
+		return; 
+	}
 
 	// Shooting the hook towards its target, does not need to do anything else 
 	if(bShootingHookOutwards)
@@ -89,22 +94,19 @@ void URobotHookingState::Exit()
 {
 	Super::Exit();
 
-	// UE_LOG(LogTemp, Warning, TEXT("Exited hook state"))
-
 	if(!RobotCharacter->InputEnabled())
 		RobotCharacter->EnableInput(RobotCharacter->GetLocalViewingPlayerController());
 
 	CharOwner->GetCapsuleComponent()->OnComponentBeginOverlap.RemoveDynamic(this, &URobotHookingState::ActorOverlap);
 
 	// Calculate new velocity, defaulting at current velocity 
-	const auto MovementComp = CharOwner->GetCharacterMovement();
-	FVector NewVel = MovementComp->Velocity; 
+	FVector NewVel = MovementComponent->Velocity; 
 	
 	// If targeted a static hook or Soul 
 	if(bTravellingTowardsTarget) // Set velocity to zero if Soul otherwise keep some momentum 
-		NewVel = bHookTargetIsSoul ? FVector::ZeroVector : MovementComp->Velocity / VelocityDivOnReachedHook;
+		NewVel = bHookTargetIsSoul ? FVector::ZeroVector : MovementComponent->Velocity / VelocityDivOnReachedHook;
 
-	ServerRPCHookShotEnd(RobotCharacter, NewVel);
+	ServerRPCHookShotEnd(NewVel);
 	
 	bTravellingTowardsTarget = false;
 	bHookTargetIsSoul = false; 
@@ -118,8 +120,8 @@ void URobotHookingState::EndHookShot(const bool bEndFromDash) const
 		return; 
 	
 	// Change state if this state is active 
-	if(Cast<ARobotStateMachine>(GetOwner())->GetCurrentState() == this)
-		Cast<ACharacterStateMachine>(CharOwner)->SwitchState(RobotCharacter->RobotBaseState);
+	if(RobotCharacter->GetCurrentState() == this)
+		RobotCharacter->SwitchState(RobotCharacter->RobotBaseState);
 }
 
 void URobotHookingState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
@@ -196,10 +198,10 @@ void URobotHookingState::StartShootHook()
 	
 	HookArmLocation = CharOwner->GetActorLocation(); 
 	
-	ServerRPCHookShotStart(RobotCharacter, IsValid(CurrentTargetActor)); 
+	ServerRPCHookShotStart(IsValid(CurrentTargetActor)); 
 }
 
-void URobotHookingState::ServerRPCHookShotStart_Implementation(ARobotStateMachine* RobotChar, const bool bValidHookTarget)
+void URobotHookingState::ServerRPCHookShotStart_Implementation(const bool bValidHookTarget)
 {
 	if(!CharOwner->HasAuthority())
 		return;
@@ -208,12 +210,12 @@ void URobotHookingState::ServerRPCHookShotStart_Implementation(ARobotStateMachin
 
 	bHookShotActive = true; 
 
-	MulticastRPCHookShotStart(RobotChar, bValidHookTarget); 
+	MulticastRPCHookShotStart(bValidHookTarget); 
 }
 
-void URobotHookingState::MulticastRPCHookShotStart_Implementation(ARobotStateMachine* RobotChar, const bool bValidHookTarget)
+void URobotHookingState::MulticastRPCHookShotStart_Implementation(const bool bValidHookTarget)
 {
-	if(!GetOwner())
+	if(!CharOwner)
 	{
 		UE_LOG(LogTemp, Error, TEXT("Owner is null"))
 		return; 
@@ -221,14 +223,14 @@ void URobotHookingState::MulticastRPCHookShotStart_Implementation(ARobotStateMac
 	
 	if(bValidHookTarget) 
 	{
-		if(CharOwner->GetCharacterMovement()->Velocity.Z < 0.f) 
-			CharOwner->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Flying);
+		if(MovementComponent->Velocity.Z < 0.f) 
+			MovementComponent->SetMovementMode(EMovementMode::MOVE_Flying);
 
-		CharOwner->GetCharacterMovement()->GravityScale = 0;
-		CharOwner->GetCharacterMovement()->Velocity = FVector::ZeroVector;
+		MovementComponent->GravityScale = 0;
+		MovementComponent->Velocity = FVector::ZeroVector;
 	}
 
-	RobotChar->OnHookShotStart(); 
+	RobotCharacter->OnHookShotStart(); 
 }
 
 // Run each Tick 
@@ -291,15 +293,13 @@ void URobotHookingState::MulticastRPCStartTravel_Implementation()
 	if(HookShotTravelEffect)
 		HookShotTravelComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(HookShotTravelEffect, GetOwner()->GetRootComponent(), NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false);
 
-	CharOwner->GetCharacterMovement()->SetMovementMode(MOVE_Flying); 
+	MovementComponent->SetMovementMode(MOVE_Flying); 
 	
-	Cast<ARobotStateMachine>(CharOwner)->OnHookShotTravelStart(); 
+	RobotCharacter->OnHookShotTravelStart(); 
 }
 
 void URobotHookingState::TravelTowardsTarget(const float DeltaTime)
 {
-	// UE_LOG(LogTemp, Warning, TEXT("Travelling towards player"))
-
 	if(FVector::Dist(CharOwner->GetActorLocation(), CurrentHookTargetLocation) < ReachedTargetDistTolerance)
 	{
 		// Check if Soul and trigger explosion event 
@@ -320,14 +320,12 @@ void URobotHookingState::ServerTravelTowardsTarget_Implementation(const float De
 	if(!CharOwner->HasAuthority())
 		return;
 
-	CharOwner->GetCharacterMovement()->Velocity = Direction * HookShotTravelSpeed;
+	MovementComponent->Velocity = Direction * HookShotTravelSpeed;
 }
 
 void URobotHookingState::CollidedWithSoul()
 {
 	MovementComponent->Velocity = FVector::ZeroVector; 
-	
-	// UE_LOG(LogTemp, Warning, TEXT("Big explosion"))
 
 	ServerRPCHookCollision(); 
 }
@@ -358,7 +356,7 @@ void URobotHookingState::ActorOverlap(UPrimitiveComponent* OverlappedComp, AActo
                                       UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult)
 {
 	// Do not damage players 
-	if(!CharOwner->IsLocallyControlled() || Cast<APROJCharacter>(OtherActor))
+	if(!CharOwner->IsLocallyControlled() || OtherActor->IsA(APROJCharacter::StaticClass()))
 		return;
 
 	ServerRPC_DamageActor(OtherActor); 
@@ -377,33 +375,31 @@ void URobotHookingState::ServerRPC_RetractHook_Implementation(const FVector& New
 	HookArmLocation = NewEndLocation; 
 }
 
-void URobotHookingState::MulticastRPCHookShotEnd_Implementation(ARobotStateMachine* RobotChar)
+void URobotHookingState::MulticastRPCHookShotEnd_Implementation()
 {
-	CharOwner->GetCharacterMovement()->SetMovementMode(EMovementMode::MOVE_Walking);
+	MovementComponent->SetMovementMode(EMovementMode::MOVE_Walking);
 
 	if(HookShotTravelComponent)
 		HookShotTravelComponent->DestroyComponent(); 
 
-	RobotChar->OnHookShotEnd(); 
+	RobotCharacter->OnHookShotEnd(); 
 }
 
-void URobotHookingState::ServerRPCHookShotEnd_Implementation(ARobotStateMachine* RobotChar, const FVector& NewVel)
+void URobotHookingState::ServerRPCHookShotEnd_Implementation(const FVector& NewVel)
 {
 	if(!CharOwner->HasAuthority())
 		return;
-
-	const auto MovementComp = CharOwner->GetCharacterMovement(); 
-
-	MovementComp->GravityScale = DefaultGravityScale;
 	
-	MovementComp->Velocity = NewVel;
+	MovementComponent->GravityScale = DefaultGravityScale;
+	
+	MovementComponent->Velocity = NewVel;
 
 	bHookShotActive = false;
 	bTravellingTowardsTarget = false;
 
 	CharOwner->SetCanBeDamaged(true);
 
-	MulticastRPCHookShotEnd(RobotChar); 
+	MulticastRPCHookShotEnd(); 
 }
 
 void URobotHookingState::ServerRPCHookCollision_Implementation()
@@ -434,5 +430,5 @@ void URobotHookingState::MulticastRPCHookCollision_Implementation()
 		UGameplayStatics::FinishSpawningActor(ExplosionActor, SpawnTransform);
 	}
 	
-	Cast<ARobotStateMachine>(CharOwner)->OnHookExplosion(); 
+	RobotCharacter->OnHookExplosion(); 
 }

@@ -14,11 +14,6 @@ UBTTask_AttackPlayer::UBTTask_AttackPlayer()
 	NodeName = TEXT("AttackPlayer");
 }
 
-void UBTTask_AttackPlayer::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-}
-
 EBTNodeResult::Type UBTTask_AttackPlayer::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
@@ -38,14 +33,9 @@ void UBTTask_AttackPlayer::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* No
 
 	if (OwnerCharacter == nullptr) return;
 
-
-	APROJCharacter* PlayerToAttack = nullptr;
-	UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("PlayerToAttack");
-	if (PlayerObject)
-	{
-		PlayerToAttack = Cast<APROJCharacter>(PlayerObject);
-	}
-	if (PlayerToAttack && IsValid(PlayerToAttack))
+	APROJCharacter* PlayerToAttack = Cast<APROJCharacter>(OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("PlayerToAttack"));
+	
+	if (IsValid(PlayerToAttack))
 	{
 		OwnerCharacter->Attack();
 	

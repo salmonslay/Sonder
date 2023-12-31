@@ -31,13 +31,5 @@ public:
 
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnDashEnd();
-
-protected:
-
-	virtual void BeginPlay() override;
-	
-private:
-
-	
 	
 };

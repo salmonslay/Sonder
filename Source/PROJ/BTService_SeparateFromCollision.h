@@ -21,14 +21,10 @@ public:
 	
 	/** I have no idea when this is called but it is needed */
 	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;
-
-	/** I have no idea when this is called but it is needed as well */
-	virtual void OnGameplayTaskDeactivated(UGameplayTask& Task) override;
 	
 protected:
 	/** Tick node is called every tick service is in progress*/
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
-
 
 	UPROPERTY(VisibleAnywhere)
 	AFlyingEnemyCharacter* OwnerCharacter = nullptr;
@@ -50,5 +46,5 @@ protected:
 
 	FVector TotalSeparationVector = FVector::ZeroVector;
 
-	FVector CalculateTotalSeparationForce( FVector &Separation);
+	FVector CalculateTotalSeparationForce( FVector &Separation) const;
 };

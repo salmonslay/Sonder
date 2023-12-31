@@ -35,7 +35,7 @@ float UBaseHealthComponent::TakeDamage(float DamageAmount)
 		HealthUpdate();
 	}
 
-	UE_LOG(LogTemp, Warning, TEXT("Damage applied to %s: %f"), *GetOwner()->GetActorNameOrLabel(), DamageAmount)
+	// UE_LOG(LogTemp, Warning, TEXT("Damage applied to %s: %f"), *GetOwner()->GetActorNameOrLabel(), DamageAmount)
 
 	return DamageAmount; 
 }

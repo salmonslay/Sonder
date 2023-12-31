@@ -12,8 +12,6 @@ Pathfinder::Pathfinder(APROJCharacter* ServerPlayer, APROJCharacter* ClientPlaye
 	ClientPlayerCharacter = Cast<APROJCharacter>(ClientPlayer);
 	ensure(ServerPlayerCharacter != nullptr);
 	ensure(ClientPlayerCharacter != nullptr);
-
-	
 }
 
 bool Pathfinder::FindPath(const FVector &Start, const FVector &End)
@@ -118,4 +116,3 @@ bool Pathfinder::FindPath(const FVector &Start, const FVector &End)
 	bHasPath = false;
 	return false;
 }
-

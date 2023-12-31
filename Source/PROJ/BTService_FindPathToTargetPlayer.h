@@ -19,17 +19,10 @@ class PROJ_API UBTService_FindPathToTargetPlayer : public UBTService_BlackboardB
 				
 public: /** Constructor*/
 	UBTService_FindPathToTargetPlayer();
-
-	/** I have no idea when this is called but it is needed */
-	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;
-
-	/** I have no idea when this is called but it is needed as well */
-	virtual void OnGameplayTaskDeactivated(UGameplayTask& Task) override;
 	
 protected:
 	/** Tick node is called every tick service is in progress*/
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
-
 
 	UPROPERTY()
 	AFlyingEnemyCharacter* OwnerCharacter;

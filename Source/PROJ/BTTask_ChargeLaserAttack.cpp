@@ -13,11 +13,6 @@ UBTTask_ChargeLaserAttack::UBTTask_ChargeLaserAttack()
 	NodeName = TEXT("ChargeLaserAttack");
 }
 
-void UBTTask_ChargeLaserAttack::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-}
-
 EBTNodeResult::Type UBTTask_ChargeLaserAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);
@@ -45,13 +40,6 @@ EBTNodeResult::Type UBTTask_ChargeLaserAttack::ExecuteTask(UBehaviorTreeComponen
 	OwnerCharacter->GetCharacterMovement()->Velocity= FVector::ZeroVector;
 	
 	return EBTNodeResult::Succeeded;
-}
-
-void UBTTask_ChargeLaserAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
-{
-	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
-
-	
 }
 
 void UBTTask_ChargeLaserAttack::EnableMovement()

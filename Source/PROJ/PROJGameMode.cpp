@@ -37,7 +37,7 @@ void APROJGameMode::BeginPlay()
 
 APROJCharacter* APROJGameMode::GetActivePlayer(const int Index) const
 {
-	AGameStateBase* GSB = GetGameState<AGameStateBase>();
+	const AGameStateBase* GSB = GetGameState<AGameStateBase>();
 	ensure(GSB != nullptr);
 
 	APROJCharacter* PlayerToReturn = nullptr;
@@ -51,7 +51,6 @@ APROJCharacter* APROJGameMode::GetActivePlayer(const int Index) const
 	}
 	return PlayerToReturn;
 }
-
 
 void APROJGameMode::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
@@ -175,11 +174,6 @@ void APROJGameMode::HandleSeamlessTravelPlayer(AController*& Controller)
 	}
 }
 
-void APROJGameMode::PostSeamlessTravel()
-{
-	Super::PostSeamlessTravel();
-}
-
 void APROJGameMode::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
 	Super::GetLifetimeReplicatedProps(OutLifetimeProps);
@@ -199,9 +193,4 @@ void APROJGameMode::SetPlayerPointers()
 	{
 		GetWorldTimerManager().ClearTimer(PlayerPointerTimerHandle);
 	}
-}
-
-void APROJGameMode::GetSeamlessTravelActorList(bool bToTransition, TArray<AActor*>& ActorList)
-{
-	Super::GetSeamlessTravelActorList(bToTransition, ActorList);
 }

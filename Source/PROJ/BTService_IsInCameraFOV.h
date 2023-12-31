@@ -6,7 +6,6 @@
 #include "BehaviorTree/Services/BTService_BlackboardBase.h"
 #include "BTService_IsInCameraFOV.generated.h"
 
-
 class ASonderGameState;
 class AEnemyCharacter;
 /**
@@ -22,12 +21,6 @@ class PROJ_API UBTService_IsInCameraFOV : public UBTService_BlackboardBase
 			
 public: /** Constructor*/
 	UBTService_IsInCameraFOV();
-
-	/** I have no idea when this is called but it is needed */
-	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;
-
-	/** I have no idea when this is called but it is needed as well */
-	virtual void OnGameplayTaskDeactivated(UGameplayTask& Task) override;
 	
 protected:
 	/** Tick node is called every tick service is in progress*/
@@ -38,6 +31,7 @@ protected:
 
 	FVector OwnerLocation = FVector::ZeroVector;
 
+	UPROPERTY()
 	ASonderGameState* SGS;
 	
 	float FieldOfViewAngle = 0.f;

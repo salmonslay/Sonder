@@ -26,7 +26,7 @@ void AEnemyAIController::Initialize()
 		GetBlackboardComponent()->SetValueAsVector(TEXT("RetreatLocation"), Cast<AEnemyCharacter>(GetOwner())->RetreatLocation);
 	}
 
-	APROJGameMode* CurrentGameMode = Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this));
+	const APROJGameMode* CurrentGameMode = Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this));
 	if (CurrentGameMode != nullptr)
 	{
 		P1 = CurrentGameMode->GetActivePlayer(0);
@@ -52,16 +52,11 @@ void AEnemyAIController::Initialize()
 	}
 }
 
-APROJCharacter* AEnemyAIController::GetPlayerFromController(int Index)
+APROJCharacter* AEnemyAIController::GetPlayerFromController(const int Index) const
 {
 	if (Index == 0)
 	{
 		return P1;
 	}
 	return P2;
-}
-
-void AEnemyAIController::BeginPlay()
-{
-	Super::BeginPlay();
 }

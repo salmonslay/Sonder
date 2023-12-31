@@ -2,18 +2,10 @@
 
 #include "CharacterStateMachine.h"
 
-#include "DummyPlayerState.h"
 #include "PlayerCharState.h"
 #include "RobotBaseState.h"
 #include "SoulBaseStateNew.h"
 #include "Net/UnrealNetwork.h"
-
-ACharacterStateMachine::ACharacterStateMachine()
-{
-	// Create the states 
-	DummyState = CreateDefaultSubobject<UDummyPlayerState>(TEXT("DummyStateNew"));
-
-}
 
 void ACharacterStateMachine::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const
 {
@@ -69,7 +61,7 @@ UPlayerCharState* ACharacterStateMachine::GetStartingState() const
 		return RobotBaseState;
 
 	UE_LOG(LogTemp, Warning, TEXT("Error. %s has no base state"), *GetActorNameOrLabel())
-	return DummyState; // Should not get here 
+	return nullptr; // Should not get here 
 }
 
 void ACharacterStateMachine::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)

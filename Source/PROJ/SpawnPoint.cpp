@@ -13,17 +13,10 @@
 ASpawnPoint::ASpawnPoint()
 {
 	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
-	PrimaryActorTick.bCanEverTick = true;
+	PrimaryActorTick.bCanEverTick = false;
 
 	CapsuleComponent = CreateDefaultSubobject<UCapsuleComponent>(TEXT("CapsuleComponent"));
 	RootComponent = CapsuleComponent;
-}
-
-// Called when the game starts or when spawned
-void ASpawnPoint::BeginPlay()
-{
-	Super::BeginPlay();
-	
 }
 
 void ASpawnPoint::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -33,13 +26,7 @@ void ASpawnPoint::EndPlay(const EEndPlayReason::Type EndPlayReason)
 	GetWorldTimerManager().ClearAllTimersForObject(this);
 }
 
-// Called every frame
-void ASpawnPoint::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-}
-
-void ASpawnPoint::AddEnemyToSpawn(TSubclassOf<AEnemyCharacter> EnemyClass)
+void ASpawnPoint::AddEnemyToSpawn(const TSubclassOf<AEnemyCharacter> EnemyClass)
 {
 	FEnemyToSpawn Enemy;
 	Enemy.Class = EnemyClass;
@@ -90,7 +77,7 @@ FVector ASpawnPoint::CalculateRetreatLocation()
 	TArray<TEnumAsByte<EObjectTypeQuery>> LineTraceObjects;
 	LineTraceObjects.Add(UEngineTypes::ConvertToObjectType(ECC_WorldStatic));
 		
-	bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(this, StartLocation, EndLocation, LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true, FColor::Red, FColor::Blue, 10.f);
+	const bool bHit = UKismetSystemLibrary::LineTraceSingleForObjects(this, StartLocation, EndLocation, LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true, FColor::Red, FColor::Blue, 10.f);
 
 	if (bHit)
 	{
@@ -103,4 +90,3 @@ void ASpawnPoint::DoSpawnEvent_Implementation()
 {
 	OnSpawnEnemy();
 }
-

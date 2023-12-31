@@ -128,9 +128,8 @@ FVector AEnemyJumpTrigger::RequestJumpLocation(const FVector &EnemyLoc, const FV
 	return CalculatePointFurthestFromEnemy(EnemyLoc);
 }
 
-FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation) // forward vector * Jumpdistance
+FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation) const // forward vector * Jumpdistance
 {
-
 	// TODO: Check if platform is closer to player than enemy, only jump if that is true SHOULD NOT BE HERE; MAYBE IN SERVICE
 	if (!OverlappingPlatform)
 	{
@@ -144,7 +143,6 @@ FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation)
 	const float DirToPlatformY = Origin.Y < EnemyLocation.Y ? -1 : 1;
 	
 	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToPlatformY * EnemyJumpDistance, Origin.Z + PlatformJumpZOffset);
-	
 }
 
 FVector AEnemyJumpTrigger::CalculatePointClosetsToTarget(const FVector& EnemyLocation, const FVector& CurrentTargetLocation) const 
@@ -168,7 +166,6 @@ FVector AEnemyJumpTrigger::CalculatePointFurthestFromEnemy(const FVector& EnemyL
 	const float DirToJumpPointY = JumpPoint2Loc.Y < EnemyLocation.Y ? -1 : 1;
 	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint2Loc.Z + BasicJumpZOffset);
 }
-
 
 void AEnemyJumpTrigger::AllowJump() // runs on overlap begin with moving platform, if enemy has once jumped on a platform - allow jump to ground, if not - allow jump to platform
 {
@@ -227,4 +224,3 @@ bool AEnemyJumpTrigger::IsLeveledWithJumpPoints(const FVector &EnemyLoc) const
 	//UE_LOG(LogTemp, Error, TEXT(" EnemyLoc= %f, Jumppoints loc = %f, %f"), EnemyLoc.Z, JumpPoint1Loc.Z, JumpPoint2Loc.Z );
 	return FMath::IsNearlyEqual(EnemyLoc.Z, JumpPoint1Loc.Z, 5.f) && FMath::IsNearlyEqual(EnemyLoc.Z, JumpPoint2Loc.Z, 5.f);
 }
-

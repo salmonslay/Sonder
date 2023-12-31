@@ -6,7 +6,6 @@
 void AFlyingEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
 	
 	CheckIfOverlappingWithGrid();
 }

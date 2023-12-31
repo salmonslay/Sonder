@@ -14,11 +14,6 @@ UBTTask_MoveToAttackPosition::UBTTask_MoveToAttackPosition()
 	NodeName = TEXT("MoveToAttackPosition");
 }
 
-void UBTTask_MoveToAttackPosition::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-}
-
 EBTNodeResult::Type UBTTask_MoveToAttackPosition::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
 	Super::ExecuteTask(OwnerComp, NodeMemory);

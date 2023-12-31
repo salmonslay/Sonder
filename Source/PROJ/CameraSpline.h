@@ -8,6 +8,7 @@
 #include "CameraSpline.generated.h"
 
 class UBoxComponent;
+
 UCLASS()
 class PROJ_API ACameraSpline : public AActor
 {
@@ -32,16 +33,10 @@ public:
 protected:
 	// Called when the game starts or when spawned
 	virtual void BeginPlay() override;
-	
 
 private:
 
 	UPROPERTY(EditAnywhere)
 	bool bIsCameraSpline = false;
 
-	
-	
-
-	
-	
 };

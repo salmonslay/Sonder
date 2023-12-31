@@ -15,16 +15,6 @@ UBTService_FindPathToTargetPlayer::UBTService_FindPathToTargetPlayer()
 	NodeName = TEXT("FindPathToTargetPlayer");
 }
 
-void UBTService_FindPathToTargetPlayer::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-}
-
-void UBTService_FindPathToTargetPlayer::OnGameplayTaskDeactivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskDeactivated(Task);
-}
-
 void UBTService_FindPathToTargetPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 	float DeltaSeconds)
 {
@@ -45,19 +35,15 @@ void UBTService_FindPathToTargetPlayer::TickNode(UBehaviorTreeComponent& OwnerCo
 	{
 		return;
 	}
-	
-	APROJCharacter* PlayerToAttack;
-	UObject* PlayerObject = OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("CurrentTargetPlayer");
 
-	if (PlayerObject == nullptr)
+	const APROJCharacter* PlayerToAttack = Cast<APROJCharacter>(OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsObject("CurrentTargetPlayer"));
+
+	if (PlayerToAttack == nullptr)
 	{
 		return;
 	}
-	PlayerToAttack = Cast<APROJCharacter>(PlayerObject);
-	if (PlayerToAttack)
-	{
-		CurrentTargetLocation = PlayerToAttack->GetActorLocation();
-	}
+	
+	CurrentTargetLocation = PlayerToAttack->GetActorLocation();
 
 	OwnerGrid->TargetLocation = CurrentTargetLocation;
 	OwnerGrid->StartLocation = OwnerLocation;

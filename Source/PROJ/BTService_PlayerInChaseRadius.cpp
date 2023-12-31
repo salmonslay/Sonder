@@ -13,22 +13,11 @@ UBTService_PlayerInChaseRadius::UBTService_PlayerInChaseRadius()
 	NodeName = TEXT("PlayerInChaseRadius");
 }
 
-void UBTService_PlayerInChaseRadius::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-}
-
-void UBTService_PlayerInChaseRadius::OnGameplayTaskDeactivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskDeactivated(Task);
-}
-
 void UBTService_PlayerInChaseRadius::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
-
 	
-	OwnerCharacter = Cast<AEnemyCharacter>(OwnerComp.GetAIOwner()->GetCharacter());
+	OwnerCharacter = OwnerComp.GetAIOwner()->GetCharacter();
 
 	if (OwnerCharacter == nullptr) return;
 
@@ -42,7 +31,7 @@ void UBTService_PlayerInChaseRadius::TickNode(UBehaviorTreeComponent& OwnerComp,
 	if (bDebug) DrawDebugSphere(GetWorld(), MyLocation, RadiusToChasePlayer, 24, FColor::Black, false, .5f);
 
 	// check if sphere overlaps with any rats
-	bool bOverlaps = GetWorld()->OverlapMultiByObjectType(
+	const bool bOverlaps = GetWorld()->OverlapMultiByObjectType(
 		OverlapResults,
 		MyLocation,
 		FQuat::Identity,
@@ -53,9 +42,9 @@ void UBTService_PlayerInChaseRadius::TickNode(UBehaviorTreeComponent& OwnerComp,
 	{
 		for(FOverlapResult Overlap : OverlapResults)
 		{
-			APROJCharacter* PlayerToAttack = Cast<APROJCharacter>(Overlap.GetActor());
+			const APROJCharacter* PlayerToAttack = Cast<APROJCharacter>(Overlap.GetActor());
 			// if overlap is found, set values in bb and break
-			if (PlayerToAttack && IsValid(PlayerToAttack))
+			if (IsValid(PlayerToAttack))
 			{
 				if (bDebug)
 				{

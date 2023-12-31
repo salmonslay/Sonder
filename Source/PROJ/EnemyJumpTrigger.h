@@ -71,8 +71,6 @@ public:
 	FVector JumpPoint2Loc = FVector::ZeroVector;
 	
 private:
-
-	
 	
 	UPROPERTY(EditAnywhere)
 	float EnemyJumpDistance = 200.f;
@@ -85,7 +83,7 @@ private:
 	
 	TArray<AShadowCharacter*> WaitingEnemies = TArray<AShadowCharacter*>();
 
-	FVector CalculateJumpToPlatform(const FVector& EnemyLocation);
+	FVector CalculateJumpToPlatform(const FVector& EnemyLocation) const;
 
 	FVector CalculatePointClosetsToTarget(const FVector& EnemyLocation, const FVector& CurrentTargetLocation) const;
 

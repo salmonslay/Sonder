@@ -6,7 +6,6 @@
 #include "Components/ActorComponent.h"
 #include "BaseHealthComponent.generated.h"
 
-
 UCLASS( ClassGroup=(Custom), meta=(BlueprintSpawnableComponent) )
 class PROJ_API UBaseHealthComponent : public UActorComponent
 {
@@ -61,19 +60,12 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void RefillHealth();
 
-
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
 
 	UFUNCTION()
 	void OnRep_HealthChange();
 
-
 	UFUNCTION()
 	void HealthUpdate();
-
-private:
-	
-	
 		
 };

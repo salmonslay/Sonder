@@ -16,9 +16,6 @@ class PROJ_API UBTService_IsStunned : public UBTService_BlackboardBase
 public:
 	
 	UBTService_IsStunned();
-	
-	/** I have no idea when this is called but it is needed */
-	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;
 
 	/** I have no idea when this is called but it is needed as well */
 	virtual void OnGameplayTaskDeactivated(UGameplayTask& Task) override;

@@ -31,7 +31,6 @@ ALightGrenade::ALightGrenade()
 	
  	// Set this actor to call Tick() every frame.  You can turn this off to improve performance if you don't need it.
 	PrimaryActorTick.bCanEverTick = false;
-
 }
 
 // Called when the game starts or when spawned
@@ -45,7 +44,6 @@ void ALightGrenade::BeginPlay()
 	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap); 
 	ExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	PulseExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
-	
 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::GetPlayer, 2.0f);
     
@@ -93,7 +91,7 @@ void ALightGrenade::Throw(const float TimeHeld)
 
 void ALightGrenade::ServerRPCThrow_Implementation(const float TimeHeld)
 {
-	if(!this->HasAuthority())
+	if(!HasAuthority())
 		return;
 
 	MulticastRPCThrow(TimeHeld);
@@ -113,16 +111,12 @@ void ALightGrenade::MulticastRPCThrow_Implementation(const float TimeHeld)
 			Controller = PlayerBase->GetInstigatorController();
 		}
 		
+		// UE_LOG(LogTemp, Warning, TEXT("Throw Grenade"));
 		
-		UE_LOG(LogTemp, Warning, TEXT("Throw Grenade"));
-	
-		
-
 		ThrowEvent();
 
 		bIsExploding = false;
 		
-
 		ExplosionArea->SetWorldLocation(Player->ThrowLoc->GetComponentLocation()); 
 		
 		ExplosionArea->AddImpulse(GetLaunchForce(TimeHeld));
@@ -138,26 +132,17 @@ void ALightGrenade::MulticastRPCThrow_Implementation(const float TimeHeld)
 
 void ALightGrenade::ActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult & SweepResult)
 {
-	
 	if (!HasAuthority()) // Only run on server
 		return;
 	
-		if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OtherActor))
-		{
-			
-			StartCountdown(ExplodeTimeFast);
-			
-		}else if (APressurePlateBase* Plate = Cast<APressurePlateBase>(OtherActor))
-		{
-			Plate->StartMove();		
-		}/*
-		else if (OtherActor || OtherComp || OverlappedComponent)
-		{
-
-			StartCountdown(ExplodeTimeSlow);
-			
-		} */
-	
+	if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OtherActor))
+	{
+		StartCountdown(ExplodeTimeFast);
+	}
+	else if (APressurePlateBase* Plate = Cast<APressurePlateBase>(OtherActor))
+	{
+		Plate->StartMove();		
+	}
 }
 
 void ALightGrenade::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
@@ -171,10 +156,7 @@ void ALightGrenade::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor*
 
 void ALightGrenade::ServerRPCExplosion_Implementation()
 {
-	// Code here is only run on server, will probably not be changed unless we'll have server specific behaviour 
-	
-	// Should only run on server 
-	if(!this->HasAuthority())
+	if(!HasAuthority())
 		return;
 
 	if (!bIsExploding)
@@ -183,33 +165,27 @@ void ALightGrenade::ServerRPCExplosion_Implementation()
 		bIsExploding = true;
 		MulticastRPCExplosion();
 	}
-	
 }
 
 void ALightGrenade::MulticastRPCExplosion_Implementation()
 {
 	ExplosionEvent();
 	
-	TArray<AActor*> OverlapingActors;
+	TArray<AActor*> OverlappingActors;
 	
-	ExplosionArea->GetOverlappingActors(OverlapingActors,AActor::StaticClass());
+	ExplosionArea->GetOverlappingActors(OverlappingActors,AActor::StaticClass());
 	
 	DisableGrenade();
 	
-
-	for (AActor* OverlapingActor : OverlapingActors)
+	for (AActor* OverlappingActor : OverlappingActors)
 	{
-		if(!OverlapingActor->ActorHasTag("Player"))
+		if(!OverlappingActor->ActorHasTag("Player"))
 		{
-			UE_LOG(LogClass, Log, TEXT("did dmg"));
+			// UE_LOG(LogClass, Log, TEXT("did dmg"));
 			
-			OverlapingActor->TakeDamage(Damage, FDamageEvent(), Controller, this);
+			OverlappingActor->TakeDamage(Damage, FDamageEvent(), Controller, this);
 		}
-		
-		
 	}
-	
-	
 }
 
 void ALightGrenade::IncreaseMaxThrowIterations()
@@ -262,19 +238,16 @@ void ALightGrenade::EnableCanThrow()
 
 void ALightGrenade::DisableGrenade()
 {
-	
 	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	GrenadeMesh->SetVisibility(false);
 	
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::EnableCanThrow, ThrowCooldown);
-	
 }
 
-void ALightGrenade::EnableGrenade()
+void ALightGrenade::EnableGrenade() const
 {
 	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	GrenadeMesh->SetVisibility(true);
-	
 }
 
 void ALightGrenade::GetPlayer()
@@ -291,7 +264,7 @@ void ALightGrenade::GetPlayer()
 
 void ALightGrenade::StartCountdown(float TimeUntilExplosion)
 {
-	UE_LOG(LogTemp, Warning, TEXT("Countdown Started"));
+	// UE_LOG(LogTemp, Warning, TEXT("Countdown Started"));
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::ServerRPCExplosion, TimeUntilExplosion);
 }
 
@@ -330,4 +303,3 @@ void ALightGrenade::DisableIndicator() const
 	if(Indicator)
 		Indicator->SetActorHiddenInGame(true); 
 }
-

@@ -23,10 +23,7 @@ AFreezeConstraintWalls::AFreezeConstraintWalls()
 
 	RightWallLocation = CreateDefaultSubobject<USphereComponent>(TEXT("RightLoc"));
 	RightWallLocation->SetupAttachment(TriggerArea);
-	
 }
-
-
 
 // Called when the game starts or when spawned
 void AFreezeConstraintWalls::BeginPlay()
@@ -34,14 +31,9 @@ void AFreezeConstraintWalls::BeginPlay()
 	Super::BeginPlay();
 	
     CharactersCamera = Cast<ACharactersCamera>(UGameplayStatics::GetActorOfClass(this,ACharactersCamera::StaticClass()));
-
-	// TriggerArea->OnComponentBeginOverlap.AddDynamic(this,&AFreezeConstraintWalls::OverlapBegin);
-	// TriggerArea->OnComponentEndOverlap.AddDynamic(this,&AFreezeConstraintWalls::OverlapEnd);
-	
-	
 }
 
-void AFreezeConstraintWalls::MoveWallsToLoc()
+void AFreezeConstraintWalls::MoveWallsToLoc() const
 {
 	CharactersCamera->SetAllowWallsMovement(false);
 	if (CharactersCamera->WallOne && CharactersCamera->WallTwo)
@@ -49,15 +41,9 @@ void AFreezeConstraintWalls::MoveWallsToLoc()
 		CharactersCamera->WallOne->SetActorLocation(LeftWallLocation->GetComponentLocation());
 		CharactersCamera->WallTwo->SetActorLocation(RightWallLocation->GetComponentLocation());
 	}
-		
 }
 
-void AFreezeConstraintWalls::RemoveWallsFromLoc()
+void AFreezeConstraintWalls::RemoveWallsFromLoc() const
 {
 	CharactersCamera->SetAllowWallsMovement(true);
 }
-
-
-
-
-

@@ -19,7 +19,7 @@ class PROJ_API USoulBaseStateNew : public UPlayerCharState
 public:
 	USoulBaseStateNew();
 
-	virtual void Enter() override;
+	virtual void BeginPlay() override;
 
 	virtual void UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp) override;
 
@@ -35,8 +35,6 @@ public:
 
 	/** Run locally */
 	void Dash();
-	
-	void NewMat();
 
 	/** Ends the throw without actually throwing the grenade, for on death & meadow scene */
 	void EndGrenadeThrowWithoutThrowing(); 
@@ -59,6 +57,9 @@ private:
 
 	UPROPERTY()
 	class ASoulCharacter* SoulCharacter;
+
+	UPROPERTY()
+	class AShadowSoulCharacter* ShadowSoul; 
 
 	UPROPERTY(EditAnywhere)
 	float DashCooldown = 1.f;

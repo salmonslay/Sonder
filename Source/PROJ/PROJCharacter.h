@@ -91,23 +91,10 @@ public:
 	UPROPERTY(BlueprintReadWrite, Replicated)
 	bool AbilityTwo = false;
 
-	// TODO: This should be removed. Health is handled by the health component. This was temporary for playtesting arena 
-	UFUNCTION(BlueprintPure)
-	bool IsAlive();
-
 	UPROPERTY(BlueprintReadWrite, EditAnywhere)
 	bool bIsSafe = false;
 
 #pragma region Saving
-	/** Save all the currently tracked values to disk */
-	void SaveGame() const;
-
-	/**
-	* Load all the values from disk and apply them to the player.
-	* To get hold of a save game, use GetSaveGameSafe()
-    */
-	UFUNCTION(BlueprintCallable)
-	USonderSaveGame* LoadGame() const;
 
 	/**
 	 * Get the save game, if it exists. Otherwise, return a blank one
@@ -117,6 +104,7 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	static void SetSaveGame(USonderSaveGame* SaveGame);
+
 #pragma endregion
 
 #pragma region Events

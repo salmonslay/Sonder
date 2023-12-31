@@ -12,19 +12,18 @@ UBTTask_ToggleChargeSpecialAttack::UBTTask_ToggleChargeSpecialAttack()
 	NodeName = TEXT("Special Attack Toggle"); 
 }
 
-void UBTTask_ToggleChargeSpecialAttack::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-}
-
 EBTNodeResult::Type UBTTask_ToggleChargeSpecialAttack::ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory)
 {
-	Super::ExecuteTask(OwnerComp, NodeMemory); 
+	Super::ExecuteTask(OwnerComp, NodeMemory);
 
 	// Set we are charging the attack BB Key 
-	OwnerComp.GetBlackboardComponent()->SetValueAsBool(BBKeyChargingSpecialAttack.SelectedKeyName, bActivateCharge); 
+	OwnerComp.GetBlackboardComponent()->SetValueAsBool(BBKeyChargingSpecialAttack.SelectedKeyName, bActivateCharge);
 
-	Cast<AShadowCharacter>(OwnerComp.GetAIOwner()->GetPawn())->ServerRPC_ToggleChargeEffect(bActivateCharge);
+	if(!ShadowOwner)
+		ShadowOwner = Cast<AShadowCharacter>(OwnerComp.GetAIOwner()->GetPawn()); 
+
+	if(ShadowOwner)
+		ShadowOwner->ServerRPC_ToggleChargeEffect(bActivateCharge);
 	
 	return EBTNodeResult::Succeeded; 
 }

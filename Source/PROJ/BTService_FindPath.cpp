@@ -14,17 +14,6 @@ UBTService_FindPath::UBTService_FindPath()
 	NodeName = TEXT("FindPath");
 }
 
-void UBTService_FindPath::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-	
-}
-
-void UBTService_FindPath::OnGameplayTaskDeactivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskDeactivated(Task);
-}
-
 void UBTService_FindPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);

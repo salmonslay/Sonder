@@ -13,16 +13,6 @@ UBTService_CanAttackPlayer::UBTService_CanAttackPlayer()
 	NodeName = TEXT("CanAttackPlayer");
 }
 
-void UBTService_CanAttackPlayer::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-}
-
-void UBTService_CanAttackPlayer::OnGameplayTaskDeactivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskDeactivated(Task);
-}
-
 void UBTService_CanAttackPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
@@ -45,7 +35,7 @@ void UBTService_CanAttackPlayer::TickNode(UBehaviorTreeComponent& OwnerComp, uin
 	if (bDebug) DrawDebugSphere(GetWorld(), MyLocation, RadiusToDetectPlayer, 24, FColor::Black, false, .5f);
 
 	// check if sphere overlaps with any rats
-	bool bOverlaps = GetWorld()->OverlapMultiByObjectType(
+	const bool bOverlaps = GetWorld()->OverlapMultiByObjectType(
 		OverlapResults,
 		MyLocation,
 		FQuat::Identity,

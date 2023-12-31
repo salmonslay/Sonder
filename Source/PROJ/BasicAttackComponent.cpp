@@ -70,7 +70,6 @@ bool UBasicAttackComponent::Attack()
 
 void UBasicAttackComponent::DoAttackDamage()
 {
-	// Ensure player is set 
 	if(!Owner)
 	{
 		Owner = Cast<ACharacter>(GetOwner()); 

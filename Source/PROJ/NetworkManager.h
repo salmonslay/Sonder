@@ -15,14 +15,6 @@ public:
 	// Sets default values for this actor's properties
 	ANetworkManager();
 
-protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
-
-public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
 	/**
 	 * @return The local IPv4 address of this computer 
 	 */

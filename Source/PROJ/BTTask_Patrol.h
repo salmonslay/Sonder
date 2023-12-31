@@ -16,21 +16,16 @@ UCLASS()
 class PROJ_API UBTTask_Patrol : public UBTTask_BlackboardBase
 {
 	GENERATED_BODY()
-
-
+	
 	/** Constructor*/
 	UBTTask_Patrol();
-	
-	/** I have no idea when this is called but it is needed */
-	virtual void OnGameplayTaskActivated(UGameplayTask& Task) override;
 
 	/** Execute task is called once every time this task is activated */
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
 
 	/** Tick task is called every tick this task is in progress, set up in execute task */
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
-
-
+	
 	UPROPERTY()
 	AEnemyCharacter* OwnerCharacter;
 
@@ -54,9 +49,7 @@ class PROJ_API UBTTask_Patrol : public UBTTask_BlackboardBase
 	UPROPERTY(EditAnywhere)
 	float PatrolSpeed = 10.f;
 
-
 	FRotator EnemyRotation = FRotator(0, 90, 0);
-
 
 	UPROPERTY()
 	APROJCharacter* Player1 = nullptr;

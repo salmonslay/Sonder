@@ -14,8 +14,6 @@ class PROJ_API UEnemyHealthComponent : public UBaseHealthComponent
 {
 	GENERATED_BODY()
 
-
-	
 public:
 
 	UEnemyHealthComponent();
@@ -32,7 +30,6 @@ protected:
 
 private:
 	
-
 	UPROPERTY()
 	class AEnemyCharacter* EnemyCharacter;
 

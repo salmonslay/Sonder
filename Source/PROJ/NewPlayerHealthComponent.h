@@ -13,7 +13,6 @@ UCLASS(ClassGroup=(Custom), meta=(BlueprintSpawnableComponent))
 class PROJ_API UNewPlayerHealthComponent : public UBaseHealthComponent
 {
 	GENERATED_BODY()
-
 	
 public:
 

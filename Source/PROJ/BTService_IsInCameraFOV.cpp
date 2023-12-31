@@ -15,16 +15,6 @@ UBTService_IsInCameraFOV::UBTService_IsInCameraFOV()
 	NodeName = TEXT("IsInCameraFOV");
 }
 
-void UBTService_IsInCameraFOV::OnGameplayTaskActivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskActivated(Task);
-}
-
-void UBTService_IsInCameraFOV::OnGameplayTaskDeactivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskDeactivated(Task);
-}
-
 void UBTService_IsInCameraFOV::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);

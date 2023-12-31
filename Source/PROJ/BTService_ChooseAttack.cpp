@@ -88,7 +88,7 @@ bool UBTService_ChooseAttack::IsSpecialAttackOnCooldown(APawn* Owner) const
 	return true; 
 }
 
-bool UBTService_ChooseAttack::CanBasicAttack(const APawn* Owner) const
+bool UBTService_ChooseAttack::CanBasicAttack(const APawn* Owner)
 {
 	if(const auto BasicAttack = Owner->FindComponentByClass<UBasicAttackComponent>())
 		return BasicAttack->CanAttack();

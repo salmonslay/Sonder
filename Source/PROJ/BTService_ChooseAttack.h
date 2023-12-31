@@ -55,7 +55,7 @@ private:
 	bool IsSpecialAttackOnCooldown(APawn* Owner) const;
 
 	/** Returns true if the Owner's basic attack is on cooldown and cant be performed */
-	bool CanBasicAttack(const APawn* Owner) const; 
+	static bool CanBasicAttack(const APawn* Owner); 
 
 	/** Returns true if the AI is in range to perform basic attack */
 	bool IsInRangeForBasicAttack(const float DistanceToTarget) const;

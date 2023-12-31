@@ -144,7 +144,7 @@ private:
 
 	void DisableGrenade();
 
-	void EnableGrenade();
+	void EnableGrenade() const;
 
 	void GetPlayer();
 
@@ -162,9 +162,5 @@ private:
 	void MulticastRPCThrow(const float TimeHeld);
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-	/** Sets the indicator's location */
-	void GetIndicatorLocation(); 
-
 	
 };

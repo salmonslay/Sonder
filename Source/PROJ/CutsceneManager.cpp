@@ -67,7 +67,7 @@ void ACutsceneManager::EndPlay(const EEndPlayReason::Type EndPlayReason)
 
 	CutscenesPlayingCounter = 0; 
 
-	GetWorldTimerManager().ClearAllTimersForObject(this); // TODO: Will need switch if object is destroyed 
+	GetWorldTimerManager().ClearAllTimersForObject(this); 
 }
 
 void ACutsceneManager::PlayCutscene()
@@ -163,9 +163,6 @@ void ACutsceneManager::EnablePlayerInput() const
 
 void ACutsceneManager::BindSkipCutsceneButton()
 {
-	// TODO: Cant skip on client rn. I think it needs to be passed through the player controller, i.e make a server rpc
-	// TODO: function on the player controller class which is called when pressing skip https://cedric-neukirchen.net/docs/multiplayer-compendium/ownership/ 
-
 	for(const auto Controller : PlayerControllers)
 	{
 		if(!IsValid(Controller))
@@ -199,9 +196,6 @@ void ACutsceneManager::StopCutscene()
 		GetWorld()->ServerTravel("/Game/Maps/" + LevelToLoadOnCutsceneEnd.ToString());
 
 	ShowHud(); 
-	
-	// if(!IsCutscenePlaying())
-	// 	Destroy(); // TODO: Destroy? 
 }
 
 void ACutsceneManager::TogglePlayerVisibility(const bool bVisible) const

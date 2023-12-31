@@ -28,13 +28,10 @@ AEnemyCharacter::AEnemyCharacter()
 	GetCharacterMovement()->SetPlaneConstraintEnabled(true);
 }
 
-
-
 // Called when the game starts or when spawned
 void AEnemyCharacter::BeginPlay()
 {
 	Super::BeginPlay();
-
 	
 	if(!GetController())
 	{
@@ -63,21 +60,6 @@ void AEnemyCharacter::InitializeController()
 	{
 		UE_LOG(LogTemp, Error, TEXT("Controller cast failed"));
 	}
-}
-
-
-// Called every frame
-void AEnemyCharacter::Tick(float DeltaTime)
-{
-	Super::Tick(DeltaTime);
-
-}
-
-// Called to bind functionality to input
-void AEnemyCharacter::SetupPlayerInputComponent(UInputComponent* PlayerInputComponent)
-{
-	Super::SetupPlayerInputComponent(PlayerInputComponent);
-
 }
 
 void AEnemyCharacter::OnRep_Stunned()
@@ -265,11 +247,9 @@ void AEnemyCharacter::CheckIfOverlappingWithGrid()
 	}
 }
 
-
 void AEnemyCharacter::KillMe()
 {
 	GetWorldTimerManager().ClearTimer(StunnedTimerHandle);
 	GetWorldTimerManager().ClearTimer(ChargeAttackTimerHandle);
 	GetWorldTimerManager().ClearTimer(AttackTimerHandle);
 }
-

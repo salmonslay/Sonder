@@ -27,14 +27,10 @@ public:
 	ASpawnPoint();
 
 protected:
-	// Called when the game starts or when spawned
-	virtual void BeginPlay() override;
 
 	virtual void EndPlay(const EEndPlayReason::Type EndPlayReason) override;
 
 public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
 
 	UPROPERTY(EditDefaultsOnly)
 	float SpawnCheckFrequency = .5f;
@@ -52,6 +48,7 @@ public:
 	UPROPERTY(EditAnywhere)
 	UCapsuleComponent* CapsuleComponent;
 
+	UPROPERTY()
 	ACombatManager* Manager = nullptr;
 
 	bool bCombatOver = false; 

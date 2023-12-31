@@ -33,8 +33,6 @@ public:
 	/** Checks if ToLocation is in front of ActorFrom based on ActorFrom's forward vector. Perpendicular counts as in front */
 	static bool ActorIsInFront(const AActor* ActorFrom, const FVector& ToLocation);
 
-	// Possible function: static bool IsOnScreen(AActor* Actor, APlayerController* PlayerController);
-
 	/** Check if the current session is playing locally (2 people on the same device) */
 	static bool IsPlayingLocal(const UObject* WorldRefObject); 
 

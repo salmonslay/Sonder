@@ -19,18 +19,16 @@ USoulBaseStateNew::USoulBaseStateNew()
 	SetIsReplicatedByDefault(true); 
 }
 
-void USoulBaseStateNew::Enter()
+void USoulBaseStateNew::BeginPlay()
 {
-	Super::Enter();
+	Super::BeginPlay();
 
-	if(!SoulCharacter)
-		SoulCharacter = Cast<ASoulCharacter>(CharOwner);
+	SoulCharacter = Cast<ASoulCharacter>(CharOwner);
+	ShadowSoul = Cast<AShadowSoulCharacter>(CharOwner); 
 
-	if(!LightGrenade)
-		LightGrenade = Cast<ALightGrenade>(UGameplayStatics::GetActorOfClass(this, ALightGrenade::StaticClass()));
+	LightGrenade = Cast<ALightGrenade>(UGameplayStatics::GetActorOfClass(this, ALightGrenade::StaticClass()));
 
-	if(!AttackComponent)
-		AttackComponent = CharOwner->FindComponentByClass<UBasicAttackComponent>(); 
+	AttackComponent = CharOwner->FindComponentByClass<UBasicAttackComponent>(); 
 }
 
 void USoulBaseStateNew::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
@@ -79,8 +77,8 @@ void USoulBaseStateNew::Dash()
 		return; 
 
 	if(CharOwner->IsPlayerControlled())
-		Cast<ACharacterStateMachine>(CharOwner)->SwitchState(SoulCharacter->DashingState);
-	else if(const auto ShadowSoul = Cast<AShadowSoulCharacter>(CharOwner))
+		SoulCharacter->SwitchState(SoulCharacter->DashingState);
+	else 
 		ShadowSoul->SwitchState(ShadowSoul->DashState); 
 }
 

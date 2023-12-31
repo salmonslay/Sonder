@@ -32,8 +32,6 @@ public:
 	virtual UClass* GetDefaultPawnClassForController_Implementation(AController* InController) override;
 
 	virtual void HandleSeamlessTravelPlayer(AController*& Controller) override;
-
-	virtual void PostSeamlessTravel() override;
 	
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
@@ -55,8 +53,6 @@ private:
 	TArray<class APlayerStart*> UnusedPlayerStarts;
 
 	inline static int PlayerCount = 0;
-
-	virtual void GetSeamlessTravelActorList(bool bToTransition, TArray<AActor*>& ActorList) override;
 };
 
 

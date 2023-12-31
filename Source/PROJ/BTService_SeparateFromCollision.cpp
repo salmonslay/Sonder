@@ -24,11 +24,6 @@ void UBTService_SeparateFromCollision::OnGameplayTaskActivated(UGameplayTask& Ta
 	}
 }
 
-void UBTService_SeparateFromCollision::OnGameplayTaskDeactivated(UGameplayTask& Task)
-{
-	Super::OnGameplayTaskDeactivated(Task);
-}
-
 void UBTService_SeparateFromCollision::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
 	float DeltaSeconds)
 {
@@ -53,19 +48,18 @@ void UBTService_SeparateFromCollision::TickNode(UBehaviorTreeComponent& OwnerCom
 	if (bDebug) DrawDebugSphere(GetWorld(), MyLocation, CollisionCheckRadius, 24, FColor::Red, false, .5f);
 
 	// check if sphere overlaps with any rats
-	bool bOverlaps = GetWorld()->OverlapMultiByObjectType(
+	const bool bOverlaps = GetWorld()->OverlapMultiByObjectType(
 		OverlapResults,
 		MyLocation,
 		FQuat::Identity,
 		CollisionObjectParams,
 		CheckSphereShape);
 
-	FVector CurrentSeparationForce;
 	if(bOverlaps)
 	{
 		for(FOverlapResult Overlap : OverlapResults)
 		{
-			AActor* OverlappingActor = Overlap.GetActor();
+			const AActor* OverlappingActor = Overlap.GetActor();
 			if (OverlappingActor)
 			{
 				if (OverlappingActor && Cast<AFlyingEnemyCharacter>(OverlappingActor) && (OverlappingActor->GetName() != OwnerCharacter->GetName()))
@@ -82,13 +76,13 @@ void UBTService_SeparateFromCollision::TickNode(UBehaviorTreeComponent& OwnerCom
 
 		if (CollisionCounter - 1 > 0)
 		{
-			CurrentSeparationForce = CalculateTotalSeparationForce(TotalSeparationVector);
+			const FVector CurrentSeparationForce = CalculateTotalSeparationForce(TotalSeparationVector);
 			OwnerCharacter->GetCharacterMovement()->Velocity += CurrentSeparationForce * 100.f;
 		}
 	}
 }
 
-FVector UBTService_SeparateFromCollision::CalculateTotalSeparationForce(FVector& Separation)
+FVector UBTService_SeparateFromCollision::CalculateTotalSeparationForce(FVector& Separation) const
 {
 	if (CollisionCounter > 0)
 	{

@@ -11,13 +11,3 @@ ACombatTrigger::ACombatTrigger()
 	Bounds->SetCollisionProfileName("CombatTrigger");
 	RootComponent = Bounds;
 }
-
-void ACombatTrigger::BeginPlay()
-{
-	Super::BeginPlay();
-}
-
-void ACombatTrigger::Tick(float DeltaSeconds)
-{
-	Super::Tick(DeltaSeconds);
-}

@@ -23,7 +23,7 @@ public:
 	AEnemyCharacter();
 	
 	/** Property replication */
-    void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
+	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void InitializeControllerFromManager();
 
@@ -49,6 +49,7 @@ protected:
 
 private:
 
+	UPROPERTY()
 	APROJCharacter* LatestDamageCauser;
 
 	bool bHasBeenAttacked = false;
@@ -57,11 +58,6 @@ private:
 	AGrid* PathfindingGrid;
 	
 public:
-	// Called every frame
-	virtual void Tick(float DeltaTime) override;
-
-	// Called to bind functionality to input
-	virtual void SetupPlayerInputComponent(class UInputComponent* PlayerInputComponent) override;
 
 	UPROPERTY(VisibleAnywhere, Category=Health, Replicated, BlueprintReadOnly)
 	UEnemyHealthComponent* EnemyHealthComponent = nullptr;

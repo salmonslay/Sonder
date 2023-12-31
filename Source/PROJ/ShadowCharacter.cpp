@@ -3,7 +3,6 @@
 #include "ShadowCharacter.h"
 
 #include "BasicAttackComponent.h"
-#include "DummyPlayerState.h"
 #include "EnemyJumpTrigger.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
@@ -17,9 +16,6 @@
 
 AShadowCharacter::AShadowCharacter()
 {
-	// Create the states 
-	DummyState = CreateDefaultSubobject<UDummyPlayerState>(TEXT("DummyStateNew"));
-
 	EnemyAttackComp = CreateDefaultSubobject<UBasicAttackComponent>(TEXT("Basic Attack Comp"));
 	EnemyAttackComp->SetupAttachment(RootComponent);
 }
@@ -162,9 +158,8 @@ UPlayerCharState* AShadowCharacter::GetStartingState() const
 		return RobotBaseState;
 
 	UE_LOG(LogTemp, Warning, TEXT("Error. %s has no base state"), *GetActorNameOrLabel())
-	return DummyState; // Should not get here 
+	return nullptr; // Should not get here 
 }
-
 
 void AShadowCharacter::ServerRPC_SwitchState_Implementation(UPlayerCharState* NewState)
 {

@@ -44,7 +44,7 @@ void AProjPlayerController::OnPossess(APawn* InPawn)
 
 	APROJCharacter* MyPlayerCharacter = Cast<APROJCharacter>(InPawn);
 
-	if (MyPlayerCharacter && IsValid(MyPlayerCharacter))
+	if (IsValid(MyPlayerCharacter))
 	{
 		PlayerCharacter = MyPlayerCharacter;
 		PlayerCharacter->Restart();
@@ -79,7 +79,7 @@ void AProjPlayerController::OnFinishSeamlessTravel()
 
 	playerSpawnPoint = PlayerStarts[0]; // the first checkpoint is a fallback
 
-	APROJGameMode* Gm = Cast<APROJGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
+	const APROJGameMode* Gm = Cast<APROJGameMode>(UGameplayStatics::GetGameMode(GetWorld()));
 
 	if (Gm)
 	{
@@ -90,12 +90,12 @@ void AProjPlayerController::OnFinishSeamlessTravel()
 		UClass* SoulClass = Gm->PlayerPawnClasses[1];
 
 		UClass* PickedClass = UGameplayStatics::GetActorOfClass(GetWorld(), SoulClass) ? RobotClass : SoulClass;
-		FName ClassTag = PickedClass == SoulClass ? FName("Soul") : FName("Robot");
+		const FName ClassTag = PickedClass == SoulClass ? FName("Soul") : FName("Robot");
 
 		// iter through all playerstarts
 		TArray<AActor*> AllPlayerStarts;
 		UGameplayStatics::GetAllActorsOfClass(GetWorld(), APlayerStart::StaticClass(), AllPlayerStarts);
-		for (auto& PlayerStart : AllPlayerStarts)
+		for (const auto& PlayerStart : AllPlayerStarts)
 		{
 			if (PlayerStart->ActorHasTag(ClassTag))
 			{
@@ -107,7 +107,7 @@ void AProjPlayerController::OnFinishSeamlessTravel()
 
 		APROJCharacter* Hero = GetWorld()->SpawnActor<APROJCharacter>(PickedClass, playerSpawnPoint->GetTransform(),
 		                                                              SpawnParam);
-		this->Possess(Hero);
+		Possess(Hero);
 	}
 	else
 	{

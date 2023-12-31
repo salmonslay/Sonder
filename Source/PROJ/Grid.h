@@ -23,7 +23,6 @@ public:
 
 	TArray<FVector> RequestPath(const FVector &Start, const FVector &End, const bool bDoDebugDraw);
 
-
 	TArray<FVector> CurrentPath = TArray<FVector>();
 	
 	/** Timer handle to debug unwalkable nodes and grid, a lot of stuff in begin play can sometimes make nodes not being created fast enough*/
@@ -31,8 +30,6 @@ public:
 
 	/** Timer handel to start pathfinding, making sure grid and nodes are instantiated before calculations start*/
 	FTimerHandle StartPathfindingTimerHandle;
-
-	
 
 	/** bool to start pathfinding */
 	bool bHasPathfinder = false;
@@ -43,7 +40,6 @@ public:
 
 	virtual ~AGrid() override;
 	
-
 	virtual void Tick(float DeltaSeconds) override;
 
 	/** Returns the direction of node in specified location
@@ -71,7 +67,6 @@ public:
 
 	FVector StartLocation = FVector::ZeroVector;
 	
-
 	/** Gets the max size of grid */
 	int GetGridMaxSize() const
 	{
@@ -108,20 +103,19 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TArray<TEnumAsByte<EObjectTypeQuery>> ObjectTypeQueries;
-
-
-	//void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-
+	
 	UPROPERTY(VisibleAnywhere, Category="A*")
 	float MovementPenalty = 400.f;
-	
 
 	FTimerHandle CheckForPlayersTimerHandle;
 	float CheckForPlayersLoopDelay = 0.5f;
 
 	void CheckForPlayers();
+
+	UPROPERTY()
 	APROJCharacter* ServerPlayer;
+
+	UPROPERTY()
 	APROJCharacter* ClientPlayer;
 
 	// ============ General grid variables and funcs ============= //
@@ -147,8 +141,7 @@ private:
 	FVector GridBottomLeftLocation = FVector::ZeroVector; 
 
 	FVector GridTopLeftLocation = FVector::ZeroVector; 
-
-
+	
 	friend class Pathfinder;
 	Pathfinder* EnemyPathfinder = nullptr;
 
@@ -159,7 +152,7 @@ private:
 	
 	void CreateGrid();
 
-	void AddToArray(const int IndexX, const int IndexY, const int IndexZ, const GridNode Node);
+	void AddToArray(const int IndexX, const int IndexY, const int IndexZ, const GridNode Node) const;
 
 	GridNode* GetNodeFromGrid(const int IndexX, const int IndexY, const int IndexZ) const;
 
@@ -168,6 +161,5 @@ private:
 	int GetIndex(const int IndexX, const int IndexY, const int IndexZ) const;
 
 	TMap<FName, TArray<GridNode*>> MovingActorNodes = TMap<FName, TArray<GridNode*>>();
-
-
+	
 };
