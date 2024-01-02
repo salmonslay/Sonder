@@ -167,7 +167,7 @@ void ACombatDirector::AddSpawnPointsToWave(FEnemyWave& Wave, int NumSpawnPoints)
 		{
 			for(int j = 0; j < Manager->SpawnPoints.Num(); j++)
 			{
-				SpawnPointIndices.Emplace(i);
+				SpawnPointIndices.Emplace(j);
 			}
 		}
 		int RandomIndex = SpawnPointIndices[rand() % SpawnPointIndices.Num()];
