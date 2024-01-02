@@ -78,5 +78,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	TArray<FEnhancedActionKeyMapping> InputMappings;
+
+	/** Brightness set through settings */
+	UPROPERTY(BlueprintReadWrite)
+	float Brightness = 0; 
 	
 };
