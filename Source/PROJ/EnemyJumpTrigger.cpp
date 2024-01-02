@@ -37,79 +37,29 @@ void AEnemyJumpTrigger::BeginPlay()
 void AEnemyJumpTrigger::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-
-	/*
-	if (WaitingEnemies.IsEmpty())
-	{
-		return;
-	}
 	
-	for (AShadowCharacter* Enemy : WaitingEnemies)
-	{
-		if (Enemy)
-		{
-			FVector EnemyLocation = Enemy->GetActorLocation();
-
-	
-			if (bTriggerJumpToMovablePlatform) // TODO:Doesnt need this, can be same trigger for both after fix
-			{
-				if (bIsOverlappingWithMovingPlatform && Enemy->bCanBasicJump && Enemy->bHasLandedOnGround && !Enemy->bIsJumping && !Enemy->bIsPerformingJump)
-				{
-					Enemy->AvaliableJumpPoint = CalculateJumpToPlatform(EnemyLocation);
-				}
-
-				else if (!bIsOverlappingWithMovingPlatform && Enemy->bCanBasicJump && Enemy->bHasLandedOnGround && !Enemy->bIsJumping && !Enemy->bIsPerformingJump)
-				{
-					// TODO: Check if is on platform, if is on platform it should jump to closest point to target but if its not it should jump to the point furthest away from it
-					// TODO: Go to closest movable platform in BT if hasnt path to player.
-
-					if (!IsLeveledWithJumpPoints(EnemyLocation))
-					{
-						//UE_LOG(LogTemp, Warning, TEXT("Not IsLeveled with platform, own location"));
-						Enemy->AvaliableJumpPoint = CalculatePointClosetsToTarget(EnemyLocation, Enemy->CurrentTargetLocation);
-					}
-					else
-					{
-						//UE_LOG(LogTemp, Warning, TEXT("IsLeveled with platform"));
-						Enemy->AvaliableJumpPoint = CalculatePointFurthestFromEnemy(EnemyLocation);
-					}
-				}
-				// TODO: If is overlapping with moving platform, and is grounded, and is not jumping/performing jump
-			}
-			
-			else
-			{
-				//TODO: Should only happen when can make basic jump and is not a movable platform jump-trigger. 
-				if (Enemy->bCanBasicJump && Enemy->bHasLandedOnGround && !Enemy->bIsJumping && !Enemy->bIsPerformingJump) // ordinary jump to some point 
-				{
-					Enemy->AvaliableJumpPoint = CalculatePointFurthestFromEnemy(EnemyLocation);
-				}
-			}
-		}
-	}
-	*/
-
 }
 
-void AEnemyJumpTrigger::RemoveWaitingEnemy(AShadowCharacter* EnemyToRemove)
+void AEnemyJumpTrigger::AddOverlappingPlatform(AMovingPlatform* PlatformToAdd)
 {
-	if (!EnemyToRemove) return;
-	
-	if (WaitingEnemies.Contains(EnemyToRemove))
+	if (ensure (PlatformToAdd!= nullptr))
 	{
-		WaitingEnemies.Remove(EnemyToRemove);
+		OverlappingPlatforms.Add(PlatformToAdd);
 	}
 }
 
-void AEnemyJumpTrigger::AddWaitingEnemy(AShadowCharacter* EnemyToAdd)
+void AEnemyJumpTrigger::RemoveOverlappingPlatform(AMovingPlatform* PlatformToRemove)
 {
-	if (!EnemyToAdd) return;
-	
-	if (!WaitingEnemies.Contains(EnemyToAdd))
+	if (ensure (PlatformToRemove != nullptr))
 	{
-		WaitingEnemies.Add(EnemyToAdd);
+		OverlappingPlatforms.Remove(PlatformToRemove);
+	}
+	if (OverlappingPlatforms.IsEmpty())
+	{
+		bIsOverlappingWithMovingPlatform = false;
 	}
 }
+
 
 FVector AEnemyJumpTrigger::RequestJumpLocation(const FVector &EnemyLoc, const FVector &CurrentTargetLocation, const bool bIsOnPlatform)
 {
@@ -117,8 +67,7 @@ FVector AEnemyJumpTrigger::RequestJumpLocation(const FVector &EnemyLoc, const FV
 	{
 		if (bIsOverlappingWithMovingPlatform && !bIsOnPlatform)
 		{
-			return CalculateJumpToPlatform(EnemyLoc);
-			
+			return CalculateJumpToPlatform(EnemyLoc, CurrentTargetLocation);
 		}
 		if (bIsOverlappingWithMovingPlatform && bIsOnPlatform)
 		{
@@ -128,21 +77,61 @@ FVector AEnemyJumpTrigger::RequestJumpLocation(const FVector &EnemyLoc, const FV
 	return CalculatePointFurthestFromEnemy(EnemyLoc);
 }
 
-FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation) const // forward vector * Jumpdistance
+FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation, const FVector& CurrentTargetLocation)  // forward vector * Jumpdistance
 {
 	// TODO: Check if platform is closer to player than enemy, only jump if that is true SHOULD NOT BE HERE; MAYBE IN SERVICE
-	if (!OverlappingPlatform)
+	
+	if (OverlappingPlatforms.Num() > 1)
+	{
+		OverlappingPlatform = SelectPlatform(EnemyLocation, CurrentTargetLocation);
+	}
+	else
+	{
+		OverlappingPlatform = OverlappingPlatforms[0];
+	}
+	// Choose platform to jump to
+	if (!OverlappingPlatform.Get() && ensure(OverlappingPlatform != nullptr))
 	{
 		return FVector::ZeroVector;
 	}
 	FVector Origin;
 	FVector Extent;
-	OverlappingPlatform->GetActorBounds(true, Origin, Extent);
+	OverlappingPlatform.Get()->GetActorBounds(true, Origin, Extent);
 
 	// Jump left if platform's origin is to the left and vice versa with right 
 	const float DirToPlatformY = Origin.Y < EnemyLocation.Y ? -1 : 1;
 	
 	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToPlatformY * EnemyJumpDistance, Origin.Z + PlatformJumpZOffset);
+}
+
+TWeakObjectPtr<AMovingPlatform> AEnemyJumpTrigger::SelectPlatform(const FVector& EnemyLocation, const FVector& CurrentTargetLocation) const
+{
+	TWeakObjectPtr<AMovingPlatform> BestPtr;
+	float BestScore = 0.f;
+	
+	for (const auto &Platform : OverlappingPlatforms)
+	{
+		if (Platform.IsValid())
+		{
+			const float DistanceToPlayer = FVector::Distance(EnemyLocation, CurrentTargetLocation);
+			// Calculate the dot product of the direction to player and platform movement vector
+			const float DotPlatformToTarget = FVector::DotProduct(CurrentTargetLocation, Platform.Get()->GetMovementDelta().GetSafeNormal());
+
+			// Calculate the dot product of the direction to player and player's movement direction
+			const float DotEnemyToTarget = FVector::DotProduct(EnemyLocation, CurrentTargetLocation);
+
+			// Calculate score based on direction towards the player and platform movement, update best actor if needed
+
+			const float ComboDot = DotPlatformToTarget + DotEnemyToTarget;
+			const float Score = ComboDot + (1.0f / DistanceToPlayer);
+			if (Score > BestScore)
+			{
+				BestScore = Score;
+				BestPtr = Platform;
+			}
+		}
+	}
+	return BestPtr;
 }
 
 FVector AEnemyJumpTrigger::CalculatePointClosetsToTarget(const FVector& EnemyLocation, const FVector& CurrentTargetLocation) const 
@@ -178,24 +167,7 @@ void AEnemyJumpTrigger::AllowJump() // runs on overlap begin with moving platfor
 	{
 		if (Enemy)
 		{
-			//Enemy->bCanPlatformJump = true;
-			//Enemy->bCanBasicJump = false;
 			Enemy->JumpCoolDownTimer = Enemy->JumpCoolDownDuration;
-		}
-	}
-}
-
-void AEnemyJumpTrigger::DenyJump()  // runs on overlap end with moving platform, if enemy is standing on a platform - allow jump to ground, if not - allow jump to platform
-{
-	if (!WaitingEnemies.IsEmpty())
-	{
-		for (AShadowCharacter* Enemy : WaitingEnemies)
-		{
-			if (Enemy)
-			{
-				//Enemy->bCanPlatformJump = false;
-				//Enemy->bCanBasicJump = true;
-			}
 		}
 	}
 }
@@ -224,3 +196,32 @@ bool AEnemyJumpTrigger::IsLeveledWithJumpPoints(const FVector &EnemyLoc) const
 	//UE_LOG(LogTemp, Error, TEXT(" EnemyLoc= %f, Jumppoints loc = %f, %f"), EnemyLoc.Z, JumpPoint1Loc.Z, JumpPoint2Loc.Z );
 	return FMath::IsNearlyEqual(EnemyLoc.Z, JumpPoint1Loc.Z, 5.f) && FMath::IsNearlyEqual(EnemyLoc.Z, JumpPoint2Loc.Z, 5.f);
 }
+
+
+/*for (AActor* Actor : Actors)
+	{
+		if (!Actor || !Actor->IsValidLowLevelFast()) continue;
+
+		FVector ActorLocation = Actor->GetActorLocation();
+
+		// Calculate the direction from the actor to the player
+		FVector DirectionToPlayer = (PlayerLocation - ActorLocation).GetSafeNormal();
+
+		// Calculate the dot product of the direction to player and player's movement direction
+		float DotProduct = FVector::DotProduct(DirectionToPlayer, PlayerMovementDelta.GetSafeNormal());
+
+		// Calculate the distance between the actor and the player
+		float DistanceToPlayer = FVector::Distance(ActorLocation, PlayerLocation);
+
+		// Calculate a score based on direction and distance (you can adjust weights as needed)
+		float Score = DotProduct + (1.0f / DistanceToPlayer);
+
+		// Update the best actor if this actor has a better score
+		if (Score > BestScore)
+		{
+			BestScore = Score;
+			BestActor = Actor;
+		}
+	}
+
+	return BestActor;*/
