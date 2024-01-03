@@ -165,8 +165,20 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 	TArray<AActor*> OverlappingActors;
 	CharOwner->GetOverlappingActors(OverlappingActors, AActor::StaticClass());
 
+	const bool bIsPlayerControlled = CharOwner->IsPlayerControlled(); 
+
 	for (const auto Actor : OverlappingActors)
 	{
+		if(!bIsPlayerControlled)
+		{
+			if(Actor->IsA(AEnemyCharacter::StaticClass()))
+				continue;
+			
+			Actor->TakeDamage(Damage, FDamageEvent(), Controller, CharOwner);
+
+			continue;
+		}
+		
 		if(const auto Soul = Cast<ASoulCharacter>(Actor))
 		{
 			// See if there is line of sight to Soul, if there isn't then do nothing with Soul 
@@ -226,7 +238,9 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 		}
 
 		else
+		{
 			Actor->TakeDamage(Damage, FDamageEvent(), Controller, CharOwner);
+		}
 	}
 	
 	if (CharOwner->IsPlayerControlled())

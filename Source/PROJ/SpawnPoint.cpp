@@ -34,10 +34,7 @@ void ASpawnPoint::AddEnemyToSpawn(const TSubclassOf<AEnemyCharacter> EnemyClass)
 	if(!GetWorldTimerManager().TimerExists(SpawnCheckTimerHandle))
 	{
 		TrySpawnNext();
-		if(!EnemiesToSpawn.IsEmpty())
-		{
-			GetWorldTimerManager().SetTimer(SpawnCheckTimerHandle, this, &ASpawnPoint::TrySpawnNext, SpawnCheckFrequency, true);
-		}
+		GetWorldTimerManager().SetTimer(SpawnCheckTimerHandle, this, &ASpawnPoint::TrySpawnNext, SpawnCheckFrequency, true);
 	}
 }
 

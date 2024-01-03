@@ -128,7 +128,7 @@ public:
 	UFUNCTION(BlueprintPure)
 	bool IsCombatEnded() const { return bCombatEnded; }
 
-	UPROPERTY(EditAnywhere, Category="EndlessMode")
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="EndlessMode")
 	bool bEndlessMode = false;
 
 	//Adds a wave to the active queue, used by CombatDirector to add waves in runtime
