@@ -36,7 +36,7 @@ private:
 
 	/** Height difference between target location and actor location to consider it unwalkable */
 	UPROPERTY(EditAnywhere)
-	float HeightDifferenceToMarkInvalid = 150.f;
+	float HeightDifferenceToMarkInvalid = 100.f;
 
 	bool HasLineOfSightToPlayer(AShadowCharacter* Owner, const FVector &CurrentPlayerTarget) const;
 

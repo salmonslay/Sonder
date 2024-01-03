@@ -63,19 +63,16 @@ void AEnemyJumpTrigger::RemoveOverlappingPlatform(AMovingPlatform* PlatformToRem
 
 FVector AEnemyJumpTrigger::RequestJumpLocation(const FVector &EnemyLoc, const FVector &CurrentTargetLocation, const bool bIsOnPlatform)
 {
-	if (bTriggerJumpToMovablePlatform)
+	if (bIsOverlappingWithMovingPlatform && !bIsOnPlatform)
 	{
-		if (bIsOverlappingWithMovingPlatform && !bIsOnPlatform)
-		{
-			return CalculateJumpToPlatform(EnemyLoc, CurrentTargetLocation);
-		}
-		if (bIsOverlappingWithMovingPlatform && bIsOnPlatform)
-		{
-			return CalculatePointClosetsToTarget(EnemyLoc, CurrentTargetLocation);
-		}
+		return CalculateJumpToPlatform(EnemyLoc, CurrentTargetLocation);
+	}
+	if (bIsOverlappingWithMovingPlatform && bIsOnPlatform)
+	{
+		return CalculatePointClosetsToTarget(EnemyLoc, CurrentTargetLocation);
 	}
 	return CalculatePointFurthestFromEnemy(EnemyLoc);
-}
+ }
 
 FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation, const FVector& CurrentTargetLocation)  // forward vector * Jumpdistance
 {

@@ -92,8 +92,6 @@ private:
 	UFUNCTION(BlueprintCallable)
 	void AllowJump();
 
-	
-
 	UFUNCTION(BlueprintCallable)
 	bool HasPathBetweenPoints() const;
 
