@@ -137,8 +137,8 @@ void USoulBaseStateNew::ThrowGrenade()
 void USoulBaseStateNew::BeginGrenadeThrow()
 {
 	if(!LightGrenade || !LightGrenade->bCanThrow || !SoulCharacter->AbilityTwo)
-		return; 
-
+		return;
+	
 	bHasBeganThrow = true; 
 	AttackComponent->ToggleAttackEnable(false); 
 	ServerRPC_BeginGrenadeThrow(); 
@@ -162,7 +162,10 @@ void USoulBaseStateNew::ServerRPCThrowGrenade_Implementation(const float TimeHel
 	if(!CharOwner->HasAuthority())
 		return;
 	
-	//LightGrenade = GetWorld()->SpawnActor<AActor>(LightGrenadeRef,SoulCharacter->FireLoc->GetComponentLocation(),SoulCharacter->FireLoc->GetComponentRotation());
+	FHitResult HitResult;
+	if (bool bHitSomething = GetWorld()->LineTraceSingleByChannel(HitResult,SoulCharacter->GetActorLocation(),SoulCharacter->ThrowLoc->GetComponentLocation(),ECC_Visibility))
+		EndGrenadeThrowWithoutThrowing();
+	
 
 	MulticastRPCThrowGrenade(TimeHeldGrenade);
 }
