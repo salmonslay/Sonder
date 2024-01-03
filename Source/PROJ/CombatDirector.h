@@ -43,6 +43,9 @@ struct FSpawnStruct
 	UPROPERTY(EditAnywhere, Category="Weight")
 	bool bActiveEnemiesAddWeight = false;
 
+	UPROPERTY(EditAnywhere, Category="Weight")
+	bool bPlayerHealthReducesWeight = false;
+
 	UPROPERTY(VisibleAnywhere, Category="Weight")
 	int WavesUnpicked = 0;
 	
@@ -112,6 +115,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Weight")
 	float UnpickedWeightMultiplier = 2.f;
+
+	UPROPERTY(EditAnywhere, Category="Weight")
+	float PlayerHealthWeightMultiplier = 1.f;
 
 	void SpendBudget();
 
