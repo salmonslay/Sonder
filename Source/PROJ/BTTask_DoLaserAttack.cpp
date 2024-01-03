@@ -60,8 +60,3 @@ EBTNodeResult::Type UBTTask_DoLaserAttack::ExecuteTask(UBehaviorTreeComponent& O
 	
 }
 
-void UBTTask_DoLaserAttack::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
-{
-	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
-	
-}
