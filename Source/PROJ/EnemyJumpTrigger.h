@@ -44,19 +44,16 @@ public:
 	virtual void Tick(float DeltaTime) override;
 
 	UFUNCTION(BlueprintCallable)
-	void RemoveWaitingEnemy(AShadowCharacter* EnemyToRemove);
+	void AddOverlappingPlatform(AMovingPlatform* PlatformToAdd);
+
+	UFUNCTION(BlueprintCallable)
+	void RemoveOverlappingPlatform(AMovingPlatform*  PlatformToRemove);
 	
-	UFUNCTION(BlueprintCallable)
-	void AddWaitingEnemy(AShadowCharacter* EnemyToAdd);
-
-	UFUNCTION(BlueprintCallable)
-	bool IsOverlappingWithEnemies() {	return !WaitingEnemies.IsEmpty();	}
-
-	UFUNCTION(BlueprintCallable)
-	bool IsOverlappingWithPlatform() { return bIsOverlappingWithMovingPlatform; }
 
 	UPROPERTY(BlueprintReadWrite)
-	AMovingPlatform* OverlappingPlatform = nullptr;
+	TWeakObjectPtr<AMovingPlatform> OverlappingPlatform = nullptr;
+
+	TArray<TWeakObjectPtr<AMovingPlatform>> OverlappingPlatforms = TArray<TWeakObjectPtr<AMovingPlatform>>();
 
 	UPROPERTY(EditAnywhere, BlueprintReadOnly)
 	bool bTriggerJumpToMovablePlatform = false;
@@ -83,7 +80,9 @@ private:
 	
 	TArray<AShadowCharacter*> WaitingEnemies = TArray<AShadowCharacter*>();
 
-	FVector CalculateJumpToPlatform(const FVector& EnemyLocation) const;
+	FVector CalculateJumpToPlatform(const FVector& EnemyLocation, const FVector& CurrentTargetLocation);
+
+	TWeakObjectPtr<AMovingPlatform>  SelectPlatform(const FVector& EnemyLocation, const FVector& CurrentTargetLocation) const;
 
 	FVector CalculatePointClosetsToTarget(const FVector& EnemyLocation, const FVector& CurrentTargetLocation) const;
 
@@ -92,10 +91,6 @@ private:
 	/** Runs on overlap begin with moving platform, enemies on moving platform are allowed to jump to ground, enemies on ground are allowed to jump on platform*/
 	UFUNCTION(BlueprintCallable)
 	void AllowJump();
-
-	/** Runs on overlap end with moving platform, enemies on moving platform are denied to jump to ground, enemies on ground are denied to jump on platform*/
-	UFUNCTION(BlueprintCallable)
-	void DenyJump();
 
 	UFUNCTION(BlueprintCallable)
 	bool HasPathBetweenPoints() const;

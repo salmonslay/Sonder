@@ -36,9 +36,21 @@ EBTNodeResult::Type UBTTask_StopLaserAttack::ExecuteTask(UBehaviorTreeComponent&
 	return EBTNodeResult::Succeeded;
 }
 
+void UBTTask_StopLaserAttack::OnTaskFinished(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
+	EBTNodeResult::Type TaskResult)
+{
+	Super::OnTaskFinished(OwnerComp, NodeMemory, TaskResult);
+
+	StopRepositioning();
+}
+
 void UBTTask_StopLaserAttack::StopRepositioning()
 {
+	ensure(TreeComponent != nullptr);
+	ensure(TreeComponent->GetBlackboardComponent() != nullptr);
+	
 	TreeComponent->GetBlackboardComponent()->SetValueAsBool("bIsRepositioning", false);
 	TreeComponent->GetBlackboardComponent()->ClearValue("bIsRepositioning");
 	GetWorld()->GetTimerManager().ClearTimer(StopRepositioningTimerHandle);
+	
 }

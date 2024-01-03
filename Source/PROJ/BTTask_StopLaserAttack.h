@@ -19,8 +19,12 @@ public:
 
 	UBTTask_StopLaserAttack();
 
+
 	/** Execute task is called once every time this task is activated */
 	virtual EBTNodeResult::Type ExecuteTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory) override;
+
+	virtual void OnTaskFinished(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, EBTNodeResult::Type TaskResult) override;
+
 
 	UPROPERTY()
 	AFlyingEnemyCharacter* OwnerCharacter;
