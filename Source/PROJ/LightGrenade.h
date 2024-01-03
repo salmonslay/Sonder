@@ -122,7 +122,7 @@ private:
 
 	/** Needed an offset to get the indicator to match the grenades position */
 	UPROPERTY(EditAnywhere)
-	float IndicatorOffsetDivisor = 250.f;
+	float IndicatorOffsetDivisor = 235.f;
 
 	/** How long to be at max throw force before resetting to min */
 	UPROPERTY(EditAnywhere)
