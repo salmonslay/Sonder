@@ -84,6 +84,9 @@ public:
 
 	/** Brightness set through settings */
 	UPROPERTY(BlueprintReadWrite)
-	float Brightness = 0; 
+	float Brightness = 0;
+
+	UPROPERTY(BlueprintReadWrite)
+	float MasterVolume = 0.5f; 
 	
 };
