@@ -101,5 +101,7 @@ private:
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
 	void ActivateAbilities();
+
+	void CheckCanThrow();
 	
 };
