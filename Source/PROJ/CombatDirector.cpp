@@ -125,10 +125,16 @@ void ACombatDirector::IncreaseBudgetMultiplier()
 
 int ACombatDirector::CalculateSpawnWeight(const FSpawnStruct& Spawn) const
 {
-	int const Weight = Spawn.BaseCost * CostWeightMultiplier + Spawn.WavesUnpicked * UnpickedWeightMultiplier +
+	int Weight = Spawn.BaseCost * CostWeightMultiplier + Spawn.WavesUnpicked * UnpickedWeightMultiplier +
 		Spawn.bActiveEnemiesAddWeight * Manager->NumActiveEnemies * ActiveEnemiesWeightMultiplier;
-	//Weight += Cast<ASonderGameState>(GetWorld()->GetGameState())->GetServerPlayer()->NewPlayerHealthComponent->GetHealth();
-	return Weight;
+	if(Spawn.bPlayerHealthReducesWeight)
+	{
+		int HealthWeight = 50 - FMath::Min(
+			Cast<ASonderGameState>(GetWorld()->GetGameState())->GetServerPlayer()->NewPlayerHealthComponent->GetHealth(),
+			Cast<ASonderGameState>(GetWorld()->GetGameState())->GetClientPlayer()->NewPlayerHealthComponent->GetHealth());
+		Weight += HealthWeight * PlayerHealthWeightMultiplier;
+	}
+	return FMath::Max(Weight, 0);
 }
 
 int ACombatDirector::WeightedRandomSpawnTypeIndex(int TotalWeight, int MaxValidIndex)
