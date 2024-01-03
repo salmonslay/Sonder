@@ -3,6 +3,7 @@
 
 #include "CombatDirector.h"
 
+#include "ADPCMAudioInfo.h"
 #include "CombatManager.h"
 #include "NewPlayerHealthComponent.h"
 #include "PROJCharacter.h"
@@ -114,6 +115,7 @@ void ACombatDirector::SpendBudget()
 			SpawnTypes.Remove(Spawn);
 			SpawnTypes.Sort([](const FSpawnStruct SS1, const FSpawnStruct SS2){return SS1.BaseCost < SS2.BaseCost;});
 		}
+		UE_LOG(LogTemp, Warning, TEXT("NumSpawnTypes: %i \n CurrentBudget: %f \n SpawnTypeName: %s"), SpawnTypes.Num(), CurrentBudget, *Spawn.Name.ToString());
 	}
 	GetWorldTimerManager().SetTimer(SpendBudgetTimerHandle, this, &ACombatDirector::SpendBudget, WaitTimeForNextCheck);
 }
