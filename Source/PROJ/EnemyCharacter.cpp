@@ -104,8 +104,8 @@ void AEnemyCharacter::Stun(float Duration)
 			bIsChargingAttack = false;
 			bIsAttacking = false;
 			bIsIdle = false;
-			OnStunnedEvent();
 			StunnedDuration = Duration;
+			OnStunnedEvent();
 		}
 		//GetWorldTimerManager().SetTimer(StunnedTimerHandle, this, &AEnemyCharacter::Idle, Duration, false, -1.f);
 	}
