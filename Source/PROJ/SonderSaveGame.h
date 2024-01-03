@@ -52,6 +52,9 @@ public:
 	UFUNCTION(BlueprintPure)
 	TArray<ESonderLevel> GetLevelsCompleted() const { return LevelsCompleted; }
 
+	UFUNCTION(BlueprintCallable)
+	void ResetMapProgress() { LevelsCompleted = {ESonderLevel::None}; } 
+
 	/**
 	 * Iter through all completed levels and return the highest one
 	 * @return The highest level completed, or ESonderLevel::None if no levels have been completed
