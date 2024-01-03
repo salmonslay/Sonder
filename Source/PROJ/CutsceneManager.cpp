@@ -32,11 +32,12 @@ void ACutsceneManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	// will only be on if playing online, 2 if playing local 
+	// will only be 1 if playing online, 2 if playing local 
 	for(int i = 0; i < UGameplayStatics::GetNumLocalPlayerControllers(this); i++)
 		PlayerControllers.Add(UGameplayStatics::GetPlayerController(this, i)); 
 
-	GetWorldTimerManager().SetTimerForNextTick(this, &ACutsceneManager::BindSkipCutsceneButton); 
+	if(HasAuthority())
+		GetWorldTimerManager().SetTimerForNextTick(this, &ACutsceneManager::BindSkipCutsceneButton); 
 
 	if(bAutoPlay)
 	{
@@ -194,8 +195,8 @@ void ACutsceneManager::StopCutscene()
 
 	if(!LevelToLoadOnCutsceneEnd.IsNone() && HasAuthority())
 		GetWorld()->ServerTravel("/Game/Maps/" + LevelToLoadOnCutsceneEnd.ToString());
-
-	ShowHud(); 
+	else 
+		ShowHud(); 
 }
 
 void ACutsceneManager::TogglePlayerVisibility(const bool bVisible) const

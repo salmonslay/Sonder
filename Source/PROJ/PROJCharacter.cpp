@@ -233,10 +233,6 @@ void APROJCharacter::Tick(float DeltaSeconds)
 	GetCharacterMovement()->SetPlaneConstraintEnabled(!bDepthMovementEnabled);
 
 	RotatePlayer(GetLastMovementInputVector().Y);
-
-	// Probably not and should not be necessary but attack comp has been in its rebellious phase lately
-	if(IsLocallyControlled())
-		AttackTimer += DeltaSeconds;
 }
 
 USonderSaveGame* APROJCharacter::GetSaveGameSafe()
@@ -348,13 +344,8 @@ float APROJCharacter::GetDesiredYawRot() const
 
 void APROJCharacter::DoBasicAttack()
 {
-	if(AttackTimer > 0.5f)
-		AttackComponent->EnableAttack(); 
-	
-	if(IsValid(AttackComponent)) {
-		if(AttackComponent->Attack()) // Reset timer if could attack 
-			AttackTimer = 0; 
-	}
+	if(IsValid(AttackComponent)) 
+		AttackComponent->Attack(); 
 	else
 	{
 		UE_LOG(LogTemp, Error, TEXT("No attack component, trying to find one..."))
