@@ -126,22 +126,27 @@ void USoulBaseStateNew::ThrowGrenade()
 	{
 		return;	
 	}
-
+	
 	bHasBeganThrow = false; 
 
 	AttackComponent->ToggleAttackEnable(true); 
 
-	ServerRPCThrowGrenade(TimeHeld);
+	CheckCanThrow();
 }
 
 void USoulBaseStateNew::BeginGrenadeThrow()
 {
-	if(!LightGrenade || !LightGrenade->bCanThrow || !SoulCharacter->AbilityTwo)
-		return; 
-
+	FHitResult HitResult;
+	bool bHitSomething = GetWorld()->
+		LineTraceSingleByChannel(HitResult, SoulCharacter->GetActorLocation(),
+								 SoulCharacter->ThrowLoc->GetComponentLocation(), ECC_Visibility);
+	if (!LightGrenade || !LightGrenade->bCanThrow || !SoulCharacter->AbilityTwo || bHitSomething)
+		return;
+	
 	bHasBeganThrow = true; 
-	AttackComponent->ToggleAttackEnable(false); 
+	AttackComponent->ToggleAttackEnable(false);
 	ServerRPC_BeginGrenadeThrow(); 
+	
 }
 
 void USoulBaseStateNew::MulticastRPC_BeginGrenadeThrow_Implementation()
@@ -153,7 +158,7 @@ void USoulBaseStateNew::ServerRPC_BeginGrenadeThrow_Implementation()
 {
 	if(!CharOwner->HasAuthority())
 		return;
-
+	
 	MulticastRPC_BeginGrenadeThrow(); 
 }
 
@@ -162,7 +167,6 @@ void USoulBaseStateNew::ServerRPCThrowGrenade_Implementation(const float TimeHel
 	if(!CharOwner->HasAuthority())
 		return;
 	
-	//LightGrenade = GetWorld()->SpawnActor<AActor>(LightGrenadeRef,SoulCharacter->FireLoc->GetComponentLocation(),SoulCharacter->FireLoc->GetComponentRotation());
 
 	MulticastRPCThrowGrenade(TimeHeldGrenade);
 }
@@ -179,6 +183,23 @@ void USoulBaseStateNew::ActivateAbilities()
 {
 	SoulCharacter->AbilityOne = true;
 	SoulCharacter->AbilityTwo = true;
+}
+
+void USoulBaseStateNew::CheckCanThrow()
+{
+	FHitResult HitResult;
+	if (bool bHitSomething = GetWorld()->LineTraceSingleByChannel(HitResult,SoulCharacter->GetActorLocation(),SoulCharacter->ThrowLoc->GetComponentLocation(),ECC_Visibility))
+	{
+		if(LightGrenade)
+			LightGrenade->DisableIndicator();
+		
+		SoulCharacter->OnGrenadeThrowEnd(); 
+	}
+	else
+	{
+		ServerRPCThrowGrenade(TimeHeld);
+	}
+	
 }
 
 void USoulBaseStateNew::EndGrenadeThrowWithoutThrowing()
