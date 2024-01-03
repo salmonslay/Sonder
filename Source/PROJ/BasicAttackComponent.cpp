@@ -27,16 +27,16 @@ void UBasicAttackComponent::BeginPlay()
 	Super::BeginPlay();
 
 	Owner = Cast<ACharacter>(GetOwner());
+	PlayerOwner = Cast<APROJCharacter>(Owner);
+	ShadowOwner = Cast<AShadowCharacter>(Owner); 
 
 	bCanAttack = true;
-	LastTimeAttack = 0; 
 }
 
 void UBasicAttackComponent::EndPlay(const EEndPlayReason::Type EndPlayReason)
 {
 	Super::EndPlay(EndPlayReason);
 
-	LastTimeAttack = 0;
 	bCanAttack = true; 
 
 	GetWorld()->GetTimerManager().ClearAllTimersForObject(this); 
@@ -53,11 +53,6 @@ bool UBasicAttackComponent::Attack()
 	if(!GetWorld() || !bAttackEnabled || !bCanAttack || !Owner->IsLocallyControlled())
 		return false; 
 	
-	if(GetWorld()->TimeSeconds - AttackCooldown >= LastTimeAttack)
-		bCanAttack = true;
-
-	LastTimeAttack = GetWorld()->TimeSeconds;
-	
 	FTimerHandle TimerHandle; 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UBasicAttackComponent::EnableCanAttack, AttackCooldown);
 
@@ -72,21 +67,20 @@ void UBasicAttackComponent::DoAttackDamage()
 {
 	if(!Owner)
 	{
-		Owner = Cast<ACharacter>(GetOwner()); 
+		Owner = Cast<ACharacter>(GetOwner());
+		PlayerOwner = Cast<APROJCharacter>(Owner);
+		ShadowOwner = Cast<AShadowCharacter>(Owner); 
 		return;
 	}
 
 	bool bCalledHitEvent = false;
 
-	const auto PlayerOwner = Cast<APROJCharacter>(Owner);
-	const auto EnemyOwner = Cast<AShadowCharacter>(Owner); 
-
 	if(ShouldCallHitEvent())
 	{
 		if(PlayerOwner)
 			PlayerOwner->OnBasicAttackHit();
-		else if(EnemyOwner)
-			EnemyOwner->OnBasicAttackHit();
+		else if(ShadowOwner)
+			ShadowOwner->OnBasicAttackHit();
 		
 		bCalledHitEvent = true; 
 	}
@@ -110,8 +104,8 @@ void UBasicAttackComponent::DoAttackDamage()
 				if(bPlayerControlled && PlayerOwner)
 					PlayerOwner->OnBasicAttackHit();
 				
-				else if(!bPlayerControlled && EnemyOwner)
-					EnemyOwner->OnBasicAttackHit();
+				else if(!bPlayerControlled && ShadowOwner)
+					ShadowOwner->OnBasicAttackHit();
 				
 				bCalledHitEvent = true; 
 			}
@@ -146,20 +140,15 @@ void UBasicAttackComponent::MulticastRPC_StartAttack_Implementation()
 {
 	if(Owner->IsPlayerControlled())
 	{
-		if(const auto PlayerOwner = Cast<APROJCharacter>(Owner))
+		if(PlayerOwner)
 			PlayerOwner->OnBasicAttack();
 	}
 	else if(!Owner->IsPlayerControlled())
 	{
-		if(const auto EnemyOwner = Cast<AShadowCharacter>(Owner))
-			EnemyOwner->OnBasicAttack();
+		if(ShadowOwner)
+			ShadowOwner->OnBasicAttack();
 	}
 
 	FTimerHandle TimerHandle; 
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &UBasicAttackComponent::DoAttackDamage, AttackAnimationDelay); 
-}
-
-void UBasicAttackComponent::EnableCanAttack()
-{
-	bCanAttack = true; 
 }

@@ -203,8 +203,5 @@ private:
 	class UInputAction* AttackInputAction;
 
 	void DoBasicAttack();
-
-	// Back up to the back up 
-	float AttackTimer = 0;
 	
 };
