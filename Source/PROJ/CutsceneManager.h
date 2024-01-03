@@ -88,7 +88,7 @@ private:
 	bool bHidePlayersDuringCutscene = true;
     
 	/** The level to load when the cutscene finished playing. Leaving it empty loads no new level
-     *  NOTE: Needs to be in form of: TestMaps/MAPNAMEGOESHERE or just the map name if in the Maps folder */ 
+     *  NOTE: Needs to be in form of: Levels/MAPNAMEGOESHERE or just the map name if in the Maps folder */ 
 	UPROPERTY(EditAnywhere)
 	FName LevelToLoadOnCutsceneEnd = NAME_None;
 
