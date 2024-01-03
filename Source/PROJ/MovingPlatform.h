@@ -42,6 +42,12 @@ public:
 	
 	float GetMoveDirectionZ() const;
 
+	float GetMoveDirectionY() const;
+
+	FVector GetMovementDelta() const;
+
+	bool IsMovingTowardLocation(const FVector &To) const;
+
 private:
 	
 	FVector MoveDelta = FVector::ZeroVector;

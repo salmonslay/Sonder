@@ -47,8 +47,8 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	
 	if (OwnerCharacter->bIsJumping || OwnerCharacter->bIsPerformingJump )
 	{
-		// this feels wrong but its right, should rename the bb-key
 		BlackboardComponent->SetValueAsBool("bIsJumping", true);
+		
 		//OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue("bIsJumping");
 		//return;
 	}
