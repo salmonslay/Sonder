@@ -48,9 +48,6 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	if (OwnerCharacter->bIsJumping || OwnerCharacter->bIsPerformingJump )
 	{
 		BlackboardComponent->SetValueAsBool("bIsJumping", true);
-		
-		//OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue("bIsJumping");
-		//return;
 	}
 	
 	OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;

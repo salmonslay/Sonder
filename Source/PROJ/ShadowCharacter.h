@@ -88,6 +88,7 @@ public:
 	UFUNCTION()
 	void OnRep_Jump();
 
+	UPROPERTY(BlueprintReadOnly)
 	FVector CurrentTargetLocation = FVector::ZeroVector;
 	
 	UFUNCTION(BlueprintImplementableEvent)
