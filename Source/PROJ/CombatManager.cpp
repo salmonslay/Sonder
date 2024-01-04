@@ -69,6 +69,14 @@ void ACombatManager::Tick(float DeltaTime)
 			GetWorldTimerManager().SetTimer(WaveWaitTimerHandle, this, &ACombatManager::HandleSpawn, Wait, false, Wait);
 		}
 	}
+	if (!GetWorld()->GetGameState())
+	{
+		return;
+	}
+	if (!Cast<ASonderGameState>(GetWorld()->GetGameState())->GetServerPlayer() || !Cast<ASonderGameState>(GetWorld()->GetGameState())->GetClientPlayer())
+	{
+		return;
+	}
 	if(bCombatStarted && !bCombatEnded && GetLocalRole() == ROLE_Authority &&
 		Cast<ASonderGameState>(GetWorld()->GetGameState())->GetServerPlayer()->bIsSafe &&
 		Cast<ASonderGameState>(GetWorld()->GetGameState())->GetClientPlayer()->bIsSafe)

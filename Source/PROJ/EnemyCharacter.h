@@ -113,7 +113,7 @@ public:
 	UPROPERTY(EditDefaultsOnly)
 	float UnlockRotationAfterAttackDuration = 0.5f;
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Replicated)
 	float StunnedDuration = 0.5f;
 
 	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly)

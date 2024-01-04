@@ -23,7 +23,10 @@ EBTNodeResult::Type UBTTask_ToggleChargeSpecialAttack::ExecuteTask(UBehaviorTree
 		ShadowOwner = Cast<AShadowCharacter>(OwnerComp.GetAIOwner()->GetPawn()); 
 
 	if(ShadowOwner)
+	{
 		ShadowOwner->ServerRPC_ToggleChargeEffect(bActivateCharge);
+		ShadowOwner->OnChargeToggle(bActivateCharge); 
+	}
 	
 	return EBTNodeResult::Succeeded; 
 }

@@ -31,16 +31,6 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	// EVENTS
-
-	/** Called when a basic attack is performed, regardless if it hit something */
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnBasicAttack();
-
-	/** Called when the basic attack actually lands a hit, and is called for every hit */
-	UFUNCTION(BlueprintImplementableEvent)
-	void OnBasicAttackHit(); 
-
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool bCanPlatformJump = false;
 
@@ -88,18 +78,31 @@ public:
 	UFUNCTION()
 	void OnRep_Jump();
 
+	UPROPERTY(BlueprintReadOnly)
 	FVector CurrentTargetLocation = FVector::ZeroVector;
 	
-	UFUNCTION(BlueprintImplementableEvent)
-
-	void OnJumpEvent();
-
 	/** Check if there's a path between the enemy character and player character*/
 	bool HasNavigationToTarget(const FVector &CurrentTargetPoint) const;
 
 	/** Calculates if jump point is closer to player than enemy*/
 	bool PointCloserToPlayer(const FVector &CurrentTargetPoint) const;
 
+	// EVENTS
+
+	/** Called when a basic attack is performed, regardless if it hit something */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnBasicAttack();
+
+	/** Called when the basic attack actually lands a hit, and is called for every hit */
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnBasicAttackHit(); 
+	
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnJumpEvent();
+
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnChargeToggle(const bool bCharging); 
+	
 protected:
 
 	virtual void BeginPlay() override;
