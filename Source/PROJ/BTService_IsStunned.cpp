@@ -17,6 +17,7 @@ void UBTService_IsStunned::OnGameplayTaskDeactivated(UGameplayTask& Task)
 {
 	Super::OnGameplayTaskDeactivated(Task);
 
+	StopRepositioning();
 	GetWorld()->GetTimerManager().ClearAllTimersForObject(this); 
 }
 

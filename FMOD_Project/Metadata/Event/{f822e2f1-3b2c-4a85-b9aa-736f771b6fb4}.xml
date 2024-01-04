@@ -790,6 +790,9 @@
 		<property name="startOffset">
 			<value>49.5</value>
 		</property>
+		<property name="volume">
+			<value>3.5</value>
+		</property>
 		<property name="looping">
 			<value>true</value>
 		</property>
