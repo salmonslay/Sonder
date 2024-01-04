@@ -180,7 +180,7 @@ bool AEnemyJumpTrigger::HasPathBetweenPoints() const
 	if (ensure(IsValid(Navigation))) {
 		const UNavigationPath* NavigationPath = Navigation->FindPathToLocationSynchronously(GetWorld(), JumpPoint1Loc, JumpPoint2Loc);
 
-		if(ensure(NavigationPath != nullptr) == false)
+		if(NavigationPath == nullptr)
 		{
 			return false;
 		}
