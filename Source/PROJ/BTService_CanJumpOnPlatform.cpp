@@ -29,28 +29,10 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	BlackboardComponent = OwnerComp.GetAIOwner()->GetBlackboardComponent();
 	
 	if (BlackboardComponent == nullptr) return;
-
-	// TESTING SHOULD LOOK FOR Z on locations
-	// this should really not be here and its horrid but there are a lot of things that needs to change
-
-	/*
-	if (OwnerCharacter->bHasLandedOnPlatform && !FMath::IsNearlyEqual(BlackboardComponent->GetValueAsVector("CurrentMoveTarget").Z,OwnerLocation.Z, 3 ))
-	{
-		BlackboardComponent->SetValueAsBool("bIsOnPlatform", true);
-	}
-	else
-	{
-		BlackboardComponent->SetValueAsBool("bIsOnPlatform", false);
-		BlackboardComponent->ClearValue("bIsOnPlatform");
-	}
-	*/
 	
 	if (OwnerCharacter->bIsJumping || OwnerCharacter->bIsPerformingJump )
 	{
 		BlackboardComponent->SetValueAsBool("bIsJumping", true);
-		
-		//OwnerComp.GetAIOwner()->GetBlackboardComponent()->ClearValue("bIsJumping");
-		//return;
 	}
 	
 	OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
@@ -59,10 +41,8 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	{
 		if (OwnerCharacter->JumpCoolDownTimer >= OwnerCharacter->JumpCoolDownDuration)
 		{
-			//UE_LOG(LogTemp, Error, TEXT("Jump cooldown is done"))
 			if (OwnerCharacter->AvaliableJumpPoint != FVector::ZeroVector)
 			{
-				//  && OwnerCharacter->PointCloserToPlayer(OwnerComp.GetAIOwner()->GetBlackboardComponent()->GetValueAsVector("CurrentMoveTarget"))
 				if (!OwnerCharacter->HasNavigationToTarget(BlackboardComponent->GetValueAsVector("CurrentMoveTarget")))
 				{
 					BlackboardComponent->SetValueAsBool("bIsJumping", true);
