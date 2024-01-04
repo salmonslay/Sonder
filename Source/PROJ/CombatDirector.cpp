@@ -3,7 +3,11 @@
 
 #include "CombatDirector.h"
 
+#include "ADPCMAudioInfo.h"
 #include "CombatManager.h"
+#include "NewPlayerHealthComponent.h"
+#include "PROJCharacter.h"
+#include "SonderGameState.h"
 
 
 bool FSpawnStruct::operator==(const FSpawnStruct& Other) const
@@ -38,6 +42,10 @@ void ACombatDirector::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (!Manager)
+	{
+		return;
+	}
 	if(Manager->bEndlessMode && Manager->IsCombatStarted() && !Manager->IsCombatEnded() && GetLocalRole() == ROLE_Authority)
 	{
 		if(!bInitialized)
@@ -71,16 +79,14 @@ void ACombatDirector::SpendBudget()
 		const int Index = WeightedRandomSpawnTypeIndex(TotalWeight, MaxValidIndex);
 		FSpawnStruct Spawn = SpawnTypes[Index];
 		Spawn.WavesUnpicked = 0;
-		//UE_LOG(LogTemp, Warning, TEXT("Budget before spending: %f"), CurrentBudget);
 		CurrentBudget -= Spawn.BaseCost;
 		int ExtraEnemies = 0;
 		if(Spawn.CostPerAdditionalEnemy > 0)
 		{
 			ExtraEnemies = CurrentBudget / Spawn.CostPerAdditionalEnemy;
-			//UE_LOG(LogTemp, Warning, TEXT("Number of extra enemies to spawn: %i"), ExtraEnemies);
 			CurrentBudget -= ExtraEnemies * Spawn.CostPerAdditionalEnemy;
 		}
-		if(Spawn.EnemyClasses.Num() <= 0)
+		if(!Spawn.WaveTriggeredActors.IsEmpty())
 		{
 			FEnemyWave Wave = FEnemyWave();
 			Wave.AllowedRemainingEnemiesForWave = -1;
@@ -93,23 +99,11 @@ void ACombatDirector::SpendBudget()
 			Wave.EnemyClass = EnemyClass;
 			Wave.NumEnemies = Spawn.BaseNumEnemies + ExtraEnemies;
 			Wave.AllowedRemainingEnemiesForWave = -1;
-			Wave.WaveStartedTriggeredActors = Spawn.WaveTriggeredActors;
 
 			int MaxNumSpawnPoints = FMath::Min(Manager->SpawnPoints.Num() / Spawn.EnemyClasses.Num(), Wave.NumEnemies);
 			int NumSpawnPoints = FMath::RandRange(1, MaxNumSpawnPoints);
 			AddSpawnPointsToWave(Wave, NumSpawnPoints);
 
-			/*
-			//todo: there has to be a better way to do this, would also like it if there was no overlap when spawning two enemy types
-			const int StartSpawnPointIndex = FMath::RandRange(0, Manager->SpawnPoints.Num() - 2);
-			const int EndSpawnPointIndex = FMath::RandRange(StartSpawnPointIndex + 1,
-				FMath::Min(Manager->SpawnPoints.Num(), StartSpawnPointIndex + Wave.NumEnemies));
-			//UE_LOG(LogTemp, Warning, TEXT("Starting and ending spawn point indexes: %i and %i"), StartSpawnPointIndex, EndSpawnPointIndex);
-			for(int i = StartSpawnPointIndex; i < EndSpawnPointIndex; i++)
-			{
-				Wave.SpawnPoints.Emplace(Manager->SpawnPoints[i]);
-			}
-			*/
 			Manager->AddWave(Wave);
 		}
 		if(CurrentBudget > Spawn.BaseCost)
@@ -125,7 +119,7 @@ void ACombatDirector::SpendBudget()
 			SpawnTypes.Remove(Spawn);
 			SpawnTypes.Sort([](const FSpawnStruct SS1, const FSpawnStruct SS2){return SS1.BaseCost < SS2.BaseCost;});
 		}
-		//UE_LOG(LogTemp, Warning, TEXT("Budget after spending: %f"), CurrentBudget);
+		UE_LOG(LogTemp, Warning, TEXT("NumSpawnTypes: %i \n CurrentBudget: %f \n SpawnTypeName: %s"), SpawnTypes.Num(), CurrentBudget, *Spawn.Name.ToString());
 	}
 	GetWorldTimerManager().SetTimer(SpendBudgetTimerHandle, this, &ACombatDirector::SpendBudget, WaitTimeForNextCheck);
 }
@@ -133,15 +127,23 @@ void ACombatDirector::SpendBudget()
 void ACombatDirector::IncreaseBudgetMultiplier()
 {
 	BudgetMultiplier *= BudgetGrowthMultiplier;
-	//UE_LOG(LogTemp, Warning, TEXT("Increased budget multiplier, current multiplier: %f"), BudgetMultiplier);
 }
 
 int ACombatDirector::CalculateSpawnWeight(const FSpawnStruct& Spawn) const
 {
-	const int Weight = Spawn.BaseCost * CostWeightMultiplier + Spawn.WavesUnpicked * UnpickedWeightMultiplier +
+
+	ensure(&Spawn != nullptr);
+	
+	int Weight = Spawn.BaseCost * CostWeightMultiplier + Spawn.WavesUnpicked * UnpickedWeightMultiplier +
 		Spawn.bActiveEnemiesAddWeight * Manager->NumActiveEnemies * ActiveEnemiesWeightMultiplier;
-	UE_LOG(LogTemp, Error, TEXT("%s has weight: %i"), *Spawn.Name.ToString(), Weight);
-	return Weight;
+	if(Spawn.bPlayerHealthReducesWeight)
+	{
+		int HealthWeight = 50 - FMath::Min(
+			Cast<ASonderGameState>(GetWorld()->GetGameState())->GetServerPlayer()->NewPlayerHealthComponent->GetHealth(),
+			Cast<ASonderGameState>(GetWorld()->GetGameState())->GetClientPlayer()->NewPlayerHealthComponent->GetHealth());
+		Weight += HealthWeight * PlayerHealthWeightMultiplier;
+	}
+	return FMath::Max(Weight, 0);
 }
 
 int ACombatDirector::WeightedRandomSpawnTypeIndex(int TotalWeight, int MaxValidIndex)

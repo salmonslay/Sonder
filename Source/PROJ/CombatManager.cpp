@@ -62,13 +62,20 @@ void ACombatManager::Tick(float DeltaTime)
 		if (Wait <= 0)
 		{
 			HandleSpawn();
-			UE_LOG(LogTemp, Warning, TEXT("Delay wpanf %f"), Wait);
 		}
 		else
 		{
 			bWaitingForWave = true;
 			GetWorldTimerManager().SetTimer(WaveWaitTimerHandle, this, &ACombatManager::HandleSpawn, Wait, false, Wait);
 		}
+	}
+	if (!GetWorld()->GetGameState())
+	{
+		return;
+	}
+	if (!Cast<ASonderGameState>(GetWorld()->GetGameState())->GetServerPlayer() || !Cast<ASonderGameState>(GetWorld()->GetGameState())->GetClientPlayer())
+	{
+		return;
 	}
 	if(bCombatStarted && !bCombatEnded && GetLocalRole() == ROLE_Authority &&
 		Cast<ASonderGameState>(GetWorld()->GetGameState())->GetServerPlayer()->bIsSafe &&
@@ -134,16 +141,10 @@ void ACombatManager::AddWave(FEnemyWave Wave)
 
 void ACombatManager::IncreaseSpawnCheckFrequency()
 {
-	bool bFirstPrinted = false;
 	for(ASpawnPoint* SpawnPoint : SpawnPoints)
 	{
 		SpawnPoint->SpawnCheckFrequency *= 0.8f;
 		SpawnPoint->SpawnCheckFrequency += 0.1f;
-		if(!bFirstPrinted)
-		{
-			bFirstPrinted = true;
-			UE_LOG(LogTemp, Warning, TEXT("Increased spawn speed, current speed: %f"), SpawnPoint->SpawnCheckFrequency);
-		}
 	}
 }
 
