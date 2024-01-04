@@ -42,6 +42,10 @@ void ACombatDirector::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
+	if (!Manager)
+	{
+		return;
+	}
 	if(Manager->bEndlessMode && Manager->IsCombatStarted() && !Manager->IsCombatEnded() && GetLocalRole() == ROLE_Authority)
 	{
 		if(!bInitialized)
@@ -127,6 +131,9 @@ void ACombatDirector::IncreaseBudgetMultiplier()
 
 int ACombatDirector::CalculateSpawnWeight(const FSpawnStruct& Spawn) const
 {
+
+	ensure(&Spawn != nullptr);
+	
 	int Weight = Spawn.BaseCost * CostWeightMultiplier + Spawn.WavesUnpicked * UnpickedWeightMultiplier +
 		Spawn.bActiveEnemiesAddWeight * Manager->NumActiveEnemies * ActiveEnemiesWeightMultiplier;
 	if(Spawn.bPlayerHealthReducesWeight)
