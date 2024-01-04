@@ -196,6 +196,7 @@ void AEnemyCharacter::GetLifetimeReplicatedProps(TArray <FLifetimeProperty>& Out
 	DOREPLIFETIME(AEnemyCharacter, bIsChargingAttack);
 	DOREPLIFETIME(AEnemyCharacter, bIsAttacking);
 	DOREPLIFETIME(AEnemyCharacter, bIsIdle);
+	DOREPLIFETIME(AEnemyCharacter, StunnedDuration);
 }
 
 void AEnemyCharacter::InitializeControllerFromManager()
