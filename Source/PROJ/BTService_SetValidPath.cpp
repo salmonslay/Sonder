@@ -128,9 +128,9 @@ void UBTService_SetValidPath::VerifyGroundStatus(AShadowCharacter* Owner) const
 	bool bHit;
 	if (bDebug)
 	{
-		bHit = UKismetSystemLibrary::LineTraceSingleForObjects(this, OwnerLocation, FVector(OwnerLocation.X, OwnerLocation.Y, OwnerLocation.Z - 90.f), LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true, FColor::Red, FColor::Blue, 10.f);
+		bHit = UKismetSystemLibrary::SphereTraceSingleForObjects(this, OwnerLocation, FVector(OwnerLocation.X, OwnerLocation.Y, OwnerLocation.Z - 90.f), 30.f, LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true, FColor::Red, FColor::Blue, 10.f);
 	} else 
-		bHit = UKismetSystemLibrary::LineTraceSingleForObjects(this, OwnerLocation, FVector(OwnerLocation.X, OwnerLocation.Y, OwnerLocation.Z - 90.f), LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
+		bHit = UKismetSystemLibrary::SphereTraceSingleForObjects(this, OwnerLocation, FVector(OwnerLocation.X, OwnerLocation.Y, OwnerLocation.Z - 90.f), 30.f,LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
 
 	if (bHit)
 	{

@@ -81,6 +81,7 @@ void UBTTask_FollowPath::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	// Check if there are more waypoints left
 	if (OwnerCharacter->CurrentPath.IsEmpty())
 	{
+		OnTaskFinished(OwnerComp, NodeMemory, EBTNodeResult::Succeeded);
 		return;
 	}
 	
@@ -100,3 +101,4 @@ void UBTTask_FollowPath::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* Node
 	OwnerCharacter->GetCharacterMovement()->SetMovementMode(MOVE_Flying);
 	OwnerCharacter->GetCharacterMovement()->AddInputVector(DirectionToWaypoint * PathFollowingSpeed);
 }
+
