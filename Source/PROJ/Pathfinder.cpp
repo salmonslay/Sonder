@@ -23,6 +23,8 @@ bool Pathfinder::FindPath(const FVector &Start, const FVector &End)
 		return false;
 	}
 
+	ensureMsgf(Grid, TEXT("No grid in pathfinder, in find path"));
+
 	GridNode* StartNode = Grid->GetNodeFromWorldLocation(Start);
 	GridNode* EndNode = Grid->GetNodeFromWorldLocation(End);
 	
