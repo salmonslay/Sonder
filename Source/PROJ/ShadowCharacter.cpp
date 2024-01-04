@@ -44,6 +44,7 @@ bool AShadowCharacter::CheckIfJumpNeeded()
 
 	if (bHasLandedOnPlatform || bHasLandedOnGround)
 	{
+		//UE_LOG(LogTemp, Error, TEXT("Jump is needed, is grounded and is overlapping a jumptrigger with no path between jump points"))
 		return true;
 	}
 	return false;
@@ -96,7 +97,7 @@ bool AShadowCharacter::HasNavigationToTarget(const FVector &CurrentTargetPoint) 
 	if (ensure(IsValid(Navigation))) {
 		const UNavigationPath* NavigationPath = Navigation->FindPathToLocationSynchronously(GetWorld(), GetActorLocation(), CurrentTargetPoint);
 
-		if(ensure(NavigationPath != nullptr) == false)
+		if(NavigationPath == nullptr)
 		{
 			return false;
 		}
@@ -143,7 +144,6 @@ void AShadowCharacter::Tick(const float DeltaSeconds)
 			if (!bIsPerformingJump)
 			{
 				bCanBasicJump = true;
-				// TODO: C
 				AvaliableJumpPoint = CurrentJumpTrigger->RequestJumpLocation(GetActorLocation(), CurrentTargetLocation, bHasLandedOnPlatform);
 			}
 		}

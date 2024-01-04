@@ -89,14 +89,33 @@ FVector UBTTask_MoveToMovingPlatform::GetMovingPlatform(const UBehaviorTreeCompo
 	{
 		LocationToCheck = CurrentTarget;
 	}
-	float ClosestDist = FVector::Dist(ClosestPoint, LocationToCheck); 
+
+	// choose the platform loc that is closest to enemy´s Z loc, if two platforms have the same height choose the platform closest to enemy´s Y value
+	float ClosestDist= FVector::Dist(ClosestPoint, LocationToCheck);
+	float ClosestDistZ = ClosestPoint.Z - LocationToCheck.Z;
+	float ClosestDistY = ClosestPoint.Y - LocationToCheck.Y;
+	
 	for(int i = 1; i < PossiblePoints.Num(); i++)
 	{
+		if (FMath::Abs(PossiblePoints[i].Z - LocationToCheck.Z) < ClosestDistZ)
+		{
+			ClosestDistZ = PossiblePoints[i].Z - LocationToCheck.Z;
+			ClosestPoint = PossiblePoints[i];
+		}
+		else if (FMath::IsNearlyEqual(PossiblePoints[i].Z - LocationToCheck.Z, ClosestDistZ, 5))
+		{
+			if (FMath::Abs(PossiblePoints[i].Y - LocationToCheck.Y) < ClosestDistY)
+			{
+				ClosestDistY = PossiblePoints[i].Y - LocationToCheck.Y;
+				ClosestPoint = PossiblePoints[i];
+			}
+		}
+		/*
 		if(FVector::Dist(PossiblePoints[i], LocationToCheck) < ClosestDist)
 		{
 			ClosestDist = FVector::Dist(PossiblePoints[i], LocationToCheck);
 			ClosestPoint = PossiblePoints[i]; 
-		}
+		}*/
 	}
 	return ClosestPoint; 
 }
