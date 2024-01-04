@@ -40,11 +40,11 @@ struct FLevelInfo
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ESonderLevel Level;
+	ESonderLevel Level = ESonderLevel::None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FText LevelTitle;
+	FText LevelTitle = FText::FromString("None");
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTexture2D* LevelCover;
+	UTexture2D* LevelCover = nullptr;
 };
 
 UCLASS()

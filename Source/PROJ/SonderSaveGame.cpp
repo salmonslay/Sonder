@@ -48,7 +48,7 @@ FString USonderSaveGame::GetLevelToContinueTo(const ESonderLevel From)
 	case ESonderLevel::Arena2:
 		return LevelPaths[ESonderLevel::Ending];
 	case ESonderLevel::Ending:
-		return LevelPaths[ESonderLevel::Ending];
+		return LevelPaths[ESonderLevel::Arena2];
 	default:
 		return LevelPaths[ESonderLevel::Tutorial];
 	}
