@@ -26,16 +26,15 @@ public:
 
 	/** Tick task is called every tick this task is in progress, set up in execute task */
 	virtual void TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
-	
+
 	UPROPERTY()
-	AFlyingEnemyCharacter* OwnerCharacter;
+	TWeakObjectPtr<AFlyingEnemyCharacter> OwnerCharacter;
+
+	UPROPERTY()
+	TWeakObjectPtr<AGrid> OwnerGrid = nullptr;
 
 	FVector OwnerLocation;
-
 	FVector CurrentTargetLocation;
-
-	UPROPERTY()
-	AGrid* OwnerGrid = nullptr;
 
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;

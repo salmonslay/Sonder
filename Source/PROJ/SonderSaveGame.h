@@ -24,17 +24,27 @@ enum class ESonderLevel : uint8
 	Ending = 60,
 };
 
+UENUM(BlueprintType)
+enum class EScalability : uint8
+{
+	None = 0, // Note: cinematic is index 0 in editor 
+	High = 1,
+	Medium = 2, 
+	Low = 4,
+	Auto = 10
+};
+
 USTRUCT(BlueprintType)
 struct FLevelInfo
 {
 	GENERATED_BODY()
 
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	ESonderLevel Level;
+	ESonderLevel Level = ESonderLevel::None;
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	FText LevelTitle;
+	FText LevelTitle = FText::FromString("None");
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	UTexture2D* LevelCover;
+	UTexture2D* LevelCover = nullptr;
 };
 
 UCLASS()
@@ -87,6 +97,9 @@ public:
 	float Brightness = 0;
 
 	UPROPERTY(BlueprintReadWrite)
-	float MasterVolume = 0.5f; 
+	float MasterVolume = 0.5f;
+
+	UPROPERTY(BlueprintReadWrite)
+	EScalability CurrentScalability = EScalability::High; 
 	
 };
