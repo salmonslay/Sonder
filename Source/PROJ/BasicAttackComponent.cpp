@@ -130,7 +130,7 @@ bool UBasicAttackComponent::ShouldCallHitEvent(AActor* OverlappingActor) const
 
 void UBasicAttackComponent::ServerRPC_StartAttack_Implementation()
 {
-	if(!Owner->HasAuthority())
+	if(!Owner || !Owner->HasAuthority())
 		return;
 
 	MulticastRPC_StartAttack(); 
@@ -138,6 +138,9 @@ void UBasicAttackComponent::ServerRPC_StartAttack_Implementation()
 
 void UBasicAttackComponent::MulticastRPC_StartAttack_Implementation()
 {
+	if(!Owner)
+		return; 
+	
 	if(Owner->IsPlayerControlled())
 	{
 		if(PlayerOwner)

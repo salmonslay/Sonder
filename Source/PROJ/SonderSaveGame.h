@@ -27,10 +27,10 @@ enum class ESonderLevel : uint8
 UENUM(BlueprintType)
 enum class EScalability : uint8
 {
-	None = 0, // Note: cinematic is index 0 in editor 
+	Epic = 0, 
 	High = 1,
 	Medium = 2, 
-	Low = 4,
+	Low = 3,
 	Auto = 10
 };
 
