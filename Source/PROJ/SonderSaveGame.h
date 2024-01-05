@@ -34,6 +34,13 @@ enum class EScalability : uint8
 	Auto = 10
 };
 
+UENUM(BlueprintType)
+enum class ELanguage : uint8
+{
+	English = 0,
+	Swedish, 
+};
+
 USTRUCT(BlueprintType)
 struct FLevelInfo
 {
@@ -100,6 +107,9 @@ public:
 	float MasterVolume = 0.5f;
 
 	UPROPERTY(BlueprintReadWrite)
-	EScalability CurrentScalability = EScalability::High; 
+	EScalability CurrentScalability = EScalability::High;
+
+	UPROPERTY(BlueprintReadWrite)
+	ELanguage CurrentLanguage = ELanguage::English; 
 	
 };
