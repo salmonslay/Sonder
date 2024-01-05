@@ -77,7 +77,14 @@ void USoulBaseStateNew::Dash()
 		return; 
 
 	if(CharOwner->IsPlayerControlled())
+	{
+		if(bHasBeganThrow)
+		{
+			TimeHeld = 0; 
+			ThrowGrenade();
+		}
 		SoulCharacter->SwitchState(SoulCharacter->DashingState);
+	}
 	else 
 		ShadowSoul->SwitchState(ShadowSoul->DashState); 
 }
@@ -173,7 +180,7 @@ void USoulBaseStateNew::ServerRPCThrowGrenade_Implementation(const float TimeHel
 
 void USoulBaseStateNew::MulticastRPCThrowGrenade_Implementation(const float TimeHeldGrenade)
 {
-	if(LightGrenade && TimeHeldGrenade > 0)
+	if(LightGrenade)
 		LightGrenade->Throw(TimeHeldGrenade);
 	
 	SoulCharacter->OnGrenadeThrowEnd(); 
@@ -188,7 +195,7 @@ void USoulBaseStateNew::ActivateAbilities()
 void USoulBaseStateNew::CheckCanThrow()
 {
 	FHitResult HitResult;
-	if (bool bHitSomething = GetWorld()->LineTraceSingleByChannel(HitResult,SoulCharacter->GetActorLocation(),SoulCharacter->ThrowLoc->GetComponentLocation(),ECC_Visibility))
+	if (GetWorld()->LineTraceSingleByChannel(HitResult,SoulCharacter->GetActorLocation(),SoulCharacter->ThrowLoc->GetComponentLocation(),ECC_Visibility))
 	{
 		if(LightGrenade)
 			LightGrenade->DisableIndicator();
