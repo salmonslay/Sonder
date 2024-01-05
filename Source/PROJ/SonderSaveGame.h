@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "EnhancedActionKeyMapping.h"
+#include "PROJCharacter.h"
 #include "GameFramework/SaveGame.h"
 #include "SonderSaveGame.generated.h"
 
@@ -53,7 +54,7 @@ public:
 	TArray<ESonderLevel> GetLevelsCompleted() const { return LevelsCompleted; }
 
 	UFUNCTION(BlueprintCallable)
-	void ResetMapProgress() { LevelsCompleted = {ESonderLevel::None}; } 
+	void ResetMapProgress() { LevelsCompleted = {ESonderLevel::None}; }
 
 	/**
 	 * Iter through all completed levels and return the highest one
@@ -75,7 +76,7 @@ public:
 	 */
 	UFUNCTION(BlueprintPure)
 	static FString GetLevelToContinueTo(const ESonderLevel From = ESonderLevel::None);
-	
+
 	UFUNCTION(BlueprintPure)
 	static bool CanPlayLevel(const ESonderLevel LevelToPlay);
 
@@ -87,6 +88,46 @@ public:
 	float Brightness = 0;
 
 	UPROPERTY(BlueprintReadWrite)
-	float MasterVolume = 0.5f; 
+	float MasterVolume = 0.5f;
+
+#pragma region achievements
+	UPROPERTY(BlueprintReadOnly)
+	int EverlookingEyesKilled = 0;
+
+	UPROPERTY(BlueprintReadOnly)
+	int GrenadesExplodedWithPulse = 0;
+
+	UPROPERTY(BlueprintReadOnly)
+	int RobotBoostsWithDash = 0;
+
+	UFUNCTION(BlueprintCallable)
+	static int AddEverlookingEyesKilled()
+	{
+		USonderSaveGame* SaveGame = APROJCharacter::GetSaveGameSafe();
+		SaveGame->EverlookingEyesKilled++;
+		APROJCharacter::SetSaveGame(SaveGame);
+
+		return SaveGame->EverlookingEyesKilled;
+	}
 	
+	UFUNCTION(BlueprintCallable)
+	static int AddGrenadesExplodedWithPulse()
+	{
+		USonderSaveGame* SaveGame = APROJCharacter::GetSaveGameSafe();
+		SaveGame->GrenadesExplodedWithPulse++;
+		APROJCharacter::SetSaveGame(SaveGame);
+
+		return SaveGame->GrenadesExplodedWithPulse;
+	}
+	
+	UFUNCTION(BlueprintCallable)
+	static int AddRobotBoostsWithDash()
+	{
+		USonderSaveGame* SaveGame = APROJCharacter::GetSaveGameSafe();
+		SaveGame->RobotBoostsWithDash++;
+		APROJCharacter::SetSaveGame(SaveGame);
+
+		return SaveGame->RobotBoostsWithDash;
+	}
+#pragma endregion
 };
