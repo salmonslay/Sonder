@@ -40,6 +40,9 @@ void ALightGrenade::BeginPlay()
 
 	CollisionArea->OnComponentBeginOverlap.AddDynamic(this,&ALightGrenade::ActorBeginOverlap);
 	CollisionArea->OnComponentEndOverlap.AddDynamic(this,&ALightGrenade::OverlapEnd);
+
+	PulseExplosionArea->OnComponentBeginOverlap.AddDynamic(this,&ALightGrenade::ActorBeginOverlap);
+	PulseExplosionArea->OnComponentEndOverlap.AddDynamic(this,&ALightGrenade::OverlapEnd);
 	
 	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap); 
 	ExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
@@ -169,11 +172,24 @@ void ALightGrenade::ServerRPCExplosion_Implementation()
 
 void ALightGrenade::MulticastRPCExplosion_Implementation()
 {
-	ExplosionEvent();
+	
 	
 	TArray<AActor*> OverlappingActors;
+
+	if (bIsPulseExploding)
+	{
+		PulseExplosionEvent();
+		PulseExplosionArea->GetOverlappingActors(OverlappingActors,AActor::StaticClass());
+		Damage = Damage*PulseDamageMultiplier;
+
+		
+	}
+	else
+	{
+		ExplosionArea->GetOverlappingActors(OverlappingActors,AActor::StaticClass());
+		ExplosionEvent();
+	}
 	
-	ExplosionArea->GetOverlappingActors(OverlappingActors,AActor::StaticClass());
 	
 	DisableGrenade();
 	
@@ -239,15 +255,18 @@ void ALightGrenade::EnableCanThrow()
 void ALightGrenade::DisableGrenade()
 {
 	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	PulseExplosionArea->SetCollisionResponseToAllChannels(ECR_Ignore);
 	GrenadeMesh->SetVisibility(false);
+	bIsPulseExploding = false;
 	
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::EnableCanThrow, ThrowCooldown);
 }
 
-void ALightGrenade::EnableGrenade() const
+void ALightGrenade::EnableGrenade()
 {
 	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	GrenadeMesh->SetVisibility(true);
+	Damage = DefaultDamage;
 }
 
 void ALightGrenade::GetPlayer()
@@ -270,8 +289,8 @@ void ALightGrenade::StartCountdown(float TimeUntilExplosion)
 
 void ALightGrenade::PulseExplosion()
 {
-	Damage = 20.0f;
-	PulseExplosionArea->Activate();
+	PulseExplosionArea->SetCollisionResponseToAllChannels(ECR_Overlap);
+	bIsPulseExploding = true;
 }
 
 void ALightGrenade::IsChargingGrenade(const float TimeHeld)
