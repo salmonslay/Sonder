@@ -20,14 +20,12 @@ ESonderLevel USonderSaveGame::GetHighestLevelCompleted() const
 TMap<ESonderLevel, FString> USonderSaveGame::GetLevelPaths()
 {
 	TMap<ESonderLevel, FString> LevelPaths;
-	LevelPaths.Add(ESonderLevel::MainMenu, TEXT("/Game/Maps/MainMenu"));
 	LevelPaths.Add(ESonderLevel::Tutorial, TEXT("/Game/Maps/Levels/Tutorial"));
 	LevelPaths.Add(ESonderLevel::Level1, TEXT("/Game/Maps/Levels/Level1"));
 	LevelPaths.Add(ESonderLevel::Arena1, TEXT("/Game/Maps/Levels/Arena1"));
 	LevelPaths.Add(ESonderLevel::Level2, TEXT("/Game/Maps/Levels/Level2"));
 	LevelPaths.Add(ESonderLevel::Arena2, TEXT("/Game/Maps/Levels/Arena2"));
 	LevelPaths.Add(ESonderLevel::Ending, TEXT("/Game/Maps/Levels/Outro"));
-	LevelPaths.Add(ESonderLevel::ArenaSurvival, TEXT("/Game/Maps/Levels/ArenaSurvival"));
 	return LevelPaths;
 }
 

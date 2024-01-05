@@ -8,7 +8,6 @@
 #include "LevelSequenceActor.h"
 #include "LevelSequencePlayer.h"
 #include "PROJCharacter.h"
-#include "SonderGameInstance.h"
 #include "Blueprint/UserWidget.h"
 #include "Blueprint/WidgetBlueprintLibrary.h"
 #include "Kismet/GameplayStatics.h"
@@ -33,8 +32,6 @@ void ACutsceneManager::BeginPlay()
 {
 	Super::BeginPlay();
 
-	GameInstance = Cast<USonderGameInstance>(GetGameInstance()); 
-
 	// will only be 1 if playing online, 2 if playing local 
 	for(int i = 0; i < UGameplayStatics::GetNumLocalPlayerControllers(this); i++)
 		PlayerControllers.Add(UGameplayStatics::GetPlayerController(this, i)); 
@@ -42,8 +39,7 @@ void ACutsceneManager::BeginPlay()
 	if(HasAuthority())
 		GetWorldTimerManager().SetTimerForNextTick(this, &ACutsceneManager::BindSkipCutsceneButton); 
 
-	// Do not play cutscene if the level was loaded from itself/reset (as in died in arenas) 
-	if(bAutoPlay && !GameInstance->LevelWasReset())
+	if(bAutoPlay)
 	{
 		if(AutoPlayBlackScreenWidget)
 		{
@@ -195,10 +191,10 @@ void ACutsceneManager::StopCutscene()
 
 	CutscenesPlayingCounter--;
 
-	OnCutsceneEnd(LevelToLoadOnCutsceneEnd != ESonderLevel::None); 
+	OnCutsceneEnd(!LevelToLoadOnCutsceneEnd.IsNone()); 
 
-	if(LevelToLoadOnCutsceneEnd != ESonderLevel::None && HasAuthority())
-		GameInstance->LoadNewLevel(LevelToLoadOnCutsceneEnd);
+	if(!LevelToLoadOnCutsceneEnd.IsNone() && HasAuthority())
+		GetWorld()->ServerTravel("/Game/Maps/" + LevelToLoadOnCutsceneEnd.ToString());
 	else 
 		ShowHud();
 }

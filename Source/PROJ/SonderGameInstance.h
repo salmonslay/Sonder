@@ -32,17 +32,6 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void AddToLog(FString TextToLog);
 
-	UFUNCTION(BlueprintCallable)
-	void LoadNewLevel(ESonderLevel NewLevel);
-
-	bool LevelWasReset() const { return PreviousLevel == CurrentLevel; }
-
 private:
 	FString FilePath;
-
-	/** The level that loaded the current level, will be same as current if a level is reset */
-	ESonderLevel PreviousLevel = ESonderLevel::None;
-
-	ESonderLevel CurrentLevel = ESonderLevel::None;
-	
 };

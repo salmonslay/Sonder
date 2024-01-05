@@ -2,8 +2,6 @@
 
 
 #include "LevelSwitcher.h"
-
-#include "SonderGameInstance.h"
 #include "GameFramework/Character.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -24,8 +22,9 @@ void ALevelSwitcher::NotifyActorBeginOverlap(AActor* OtherActor)
 		{
 			bIsSwitching = true;
 
-			UE_LOG(LogTemp, Display, TEXT("Changing level to %s"), *UEnum::GetValueAsString(LevelToLoad));
-			Cast<USonderGameInstance>(GetGameInstance())->LoadNewLevel(LevelToLoad);
+			UE_LOG(LogTemp, Display, TEXT("Changing level to %s"), *LevelName.ToString());
+			GetWorld()->ServerTravel(LevelName.ToString());
+			
 		}
 	}
 }

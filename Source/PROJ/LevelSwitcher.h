@@ -3,11 +3,9 @@
 #pragma once
 
 #include "CoreMinimal.h"
-#include "CutsceneManager.h"
 #include "Engine/TriggerBox.h"
 #include "LevelSwitcher.generated.h"
 
-enum class ESonderLevel : uint8;
 /**
  * 
  */
@@ -28,8 +26,8 @@ private:
 	UPROPERTY()
 	TArray<AActor*> OverlappingActors;
 
-	// The level to switch to
+	// The name (path) of the level to switch to
 	UPROPERTY(EditAnywhere)
-	ESonderLevel LevelToLoad = ESonderLevel::MainMenu;
+	FName LevelName = "/Game/Maps/TestMaps/SofiaTestMap";
 
 };

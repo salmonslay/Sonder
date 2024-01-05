@@ -20,10 +20,3 @@ void USonderGameInstance::AddToLog(FString TextToLog)
 	FFileHelper::SaveStringToFile(Now.ToString() + TextToLog + "\n", *FilePath ,FFileHelper::EEncodingOptions::ForceUTF8, &IFileManager::Get(), EFileWrite::FILEWRITE_Append);
 }
 
-void USonderGameInstance::LoadNewLevel(const ESonderLevel NewLevel)
-{
-	PreviousLevel = CurrentLevel; 
-	CurrentLevel = NewLevel; 
-
-	GetWorld()->ServerTravel(*USonderSaveGame::GetLevelPaths().Find(NewLevel)); 
-}
