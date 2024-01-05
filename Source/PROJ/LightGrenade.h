@@ -48,6 +48,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void ThrowEvent();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void PulseExplosionEvent();
+
 	UPROPERTY()
 	class ASoulCharacter* Player;
 
@@ -70,7 +73,10 @@ public:
 	float MaxTimePressed;
 
 	UPROPERTY(EditAnywhere)
-	float Damage = 5.0f;
+	float DefaultDamage = 5.0f;
+	
+	UPROPERTY(EditAnywhere)
+	float PulseDamageMultiplier = 2.0f;
 
 	/**
  * Function executed on server ONLY when client attacks, called from client. This function will probably only call
@@ -90,6 +96,9 @@ private:
 	UPROPERTY()
 	FTimerHandle TimerHandle;
 
+	UPROPERTY()
+	float Damage;
+	
 	/** How much a second of hold time should add to the throw velocity */
 	UPROPERTY(EditAnywhere)
 	float FireSpeedPerSecondHeld = 300000.0f;
@@ -112,6 +121,9 @@ private:
 
 	UPROPERTY(Replicated)
 	bool bIsExploding = false;
+
+	UPROPERTY()
+	bool bIsPulseExploding = false;
 	
 	/** The indicator class for the grenade */
 	UPROPERTY(EditAnywhere)
@@ -119,6 +131,8 @@ private:
 
 	UPROPERTY()
 	AActor* Indicator;
+
+	
 
 	/** Needed an offset to get the indicator to match the grenades position */
 	UPROPERTY(EditAnywhere)
@@ -144,7 +158,7 @@ private:
 
 	void DisableGrenade();
 
-	void EnableGrenade() const;
+	void EnableGrenade();
 
 	void GetPlayer();
 
