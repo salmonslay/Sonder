@@ -58,6 +58,7 @@ class PROJ_API PathfinderHeap
 
                 if (NodeComparisonFunctions::IsGreaterThan(*Item,*Items[SwapIndex]))
 				{
+                	ensure(Items.IsValidIndex(SwapIndex));
 					Swap(Item, Items[SwapIndex]);
 				}
 				else {
@@ -76,7 +77,7 @@ class PROJ_API PathfinderHeap
 		int ParentIndex = (Item->HeapIndex - 1) / 2;
 
 		ensure(Items.IsValidIndex(ParentIndex));
-		while (true)
+		while (ParentIndex >= 0)
 		{
 			GridNode* ParentItem = Items[ParentIndex];
 			ensure(ParentItem != nullptr);
@@ -89,7 +90,7 @@ class PROJ_API PathfinderHeap
 				break;
 			}
 			ParentIndex = (Item->HeapIndex - 1) / 2;
-			ensure(Items.IsValidIndex(ParentIndex));
+			//ensure(Items.IsValidIndex(ParentIndex));
 		}
 	}
 
@@ -97,7 +98,8 @@ class PROJ_API PathfinderHeap
 	{
 		ensure(ItemA != nullptr);
 		ensure(ItemB != nullptr);
-		std::swap(Items[ItemA->HeapIndex], Items[ItemB->HeapIndex]);
+		Items.Swap(ItemA->HeapIndex, ItemB->HeapIndex);
+		//std::swap(Items[ItemA->HeapIndex], Items[ItemB->HeapIndex]);
 		const int ItemAIndex = ItemA->HeapIndex;
 		ItemA->HeapIndex = ItemB->HeapIndex;
 		ItemB->HeapIndex = ItemAIndex;
@@ -158,6 +160,7 @@ public:
 	bool Contains(const GridNode* Item) 
 	{
 		ensure(Item != nullptr);
+		if(Item->HeapIndex == -1) return false;
 		ensure(Items.IsValidIndex(Item->HeapIndex));
 		//ensure(Items[Item->HeapIndex] != nullptr);
 		return Items[Item->HeapIndex] != nullptr && NodeComparisonFunctions::IsEqualTo(*Items[Item->HeapIndex], *Item);
