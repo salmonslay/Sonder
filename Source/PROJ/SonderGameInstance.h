@@ -4,7 +4,6 @@
 
 #include "CoreMinimal.h"
 #include "AdvancedFriendsGameInstance.h"
-#include "SonderSaveGame.h"
 #include "SonderGameInstance.generated.h"
 
 /**
@@ -16,9 +15,8 @@ class PROJ_API USonderGameInstance : public UAdvancedFriendsGameInstance
 	GENERATED_BODY()
 
 public:
-
 	USonderGameInstance(const FObjectInitializer& ObjectInitializer);
-	
+
 	UPROPERTY(BlueprintReadWrite)
 	bool bIsPlayingLocal = false;
 
@@ -31,6 +29,12 @@ public:
 
 	UFUNCTION(BlueprintCallable)
 	void AddToLog(FString TextToLog);
+
+	/**
+	 * The BP_SonderGameInstance will implement this event to check if any achievements have been unlocked.
+	 */
+	UFUNCTION(BlueprintImplementableEvent)
+	void CheckAchievements();
 
 private:
 	FString FilePath;

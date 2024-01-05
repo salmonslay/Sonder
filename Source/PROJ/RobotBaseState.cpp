@@ -10,6 +10,7 @@
 #include "RobotHookingState.h"
 #include "RobotStateMachine.h"
 #include "ShadowRobotCharacter.h"
+#include "SonderSaveGame.h"
 #include "SoulCharacter.h"
 #include "Chaos/CollisionResolutionUtil.h"
 #include "GameFramework/CharacterMovementComponent.h"
@@ -233,6 +234,7 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 				continue;
 			
 			Grenade->PulseExplosion();
+			USonderSaveGame::AddGrenadesExplodedWithPulse();
 			Grenade->ServerRPCExplosion();
 			UE_LOG(LogTemp, Warning, TEXT("Explode"));
 		}
