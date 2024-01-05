@@ -154,6 +154,10 @@ void AEnemyCharacter::Idle()
 float AEnemyCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
                                   AActor* DamageCauser)
 {
+	// Enemies cannot damage other enemies 
+	if(DamageCauser->IsA(AEnemyCharacter::StaticClass()))
+		return 0; 
+		
 	// Increase damage by eventual Robot damage multiplier 
 	if(const auto Robot = Cast<ARobotStateMachine>(DamageCauser))
 		DamageAmount *= Robot->FindComponentByClass<URobotBaseState>()->GetDamageBoostMultiplier();

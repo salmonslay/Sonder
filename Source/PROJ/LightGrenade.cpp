@@ -121,7 +121,7 @@ void ALightGrenade::MulticastRPCThrow_Implementation(const float TimeHeld)
 		bIsExploding = false;
 		
 		ExplosionArea->SetWorldLocation(Player->ThrowLoc->GetComponentLocation()); 
-		
+
 		ExplosionArea->AddImpulse(GetLaunchForce(TimeHeld));
 
 		EnableGrenade();
@@ -219,7 +219,10 @@ FVector ALightGrenade::GetLaunchForce(const float TimeHeld)
 	{
 		GetPlayer();
 	}
-	
+
+	if(TimeHeld == 0)
+		return FVector::ZeroVector; 
+		
 	// Get the direction to throw the grenade in, check if depth movement is enabled 
 	FVector ThrowDir = Player->ThrowLoc->GetComponentLocation() - Player->GetActorLocation();
 	if(!Player->IsDepthMovementEnabled())
