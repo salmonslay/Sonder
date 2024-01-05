@@ -109,8 +109,6 @@
 			<destination>{2d00e58f-4db7-410c-ae2c-4834925439be}</destination>
 			<destination>{8670b81b-a1d1-409f-80c9-22711e6c47e9}</destination>
 			<destination>{3308700c-1b4d-48a5-9c6a-6594b22b9691}</destination>
-			<destination>{58f06370-4dd8-463c-8bb0-b5a45f8dc09a}</destination>
-			<destination>{df146630-32ee-471c-bdc2-4f890667b5cf}</destination>
 			<destination>{5f0ab7a1-aa81-4d9d-9947-30db5e8ec350}</destination>
 		</relationship>
 	</object>
@@ -130,50 +128,34 @@
 		<property name="filterTypeA">
 			<value>4</value>
 		</property>
+		<property name="filterTypeC">
+			<value>9</value>
+		</property>
 		<property name="filterTypeD">
 			<value>2</value>
 		</property>
 		<property name="frequencyA">
 			<value>162.124435</value>
 		</property>
+		<property name="frequencyC">
+			<value>3552.8811</value>
+		</property>
 		<property name="frequencyD">
-			<value>18257.3887</value>
+			<value>18639.6113</value>
 		</property>
 		<property name="qualityA">
 			<value>0.665137947</value>
 		</property>
 		<property name="qualityD">
-			<value>0.20465517</value>
+			<value>0.100000001</value>
+		</property>
+		<property name="gainC">
+			<value>-11.8965511</value>
 		</property>
 	</object>
 	<object class="DistortionEffect" id="{3308700c-1b4d-48a5-9c6a-6594b22b9691}">
 		<property name="level">
 			<value>0.314999998</value>
-		</property>
-	</object>
-	<object class="FlangerEffect" id="{58f06370-4dd8-463c-8bb0-b5a45f8dc09a}">
-		<property name="bypass">
-			<value>true</value>
-		</property>
-		<property name="rate">
-			<value>3.70000005</value>
-		</property>
-		<property name="mix">
-			<value>78</value>
-		</property>
-	</object>
-	<object class="ChorusEffect" id="{df146630-32ee-471c-bdc2-4f890667b5cf}">
-		<property name="bypass">
-			<value>true</value>
-		</property>
-		<property name="rate">
-			<value>0.0949999988</value>
-		</property>
-		<property name="depth">
-			<value>0</value>
-		</property>
-		<property name="mix">
-			<value>66.5</value>
 		</property>
 	</object>
 	<object class="GainEffect" id="{5f0ab7a1-aa81-4d9d-9947-30db5e8ec350}">
