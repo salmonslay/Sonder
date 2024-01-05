@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SonderSaveGame.h"
 #include "Engine/TriggerBox.h"
 #include "CutsceneManager.generated.h"
 
+enum class ESonderLevel : uint8;
 class UInputMappingContext;
 /**
  * Cutscene class handling playing all cutscenes 
@@ -87,10 +89,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	bool bHidePlayersDuringCutscene = true;
     
-	/** The level to load when the cutscene finished playing. Leaving it empty loads no new level
-     *  NOTE: Needs to be in form of: Levels/MAPNAMEGOESHERE or just the map name if in the Maps folder */ 
+	/** The level to load when the cutscene finished playing. None loads no new level */
 	UPROPERTY(EditAnywhere)
-	FName LevelToLoadOnCutsceneEnd = NAME_None;
+	ESonderLevel LevelToLoadOnCutsceneEnd = ESonderLevel::None;
 
 	/** Widget shown until the cutscene starts playing, probably a black screen but not necessarily.
 	 * Is removed when cutscene starts */
@@ -106,7 +107,10 @@ private:
 
 	/** Widget classes to hide during cutscenes */
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UUserWidget> WidgetsToHide; 
+	TSubclassOf<UUserWidget> WidgetsToHide;
+
+	UPROPERTY()
+	class USonderGameInstance* GameInstance; 
 
 	/** Plays the assigned cutscene */
 	void PlayCutscene();

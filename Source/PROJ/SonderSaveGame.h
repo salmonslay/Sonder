@@ -8,7 +8,6 @@
 #include "SonderSaveGame.generated.h"
 
 // Enum values are 10-step increments, so that we can add more levels in between if needed while maintaining the order
-// EDIT: This is no longer true, they have to use 10-step increments. Fuck.
 UENUM(BlueprintType)
 enum class ESonderLevel : uint8
 {
@@ -16,12 +15,14 @@ enum class ESonderLevel : uint8
 	 * None is mostly meant as a placeholder for when you change level but don't want to count it
 	 */
 	None = 0,
+	MainMenu = 5, 
 	Tutorial = 10,
 	Level1 = 20,
 	Arena1 = 30,
 	Level2 = 40,
 	Arena2 = 50,
 	Ending = 60,
+	ArenaSurvival = 70,
 };
 
 UENUM(BlueprintType)
