@@ -6,6 +6,7 @@
 #include "PROJCharacter.h"
 #include "SonderGameInstance.h"
 #include "Engine/DamageEvents.h"
+#include "Kismet/GameplayStatics.h"
 
 ADamageZone::ADamageZone()
 {
@@ -15,6 +16,7 @@ ADamageZone::ADamageZone()
 void ADamageZone::BeginPlay()
 {
 	Super::BeginPlay();
+	TeamkillCount = 0;
 }
 
 void ADamageZone::NotifyActorBeginOverlap(AActor* OtherActor)
@@ -43,7 +45,8 @@ void ADamageZone::NotifyActorEndOverlap(AActor* OtherActor)
 	{
 		PlayerActors.Remove(OtherActor);
 		UE_LOG(LogTemp, Warning, TEXT("Removed %s from %s"), *OtherActor->GetName(), *GetName())
-		Cast<USonderGameInstance>(GetGameInstance())->AddToLog("Player " + OtherActor->GetName() + " died from kill zone.");
+		Cast<USonderGameInstance>(GetGameInstance())->AddToLog(
+			"Player " + OtherActor->GetName() + " died from kill zone.");
 		PlayersDamagedThisOverlap.Remove(OtherActor);
 	}
 }
@@ -76,9 +79,19 @@ void ADamageZone::Tick(float DeltaSeconds)
 					// Character->TakeDamage(TNumericLimits<float>::Max(), FDamageEvent(), nullptr, this);
 
 					// Calls IDied directly instead 
-					if(const auto HealthComp = Character->FindComponentByClass<UNewPlayerHealthComponent>())
-						HealthComp->IDied(); 
-					
+					if (const auto HealthComp = Character->FindComponentByClass<UNewPlayerHealthComponent>())
+					{
+						HealthComp->IDied();
+
+						if (bIsTeamkillZone)
+						{
+							TeamkillCount++;
+							USonderGameInstance* GameInstance = Cast<USonderGameInstance>(
+								UGameplayStatics::GetGameInstance(GEngine->GameViewport->GetWorld()));
+							GameInstance->CheckAchievements();
+						}
+					}
+
 					PlayerActors.Remove(PlayerActor);
 					PlayersDamagedThisOverlap.Remove(PlayerActor);
 				}
