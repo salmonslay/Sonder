@@ -148,20 +148,29 @@
 		<property name="filterTypeA">
 			<value>4</value>
 		</property>
+		<property name="filterTypeC">
+			<value>9</value>
+		</property>
 		<property name="filterTypeD">
 			<value>2</value>
 		</property>
 		<property name="frequencyA">
-			<value>162.124435</value>
+			<value>327.934692</value>
+		</property>
+		<property name="frequencyC">
+			<value>3940.68457</value>
 		</property>
 		<property name="frequencyD">
-			<value>18257.3887</value>
+			<value>17157.1074</value>
 		</property>
 		<property name="qualityA">
-			<value>0.665137947</value>
+			<value>0.413965493</value>
 		</property>
 		<property name="qualityD">
-			<value>0.20465517</value>
+			<value>0.100000001</value>
+		</property>
+		<property name="gainC">
+			<value>-9.3103447</value>
 		</property>
 	</object>
 	<object class="DistortionEffect" id="{d94c2c27-480b-43a3-8d05-242f525b4803}">
