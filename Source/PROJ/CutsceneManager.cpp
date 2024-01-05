@@ -196,7 +196,7 @@ void ACutsceneManager::StopCutscene()
 	if(!LevelToLoadOnCutsceneEnd.IsNone() && HasAuthority())
 		GetWorld()->ServerTravel("/Game/Maps/" + LevelToLoadOnCutsceneEnd.ToString());
 	else 
-		ShowHud(); 
+		ShowHud();
 }
 
 void ACutsceneManager::TogglePlayerVisibility(const bool bVisible) const
@@ -210,6 +210,7 @@ void ACutsceneManager::TogglePlayerVisibility(const bool bVisible) const
 
 void ACutsceneManager::MulticastRPC_StopCutscene_Implementation()
 {
+	OnCutsceneSkipped();
 	StopCutscene(); 
 }
 
