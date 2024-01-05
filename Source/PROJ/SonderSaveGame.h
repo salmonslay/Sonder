@@ -5,7 +5,9 @@
 #include "CoreMinimal.h"
 #include "EnhancedActionKeyMapping.h"
 #include "PROJCharacter.h"
+#include "SonderGameInstance.h"
 #include "GameFramework/SaveGame.h"
+#include "Kismet/GameplayStatics.h"
 #include "SonderSaveGame.generated.h"
 
 // Enum values are 10-step increments, so that we can add more levels in between if needed while maintaining the order
@@ -28,9 +30,9 @@ enum class ESonderLevel : uint8
 UENUM(BlueprintType)
 enum class EScalability : uint8
 {
-	Epic = 0, 
+	Epic = 0,
 	High = 1,
-	Medium = 2, 
+	Medium = 2,
 	Low = 3,
 	Auto = 10
 };
@@ -39,7 +41,7 @@ UENUM(BlueprintType)
 enum class ELanguage : uint8
 {
 	English = 0,
-	Swedish, 
+	Swedish,
 };
 
 USTRUCT(BlueprintType)
@@ -71,7 +73,7 @@ public:
 	TArray<ESonderLevel> GetLevelsCompleted() const { return LevelsCompleted; }
 
 	UFUNCTION(BlueprintCallable)
-	void ResetMapProgress() { LevelsCompleted = {ESonderLevel::None}; } 
+	void ResetMapProgress() { LevelsCompleted = {ESonderLevel::None}; }
 
 	/**
 	 * Iter through all completed levels and return the highest one
@@ -93,7 +95,7 @@ public:
 	 */
 	UFUNCTION(BlueprintPure)
 	static FString GetLevelToContinueTo(const ESonderLevel From = ESonderLevel::None);
-	
+
 	UFUNCTION(BlueprintPure)
 	static bool CanPlayLevel(const ESonderLevel LevelToPlay);
 
@@ -111,7 +113,7 @@ public:
 	EScalability CurrentScalability = EScalability::High;
 
 	UPROPERTY(BlueprintReadWrite)
-	ELanguage CurrentLanguage = ELanguage::English; 
+	ELanguage CurrentLanguage = ELanguage::English;
 
 #pragma region achievements
 	UPROPERTY(BlueprintReadOnly)
@@ -132,5 +134,38 @@ public:
 
 		return SaveGame->EverlookingEyesKilled;
 	}
-	
+
+	UFUNCTION(BlueprintCallable)
+	static int AddGrenadesExplodedWithPulse()
+	{
+		USonderSaveGame* SaveGame = APROJCharacter::GetSaveGameSafe();
+		SaveGame->GrenadesExplodedWithPulse++;
+		APROJCharacter::SetSaveGame(SaveGame);
+
+		if (GEngine)
+		{
+			USonderGameInstance* GameInstance = Cast<USonderGameInstance>(
+				UGameplayStatics::GetGameInstance(GEngine->GameViewport->GetWorld()));
+			GameInstance->CheckAchievements();
+		}
+
+		return SaveGame->GrenadesExplodedWithPulse;
+	}
+
+	UFUNCTION(BlueprintCallable)
+	static int AddRobotBoostsWithDash()
+	{
+		USonderSaveGame* SaveGame = APROJCharacter::GetSaveGameSafe();
+		SaveGame->RobotBoostsWithDash++;
+		APROJCharacter::SetSaveGame(SaveGame);
+
+		if (GEngine)
+		{
+			USonderGameInstance* GameInstance = Cast<USonderGameInstance>(
+				UGameplayStatics::GetGameInstance(GEngine->GameViewport->GetWorld()));
+			GameInstance->CheckAchievements();
+		}
+
+		return SaveGame->RobotBoostsWithDash;
+	}
 };
