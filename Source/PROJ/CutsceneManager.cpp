@@ -37,12 +37,7 @@ void ACutsceneManager::BeginPlay()
 		PlayerControllers.Add(UGameplayStatics::GetPlayerController(this, i)); 
 
 	if(HasAuthority())
-		GetWorldTimerManager().SetTimerForNextTick(this, &ACutsceneManager::BindSkipCutsceneButton);
-
-	const FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(this);
-
-	if(CurrentLevelName.Equals(TEXT("Arena2")) && CurrentLevelName.Equals(LatestPlayedCutsceneLevel))
-		return; 
+		GetWorldTimerManager().SetTimerForNextTick(this, &ACutsceneManager::BindSkipCutsceneButton); 
 
 	if(bAutoPlay)
 	{
@@ -90,8 +85,6 @@ void ACutsceneManager::PlayCutscene()
 		UE_LOG(LogTemp, Warning, TEXT("No level sequencer assigned to cutscene manager"))
 		return;
 	}
-
-	LatestPlayedCutsceneLevel = UGameplayStatics::GetCurrentLevelName(this); 
 
 	DisablePlayerInput(); 
 

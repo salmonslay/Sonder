@@ -30,6 +30,8 @@ void URobotHookingState::Enter()
 
 	FailSafeTimer = 0;
 
+	StartLocation = CharOwner->GetActorLocation();
+
 	CurrentTargetActor = nullptr; 
 
 	SetHookTarget(); 
@@ -226,8 +228,6 @@ void URobotHookingState::MulticastRPCHookShotStart_Implementation(const bool bVa
 
 		MovementComponent->GravityScale = 0;
 		MovementComponent->Velocity = FVector::ZeroVector;
-		
-		StartLocation = CharOwner->GetActorLocation();
 	}
 
 	RobotCharacter->OnHookShotStart(); 

@@ -19,14 +19,12 @@ enum class ESonderLevel : uint8
 	 * None is mostly meant as a placeholder for when you change level but don't want to count it
 	 */
 	None = 0,
-	MainMenu = 5,
 	Tutorial = 10,
 	Level1 = 20,
 	Arena1 = 30,
 	Level2 = 40,
 	Arena2 = 50,
 	Ending = 60,
-	ArenaSurvival = 70,
 };
 
 UENUM(BlueprintType)
