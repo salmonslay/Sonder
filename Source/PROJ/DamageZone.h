@@ -54,4 +54,17 @@ private:
 
 	UPROPERTY()
 	TArray<AActor*> PlayersDamagedThisOverlap;
+
+	UPROPERTY(EditAnywhere)
+	bool bIsTeamkillZone = false;
+
+public:
+	/**
+	 * The amount of times a player has been killed in a zone marked as a teamkill zone.
+	 * This will reset at the start of every level containing at least one kill zone.
+	 */
+	inline static int TeamkillCount = 0;
+
+	UFUNCTION(BlueprintPure)
+	static int GetTeamkillCount() { return TeamkillCount; }
 };
