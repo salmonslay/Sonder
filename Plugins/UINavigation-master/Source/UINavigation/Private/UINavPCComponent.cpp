@@ -713,9 +713,15 @@ void UUINavPCComponent::HandleAnalogInputEvent(FSlateApplication& SlateApp, cons
 
 			if (ThumbstickDelta.SizeSquared() < 0.01f) return;
 
+			FDisplayMetrics DisplayMetrics;
+			FSlateApplication::Get().GetInitialDisplayMetrics(DisplayMetrics);
+			int32 ScreenWidth = DisplayMetrics.PrimaryDisplayWidth;
+			float WidthScale = ScreenWidth/1920.0f;
+			float ScaledThumbstickCursorSensitivity = ThumbstickCursorSensitivity * WidthScale;
+			
 			const FVector2D OldPosition = SlateApp.GetCursorPos();
-			const FVector2D NewPosition(OldPosition.X + (bIsHorizontal ? Value * ThumbstickCursorSensitivity * 100.0f * DeltaTime : 0.0f),
-				OldPosition.Y + (!bIsHorizontal ? -Value * ThumbstickCursorSensitivity * 100.0f * DeltaTime : 0.0f));
+			const FVector2D NewPosition(OldPosition.X + (bIsHorizontal ? Value * ScaledThumbstickCursorSensitivity * 100.0f * DeltaTime : 0.0f),
+				OldPosition.Y + (!bIsHorizontal ? -Value * ScaledThumbstickCursorSensitivity * 100.0f * DeltaTime : 0.0f));
 			SlateApp.SetCursorPos(NewPosition);
 			// Since the cursor may have been locked and its location clamped, get the actual new position
 			if (const TSharedPtr<FSlateUser> SlateUser = SlateApp.GetUser(SlateApp.CursorUserIndex))
