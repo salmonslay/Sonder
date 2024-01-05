@@ -200,7 +200,7 @@ void ACutsceneManager::StopCutscene()
 	if(LevelToLoadOnCutsceneEnd != ESonderLevel::None && HasAuthority())
 		GameInstance->LoadNewLevel(LevelToLoadOnCutsceneEnd);
 	else 
-		ShowHud(); 
+		ShowHud();
 }
 
 void ACutsceneManager::TogglePlayerVisibility(const bool bVisible) const
@@ -214,6 +214,7 @@ void ACutsceneManager::TogglePlayerVisibility(const bool bVisible) const
 
 void ACutsceneManager::MulticastRPC_StopCutscene_Implementation()
 {
+	OnCutsceneSkipped();
 	StopCutscene(); 
 }
 
