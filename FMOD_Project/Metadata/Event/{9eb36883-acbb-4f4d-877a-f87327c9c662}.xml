@@ -146,7 +146,7 @@
 			<value>10</value>
 		</property>
 		<property name="pitch">
-			<value>3.4000001</value>
+			<value>-8</value>
 		</property>
 		<relationship name="sounds">
 			<destination>{49a05359-f71f-41b8-85ac-bdcb687710b2}</destination>
@@ -186,6 +186,9 @@
 		</property>
 		<property name="startOffset">
 			<value>35</value>
+		</property>
+		<property name="pitch">
+			<value>-8</value>
 		</property>
 		<relationship name="modulators">
 			<destination>{75ff1d0b-190a-48fb-9c49-154c9448fa7c}</destination>
@@ -360,13 +363,13 @@
 			<value>162.124435</value>
 		</property>
 		<property name="frequencyD">
-			<value>18257.3887</value>
+			<value>11816.1611</value>
 		</property>
 		<property name="qualityA">
 			<value>0.665137947</value>
 		</property>
 		<property name="qualityD">
-			<value>0.20465517</value>
+			<value>0.246517241</value>
 		</property>
 	</object>
 	<object class="DistortionEffect" id="{acbfac4f-107d-4440-9363-5e7c630bfd6f}">

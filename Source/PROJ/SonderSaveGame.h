@@ -4,6 +4,7 @@
 
 #include "CoreMinimal.h"
 #include "EnhancedActionKeyMapping.h"
+#include "PROJCharacter.h"
 #include "GameFramework/SaveGame.h"
 #include "SonderSaveGame.generated.h"
 
@@ -111,5 +112,25 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	ELanguage CurrentLanguage = ELanguage::English; 
+
+#pragma region achievements
+	UPROPERTY(BlueprintReadOnly)
+	int EverlookingEyesKilled = 0;
+
+	UPROPERTY(BlueprintReadOnly)
+	int GrenadesExplodedWithPulse = 0;
+
+	UPROPERTY(BlueprintReadOnly)
+	int RobotBoostsWithDash = 0;
+
+	UFUNCTION(BlueprintCallable)
+	static int AddEverlookingEyesKilled()
+	{
+		USonderSaveGame* SaveGame = APROJCharacter::GetSaveGameSafe();
+		SaveGame->EverlookingEyesKilled++;
+		APROJCharacter::SetSaveGame(SaveGame);
+
+		return SaveGame->EverlookingEyesKilled;
+	}
 	
 };
