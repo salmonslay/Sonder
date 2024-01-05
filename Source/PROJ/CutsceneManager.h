@@ -3,9 +3,11 @@
 #pragma once
 
 #include "CoreMinimal.h"
+#include "SonderSaveGame.h"
 #include "Engine/TriggerBox.h"
 #include "CutsceneManager.generated.h"
 
+enum class ESonderLevel : uint8;
 class UInputMappingContext;
 /**
  * Cutscene class handling playing all cutscenes 
@@ -109,7 +111,9 @@ private:
 
 	/** Widget classes to hide during cutscenes */
 	UPROPERTY(EditDefaultsOnly)
-	TSubclassOf<UUserWidget> WidgetsToHide; 
+	TSubclassOf<UUserWidget> WidgetsToHide;
+
+	inline static FString LatestPlayedCutsceneLevel = ""; 
 
 	/** Plays the assigned cutscene */
 	void PlayCutscene();
