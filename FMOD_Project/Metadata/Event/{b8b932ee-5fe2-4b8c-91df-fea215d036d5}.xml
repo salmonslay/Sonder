@@ -159,6 +159,7 @@
 		<relationship name="effects">
 			<destination>{67afd649-c8d9-449d-9d44-31ed2dae98b3}</destination>
 			<destination>{03e7a478-38bb-46ab-b149-c52880c8ae9b}</destination>
+			<destination>{8cc9c64b-1e68-4437-bc4a-3b5060da135c}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{8f698c5d-2070-4cb9-9823-a0a4c25e86b2}" />
@@ -185,6 +186,11 @@
 		</property>
 		<property name="LFEUpmixEnabled">
 			<value>true</value>
+		</property>
+	</object>
+	<object class="ThreeEQEffect" id="{8cc9c64b-1e68-4437-bc4a-3b5060da135c}">
+		<property name="lowGain">
+			<value>-8</value>
 		</property>
 	</object>
 	<object class="MixerBusFader" id="{c149ba79-3082-4a57-ae15-b01d765cc15d}" />

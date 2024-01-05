@@ -43,12 +43,16 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 		{
 			if (OwnerCharacter->AvaliableJumpPoint != FVector::ZeroVector)
 			{
-				if (!OwnerCharacter->HasNavigationToTarget(BlackboardComponent->GetValueAsVector("CurrentMoveTarget")))
+				if (!BlackboardComponent->GetValueAsBool("bHasValidPath"))
 				{
 					BlackboardComponent->SetValueAsBool("bIsJumping", true);
 					JumpToPoint(OwnerLocation, OwnerCharacter->AvaliableJumpPoint);
 					OwnerCharacter->JumpCoolDownTimer = 0;
 					OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
+				}
+				else
+				{
+					UE_LOG(LogTemp, Error, TEXT("Has a valid path and therefore no jumpy :(("))
 				}
 			}
 		}

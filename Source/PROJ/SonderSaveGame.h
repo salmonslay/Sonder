@@ -25,6 +25,23 @@ enum class ESonderLevel : uint8
 	Ending = 60,
 };
 
+UENUM(BlueprintType)
+enum class EScalability : uint8
+{
+	Epic = 0, 
+	High = 1,
+	Medium = 2, 
+	Low = 3,
+	Auto = 10
+};
+
+UENUM(BlueprintType)
+enum class ELanguage : uint8
+{
+	English = 0,
+	Swedish, 
+};
+
 USTRUCT(BlueprintType)
 struct FLevelInfo
 {
@@ -54,7 +71,7 @@ public:
 	TArray<ESonderLevel> GetLevelsCompleted() const { return LevelsCompleted; }
 
 	UFUNCTION(BlueprintCallable)
-	void ResetMapProgress() { LevelsCompleted = {ESonderLevel::None}; }
+	void ResetMapProgress() { LevelsCompleted = {ESonderLevel::None}; } 
 
 	/**
 	 * Iter through all completed levels and return the highest one
@@ -76,7 +93,7 @@ public:
 	 */
 	UFUNCTION(BlueprintPure)
 	static FString GetLevelToContinueTo(const ESonderLevel From = ESonderLevel::None);
-
+	
 	UFUNCTION(BlueprintPure)
 	static bool CanPlayLevel(const ESonderLevel LevelToPlay);
 
@@ -89,6 +106,12 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	float MasterVolume = 0.5f;
+
+	UPROPERTY(BlueprintReadWrite)
+	EScalability CurrentScalability = EScalability::High;
+
+	UPROPERTY(BlueprintReadWrite)
+	ELanguage CurrentLanguage = ELanguage::English; 
 
 #pragma region achievements
 	UPROPERTY(BlueprintReadOnly)
@@ -110,24 +133,4 @@ public:
 		return SaveGame->EverlookingEyesKilled;
 	}
 	
-	UFUNCTION(BlueprintCallable)
-	static int AddGrenadesExplodedWithPulse()
-	{
-		USonderSaveGame* SaveGame = APROJCharacter::GetSaveGameSafe();
-		SaveGame->GrenadesExplodedWithPulse++;
-		APROJCharacter::SetSaveGame(SaveGame);
-
-		return SaveGame->GrenadesExplodedWithPulse;
-	}
-	
-	UFUNCTION(BlueprintCallable)
-	static int AddRobotBoostsWithDash()
-	{
-		USonderSaveGame* SaveGame = APROJCharacter::GetSaveGameSafe();
-		SaveGame->RobotBoostsWithDash++;
-		APROJCharacter::SetSaveGame(SaveGame);
-
-		return SaveGame->RobotBoostsWithDash;
-	}
-#pragma endregion
 };
