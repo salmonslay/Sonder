@@ -43,6 +43,9 @@ protected:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnCutsceneEnd(const bool bLoadingNewMap);
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void OnCutsceneSkipped();
+
 private:
 
 	/** Auto plays the cutscene on level load */
