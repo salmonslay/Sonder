@@ -30,8 +30,8 @@ void URobotBaseState::BeginPlay()
 	ShadowRobot = Cast<AShadowRobotCharacter>(CharOwner);
 
 	DefaultWalkSpeed = CharOwner->GetCharacterMovement()->MaxWalkSpeed;
-	
-	MovementComponent = CharOwner->GetCharacterMovement(); 
+
+	MovementComponent = CharOwner->GetCharacterMovement();
 }
 
 void URobotBaseState::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
@@ -45,7 +45,7 @@ void URobotBaseState::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
 
 		InputComp->BindAction(PulseInputAction, ETriggerEvent::Started, this, &URobotBaseState::Pulse);
 
-		InputComp->BindAction(AbilityInputAction, ETriggerEvent::Started, this, &URobotBaseState::ActivateAbilities); 
+		InputComp->BindAction(AbilityInputAction, ETriggerEvent::Started, this, &URobotBaseState::ActivateAbilities);
 	}
 }
 
@@ -74,10 +74,15 @@ void URobotBaseState::MulticastRPC_DashBuffStart_Implementation()
 {
 	MovementComponent->MaxWalkSpeed = WalkSpeedWhenBuffed;
 
-	if(CharOwner->IsPlayerControlled())
+	if (CharOwner->IsPlayerControlled())
+	{
 		RobotCharacter->OnDashBuffStart();
+		USonderSaveGame::AddRobotBoostsWithDash();
+	}
 	else
-		ShadowRobot->OnDashBuffStart(); 
+	{
+		ShadowRobot->OnDashBuffStart();
+	}
 }
 
 void URobotBaseState::ResetDashBuff()
@@ -99,10 +104,10 @@ void URobotBaseState::MulticastRPC_DashBuffEnd_Implementation()
 {
 	MovementComponent->MaxWalkSpeed = DefaultWalkSpeed;
 
-	if(CharOwner->IsPlayerControlled())
+	if (CharOwner->IsPlayerControlled())
 		RobotCharacter->OnDashBuffEnd();
 	else
-		ShadowRobot->OnDashBuffEnd(); 
+		ShadowRobot->OnDashBuffEnd();
 }
 
 void URobotBaseState::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -137,13 +142,13 @@ void URobotBaseState::ShootHook()
 
 void URobotBaseState::Pulse()
 {
-	if(bPulseCoolDownActive || !CharOwner->IsLocallyControlled()) 
+	if (bPulseCoolDownActive || !CharOwner->IsLocallyControlled())
 		return;
 
 	// controlled by player and ability is not unlocked 
-	if(CharOwner->IsPlayerControlled() && !RobotCharacter->AbilityOne)
-		return; 
-	
+	if (CharOwner->IsPlayerControlled() && !RobotCharacter->AbilityOne)
+		return;
+
 	bPulseCoolDownActive = true;
 
 	FTimerHandle PulseTimerHandle;
@@ -166,35 +171,37 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 	TArray<AActor*> OverlappingActors;
 	CharOwner->GetOverlappingActors(OverlappingActors, AActor::StaticClass());
 
-	const bool bIsPlayerControlled = CharOwner->IsPlayerControlled(); 
+	const bool bIsPlayerControlled = CharOwner->IsPlayerControlled();
 
 	for (const auto Actor : OverlappingActors)
 	{
-		if(!bIsPlayerControlled)
+		if (!bIsPlayerControlled)
 		{
-			if(Actor->IsA(AEnemyCharacter::StaticClass()))
+			if (Actor->IsA(AEnemyCharacter::StaticClass()))
 				continue;
-			
+
 			Actor->TakeDamage(Damage, FDamageEvent(), Controller, CharOwner);
 
 			continue;
 		}
-		
-		if(const auto Soul = Cast<ASoulCharacter>(Actor))
+
+		if (const auto Soul = Cast<ASoulCharacter>(Actor))
 		{
 			// See if there is line of sight to Soul, if there isn't then do nothing with Soul 
-			FHitResult HitResult; 
-			if(GetWorld()->LineTraceSingleByChannel(HitResult, CharOwner->GetActorLocation(), Soul->GetActorLocation(), ECC_Pawn))
+			FHitResult HitResult;
+			if (GetWorld()->LineTraceSingleByChannel(HitResult, CharOwner->GetActorLocation(), Soul->GetActorLocation(),
+			                                         ECC_Pawn))
 				continue;
-			
-			if(CharOwner->GetActorLocation().Y - 100 < Actor->GetActorLocation().Y && Actor->GetActorLocation().Y < CharOwner->GetActorLocation().Y + 100)
+
+			if (CharOwner->GetActorLocation().Y - 100 < Actor->GetActorLocation().Y && Actor->GetActorLocation().Y <
+				CharOwner->GetActorLocation().Y + 100)
 			{
 				if (Actor->GetActorLocation().Z > CharOwner->GetActorLocation().Z + 5)
 				{
 					PlayerActor = Soul;
 					UE_LOG(LogTemp, Warning, TEXT("Boost"));
 
-					if(Soul->GetCharacterMovement()->IsMovingOnGround() == false)
+					if (Soul->GetCharacterMovement()->IsMovingOnGround() == false)
 					{
 						Soul->GetCharacterMovement()->Velocity.Z = 0;
 						Soul->JumpMaxCount = 2;
@@ -202,19 +209,22 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 					}
 
 					FTimerHandle MemberTimerHandle;
-					GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f);
+					GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump,
+					                                       1.0f);
 				}
 
-				else if (Actor->GetActorLocation().Z + 20 < CharOwner->GetActorLocation().Z && MovementComponent->IsMovingOnGround() == false)
+				else if (Actor->GetActorLocation().Z + 20 < CharOwner->GetActorLocation().Z && MovementComponent->
+					IsMovingOnGround() == false)
 				{
-					PlayerActor = RobotCharacter; 
+					PlayerActor = RobotCharacter;
 
 					MovementComponent->Velocity.Z = 0;
 					CharOwner->JumpMaxCount = 2;
 					CharOwner->Jump();
 
 					FTimerHandle MemberTimerHandle;
-					GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump, 1.0f);
+					GetWorld()->GetTimerManager().SetTimer(MemberTimerHandle, this, &URobotBaseState::DisableSecondJump,
+					                                       1.0f);
 				}
 			}
 		}
@@ -225,14 +235,15 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 			Enemy->TakeDamage(Damage, FDamageEvent(), Controller, CharOwner);
 			UE_LOG(LogTemp, Warning, TEXT("Stun"));
 		}
-		
+
 		else if (const auto Grenade = Cast<ALightGrenade>(Actor))
 		{
 			// See if there is line of sight to Soul, if there isn't then do nothing with Soul 
-			FHitResult HitResult; 
-			if(GetWorld()->LineTraceSingleByChannel(HitResult, CharOwner->GetActorLocation(), Grenade->GetActorLocation(), ECC_Pawn))
+			FHitResult HitResult;
+			if (GetWorld()->LineTraceSingleByChannel(HitResult, CharOwner->GetActorLocation(),
+			                                         Grenade->GetActorLocation(), ECC_Pawn))
 				continue;
-			
+
 			Grenade->PulseExplosion();
 			USonderSaveGame::AddGrenadesExplodedWithPulse();
 			Grenade->ServerRPCExplosion();
@@ -244,10 +255,10 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 			Actor->TakeDamage(Damage, FDamageEvent(), Controller, CharOwner);
 		}
 	}
-	
+
 	if (CharOwner->IsPlayerControlled())
 		RobotCharacter->OnPulse();
-	else 
+	else
 		ShadowRobot->OnPulse();
 }
 
