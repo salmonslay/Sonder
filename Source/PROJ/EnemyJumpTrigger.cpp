@@ -71,6 +71,8 @@ FVector AEnemyJumpTrigger::RequestJumpLocation(const FVector &EnemyLoc, const FV
 	{
 		return CalculatePointClosetsToTarget(EnemyLoc, CurrentTargetLocation);
 	}
+
+	//TODO: If enemy is really leveled with player, then jump point furthest away from enemy, if not really, then jump to furthest point
 	return CalculatePointFurthestFromEnemy(EnemyLoc);
  }
 

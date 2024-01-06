@@ -31,30 +31,30 @@ public:
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Jump Debug")
 	bool bCanPlatformJump = false;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Jump Debug")
 	bool bCanBasicJump = false;
 
 	FVector AvaliableJumpPoint = FVector::ZeroVector;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Jump Debug")
 	bool bIsJumping = false;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Jump Debug")
 	bool bHasLandedOnPlatform = false;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Jump Debug")
 	bool bHasLandedOnGround = true;
 
-	UPROPERTY(EditAnywhere, BlueprintReadOnly)
+	UPROPERTY(EditAnywhere, BlueprintReadOnly, Category="Jump Debug")
 	float JumpCoolDownDuration = 2.f;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Jump Debug")
 	float JumpCoolDownTimer = 0.f;
 
-	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite, Category="Jump Debug")
 	bool IsOverlappingWithTrigger = false;
 
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
@@ -66,7 +66,7 @@ public:
 	UFUNCTION(Server, Reliable) 
 	void ServerRPC_ToggleChargeEffect(const bool bActive);
 
-	UPROPERTY(EditDefaultsOnly, BlueprintReadWrite, ReplicatedUsing=OnRep_Jump)
+	UPROPERTY(EditDefaultsOnly,  Category="Jump Debug", BlueprintReadWrite, ReplicatedUsing=OnRep_Jump)
 	bool bIsPerformingJump = false;
 
 	UFUNCTION(BlueprintCallable)
