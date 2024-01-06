@@ -86,7 +86,9 @@ private:
 	/** Keeps track of how many cutscenes are playing to account for multiple players */
 	inline static int CutscenesPlayingCounter = 0;
 
-	bool bHasPlayed = false; 
+	bool bHasPlayed = false;
+
+	bool bHasStopped = false; 
 
 	/** Should players be hidden during cutscene? */
 	UPROPERTY(EditAnywhere)

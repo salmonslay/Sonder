@@ -39,13 +39,13 @@ void ACutsceneManager::BeginPlay()
 	if(HasAuthority())
 		GetWorldTimerManager().SetTimerForNextTick(this, &ACutsceneManager::BindSkipCutsceneButton);
 
-	const FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(this);
-
-	if(CurrentLevelName.Equals(TEXT("Arena2")) && CurrentLevelName.Equals(LatestPlayedCutsceneLevel))
-		return; 
-
 	if(bAutoPlay)
 	{
+		const FString CurrentLevelName = UGameplayStatics::GetCurrentLevelName(this);
+
+		if(CurrentLevelName.Equals(TEXT("Arena2")) && CurrentLevelName.Equals(LatestPlayedCutsceneLevel))
+			return;
+		
 		if(AutoPlayBlackScreenWidget)
 		{
 			// widget only needs to be created for ctrl 0 (only one online and local doesn't matter who gets the widget)
@@ -185,9 +185,9 @@ void ACutsceneManager::BindSkipCutsceneButton()
 
 void ACutsceneManager::StopCutscene()
 {
-	if(!IsCutscenePlaying() || !LevelSequencePlayer) // Not playing, cant stop cutscene so do nothing 
+	if(bHasStopped || !bHasPlayed) // Not playing, cant stop cutscene so do nothing 
 		return;
-	
+
 	EnablePlayerInput();
 
 	if(bHidePlayersDuringCutscene)
@@ -200,10 +200,12 @@ void ACutsceneManager::StopCutscene()
 
 	OnCutsceneEnd(!LevelToLoadOnCutsceneEnd.IsNone()); 
 
-	if(!LevelToLoadOnCutsceneEnd.IsNone() && HasAuthority())
+	if(HasAuthority() && !LevelToLoadOnCutsceneEnd.IsNone())
 		GetWorld()->ServerTravel("/Game/Maps/" + LevelToLoadOnCutsceneEnd.ToString());
-	else 
+	else if(LevelToLoadOnCutsceneEnd.IsNone())
 		ShowHud();
+
+	bHasStopped = true; 
 }
 
 void ACutsceneManager::TogglePlayerVisibility(const bool bVisible) const
