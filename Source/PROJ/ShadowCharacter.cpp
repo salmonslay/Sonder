@@ -144,7 +144,7 @@ void AShadowCharacter::Tick(const float DeltaSeconds)
 			if (!bIsPerformingJump)
 			{
 				bCanBasicJump = true;
-				AvaliableJumpPoint = CurrentJumpTrigger->RequestJumpLocation(GetActorLocation(), CurrentTargetLocation, bHasLandedOnPlatform);
+				AvaliableJumpPoint = CurrentJumpTrigger->RequestJumpLocation(GetActorLocation(), CurrentTargetLocation, ClosestJumpPoint, bHasLandedOnPlatform);
 			}
 		}
 	}
