@@ -7,7 +7,6 @@
 #include "Engine/TriggerBox.h"
 #include "CutsceneManager.generated.h"
 
-enum class ESonderLevel : uint8;
 class UInputMappingContext;
 /**
  * Cutscene class handling playing all cutscenes 
