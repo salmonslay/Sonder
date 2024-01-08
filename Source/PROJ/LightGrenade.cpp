@@ -82,7 +82,7 @@ void ALightGrenade::Throw(const float TimeHeld)
 	if(bCanThrow)
 	{
 		Damage = 15.0f;
-		PulseExplosionArea->Deactivate();
+		PulseExplosionArea->SetCollisionResponseToAllChannels(ECR_Ignore);
 		ServerRPCThrow(TimeHeld);
 
 		Indicator->SetActorHiddenInGame(true);
@@ -141,7 +141,10 @@ void ALightGrenade::ActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	
 	if (AEnemyCharacter* Enemy = Cast<AEnemyCharacter>(OtherActor))
 	{
+		
 		StartCountdown(ExplodeTimeFast);
+		
+			
 	}
 	
 }
@@ -291,6 +294,7 @@ void ALightGrenade::StartCountdown(float TimeUntilExplosion)
 void ALightGrenade::PulseExplosion()
 {
 	PulseExplosionArea->SetCollisionResponseToAllChannels(ECR_Overlap);
+	CollisionArea->SetCollisionResponseToAllChannels(ECR_Ignore);
 	bIsPulseExploding = true;
 }
 
