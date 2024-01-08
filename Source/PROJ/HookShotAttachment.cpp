@@ -265,7 +265,7 @@ void AHookShotAttachment::SetIndicatorWidget()
 
 	// check to see if it should be invisible 
 	if(!Robot->AbilityTwo || !CurrentTarget || HookState->IsTravellingToTarget() ||
-		RobotBaseState->IsHookShotOnCooldown() || ACutsceneManager::IsCutscenePlaying())
+		RobotBaseState->IsHookShotOnCooldown() || ACutsceneManager::IsCutscenePlaying() || GetGameTimeSinceCreation() < 5.f)
 	{
 		IndicatorWidget->SetVisibility(ESlateVisibility::Hidden);
 		return; 
