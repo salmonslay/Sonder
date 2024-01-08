@@ -5,6 +5,7 @@
 
 #include "ADPCMAudioInfo.h"
 #include "CombatManager.h"
+#include "CombatTriggeredBase.h"
 #include "NewPlayerHealthComponent.h"
 #include "PROJCharacter.h"
 #include "SonderGameState.h"
@@ -28,6 +29,8 @@ void ACombatDirector::BeginPlay()
 	Super::BeginPlay();
 
 	SpawnTypes.Sort([](const FSpawnStruct SS1, const FSpawnStruct SS2){return SS1.BaseCost < SS2.BaseCost;});
+
+	if(Manager) Manager->Director = this;
 }
 
 void ACombatDirector::EndPlay(const EEndPlayReason::Type EndPlayReason)
@@ -142,6 +145,18 @@ int ACombatDirector::CalculateSpawnWeight(const FSpawnStruct& Spawn) const
 			Cast<ASonderGameState>(GetWorld()->GetGameState())->GetServerPlayer()->NewPlayerHealthComponent->GetHealth(),
 			Cast<ASonderGameState>(GetWorld()->GetGameState())->GetClientPlayer()->NewPlayerHealthComponent->GetHealth());
 		Weight += HealthWeight * PlayerHealthWeightMultiplier;
+	}
+	if(Spawn.bMinDistanceToPlayerReducesWeight)
+	{
+		float MinDistance = UE_FLOAT_HUGE_DISTANCE;
+		for(ACombatTriggeredBase* EventActor : Spawn.WaveTriggeredActors)
+		{
+			MinDistance = FMath::Min(MinDistance, FVector::Distance(EventActor->GetActorLocation(),
+				Cast<ASonderGameState>(GetWorld()->GetGameState())->GetServerPlayer()->GetActorLocation()));
+			MinDistance = FMath::Min(MinDistance, FVector::Distance(EventActor->GetActorLocation(),
+				Cast<ASonderGameState>(GetWorld()->GetGameState())->GetClientPlayer()->GetActorLocation()));
+		}
+		Weight -= MinDistance / MinDistanceToPlayerWeightDenominator;
 	}
 	return FMath::Max(Weight, 0);
 }

@@ -46,6 +46,9 @@ struct FSpawnStruct
 	UPROPERTY(EditAnywhere, Category="Weight")
 	bool bPlayerHealthReducesWeight = false;
 
+	UPROPERTY(EditAnywhere, Category="Weight")
+	bool bMinDistanceToPlayerReducesWeight = false;
+
 	UPROPERTY(VisibleAnywhere, Category="Weight")
 	int WavesUnpicked = 0;
 	
@@ -118,6 +121,9 @@ public:
 
 	UPROPERTY(EditAnywhere, Category="Weight")
 	float PlayerHealthWeightMultiplier = 1.f;
+
+	UPROPERTY(EditAnywhere, Category="Weight")
+	float MinDistanceToPlayerWeightDenominator = 20;
 
 	void SpendBudget();
 

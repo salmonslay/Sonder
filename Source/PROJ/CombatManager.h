@@ -8,6 +8,7 @@
 #include "CombatManager.generated.h"
 
 
+class ACombatDirector;
 class AGrid;
 class ACombatTriggeredBase;
 class ACombatTrigger;
@@ -124,6 +125,8 @@ public:
 
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	int CurrentWave = 0;
+
+	ACombatDirector* Director = nullptr;
 
 	UFUNCTION(BlueprintPure)
 	bool IsCombatStarted() const { return bCombatStarted; }
