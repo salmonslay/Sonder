@@ -60,6 +60,9 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	AEnemyJumpTrigger* CurrentJumpTrigger = nullptr;
 
+	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
+	FVector ClosestJumpPoint = FVector::ZeroVector;
+
 	UFUNCTION(BlueprintCallable)
 	bool CheckIfJumpNeeded();
 	

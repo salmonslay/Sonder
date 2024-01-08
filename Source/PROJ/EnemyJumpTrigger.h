@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "EnemyJumpTrigger.generated.h"
 
+class AEnemyJumpPoint;
 class APROJCharacter;
 class AMovingPlatform;
 class AShadowCharacter;
@@ -23,11 +24,11 @@ public:
 	UPROPERTY(EditAnywhere, BlueprintReadWrite)
 	UBoxComponent* Bounds;
 
-	UPROPERTY(EditAnywhere)
-	UBoxComponent* JumpPoint1;
+	//UPROPERTY(EditAnywhere)
+	//UBoxComponent* JumpPoint1;
 
-	UPROPERTY(EditAnywhere)
-	UBoxComponent* JumpPoint2;
+	//UPROPERTY(EditAnywhere)
+	//UBoxComponent* JumpPoint2;
 
 protected:
 	// Called when the game starts or when spawned
@@ -61,11 +62,17 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	bool HasPathBetweenJumpPoints = false;
 
-	FVector RequestJumpLocation(const FVector &EnemyLoc, const FVector &CurrentTargetLocation, const bool bIsOnPlatform);
+	FVector RequestJumpLocation(const FVector &EnemyLoc, const FVector &CurrentTargetLocation, const FVector &ClosestJumpPoint,const bool bIsOnPlatform);
 	
-	FVector JumpPoint1Loc = FVector::ZeroVector;
+	//FVector JumpPoint1Loc = FVector::ZeroVector;
 
-	FVector JumpPoint2Loc = FVector::ZeroVector;
+	//FVector JumpPoint2Loc = FVector::ZeroVector;
+
+	UPROPERTY(EditAnywhere)
+	TArray<AEnemyJumpPoint*> JumpPoints = TArray<AEnemyJumpPoint*>();
+
+	UPROPERTY(BlueprintReadWrite)
+	TArray<FVector> JumpPointLocations = TArray<FVector>();
 	
 private:
 	
@@ -88,6 +95,13 @@ private:
 
 	FVector CalculatePointFurthestFromEnemy(const FVector& EnemyLocation) const;
 
+	FVector CalculateAccessiblePointFurthestFromEnemy(const FVector& EnemyLocation, const FVector& ClosestPointToEnemy,  const FVector& CurrentTargetLocation);
+
+	bool CanReachJumpPoint(const FVector& PointFrom, const FVector& PointTo);
+
+	UPROPERTY(EditAnywhere)
+	TArray<TEnumAsByte<EObjectTypeQuery>> LineTraceObjects;
+
 	/** Runs on overlap begin with moving platform, enemies on moving platform are allowed to jump to ground, enemies on ground are allowed to jump on platform*/
 	UFUNCTION(BlueprintCallable)
 	void AllowJump();
@@ -95,6 +109,6 @@ private:
 	UFUNCTION(BlueprintCallable)
 	bool HasPathBetweenPoints() const;
 
-	bool IsLeveledWithJumpPoints(const FVector &EnemyLoc) const;
+	//bool IsLeveledWithJumpPoints(const FVector &EnemyLoc) const;
 	
 };
