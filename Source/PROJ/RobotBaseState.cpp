@@ -32,6 +32,8 @@ void URobotBaseState::BeginPlay()
 	DefaultWalkSpeed = CharOwner->GetCharacterMovement()->MaxWalkSpeed;
 
 	MovementComponent = CharOwner->GetCharacterMovement();
+
+	PulseCollision = CharOwner->FindComponentByClass<USphereComponent>(); 
 }
 
 void URobotBaseState::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
@@ -169,7 +171,7 @@ void URobotBaseState::ServerRPCPulse_Implementation()
 void URobotBaseState::MulticastRPCPulse_Implementation()
 {
 	TArray<AActor*> OverlappingActors;
-	CharOwner->GetOverlappingActors(OverlappingActors, AActor::StaticClass());
+	PulseCollision->GetOverlappingActors(OverlappingActors, AActor::StaticClass());
 
 	const bool bIsPlayerControlled = CharOwner->IsPlayerControlled();
 

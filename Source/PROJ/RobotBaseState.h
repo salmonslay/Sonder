@@ -108,7 +108,10 @@ private:
 	float BuffedDamageMultiplier = 2.f;
 
 	UPROPERTY()
-	class UCharacterMovementComponent* MovementComponent; 
+	class UCharacterMovementComponent* MovementComponent;
+
+	UPROPERTY()
+	class USphereComponent* PulseCollision; 
 
 	/** Function firing when player presses button to request hook shot */
 	void ShootHook();
