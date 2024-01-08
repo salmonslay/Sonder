@@ -968,7 +968,7 @@
 	</object>
 	<object class="GainEffect" id="{ff28bc8f-11b3-4e70-94e8-9cfbe5f85ffe}">
 		<property name="gain">
-			<value>1</value>
+			<value>-3</value>
 		</property>
 	</object>
 	<object class="MultibandEqEffect" id="{eec4a324-73ad-42fa-b9e2-8b5d3a6de23e}">

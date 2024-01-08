@@ -8,6 +8,7 @@
 #include "PROJCharacter.h"
 #include "SonderGameState.h"
 #include "Components/BoxComponent.h"
+#include "Engine/DamageEvents.h"
 #include "Net/UnrealNetwork.h"
 
 // Sets default values
@@ -133,6 +134,19 @@ void ACombatManager::StartCombat()
 	}
 }
 
+void ACombatManager::EndCombat()
+{
+	if (GetLocalRole() == ROLE_Authority && !bCombatEnded)
+	{
+		bCombatEnded = true;
+		OnCombatEnd();
+		for(ACombatTriggeredBase* Triggered : EndCombatTriggeredActors)
+		{
+			Triggered->TriggeredEvent();
+		}
+	}
+}
+
 void ACombatManager::AddWave(FEnemyWave Wave)
 {
 	WavesQueue.Add(Wave);
@@ -145,6 +159,28 @@ void ACombatManager::IncreaseSpawnCheckFrequency()
 	{
 		SpawnPoint->SpawnCheckFrequency *= 0.8f;
 		SpawnPoint->SpawnCheckFrequency += 0.1f;
+	}
+}
+
+void ACombatManager::KillRemainingEnemies()
+{
+	TArray<AEnemyCharacter*> TempEnemies;
+	for (int i = 0; i < Enemies.Num(); i++)
+	{
+		AEnemyCharacter* EnemyCharacter = Enemies[i];
+		if(EnemyCharacter)
+		{
+			TempEnemies.Add(EnemyCharacter);
+		}
+	}
+	for (int i = 0; i < TempEnemies.Num(); i++)
+	{
+		AEnemyCharacter* EnemyCharacter = TempEnemies[i];
+		if(EnemyCharacter)
+		{
+			FDamageEvent DamageEvent;
+			EnemyCharacter->TakeDamage(1000.f, DamageEvent, nullptr, this);
+		}
 	}
 }
 

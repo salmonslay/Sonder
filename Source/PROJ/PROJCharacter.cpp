@@ -131,6 +131,7 @@ void APROJCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(APROJCharacter, NewPlayerHealthComponent) 
 	DOREPLIFETIME(APROJCharacter, AbilityOne)
 	DOREPLIFETIME(APROJCharacter, AbilityTwo)
+	DOREPLIFETIME(APROJCharacter, bIsSafe)
 }
 
 void APROJCharacter::Jump()
@@ -372,6 +373,10 @@ void APROJCharacter::ServerRPC_RotatePlayer_Implementation(const FRotator& NewRo
 float APROJCharacter::TakeDamage(float DamageAmount, FDamageEvent const& DamageEvent, AController* EventInstigator,
                                  AActor* DamageCauser)
 {
+	// No friendly fire 
+	if(DamageCauser->IsA(APROJCharacter::StaticClass()))
+		return 0; 
+	
 	// Increase damage by eventual Shadow Robot damage multiplier 
 	if(const auto Robot = Cast<AShadowRobotCharacter>(DamageCauser))
 		DamageAmount *= Robot->FindComponentByClass<URobotBaseState>()->GetDamageBoostMultiplier();

@@ -54,16 +54,18 @@ bool Pathfinder::FindPath(const FVector &Start, const FVector &End)
 	if (EndNode->bWalkable)
 	{
 		// Create open and closed sets, should probably be something else or not created every time
-		PathfinderHeap OpenSet = PathfinderHeap(Grid->GetGridMaxSize());
+		//PathfinderHeap OpenSet = PathfinderHeap(Grid->GetGridMaxSize());
+		TArray<GridNode*> OpenSet;
 		TSet<GridNode*> ClosedSet;
 
-		OpenSet.Add(StartNode);
+		OpenSet.HeapPush(StartNode, HeapPredicate());
 		StartNode->SetIsInOpenSet(true);
 
-		while (OpenSet.Count() > 0)
+		while (OpenSet.Num() > 0)
 		{
 	        // Find the node in the open set with the lowest FCost
-			GridNode* CurrentNode = OpenSet.RemoveFirst();
+			GridNode* CurrentNode;
+			OpenSet.HeapPop(CurrentNode, HeapPredicate());
 			
 			ClosedSet.Add(CurrentNode);
 
@@ -98,11 +100,11 @@ bool Pathfinder::FindPath(const FVector &Start, const FVector &End)
 	                // Add the neighbor to the open set if not already there
 	                if (!OpenSet.Contains(Neighbour))
 	                {
-	                	OpenSet.Add(Neighbour);
+	                	OpenSet.HeapPush(Neighbour, HeapPredicate());
 	                }
             		else
             		{
-            			OpenSet.UpdateItem(Neighbour);
+            			OpenSet.HeapSort(HeapPredicate());
             		}
 	            }
 	        }
