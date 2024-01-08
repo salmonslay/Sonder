@@ -46,6 +46,10 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 				if (!OwnerCharacter->HasNavigationToTarget(BlackboardComponent->GetValueAsVector("CurrentTargetLocation")))
 				{
 					BlackboardComponent->SetValueAsBool("bIsJumping", true);
+
+					DrawDebugSphere(GetWorld(), OwnerCharacter->ClosestJumpPoint, 30.f, 30, FColor::Red, false, 0.2f);
+					DrawDebugSphere(GetWorld(), OwnerCharacter->AvaliableJumpPoint, 30.f, 30, FColor::Blue, false, 0.2f);
+
 					JumpToPoint(OwnerLocation, OwnerCharacter->AvaliableJumpPoint);
 					OwnerCharacter->JumpCoolDownTimer = 0;
 					OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;

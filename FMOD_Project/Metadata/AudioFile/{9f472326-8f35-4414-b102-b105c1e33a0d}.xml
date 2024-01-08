@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<objects serializationModel="Studio.02.02.00">
+	<object class="AudioFile" id="{9f472326-8f35-4414-b102-b105c1e33a0d}">
+		<property name="assetPath">
+			<value>ESM_Fighting_Game_One_Shot_Designed_Destruction_Impact_Debris_Chair_Break_Smash_Wood_Furniture_Environment_Crate_Box_Table_05.wav</value>
+		</property>
+		<property name="frequencyInKHz">
+			<value>96</value>
+		</property>
+		<property name="channelCount">
+			<value>2</value>
+		</property>
+		<property name="length">
+			<value>1.5</value>
+		</property>
+		<relationship name="masterAssetFolder">
+			<destination>{542ff4ed-1b88-4c2c-98cc-a4f4c45c5308}</destination>
+		</relationship>
+	</object>
+</objects>

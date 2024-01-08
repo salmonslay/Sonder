@@ -3,11 +3,13 @@
 
 #include "EnemyJumpTrigger.h"
 
+#include "EnemyJumpPoint.h"
 #include "MovingPlatform.h"
 #include "NavigationPath.h"
 #include "NavigationSystem.h"
 #include "ShadowCharacter.h"
 #include "Components/BoxComponent.h"
+#include "Kismet/KismetSystemLibrary.h"
 
 // Sets default values
 AEnemyJumpTrigger::AEnemyJumpTrigger()
@@ -16,28 +18,33 @@ AEnemyJumpTrigger::AEnemyJumpTrigger()
 	PrimaryActorTick.bCanEverTick = true;
 	Bounds = CreateDefaultSubobject<UBoxComponent>(TEXT("Bounds"));
 	Bounds->SetupAttachment(RootComponent);
-
-	JumpPoint1 = CreateDefaultSubobject<UBoxComponent>(TEXT("Jump point 1"));
-	JumpPoint1->SetupAttachment(Bounds);
-
-	JumpPoint2 = CreateDefaultSubobject<UBoxComponent>(TEXT("Jump point 2"));
-	JumpPoint2->SetupAttachment(Bounds);
 }
 
 // Called when the game starts or when spawned
 void AEnemyJumpTrigger::BeginPlay()
 {
 	Super::BeginPlay();
-
-	JumpPoint1Loc = JumpPoint1->GetComponentLocation();
-	JumpPoint2Loc = JumpPoint2->GetComponentLocation();
+	
+	for (const auto JumpPoint : JumpPoints)
+	{
+		ensure (JumpPoint != nullptr);
+		JumpPointLocations.Add(JumpPoint->GetActorLocation());
+	}
 }
 
 // Called every frame
 void AEnemyJumpTrigger::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
-	
+
+	if (JumpPointLocations.IsEmpty())
+	{
+		for (const auto JumpPoint : JumpPoints)
+		{
+			ensure (JumpPoint != nullptr);
+			JumpPointLocations.Add(JumpPoint->GetActorLocation());
+		}
+	}
 }
 
 void AEnemyJumpTrigger::AddOverlappingPlatform(AMovingPlatform* PlatformToAdd)
@@ -61,7 +68,7 @@ void AEnemyJumpTrigger::RemoveOverlappingPlatform(AMovingPlatform* PlatformToRem
 }
 
 
-FVector AEnemyJumpTrigger::RequestJumpLocation(const FVector &EnemyLoc, const FVector &CurrentTargetLocation, const bool bIsOnPlatform)
+FVector AEnemyJumpTrigger::RequestJumpLocation(const FVector &EnemyLoc, const FVector &CurrentTargetLocation, const FVector &ClosestJumpPoint, const bool bIsOnPlatform)
 {
 	if (bIsOverlappingWithMovingPlatform && !bIsOnPlatform)
 	{
@@ -71,9 +78,15 @@ FVector AEnemyJumpTrigger::RequestJumpLocation(const FVector &EnemyLoc, const FV
 	{
 		return CalculatePointClosetsToTarget(EnemyLoc, CurrentTargetLocation);
 	}
-
-	//TODO: If enemy is really leveled with player, then jump point furthest away from enemy, if not really, then jump to furthest point
-	return CalculatePointFurthestFromEnemy(EnemyLoc);
+	if (!bIsOverlappingWithMovingPlatform && JumpPointLocations.Num() <= 2) // if trigger only has tqo jump points, calculate furthest one without regarding for closeness to player
+	{
+		return CalculatePointFurthestFromEnemy(EnemyLoc);
+	}
+	if (!bIsOverlappingWithMovingPlatform && JumpPointLocations.Num() > 2) // if trigger has more than 2 jump points
+	{
+		return CalculateAccessiblePointFurthestFromEnemy(EnemyLoc, ClosestJumpPoint, CurrentTargetLocation);
+	}
+	return FVector::ZeroVector;
  }
 
 FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation, const FVector& CurrentTargetLocation)  // forward vector * Jumpdistance
@@ -135,24 +148,80 @@ TWeakObjectPtr<AMovingPlatform> AEnemyJumpTrigger::SelectPlatform(const FVector&
 
 FVector AEnemyJumpTrigger::CalculatePointClosetsToTarget(const FVector& EnemyLocation, const FVector& CurrentTargetLocation) const 
 {
-	if (FVector::Distance(JumpPoint1Loc, CurrentTargetLocation) <=  FVector::Distance(JumpPoint2Loc, CurrentTargetLocation))
+	float MinDistance = 5000000000.f;
+	FVector Point;
+
+	for (FVector JumpPointLoc : JumpPointLocations)
 	{
-		const float DirToJumpPointY = JumpPoint1Loc.Y < EnemyLocation.Y ? -1 : 1;
-		return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint1Loc.Z);
+		if (FVector::Distance(JumpPointLoc, CurrentTargetLocation) <= MinDistance)
+		{
+			MinDistance = FVector::Distance(JumpPointLoc, CurrentTargetLocation);
+			Point = JumpPointLoc;
+		}
 	}
-	const float DirToJumpPointY = JumpPoint2Loc.Y < EnemyLocation.Y ? -1 : 1;
-	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint2Loc.Z);
+	const float DirToJumpPointY = Point.Y < EnemyLocation.Y ? -1 : 1;
+	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, Point.Z);
 }
 
 FVector AEnemyJumpTrigger::CalculatePointFurthestFromEnemy(const FVector& EnemyLocation) const
 {
-	if (FVector::Distance(JumpPoint1Loc, EnemyLocation) >=  FVector::Distance(JumpPoint2Loc, EnemyLocation))
+	float MaxDistance = 0.f;
+	FVector Point;
+	
+	for (FVector JumpPointLoc : JumpPointLocations)
 	{
-		const float DirToJumpPointY = JumpPoint1Loc.Y < EnemyLocation.Y ? -1 : 1;
-		return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint1Loc.Z + BasicJumpZOffset);
+		if (FVector::Distance(JumpPointLoc, EnemyLocation) >= MaxDistance)
+		{
+			MaxDistance = FVector::Distance(JumpPointLoc, EnemyLocation);
+			Point = JumpPointLoc;
+		}
 	}
-	const float DirToJumpPointY = JumpPoint2Loc.Y < EnemyLocation.Y ? -1 : 1;
-	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint2Loc.Z + BasicJumpZOffset);
+	const float DirToJumpPointY = Point.Y < EnemyLocation.Y ? -1 : 1;
+	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, Point.Z + BasicJumpZOffset);
+}
+
+FVector AEnemyJumpTrigger::CalculateAccessiblePointFurthestFromEnemy(const FVector& EnemyLocation, const FVector& ClosestPointToEnemy,  const FVector& CurrentTargetLocation )
+{
+	FVector Point;
+
+	TArray<FVector> PossibleJumpPoints;
+	// add all point locations that are further away then the closest one
+	for (FVector JumpPointLoc : JumpPointLocations)
+	{
+		if (FVector::Distance(JumpPointLoc, EnemyLocation) >= FVector::Distance(ClosestPointToEnemy, EnemyLocation))
+		{
+			PossibleJumpPoints.Add(JumpPointLoc);
+		}
+	}
+
+	// Find point closest to player that is reachable from those points
+	// perform a raycast to see if the location is reachable, choosing the location furthest away from enemy that is reachable
+	float MinDistance = 50000000.f;
+
+	for (FVector PossibleJumpLoc : PossibleJumpPoints)
+	{
+		if (CanReachJumpPoint(EnemyLocation, PossibleJumpLoc))
+		{
+			if (FVector::Distance(PossibleJumpLoc, CurrentTargetLocation) <= MinDistance)
+			{
+				MinDistance = FVector::Distance(PossibleJumpLoc, CurrentTargetLocation);
+				Point = PossibleJumpLoc;
+			}
+		}
+	}
+	
+	const float DirToJumpPointY = Point.Y < EnemyLocation.Y ? -1 : 1;
+	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, Point.Z + BasicJumpZOffset);
+}
+
+bool AEnemyJumpTrigger::CanReachJumpPoint(const FVector& PointFrom, const FVector& PointTo)
+{
+	FHitResult HitResult;
+	TArray<AActor*> ActorsToIgnore;
+	ActorsToIgnore.Add(Owner);
+
+	return !UKismetSystemLibrary::LineTraceSingleForObjects(this, PointFrom, PointTo, LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
+	
 }
 
 void AEnemyJumpTrigger::AllowJump() // runs on overlap begin with moving platform, if enemy has once jumped on a platform - allow jump to ground, if not - allow jump to platform
@@ -180,26 +249,42 @@ bool AEnemyJumpTrigger::HasPathBetweenPoints() const
 		return false;
 	}
 	if (ensure(IsValid(Navigation))) {
-		const UNavigationPath* NavigationPath = Navigation->FindPathToLocationSynchronously(GetWorld(), JumpPoint1Loc, JumpPoint2Loc);
 
-		if(NavigationPath == nullptr)
+		if (!JumpPointLocations.IsEmpty())
 		{
-			return false;
+			const FVector First = JumpPointLocations[0];
+			bool IsNavigationSuccessful = false;
+
+			for (FVector Point : JumpPointLocations)
+			{
+				const UNavigationPath* NavigationPath = Navigation->FindPathToLocationSynchronously(GetWorld(), First, Point);
+
+				if(NavigationPath == nullptr)
+				{
+					return false;
+				}
+				const bool IsNavigationValid = NavigationPath->IsValid();
+				const bool IsNavigationNotPartial = NavigationPath->IsPartial() == false;
+				IsNavigationSuccessful = IsNavigationValid && IsNavigationNotPartial;
+				if (IsNavigationSuccessful)
+				{
+					return IsNavigationSuccessful;
+				}
+			}
+			return IsNavigationSuccessful;
 		}
-		const bool IsNavigationValid = NavigationPath->IsValid();
-		const bool IsNavigationNotPartial = NavigationPath->IsPartial() == false;
-		const bool IsNavigationSuccessful = IsNavigationValid && IsNavigationNotPartial;
-		return IsNavigationSuccessful;
+		return false;
 	}
 	return false;
 }
 
+/*
 bool AEnemyJumpTrigger::IsLeveledWithJumpPoints(const FVector &EnemyLoc) const
 {
 	//UE_LOG(LogTemp, Error, TEXT(" EnemyLoc= %f, Jumppoints loc = %f, %f"), EnemyLoc.Z, JumpPoint1Loc.Z, JumpPoint2Loc.Z );
-	return FMath::IsNearlyEqual(EnemyLoc.Z, JumpPoint1Loc.Z, 5.f) && FMath::IsNearlyEqual(EnemyLoc.Z, JumpPoint2Loc.Z, 5.f);
+	//return FMath::IsNearlyEqual(EnemyLoc.Z, JumpPoint1Loc.Z, 5.f) && FMath::IsNearlyEqual(EnemyLoc.Z, JumpPoint2Loc.Z, 5.f);
 }
-
+*/
 
 /*for (AActor* Actor : Actors)
 	{
