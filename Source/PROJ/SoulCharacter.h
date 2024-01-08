@@ -45,6 +45,9 @@ public:
 	UFUNCTION(BlueprintImplementableEvent)
 	void OnGrenadeThrowEnd();
 
+	UFUNCTION(BlueprintImplementableEvent)
+	void SpawnGrenade();
+
 #pragma endregion
 
 };

@@ -142,19 +142,16 @@ void ALightGrenade::ActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	{
 		StartCountdown(ExplodeTimeFast);
 	}
-	else if (APressurePlateBase* Plate = Cast<APressurePlateBase>(OtherActor))
-	{
-		Plate->StartMove();		
-	}
+	
 }
 
 void ALightGrenade::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (APressurePlateBase* Plate = Cast<APressurePlateBase>(OtherActor))
+	/*if (APressurePlateBase* Plate = Cast<APressurePlateBase>(OtherActor))
 	{
 		Plate->StartReverse();		
-	}
+	}*/
 }
 
 void ALightGrenade::ServerRPCExplosion_Implementation()
