@@ -59,11 +59,7 @@
 			<destination>{d296c49f-9499-4308-b391-2af5c9ba477a}</destination>
 		</relationship>
 	</object>
-	<object class="EventAutomatableProperties" id="{cde2648f-7eb2-4b79-9ddf-a49a9c15ea6e}">
-		<property name="maximumDistance">
-			<value>16.5</value>
-		</property>
-	</object>
+	<object class="EventAutomatableProperties" id="{cde2648f-7eb2-4b79-9ddf-a49a9c15ea6e}" />
 	<object class="MarkerTrack" id="{74b2c9b1-5ad9-4972-b7cb-e1f3993718cd}" />
 	<object class="Timeline" id="{45480029-0796-4b35-9017-45a6b08c0b3f}">
 		<property name="isProxyEnabled">
@@ -77,7 +73,7 @@
 	</object>
 	<object class="EventMixerMaster" id="{af5203b4-c656-4c0f-9ddc-7a7068291515}">
 		<property name="volume">
-			<value>-9.5</value>
+			<value>-14.5</value>
 		</property>
 		<relationship name="effectChain">
 			<destination>{b9462445-1e28-48d5-b4ec-a97d65c4a1c3}</destination>
