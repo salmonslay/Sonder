@@ -119,6 +119,9 @@ public:
 	UFUNCTION(BlueprintCallable)
 	void StartCombat();
 
+	UFUNCTION(BlueprintCallable)
+	void EndCombat();
+
 	UPROPERTY(BlueprintReadOnly, Replicated)
 	int CurrentWave = 0;
 
@@ -136,6 +139,9 @@ public:
 
 	//Makes the spawn points spit out enemies faster to prevent clogging as endless mode progresses
 	void IncreaseSpawnCheckFrequency();
+
+	UFUNCTION(BlueprintCallable)
+	void KillRemainingEnemies();
 
 private:
 	//Used for networking the start and end events and for checking whether to spawn enemies 
@@ -162,7 +168,7 @@ private:
 
 	//Array of all the enemies tracked by the manager
 	UPROPERTY(VisibleAnywhere, Category="Enemies")
-	TArray<ACharacter*> Enemies;
+	TArray<AEnemyCharacter*> Enemies;
 
 	//A queue of all the waves to spawn, copies the array
 	UPROPERTY(VisibleAnywhere, Category="Spawn")
