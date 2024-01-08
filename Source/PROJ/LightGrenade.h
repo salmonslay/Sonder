@@ -89,7 +89,10 @@ public:
 	
 	void IsChargingGrenade(const float TimeHeld);
 
-	void DisableIndicator() const; 
+	void DisableIndicator() const;
+
+	UPROPERTY(BlueprintReadOnly)
+	bool bCanTrigger = false;
 
 private:
 
