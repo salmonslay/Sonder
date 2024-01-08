@@ -88,6 +88,7 @@ void ACombatManager::Tick(float DeltaTime)
 		}
 		bCombatEnded = true;
 		GetWorldTimerManager().ClearTimer(WaveWaitTimerHandle);
+		if(Director) GetWorldTimerManager().ClearAllTimersForObject(Director);
 		OnCombatEnd();
 	}
 }
