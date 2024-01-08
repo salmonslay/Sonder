@@ -74,6 +74,9 @@
 		<relationship name="modules">
 			<destination>{3b9001d3-3353-4554-a57d-6d767bc35099}</destination>
 		</relationship>
+		<relationship name="markers">
+			<destination>{003ccd89-04c1-4a49-89d4-10d4848d3db3}</destination>
+		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{7d74f1d8-1c2e-409f-a5e1-ba1ff84dbe7f}">
 		<property name="pitch">
@@ -128,6 +131,20 @@
 		</relationship>
 		<relationship name="output">
 			<destination>{7d74f1d8-1c2e-409f-a5e1-ba1ff84dbe7f}</destination>
+		</relationship>
+	</object>
+	<object class="LoopRegion" id="{003ccd89-04c1-4a49-89d4-10d4848d3db3}">
+		<property name="position">
+			<value>0</value>
+		</property>
+		<property name="length">
+			<value>22.52204081632653</value>
+		</property>
+		<relationship name="timeline">
+			<destination>{f227425a-3fcd-4ccb-bc00-2ebd3038a853}</destination>
+		</relationship>
+		<relationship name="markerTrack">
+			<destination>{629b810a-53f9-4abd-8f00-e5998da2e274}</destination>
 		</relationship>
 	</object>
 	<object class="Automator" id="{586bcb19-9d55-4d2a-8c19-a051ebc80291}">
