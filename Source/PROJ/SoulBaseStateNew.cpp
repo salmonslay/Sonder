@@ -188,7 +188,7 @@ void USoulBaseStateNew::ServerRPCThrowGrenade_Implementation(const float TimeHel
 
 void USoulBaseStateNew::MulticastRPCThrowGrenade_Implementation(const float TimeHeldGrenade)
 {
-	if(LightGrenade)
+	if(LightGrenade && TimeHeldGrenade >= 0)
 		LightGrenade->Throw(TimeHeldGrenade);
 	
 	SoulCharacter->OnGrenadeThrowEnd(); 
