@@ -1,12 +1,21 @@
 ﻿#pragma once
 
 #include "CoreMinimal.h"
+#include "GridNode.h"
 #include "PROJCharacter.h"
 
 
 class GridNode;
 class AGrid;
 class APROJCharacter;
+
+struct HeapPredicate
+{
+	bool operator()(const GridNode& A, const GridNode& B) const
+	{
+		return A.FCost == B.FCost ? A.HCost < B.HCost : A.FCost < B.FCost;
+	}
+};
 
 class PROJ_API Pathfinder
 {

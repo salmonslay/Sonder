@@ -131,6 +131,7 @@ void APROJCharacter::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(APROJCharacter, NewPlayerHealthComponent) 
 	DOREPLIFETIME(APROJCharacter, AbilityOne)
 	DOREPLIFETIME(APROJCharacter, AbilityTwo)
+	DOREPLIFETIME(APROJCharacter, bIsSafe)
 }
 
 void APROJCharacter::Jump()
