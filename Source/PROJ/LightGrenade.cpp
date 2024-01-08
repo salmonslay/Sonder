@@ -179,6 +179,8 @@ void ALightGrenade::MulticastRPCExplosion_Implementation()
 
 	if (bIsPulseExploding)
 	{
+		PulseExplosionArea->SetCollisionResponseToAllChannels(ECR_Overlap);
+		CollisionArea->SetCollisionResponseToAllChannels(ECR_Ignore);
 		PulseExplosionEvent();
 		PulseExplosionArea->GetOverlappingActors(OverlappingActors,AActor::StaticClass());
 		Damage = Damage*PulseDamageMultiplier;
@@ -293,8 +295,7 @@ void ALightGrenade::StartCountdown(float TimeUntilExplosion)
 
 void ALightGrenade::PulseExplosion()
 {
-	PulseExplosionArea->SetCollisionResponseToAllChannels(ECR_Overlap);
-	CollisionArea->SetCollisionResponseToAllChannels(ECR_Ignore);
+	
 	bIsPulseExploding = true;
 }
 
