@@ -87,7 +87,8 @@ void ALightGrenade::Throw(const float TimeHeld)
 
 		Indicator->SetActorHiddenInGame(true);
 		MaxThrowIterations = 0;
-		bIncreasingCharge = true; 
+		bIncreasingCharge = true;
+		bCanTrigger = true;
 		GetWorld()->GetTimerManager().ClearTimer(ThrowIterTimerHandle); 
 	}
 }
@@ -142,19 +143,16 @@ void ALightGrenade::ActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 	{
 		StartCountdown(ExplodeTimeFast);
 	}
-	else if (APressurePlateBase* Plate = Cast<APressurePlateBase>(OtherActor))
-	{
-		Plate->StartMove();		
-	}
+	
 }
 
 void ALightGrenade::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	if (APressurePlateBase* Plate = Cast<APressurePlateBase>(OtherActor))
+	/*if (APressurePlateBase* Plate = Cast<APressurePlateBase>(OtherActor))
 	{
 		Plate->StartReverse();		
-	}
+	}*/
 }
 
 void ALightGrenade::ServerRPCExplosion_Implementation()
@@ -261,7 +259,7 @@ void ALightGrenade::DisableGrenade()
 	PulseExplosionArea->SetCollisionResponseToAllChannels(ECR_Ignore);
 	GrenadeMesh->SetVisibility(false);
 	bIsPulseExploding = false;
-	
+	bCanTrigger = false;
 	GetWorld()->GetTimerManager().SetTimer(TimerHandle, this, &ALightGrenade::EnableCanThrow, ThrowCooldown);
 }
 
