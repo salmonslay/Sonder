@@ -6,6 +6,7 @@
 #include "GameFramework/Actor.h"
 #include "EnemyJumpPoint.generated.h"
 
+class AEnemyJumpTrigger;
 class UBoxComponent;
 
 UCLASS()
@@ -21,6 +22,8 @@ public:
 	UBoxComponent* Point;
 
 	FVector Location = FVector::ZeroVector;
+
+	TWeakObjectPtr<AEnemyJumpTrigger> JumpTrigger = nullptr;
 
 protected:
 	// Called when the game starts or when spawned
