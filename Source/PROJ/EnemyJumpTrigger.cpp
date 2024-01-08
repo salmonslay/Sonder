@@ -161,15 +161,6 @@ FVector AEnemyJumpTrigger::CalculatePointClosetsToTarget(const FVector& EnemyLoc
 	}
 	const float DirToJumpPointY = Point.Y < EnemyLocation.Y ? -1 : 1;
 	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, Point.Z);
-	/*
-	if (FVector::Distance(JumpPoint1Loc, CurrentTargetLocation) <=  FVector::Distance(JumpPoint2Loc, CurrentTargetLocation))
-	{
-		const float DirToJumpPointY = JumpPoint1Loc.Y < EnemyLocation.Y ? -1 : 1;
-		return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint1Loc.Z);
-	}
-	const float DirToJumpPointY = JumpPoint2Loc.Y < EnemyLocation.Y ? -1 : 1;
-	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint2Loc.Z);
-	*/
 }
 
 FVector AEnemyJumpTrigger::CalculatePointFurthestFromEnemy(const FVector& EnemyLocation) const
@@ -185,21 +176,8 @@ FVector AEnemyJumpTrigger::CalculatePointFurthestFromEnemy(const FVector& EnemyL
 			Point = JumpPointLoc;
 		}
 	}
-	//DrawDebugSphere(GetWorld(), Point, 30.f, 30, FColor::Green, false, 10.f );
-
 	const float DirToJumpPointY = Point.Y < EnemyLocation.Y ? -1 : 1;
-	//DrawDebugSphere(GetWorld(), FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, Point.Z + BasicJumpZOffset), 30.f, 30, FColor::Red, false, 0.2f );
 	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, Point.Z + BasicJumpZOffset);
-
-	/*
-	if (FVector::Distance(JumpPoint1Loc, EnemyLocation) >=  FVector::Distance(JumpPoint2Loc, EnemyLocation))
-	{
-		const float DirToJumpPointY = JumpPoint1Loc.Y < EnemyLocation.Y ? -1 : 1;
-		return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint1Loc.Z + BasicJumpZOffset);
-	}
-	const float DirToJumpPointY = JumpPoint2Loc.Y < EnemyLocation.Y ? -1 : 1;
-	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, JumpPoint2Loc.Z + BasicJumpZOffset);
-	*/
 }
 
 FVector AEnemyJumpTrigger::CalculateAccessiblePointFurthestFromEnemy(const FVector& EnemyLocation, const FVector& ClosestPointToEnemy,  const FVector& CurrentTargetLocation )

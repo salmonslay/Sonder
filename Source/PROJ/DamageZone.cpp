@@ -85,10 +85,7 @@ void ADamageZone::Tick(float DeltaSeconds)
 
 						if (bIsTeamkillZone)
 						{
-							TeamkillCount++;
-							USonderGameInstance* GameInstance = Cast<USonderGameInstance>(
-								UGameplayStatics::GetGameInstance(GEngine->GameViewport->GetWorld()));
-							GameInstance->CheckAchievements();
+							IncreaseTeamKillCount_Implementation();
 						}
 					}
 
@@ -109,4 +106,14 @@ void ADamageZone::Tick(float DeltaSeconds)
 			PlayersDamagedThisOverlap.Add(PlayerActor);
 		}
 	}
+}
+
+void ADamageZone::IncreaseTeamKillCount_Implementation()
+{
+	TeamkillCount++;
+	USonderGameInstance* GameInstance = Cast<USonderGameInstance>(
+		UGameplayStatics::GetGameInstance(GEngine->GameViewport->GetWorld()));
+	GameInstance->CheckAchievements();
+
+	UE_LOG(LogTemp, Warning, TEXT("Teamkill count is now %d"), TeamkillCount)
 }
