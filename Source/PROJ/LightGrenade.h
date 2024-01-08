@@ -125,7 +125,7 @@ private:
 	UPROPERTY(Replicated)
 	bool bIsExploding = false;
 
-	UPROPERTY()
+	UPROPERTY(Replicated)
 	bool bIsPulseExploding = false;
 	
 	/** The indicator class for the grenade */
