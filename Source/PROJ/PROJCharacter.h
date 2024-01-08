@@ -91,7 +91,7 @@ public:
 	UPROPERTY(BlueprintReadWrite, Replicated)
 	bool AbilityTwo = false;
 
-	UPROPERTY(BlueprintReadWrite, EditAnywhere)
+	UPROPERTY(BlueprintReadWrite, EditAnywhere, Replicated)
 	bool bIsSafe = false;
 
 #pragma region Saving
