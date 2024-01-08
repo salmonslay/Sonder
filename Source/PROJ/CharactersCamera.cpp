@@ -69,16 +69,7 @@ void ACharactersCamera::GetPlayers()
 		bAllowMovement = true; 
 	}
 	
-	// if (APROJGameMode* CurrentGameMode = Cast<APROJGameMode>(UGameplayStatics::GetGameMode(this)); CurrentGameMode != nullptr)
-	// {
-	// 	PlayerOne = CurrentGameMode->GetActivePlayer(0);
-	// 	if (const AGameStateBase* Gsb = UGameplayStatics::GetGameState(this); Gsb->PlayerArray.Num() > 1)
-	// 	{
-	// 		PlayerTwo = CurrentGameMode->GetActivePlayer(1);
-	// 	}
-	//
-	// 	bAllowMovement = true;
-	// }
+	
 }
 
 void ACharactersCamera::Tick(float DeltaSeconds)
