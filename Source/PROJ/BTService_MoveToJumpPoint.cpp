@@ -4,6 +4,7 @@
 #include "BTService_MoveToJumpPoint.h"
 
 #include "AIController.h"
+#include "EnemyJumpPoint.h"
 #include "EnemyJumpTrigger.h"
 #include "ShadowCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
@@ -25,12 +26,11 @@ EBTNodeResult::Type UBTService_MoveToJumpPoint::ExecuteTask(UBehaviorTreeCompone
 	if(JumpPoints.IsEmpty())
 	{
 		TArray<AActor*> TempArray; 
-		UGameplayStatics::GetAllActorsOfClass(this, AEnemyJumpTrigger::StaticClass(), TempArray);
+		UGameplayStatics::GetAllActorsOfClass(this, AEnemyJumpPoint::StaticClass(), TempArray);
 
 		for(const auto JumpPoint : TempArray)
 		{
-			JumpPoints.Add(Cast<AEnemyJumpTrigger>(JumpPoint)->JumpPoint1Loc);  
-			JumpPoints.Add(Cast<AEnemyJumpTrigger>(JumpPoint)->JumpPoint2Loc);  
+			JumpPoints.Add(Cast<AEnemyJumpPoint>(JumpPoint)->Location);  
 		}
 	}
 		
