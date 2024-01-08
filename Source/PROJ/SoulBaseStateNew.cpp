@@ -143,12 +143,20 @@ void USoulBaseStateNew::ThrowGrenade()
 
 void USoulBaseStateNew::BeginGrenadeThrow()
 {
-	FHitResult HitResult;
-	bool bHitSomething = GetWorld()->
-		LineTraceSingleByChannel(HitResult, SoulCharacter->GetActorLocation(),
-								 SoulCharacter->ThrowLoc->GetComponentLocation(), ECC_Visibility);
-	if (!LightGrenade || !LightGrenade->bCanThrow || !SoulCharacter->AbilityTwo || bHitSomething)
+	
+	
+	
+	if (!SoulCharacter->AbilityTwo)
 		return;
+	
+	if(!LightGrenade){
+		SoulCharacter->SpawnGrenade();
+		LightGrenade = Cast<ALightGrenade>(UGameplayStatics::GetActorOfClass(this, ALightGrenade::StaticClass()));
+	}
+
+	if (!LightGrenade->bCanThrow)
+		return;
+
 	
 	bHasBeganThrow = true; 
 	AttackComponent->ToggleAttackEnable(false);
