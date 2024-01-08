@@ -58,6 +58,9 @@ private:
 	UPROPERTY(EditAnywhere)
 	bool bIsTeamkillZone = false;
 
+	UFUNCTION(NetMulticast, Reliable)
+	void IncreaseTeamKillCount(); 
+
 public:
 	/**
 	 * The amount of times a player has been killed in a zone marked as a teamkill zone.
