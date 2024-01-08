@@ -29,6 +29,7 @@ void AEnemyJumpTrigger::BeginPlay()
 	{
 		ensure (JumpPoint != nullptr);
 		JumpPointLocations.Add(JumpPoint->GetActorLocation());
+		JumpPoint->JumpTrigger = this;
 	}
 }
 
@@ -43,6 +44,7 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 		{
 			ensure (JumpPoint != nullptr);
 			JumpPointLocations.Add(JumpPoint->GetActorLocation());
+			JumpPoint->JumpTrigger = this;
 		}
 	}
 }
