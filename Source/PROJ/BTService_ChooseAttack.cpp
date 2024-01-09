@@ -6,7 +6,6 @@
 #include "AIController.h"
 #include "BasicAttackComponent.h"
 #include "RobotBaseState.h"
-#include "ShadowRobotCharacter.h"
 #include "ShadowSoulCharacter.h"
 #include "SoulBaseStateNew.h"
 #include "SoulDashingState.h"
@@ -15,12 +14,20 @@
 void UBTService_ChooseAttack::TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
 {
 	Super::TickNode(OwnerComp, NodeMemory, DeltaSeconds);
+	
+	const auto OwnerPawn = OwnerComp.GetAIOwner()->GetPawn();
+
+	if(!bHasSetUpComps)
+	{
+		AttackComp = OwnerPawn->FindComponentByClass<UBasicAttackComponent>();
+		SoulState = OwnerPawn->FindComponentByClass<USoulBaseStateNew>();
+		RobotState = OwnerPawn->FindComponentByClass<URobotBaseState>();
+		bHasSetUpComps = true; 
+	}
 
 	// Do nothing if AI is charging or using its special attack 
 	if(IsUsingSpecialAttack(OwnerComp)) 
 		return; 
-	
-	const auto OwnerPawn = OwnerComp.GetAIOwner()->GetPawn();
 	
 	const float DistanceToTarget = FVector::Dist(OwnerComp.GetBlackboardComponent()->GetValueAsVector(BBKeyCurrentTarget.SelectedKeyName), OwnerPawn->GetActorLocation());
 
@@ -40,7 +47,7 @@ void UBTService_ChooseAttack::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 		return; 
 	}
 
-	// In range for special attack, check if in range for basic attack 
+	// In range for special attack, check if in range for basic attack, if we are then determine attack by weights  
 	if(IsInRangeForBasicAttack(DistanceToTarget))
 	{
 		if(CanBasicAttack(OwnerPawn) && FMath::RandRange(0.f, 1.f) < ProbabilityToBasicAttack)
@@ -70,30 +77,27 @@ bool UBTService_ChooseAttack::IsUsingSpecialAttack(UBehaviorTreeComponent& Owner
 	// Using (currently only applies to Dash since Pulse is instant, hook shot will need to be checked if implemented)
 	if(const auto Soul = Cast<AShadowSoulCharacter>(OwnerComp.GetAIOwner()->GetPawn()))
 	{
-		if(Soul->GetCurrentState()->IsA(USoulDashingState::StaticClass())) 
+		if(Soul->GetCurrentState() == Soul->DashState) 
 			return true; 
 	}
 
 	return false; // Not charging or using 
 }
 
-bool UBTService_ChooseAttack::IsSpecialAttackOnCooldown(APawn* Owner) const
+bool UBTService_ChooseAttack::IsSpecialAttackOnCooldown(const APawn* Owner) const
 {
-	if(const auto Robot = Cast<AShadowRobotCharacter>(Owner))
-		return Robot->FindComponentByClass<URobotBaseState>()->IsPulseCoolDownActive(); 
+	if(RobotState)
+		return RobotState->IsPulseCoolDownActive(); 
 		
-	if (const auto Soul = Cast<AShadowSoulCharacter>(Owner))
-		return Soul->FindComponentByClass<USoulBaseStateNew>()->bDashCoolDownActive;
+	if (SoulState)
+		return SoulState->bDashCoolDownActive;
 
 	return true; 
 }
 
-bool UBTService_ChooseAttack::CanBasicAttack(const APawn* Owner)
+bool UBTService_ChooseAttack::CanBasicAttack(const APawn* Owner) const
 {
-	if(const auto BasicAttack = Owner->FindComponentByClass<UBasicAttackComponent>())
-		return BasicAttack->CanAttack();
-
-	return false; 
+	return AttackComp && AttackComp->CanAttack(); 
 }
 
 bool UBTService_ChooseAttack::IsInRangeForBasicAttack(const float DistanceToTarget) const

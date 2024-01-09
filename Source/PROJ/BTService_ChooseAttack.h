@@ -48,14 +48,25 @@ private:
 	UPROPERTY(EditAnywhere)
 	FBlackboardKeySelector BBKeyChargingSpecialAttack;
 
+	UPROPERTY()
+	class UBasicAttackComponent* AttackComp;
+
+	UPROPERTY()
+	class URobotBaseState* RobotState;
+
+	UPROPERTY()
+	class USoulBaseStateNew* SoulState;
+
+	bool bHasSetUpComps = false; 
+
 	/** Returns true if the AI is charging or using its special attack (dash) */
 	bool IsUsingSpecialAttack(UBehaviorTreeComponent& OwnerComp) const; 
 
 	/** Returns true if the Owner's special attack (Pulse or Dash) is on cooldown and cant be performed */
-	bool IsSpecialAttackOnCooldown(APawn* Owner) const;
+	bool IsSpecialAttackOnCooldown(const APawn* Owner) const;
 
 	/** Returns true if the Owner's basic attack is on cooldown and cant be performed */
-	static bool CanBasicAttack(const APawn* Owner); 
+	bool CanBasicAttack(const APawn* Owner) const; 
 
 	/** Returns true if the AI is in range to perform basic attack */
 	bool IsInRangeForBasicAttack(const float DistanceToTarget) const;
