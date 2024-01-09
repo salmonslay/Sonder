@@ -41,20 +41,23 @@ FVector UBTService_SetCurrentTarget::GetTargetLocation(AAIController* BaseAICont
 
 		const FVector CurrentLocation = BaseAIController->GetPawn()->GetActorLocation();
 
-		const auto DistToPlayerOne = FVector::Dist(Player1->GetActorLocation(), CurrentLocation);
-		const auto DistToPlayerTwo = FVector::Dist(Player2->GetActorLocation(), CurrentLocation);
+		const FVector Player1Loc = Player1->GetActorLocation(); 
+		const FVector Player2Loc = Player2->GetActorLocation(); 
+
+		const auto DistToPlayerOne = FVector::Dist(Player1Loc, CurrentLocation);
+		const auto DistToPlayerTwo = FVector::Dist(Player2Loc, CurrentLocation);
 
 		// Respawning/in arena jail 
 		if(Player1->bIsSafe)
 		{
-			OwnerCharacter->CurrentTargetLocation = Player2->GetActorLocation();
-			return OwnerCharacter->CurrentTargetLocation; 
+			OwnerCharacter->CurrentTargetLocation = Player2Loc;
+			return Player2Loc; 
 		}
 		
 		if(Player2->bIsSafe)
 		{
-			OwnerCharacter->CurrentTargetLocation = Player1->GetActorLocation();
-			return OwnerCharacter->CurrentTargetLocation;
+			OwnerCharacter->CurrentTargetLocation = Player1Loc;
+			return Player1Loc;
 		}
 
 		const bool bLOSToP1 = HasLineOfSightToPlayer(OwnerCharacter, Player1);
@@ -64,13 +67,13 @@ FVector UBTService_SetCurrentTarget::GetTargetLocation(AAIController* BaseAICont
 		// P2 closer but no LOS to P2 and LOS to p1, then also set p1 as target 
 		if((DistToPlayerOne < DistToPlayerTwo && (bLOSToP1 || !bLOSToP2)) || DistToPlayerTwo < DistToPlayerOne && (!bLOSToP2 && bLOSToP1))
 		{
-			OwnerCharacter->CurrentTargetLocation = Player1->GetActorLocation();
-			return OwnerCharacter->CurrentTargetLocation;
+			OwnerCharacter->CurrentTargetLocation = Player1Loc;
+			return Player1Loc;
 		}
 
 		// Otherwise, p2 is target 
-		OwnerCharacter->CurrentTargetLocation = Player2->GetActorLocation();
-		return OwnerCharacter->CurrentTargetLocation; 
+		OwnerCharacter->CurrentTargetLocation = Player2Loc;
+		return Player2Loc; 
 	}
 
 	UE_LOG(LogTemp, Error, TEXT("Could not cast AI controller in Service Set Current target"))

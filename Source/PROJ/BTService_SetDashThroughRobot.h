@@ -31,7 +31,7 @@ private:
 	UPROPERTY(EditAnywhere)
 	FBlackboardKeySelector BBKeyDoSpecialAttack;
 
-	UPROPERTY()
+	UPROPERTY(EditAnywhere)
 	TArray<TEnumAsByte<EObjectTypeQuery>> ShadowObjectType;
 
 	/** How far away a Robot needs to be to dash through, assuming all other conditions are met */

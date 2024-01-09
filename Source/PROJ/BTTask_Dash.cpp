@@ -37,7 +37,7 @@ void UBTTask_Dash::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory
 	// Check if still dashing 
 	if(ShadowSoul)
 	{
-		if(ShadowSoul->GetCurrentState()->IsA(USoulDashingState::StaticClass()))
+		if(ShadowSoul->GetCurrentState() == ShadowSoul->DashState)
 			return FinishLatentTask(OwnerComp, EBTNodeResult::InProgress);
 
 		return FinishLatentTask(OwnerComp, EBTNodeResult::Succeeded); 
