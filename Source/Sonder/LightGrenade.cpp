@@ -3,6 +3,7 @@
 
 #include "LightGrenade.h"
 
+#include "DamageZone.h"
 #include "EnemyCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "PressurePlateBase.h"
@@ -144,8 +145,13 @@ void ALightGrenade::ActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 		
 		StartCountdown(ExplodeTimeFast);
 		
-			
 	}
+
+	else if (ADamageZone* DamageZone  = Cast<ADamageZone>(OtherActor))
+	{
+		StartCountdown(ExplodeTimeFast);
+	}
+	
 	
 }
 
