@@ -152,10 +152,10 @@ void ALightGrenade::ActorBeginOverlap(UPrimitiveComponent* OverlappedComponent, 
 void ALightGrenade::OverlapEnd(UPrimitiveComponent* OverlappedComponent, AActor* OtherActor,
 	UPrimitiveComponent* OtherComp, int32 OtherBodyIndex)
 {
-	/*if (APressurePlateBase* Plate = Cast<APressurePlateBase>(OtherActor))
+	if (APressurePlateBase* Plate = Cast<APressurePlateBase>(OtherActor))
 	{
 		Plate->StartReverse();		
-	}*/
+	}
 }
 
 void ALightGrenade::ServerRPCExplosion_Implementation()
@@ -261,6 +261,7 @@ void ALightGrenade::EnableCanThrow()
 void ALightGrenade::DisableGrenade()
 {
 	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
+	ExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Ignore);
 	PulseExplosionArea->SetCollisionResponseToAllChannels(ECR_Ignore);
 	GrenadeMesh->SetVisibility(false);
 	bIsPulseExploding = false;
@@ -271,6 +272,7 @@ void ALightGrenade::DisableGrenade()
 void ALightGrenade::EnableGrenade()
 {
 	CollisionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
+	ExplosionArea->SetCollisionResponseToAllChannels(ECollisionResponse::ECR_Overlap);
 	GrenadeMesh->SetVisibility(true);
 	Damage = DefaultDamage;
 }
