@@ -5,6 +5,8 @@
 
 #include "AIController.h"
 #include "EnemyJumpPoint.h"
+#include "EnemyJumpTrigger.h"
+#include "ShadowCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 
@@ -22,12 +24,23 @@ EBTNodeResult::Type UBTTask_MoveWithJumpPoints::ExecuteTask(UBehaviorTreeCompone
 		return Result;
 	}
 
+	OwnerCharacter = Cast<AShadowCharacter>(OwnerComp.GetAIOwner()->GetCharacter());
+
+	if (OwnerCharacter.Get() == nullptr)
+	{
+		return Result;
+	}
+	
+	OwnerLocation = OwnerCharacter->GetActorLocation();
+	
 	BlackboardComponent = OwnerComp.GetAIOwner()->GetBlackboardComponent();
 	
 	if (BlackboardComponent == nullptr)
 	{
 		return Result;
 	}
+
+	CurrentTargetLocation = BlackboardComponent->GetValueAsVector(BBKeyCurrentTarget.SelectedKeyName);
 
 	if(JumpPoints.IsEmpty() || JumpPointLocations.IsEmpty())
 	{
@@ -41,16 +54,99 @@ EBTNodeResult::Type UBTTask_MoveWithJumpPoints::ExecuteTask(UBehaviorTreeCompone
 		}
 	}
 
-	GetJumpPointPath(OwnerComp);
+	const FVector Closest = GetClosestReachableJumpPointLocation();
+	FVector ClosestToPlayer = GetClosestJumpPointTo(CurrentTargetLocation);
 
-	if (!JumpPointPath.IsEmpty())
+	//BlackboardComponent->SetValueAsVector(BlackboardKey.SelectedKeyName, FVector(OwnerLocation.X, Closest.Y, OwnerLocation.Z ));
+	BlackboardComponent->SetValueAsVector(BlackboardKey.SelectedKeyName,  FVector(OwnerLocation.X, Closest.Y, OwnerLocation.Z ) );
+
+	if (bDebug)
 	{
-		
+		DrawDebugSphere(GetWorld(), BlackboardComponent->GetValueAsVector(BlackboardKey.SelectedKeyName), 30.f, 30, FColor::Green, false, 0.2f );
 	}
-
+	
+	if (Closest != FVector::ZeroVector)
+	{
+		return EBTNodeResult::Succeeded;
+	}
 	return Result;
 }
 
-void UBTTask_MoveWithJumpPoints::GetJumpPointPath(const UBehaviorTreeComponent& OwnerComp)
+FVector UBTTask_MoveWithJumpPoints::GetClosestReachableJumpPointLocation()
 {
+	if (JumpPointLocations.IsEmpty())
+	{
+		return FVector::ZeroVector;
+	}
+
+	FVector ClosestToPlayer;
+	float MinDistancePlayer = 60000000.f;
+	// TODO: the point has to be within range of the enemy, getting the closest one to the target but within range.
+
+	// Choose the jump point location that is as close to the player as possible, but also reachable aka the same height as enemy.
+	for (FVector JumpPoint : JumpPointLocations)
+	{
+		if (FMath::IsNearlyEqual(JumpPoint.Z, OwnerLocation.Z, MaxHeightDifferenceToMarkAsSameHeight) && FVector::Distance(JumpPoint, OwnerLocation) <= MaxDistanceToMarkAsReachable)
+		{
+			if (FVector::Distance(JumpPoint, CurrentTargetLocation) <= MinDistancePlayer)
+			{
+				ClosestToPlayer = JumpPoint;
+				MinDistancePlayer = FVector::Distance(JumpPoint, CurrentTargetLocation);
+			}
+		}
+	} 
+	return ClosestToPlayer;
+}
+
+FVector UBTTask_MoveWithJumpPoints::GetClosestJumpPointTo(const FVector& Loc)
+{
+	FVector ClosestToPlayer;
+	float MinDistancePlayer = 60000000.f;
+	
+	// Choose the jump point location that is as close to the player as possible
+	for (FVector JumpPoint : JumpPointLocations)
+	{
+		if (FVector::Distance(JumpPoint, Loc) <= MinDistancePlayer)
+		{
+			ClosestToPlayer = JumpPoint;
+			MinDistancePlayer = FVector::Distance(JumpPoint, Loc);
+		}
+	} 
+	return ClosestToPlayer;
+}
+
+TWeakObjectPtr<AEnemyJumpPoint> UBTTask_MoveWithJumpPoints::GetJumpPointFromLocation(const FVector& Loc)
+{
+	TWeakObjectPtr<AEnemyJumpPoint> Temp;
+	for (const auto JumpPoint : JumpPoints)
+	{
+		if (JumpPoint->GetActorLocation() == Loc)
+		{
+			Temp = JumpPoint;
+		}
+	}
+	if (Temp.Get() == nullptr)
+	{
+		UE_LOG(LogTemp, Error, TEXT("No jumppoint found with location, something is severely wrong"));
+	}
+	return Temp;
+}
+
+void UBTTask_MoveWithJumpPoints::GetJumpPointPath(const FVector& ClosestPointLoc)
+{
+	TArray<FVector> TempPath;
+	TWeakObjectPtr<AEnemyJumpPoint> ClosestJumpPoint = GetJumpPointFromLocation(ClosestPointLoc);
+
+	// Iterate jump points from the closest one, checking its connected jump points
+	//TODO: if player is kinda the same height, check for y value closest to. If not, try to find the one closest to z value
+	float MinDistanceToPlayer = 37508408260.f;
+	TWeakObjectPtr<AEnemyJumpPoint> MostAccurateJumpPoint;
+	for (const auto JumpPoint : ClosestJumpPoint->JumpTrigger.Get()->JumpPoints)
+	{
+		if (FVector::Distance(JumpPoint->GetActorLocation(), CurrentTargetLocation) <= MinDistanceToPlayer)
+		{
+			MostAccurateJumpPoint = JumpPoint;
+			MinDistanceToPlayer = FVector::Distance(JumpPoint->GetActorLocation(), CurrentTargetLocation);
+		}
+	}
 }

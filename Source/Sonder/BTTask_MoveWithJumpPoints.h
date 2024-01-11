@@ -6,6 +6,7 @@
 #include "BehaviorTree/Tasks/BTTask_MoveTo.h"
 #include "BTTask_MoveWithJumpPoints.generated.h"
 
+class AShadowCharacter;
 class AEnemyJumpPoint;
 /**
  * 
@@ -24,8 +25,13 @@ public:
 
 private:
 
-	void GetJumpPointPath(const UBehaviorTreeComponent& OwnerComp);
-	
+	FVector GetClosestReachableJumpPointLocation();
+
+	FVector GetClosestJumpPointTo(const FVector& Loc);
+
+	TWeakObjectPtr<AEnemyJumpPoint> GetJumpPointFromLocation(const FVector& Loc);
+
+	void GetJumpPointPath(const FVector& ClosestPointLoc);
 
 	TArray<TWeakObjectPtr<AEnemyJumpPoint>> JumpPoints = TArray<TWeakObjectPtr<AEnemyJumpPoint>>();
 
@@ -37,11 +43,19 @@ private:
 
 	FVector OwnerLocation = FVector::ZeroVector;
 
+	FVector CurrentTargetLocation = FVector::ZeroVector;
+
 	UPROPERTY()
 	UBlackboardComponent* BlackboardComponent;
 
+	UPROPERTY()
+	TWeakObjectPtr<AShadowCharacter> OwnerCharacter = nullptr;
+
 	UPROPERTY(EditAnywhere)
-	float MaxHeightDifferenceToMarkAsSameHeight = 50.f;
+	float MaxHeightDifferenceToMarkAsSameHeight = 70.f;
+
+	UPROPERTY(EditAnywhere)
+	float MaxDistanceToMarkAsReachable= 800.f;
 
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;
