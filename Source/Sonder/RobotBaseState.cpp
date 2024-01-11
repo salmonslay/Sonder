@@ -33,7 +33,9 @@ void URobotBaseState::BeginPlay()
 
 	MovementComponent = CharOwner->GetCharacterMovement();
 
-	PulseCollision = CharOwner->FindComponentByClass<USphereComponent>(); 
+	PulseCollision = CharOwner->FindComponentByClass<USphereComponent>();
+
+	SetPulseCooldown(); 
 }
 
 void URobotBaseState::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
@@ -85,6 +87,11 @@ void URobotBaseState::MulticastRPC_DashBuffStart_Implementation()
 	{
 		ShadowRobot->OnDashBuffStart();
 	}
+}
+
+void URobotBaseState::ServerRPC_DisablePulseCooldown_Implementation()
+{
+	bPulseCoolDownActive = false; 
 }
 
 void URobotBaseState::ResetDashBuff()
@@ -154,7 +161,7 @@ void URobotBaseState::Pulse()
 	bPulseCoolDownActive = true;
 
 	FTimerHandle PulseTimerHandle;
-	GetWorld()->GetTimerManager().SetTimer(PulseTimerHandle, this, &URobotBaseState::DisablePulseCooldown,
+	GetWorld()->GetTimerManager().SetTimer(PulseTimerHandle, this, &URobotBaseState::ServerRPC_DisablePulseCooldown,
 	                                       PulseCooldown);
 
 	ServerRPCPulse();
@@ -164,6 +171,8 @@ void URobotBaseState::ServerRPCPulse_Implementation()
 {
 	if (!GetOwner()->HasAuthority())
 		return;
+
+	bPulseCoolDownActive = true;
 
 	MulticastRPCPulse();
 }
@@ -268,4 +277,10 @@ void URobotBaseState::ActivateAbilities()
 {
 	RobotCharacter->AbilityOne = true;
 	RobotCharacter->AbilityTwo = true;
+}
+
+void URobotBaseState::SetPulseCooldown()
+{
+	if(RobotCharacter && UGameplayStatics::GetCurrentLevelName(this).Equals(TEXT("ArenaSurvival")))
+		PulseCooldown = PulseCooldownInArena;
 }

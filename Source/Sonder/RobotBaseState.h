@@ -43,9 +43,6 @@ public:
 	UPROPERTY(EditAnywhere)
 	float Damage = 5.0f;
 
-	UPROPERTY(EditAnywhere, BlueprintReadWrite)
-	float PulseCooldown = 1.f;
-
 protected:
 	
 	virtual void BeginPlay() override;
@@ -111,7 +108,13 @@ private:
 	class UCharacterMovementComponent* MovementComponent;
 
 	UPROPERTY()
-	class USphereComponent* PulseCollision; 
+	class USphereComponent* PulseCollision;
+	
+	UPROPERTY(EditAnywhere)
+	float PulseCooldown = 1.f;
+
+	UPROPERTY(EditAnywhere)
+	float PulseCooldownInArena = 1.8f; 
 
 	/** Function firing when player presses button to request hook shot */
 	void ShootHook();
@@ -125,7 +128,8 @@ private:
 
 	void DisableHookShotCooldown() { bHookShotOnCooldown = false; };
 
-	void DisablePulseCooldown() { bPulseCoolDownActive = false; }
+	UFUNCTION(Server, Reliable)
+	void ServerRPC_DisablePulseCooldown(); 
 
 	void DisableSecondJump() { if (CharOwner->IsPlayerControlled()) {PlayerActor->JumpMaxCount = 1; }}
 
@@ -144,4 +148,7 @@ private:
 	void MulticastRPC_DashBuffEnd();
 
 	void ActivateAbilities();
+
+	void SetPulseCooldown(); 
+	
 };
