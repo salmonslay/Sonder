@@ -72,6 +72,9 @@
 		<property name="filterTypeB">
 			<value>9</value>
 		</property>
+		<property name="filterTypeC">
+			<value>6</value>
+		</property>
 		<property name="frequencyA">
 			<value>3338.7666</value>
 		</property>

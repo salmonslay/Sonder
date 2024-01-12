@@ -79,6 +79,9 @@
 		</relationship>
 	</object>
 	<object class="EventMixerMaster" id="{7ec0e8b1-3b9c-43a3-8da7-213578857996}">
+		<property name="volume">
+			<value>-6.5</value>
+		</property>
 		<property name="pitch">
 			<value>-5</value>
 		</property>
@@ -120,10 +123,14 @@
 			<destination>{7c64ae66-3269-4fb4-9626-d1d440f5b999}</destination>
 			<destination>{30baf180-7868-4643-8fe6-48ee2d35302f}</destination>
 			<destination>{428857ca-92ed-48cd-bd11-31a73f715e5c}</destination>
+			<destination>{26888737-81cc-45e8-9db6-2e7e8ff41c6f}</destination>
 		</relationship>
 	</object>
 	<object class="MixerBusPanner" id="{03c7fd18-77a3-48dd-a757-d83531e4044c}" />
 	<object class="SingleSound" id="{f465eb94-cd19-4e86-acc3-5dc013e898c2}">
+		<property name="pitch">
+			<value>-4</value>
+		</property>
 		<relationship name="audioFile">
 			<destination>{c4548477-9671-46c4-b906-c5d04830c179}</destination>
 		</relationship>
@@ -148,20 +155,29 @@
 		<property name="filterTypeA">
 			<value>4</value>
 		</property>
+		<property name="filterTypeC">
+			<value>9</value>
+		</property>
 		<property name="filterTypeD">
 			<value>2</value>
 		</property>
 		<property name="frequencyA">
 			<value>162.124435</value>
 		</property>
+		<property name="frequencyC">
+			<value>7807.50684</value>
+		</property>
 		<property name="frequencyD">
-			<value>18257.3887</value>
+			<value>18639.6113</value>
 		</property>
 		<property name="qualityA">
 			<value>0.665137947</value>
 		</property>
 		<property name="qualityD">
-			<value>0.20465517</value>
+			<value>0.309310347</value>
+		</property>
+		<property name="gainC">
+			<value>-7.24137878</value>
 		</property>
 	</object>
 	<object class="DistortionEffect" id="{769f92dc-7f15-4d6f-a24e-9ea1d8a6886d}">
@@ -197,6 +213,20 @@
 	<object class="GainEffect" id="{428857ca-92ed-48cd-bd11-31a73f715e5c}">
 		<property name="gain">
 			<value>-3.5</value>
+		</property>
+	</object>
+	<object class="SFXReverbEffect" id="{26888737-81cc-45e8-9db6-2e7e8ff41c6f}">
+		<property name="earlyDelay">
+			<value>0</value>
+		</property>
+		<property name="HFDecayRatio">
+			<value>10</value>
+		</property>
+		<property name="diffusion">
+			<value>0</value>
+		</property>
+		<property name="density">
+			<value>22.5</value>
 		</property>
 	</object>
 </objects>
