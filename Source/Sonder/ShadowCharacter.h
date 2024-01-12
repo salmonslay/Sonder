@@ -63,6 +63,8 @@ public:
 	UPROPERTY(VisibleAnywhere, BlueprintReadWrite)
 	FVector ClosestJumpPoint = FVector::ZeroVector;
 
+	FVector CurrentLocation = FVector::ZeroVector;
+
 	UFUNCTION(BlueprintCallable)
 	bool CheckIfJumpNeeded();
 	
@@ -89,6 +91,11 @@ public:
 
 	/** Calculates if jump point is closer to player than enemy*/
 	bool PointCloserToPlayer(const FVector &CurrentTargetPoint) const;
+
+	/** Checks if character is leveled with given location*/
+	bool IsLeveledWithLocation(const FVector &Location) const;
+
+	bool IsWithinRangeFrom(const FVector &Location) const;
 
 	// EVENTS
 
@@ -120,6 +127,12 @@ protected:
 	UPlayerCharState* CurrentState = nullptr;
 	
 private:
+
+	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess = true))
+	float MaxHeightDifferenceToMarkAsLeveled = 70.f;
+
+	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess = true))
+	float MaxDistanceToMarkAsReachable = 200.f;
 
 	UFUNCTION(Server, Reliable) 
 	void ServerRPC_SwitchState(UPlayerCharState* NewState); 

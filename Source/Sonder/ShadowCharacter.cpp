@@ -114,6 +114,16 @@ bool AShadowCharacter::PointCloserToPlayer(const FVector &CurrentTargetPoint) co
 	return FVector::Distance(AvaliableJumpPoint, CurrentTargetPoint) < FVector::Distance(GetActorLocation(),CurrentTargetPoint);
 }
 
+bool AShadowCharacter::IsLeveledWithLocation(const FVector& Location) const
+{
+	return FMath::IsNearlyEqual(Location.Z, CurrentLocation.Z, MaxHeightDifferenceToMarkAsLeveled);
+}
+
+bool AShadowCharacter::IsWithinRangeFrom(const FVector& Location) const
+{
+	return FVector::Distance(Location, CurrentLocation) <= MaxDistanceToMarkAsReachable;
+}
+
 
 void AShadowCharacter::BeginPlay()
 {
@@ -143,6 +153,7 @@ void AShadowCharacter::Tick(const float DeltaSeconds)
 		{
 			if (!bIsPerformingJump)
 			{
+				CurrentLocation = GetActorLocation();
 				bCanBasicJump = true;
 				AvaliableJumpPoint = CurrentJumpTrigger->RequestJumpLocation(GetActorLocation(), CurrentTargetLocation, ClosestJumpPoint, bHasLandedOnPlatform);
 			}
