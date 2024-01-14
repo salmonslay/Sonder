@@ -38,6 +38,9 @@ public:
 	APROJCharacter* GetLatestDamageCauser();
 	
 	void KillMe();
+
+	UPROPERTY(EditDefaultsOnly, BlueprintReadOnly, Category="EndlessMode")
+	int ScoreValue = 100;
 	
 protected:
 	// Called when the game starts or when spawned
