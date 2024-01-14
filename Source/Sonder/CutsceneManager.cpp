@@ -205,6 +205,9 @@ void ACutsceneManager::StopCutscene()
 	else if(LevelToLoadOnCutsceneEnd.IsNone())
 		ShowHud();
 
+	if(CutsceneFinishedDelegate.IsBound())
+		CutsceneFinishedDelegate.Broadcast(); 
+
 	bHasStopped = true; 
 }
 
