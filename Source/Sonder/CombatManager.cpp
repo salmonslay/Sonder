@@ -106,6 +106,8 @@ void ACombatManager::RemoveEnemy(AEnemyCharacter* Enemy)
 	Enemies.Remove(Enemy);
 	NumActiveEnemies--;
 	KilledEnemies++;
+	if(bEndlessMode)
+		TotalScore += Enemy->ScoreValue;
 	if(!bEndlessMode && WavesQueue.IsEmpty() && NumActiveEnemies <= 0 && GetLocalRole() == ROLE_Authority)
 	{
 		for(ASpawnPoint* SpawnPoint : SpawnPoints)
@@ -232,4 +234,5 @@ void ACombatManager::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLi
 	DOREPLIFETIME(ACombatManager, CurrentWave);
 	DOREPLIFETIME(ACombatManager, KilledEnemies);
 	DOREPLIFETIME(ACombatManager, NumActiveEnemies);
+	DOREPLIFETIME(ACombatManager, TotalScore);
 }

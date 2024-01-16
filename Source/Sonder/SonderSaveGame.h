@@ -117,6 +117,9 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	ELanguage CurrentLanguage = ELanguage::English;
 
+	UPROPERTY(BlueprintReadWrite)
+	bool bHasPlayedEndless;
+
 #pragma region achievements
 	UPROPERTY(BlueprintReadOnly)
 	int EverlookingEyesKilled = 0;
