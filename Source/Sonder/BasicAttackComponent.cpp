@@ -3,6 +3,7 @@
 
 #include "BasicAttackComponent.h"
 
+#include "DestructableBox.h"
 #include "PROJCharacter.h"
 #include "ShadowCharacter.h"
 #include "Engine/DamageEvents.h"
@@ -88,16 +89,29 @@ void UBasicAttackComponent::DoAttackDamage()
 	TArray<AActor*> OverlappingActors; 
 	GetOverlappingActors(OverlappingActors, AActor::StaticClass());
 
-	const bool bPlayerControlled = Owner->IsPlayerControlled(); 
+	const bool bPlayerControlled = Owner->IsPlayerControlled();
+	const FVector OwnerLoc = Owner->GetActorLocation();
+	AController* DamageController = Owner->GetInstigatorController(); 
 
+	FHitResult HitResult; 
+	
 	for(const auto Actor : OverlappingActors)
 	{
+		// Check line of sight 
+		if(!Actor->IsA(ADestructableBox::StaticClass()))
+		{
+			FCollisionQueryParams Params;
+			Params.AddIgnoredActors(TArray<AActor*> ({ Owner, Actor }));
+			if (GetWorld()->LineTraceSingleByChannel(HitResult, OwnerLoc, Actor->GetActorLocation(), ECC_Pawn, Params))
+				continue;
+		}
+		
 		const bool bDamagingPlayer = Actor->IsA(APROJCharacter::StaticClass()); 
 		
 		// Player: damage all but other players, AI controlled: damage only players 
 		if((bPlayerControlled && !bDamagingPlayer) || (!bPlayerControlled && bDamagingPlayer)) 
 		{
-			Actor->TakeDamage(Damage, FDamageEvent(), GetOwner()->GetInstigatorController(), GetOwner());
+			Actor->TakeDamage(Damage, FDamageEvent(), DamageController, Owner);
 			
 			if(!bCalledHitEvent && ShouldCallHitEvent(Actor)) 
 			{
