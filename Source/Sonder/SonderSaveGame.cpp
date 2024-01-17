@@ -61,5 +61,11 @@ bool USonderSaveGame::CanPlayLevel(const ESonderLevel LevelToPlay)
 	const USonderSaveGame* SaveGame = APROJCharacter::GetSaveGameSafe();
 	const ESonderLevel Highest = SaveGame->GetHighestLevelCompleted();
 
+	if (LevelToPlay == ESonderLevel::Football)
+		return SaveGame->bFootballUnlocked; // football is unlocked by easter egg
+
+	if (LevelToPlay == ESonderLevel::ArenaSurvival)
+		return SaveGame->GetLevelsCompleted().Contains(ESonderLevel::Arena2); // survival is unlocked by completing the game
+
 	return LevelToPlay <= Highest || LevelToPlay == static_cast<ESonderLevel>(static_cast<uint8>(Highest) + 10);
 }
