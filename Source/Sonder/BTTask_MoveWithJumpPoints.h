@@ -52,9 +52,6 @@ private:
 	TWeakObjectPtr<AShadowCharacter> OwnerCharacter = nullptr;
 
 	UPROPERTY(EditAnywhere)
-	float MaxHeightDifferenceToMarkAsSameHeight = 70.f;
-
-	UPROPERTY(EditAnywhere)
 	float MaxDistanceToMarkAsReachable= 800.f;
 
 	UPROPERTY(EditAnywhere)
