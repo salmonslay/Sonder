@@ -30,8 +30,13 @@ EBTNodeResult::Type UBTTask_MoveWithJumpPoints::ExecuteTask(UBehaviorTreeCompone
 	{
 		return Result;
 	}
-	
-	OwnerLocation = OwnerCharacter->GetActorLocation();
+
+	// if owner has not updated its location, update it
+	if (OwnerLocation != OwnerCharacter->CurrentLocation)
+	{
+		OwnerLocation = OwnerCharacter->GetActorLocation();
+		OwnerCharacter->CurrentLocation = OwnerLocation;
+	}
 	
 	BlackboardComponent = OwnerComp.GetAIOwner()->GetBlackboardComponent();
 	
@@ -86,7 +91,7 @@ FVector UBTTask_MoveWithJumpPoints::GetClosestReachableJumpPointLocation()
 	// Choose the jump point location that is as close to the player as possible, but also reachable aka the same height as enemy.
 	for (FVector JumpPoint : JumpPointLocations)
 	{
-		if (FMath::IsNearlyEqual(JumpPoint.Z, OwnerLocation.Z, MaxHeightDifferenceToMarkAsSameHeight) && FVector::Distance(JumpPoint, OwnerLocation) <= MaxDistanceToMarkAsReachable)
+		if (OwnerCharacter->IsLeveledWithLocation(JumpPoint) && FVector::Distance(JumpPoint, OwnerLocation) <= MaxDistanceToMarkAsReachable)
 		{
 			if (FVector::Distance(JumpPoint, CurrentTargetLocation) <= MinDistancePlayer)
 			{

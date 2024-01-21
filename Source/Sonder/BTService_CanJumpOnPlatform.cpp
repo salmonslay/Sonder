@@ -43,7 +43,7 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 		{
 			if (OwnerCharacter->AvaliableJumpPoint != FVector::ZeroVector)
 			{
-				if (!OwnerCharacter->HasNavigationToTarget(BlackboardComponent->GetValueAsVector("CurrentTargetLocation")))
+				if (!OwnerCharacter->HasNavigationToTarget(BlackboardComponent->GetValueAsVector("CurrentTargetLocation")) || !OwnerCharacter->IsWithinRangeFrom(BlackboardComponent->GetValueAsVector("CurrentTargetLocation")))
 				{
 					if (bDebug)
 					{
@@ -58,13 +58,18 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 				}
 				else
 				{
+					BlackboardComponent->SetValueAsBool("bIsJumping", false);
+					BlackboardComponent->ClearValue("bIsJumping");
 					UE_LOG(LogTemp, Error, TEXT("Has a valid path and therefore no jumpy :(("))
+					OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
 				}
 			}
 		}
 	}
 	BlackboardComponent->SetValueAsBool("bIsJumping", false);
 	BlackboardComponent->ClearValue("bIsJumping");
+	OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
+
 }
 
 
