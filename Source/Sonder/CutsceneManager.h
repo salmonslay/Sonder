@@ -32,6 +32,13 @@ public:
 	UFUNCTION(Server, Reliable, BlueprintCallable)
 	void ServerRPC_PlayCutscene();
 
+	UDELEGATE()
+	DECLARE_DYNAMIC_MULTICAST_DELEGATE( FCutsceneFinishedDelegate ); 
+
+	/** Delegate called when cutscene ends */
+	UPROPERTY(BlueprintAssignable)
+	FCutsceneFinishedDelegate CutsceneFinishedDelegate; 
+
 protected:
 
 	// local player controllers, 1 when playing online. 2 local 

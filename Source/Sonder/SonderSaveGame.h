@@ -20,6 +20,7 @@ enum class ESonderLevel : uint8
 	 */
 	None = 0,
 	MainMenu = 5,
+	Football = 6,
 	Tutorial = 10,
 	Level1 = 20,
 	Arena1 = 30,
@@ -69,7 +70,11 @@ public:
 	TArray<ESonderLevel> LevelsCompleted = {ESonderLevel::None};
 
 	UFUNCTION(BlueprintCallable)
-	void AddLevelCompleted(const ESonderLevel LevelCompleted) { LevelsCompleted.AddUnique(LevelCompleted); }
+	void AddLevelCompleted(const ESonderLevel LevelCompleted)
+	{
+		LevelsCompleted.AddUnique(LevelCompleted);
+		LevelsCompleted.Sort([](const ESonderLevel A, const ESonderLevel B) { return A < B; });
+	}
 
 	UFUNCTION(BlueprintPure)
 	TArray<ESonderLevel> GetLevelsCompleted() const { return LevelsCompleted; }
@@ -119,6 +124,9 @@ public:
 
 	UPROPERTY(BlueprintReadWrite)
 	bool bHasPlayedEndless;
+
+	UPROPERTY(BlueprintReadWrite)
+	bool bFootballUnlocked;
 
 #pragma region achievements
 	UPROPERTY(BlueprintReadOnly)

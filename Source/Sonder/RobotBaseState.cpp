@@ -4,6 +4,7 @@
 #include "RobotBaseState.h"
 
 #include "CollisionDebugDrawingPublic.h"
+#include "DestructableBox.h"
 #include "EnemyCharacter.h"
 #include "EnhancedInputComponent.h"
 #include "LightGrenade.h"
@@ -179,35 +180,42 @@ void URobotBaseState::ServerRPCPulse_Implementation()
 
 void URobotBaseState::MulticastRPCPulse_Implementation()
 {
-	TArray<AActor*> OverlappingActors;
-	PulseCollision->GetOverlappingActors(OverlappingActors, AActor::StaticClass());
-
 	const bool bIsPlayerControlled = CharOwner->IsPlayerControlled();
+	
+	TArray<AActor*> OverlappingActors;
+	if(bIsPlayerControlled)
+		PulseCollision->GetOverlappingActors(OverlappingActors, AActor::StaticClass());
+	else // AI/Enemy, only find players 
+		PulseCollision->GetOverlappingActors(OverlappingActors, APROJCharacter::StaticClass());
 
+	FHitResult HitResult;
+	const FVector OwnerLoc = CharOwner->GetActorLocation(); 
+	
 	for (const auto Actor : OverlappingActors)
 	{
+		const FVector OverlapActorLoc = Actor->GetActorLocation(); 
+		
+		// See if there is line of sight to actor
+		if(!Actor->IsA(ADestructableBox::StaticClass()))
+		{
+			FCollisionQueryParams Params;
+			Params.AddIgnoredActors(TArray<AActor*> ({ CharOwner, Actor }));
+			if (GetWorld()->LineTraceSingleByChannel(HitResult, OwnerLoc, OverlapActorLoc, ECC_Pawn, Params))
+				continue;
+		}
+		
 		if (!bIsPlayerControlled)
 		{
-			if (Actor->IsA(AEnemyCharacter::StaticClass()))
-				continue;
-
 			Actor->TakeDamage(Damage, FDamageEvent(), Controller, CharOwner);
-
 			continue;
 		}
 
 		if (const auto Soul = Cast<ASoulCharacter>(Actor))
 		{
-			// See if there is line of sight to Soul, if there isn't then do nothing with Soul 
-			FHitResult HitResult;
-			if (GetWorld()->LineTraceSingleByChannel(HitResult, CharOwner->GetActorLocation(), Soul->GetActorLocation(),
-			                                         ECC_Pawn))
-				continue;
-
-			if (CharOwner->GetActorLocation().Y - 100 < Actor->GetActorLocation().Y && Actor->GetActorLocation().Y <
-				CharOwner->GetActorLocation().Y + 100)
+			if (OwnerLoc.Y - 100 < OverlapActorLoc.Y && OverlapActorLoc.Y <
+				OwnerLoc.Y + 100)
 			{
-				if (Actor->GetActorLocation().Z > CharOwner->GetActorLocation().Z + 5)
+				if (OverlapActorLoc.Z > OwnerLoc.Z + 5)
 				{
 					PlayerActor = Soul;
 					UE_LOG(LogTemp, Warning, TEXT("Boost"));
@@ -224,7 +232,7 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 					                                       1.0f);
 				}
 
-				else if (Actor->GetActorLocation().Z + 20 < CharOwner->GetActorLocation().Z && MovementComponent->
+				else if (OverlapActorLoc.Z + 20 < OwnerLoc.Z && MovementComponent->
 					IsMovingOnGround() == false)
 				{
 					PlayerActor = RobotCharacter;
@@ -249,12 +257,6 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 
 		else if (const auto Grenade = Cast<ALightGrenade>(Actor))
 		{
-			// See if there is line of sight to Soul, if there isn't then do nothing with Soul 
-			FHitResult HitResult;
-			if (GetWorld()->LineTraceSingleByChannel(HitResult, CharOwner->GetActorLocation(),
-			                                         Grenade->GetActorLocation(), ECC_Pawn))
-				continue;
-
 			Grenade->PulseExplosion();
 			USonderSaveGame::AddGrenadesExplodedWithPulse();
 			Grenade->ServerRPCExplosion();
