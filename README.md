@@ -1,9 +1,9 @@
 # Sonder
-*Experience an innovative co-op adventure where two players have to work together. Engage in collaborative puzzle solving and dynamic combat with each player having unique abilities.*
+*Experience an innovative co-op adventure where two players have to work together. Engage in collaborative puzzle-solving and dynamic combat with each player having unique abilities.*
 
 
 ## Game download
-To download compiled builds of Sonder, please check out or [Steam page](https://store.steampowered.com/app/2692570/Sonder/). To compile the game from source you could grab the source code using `git clone`.
+To download compiled builds of Sonder, please check out our [Steam page](https://store.steampowered.com/app/2692570/Sonder/). To compile the game from source you could grab the source code using `git clone`.
 
 ## Game description
 ### Psychological narrative
@@ -15,5 +15,5 @@ Work together - succeed together. Each character has unique abilities that allow
 
 
 ## Technical details / Contribution
-Sonder is created using Unreal 5.1 and is a mixed C++/Blueprint-project. We do not accept external pull requests at the moment.
+Sonder is created using Unreal 5.3 and is a mixed C++/Blueprint-project. We do not accept external pull requests at the moment.
 
