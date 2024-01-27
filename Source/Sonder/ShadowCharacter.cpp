@@ -57,6 +57,7 @@ void AShadowCharacter::MakeJump()
 		GetCharacterMovement()->SetMovementMode(MOVE_Falling);
 		//UE_LOG(LogTemp, Error, TEXT("MovementMode falling"));
 		bCanBasicJump = false;
+		bIsJumping = true;
 		bIsPerformingJump = true;
 		bHasLandedOnPlatform = false;
 		bHasLandedOnGround = false;
@@ -146,6 +147,7 @@ void AShadowCharacter::Tick(const float DeltaSeconds)
 
 	if(CurrentState)
 		CurrentState->Update(DeltaSeconds);
+	
 	
 	if (IsOverlappingWithTrigger && JumpCoolDownTimer >= JumpCoolDownDuration)
 	{

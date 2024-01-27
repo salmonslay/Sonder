@@ -39,8 +39,14 @@ void UBTService_SetValidPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 		DrawDebugSphere(GetWorld(), FVector(OwnerLocation.X, OwnerLocation.Y, OwnerLocation.Z - HeightDifferenceToMarkInvalid), 30.f, 30, FColor::Red, false, 1.f );
 	}
 
+	if (BlackboardComponent->GetValueAsBool("bIsJumping"))
+	{
+		SetPathIsInvalid(OwnerComp);
+		return;
+	}
 	VerifyGroundStatus(OwnerCharacter);
 
+	
 	if (OwnerCharacter->bHasLandedOnPlatform && !FMath::IsNearlyEqual(BlackboardComponent->GetValueAsVector("CurrentMoveTarget").Z,OwnerLocation.Z, 3 ))
 	{
 		BlackboardComponent->SetValueAsBool("bIsOnPlatform", true);
