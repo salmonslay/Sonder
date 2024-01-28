@@ -166,7 +166,7 @@ FVector AEnemyJumpTrigger::CalculatePointClosetsToTarget(const FVector& EnemyLoc
 			Point = JumpPointLoc;
 		}
 	}
-	DrawDebugSphere(GetWorld(), Point, 30.f, 6, FColor::Orange, false, 0.2f );
+	//DrawDebugSphere(GetWorld(), Point, 30.f, 6, FColor::Orange, false, 0.2f );
 	const float DirToJumpPointY = Point.Y < EnemyLocation.Y ? -1 : 1;
 	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, Point.Z);
 }
