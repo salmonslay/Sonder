@@ -110,7 +110,7 @@ void AShadowCharacter::JumpToPoint(const FVector &JumpPoint)
 
 bool AShadowCharacter::IsNearlyAtLocation(const FVector& Loc) const
 {
-	return FMath::IsNearlyEqual(CurrentLocation.Y, Loc.Y, 5.f) && FMath::IsNearlyEqual(CurrentLocation.Z, Loc.Z, 5.f);
+	return FMath::IsNearlyEqual(CurrentLocation.Y, Loc.Y, 20.f) && FMath::IsNearlyEqual(CurrentLocation.Z, Loc.Z, 20.f);
 }
 
 

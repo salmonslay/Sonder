@@ -34,6 +34,14 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	{
 		BlackboardComponent->SetValueAsBool("bIsJumping", true);
 	}
+
+	if (OwnerCharacter->IsNearlyAtLocation(BlackboardComponent->GetValueAsVector("ClosestMoveTarget")) && (OwnerCharacter->bHasLandedOnGround || OwnerCharacter->bHasLandedOnPlatform))
+	{
+		OwnerCharacter->JumpToPoint(OwnerCharacter->AvaliableJumpPoint);
+		BlackboardComponent->SetValueAsBool("bIsJumping", true);
+		OwnerCharacter->JumpCoolDownTimer = 0;
+		OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
+	}
 	
 	OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
 	

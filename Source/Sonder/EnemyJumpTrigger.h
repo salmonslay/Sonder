@@ -77,7 +77,7 @@ public:
 private:
 	
 	UPROPERTY(EditAnywhere)
-	float EnemyJumpDistance = 200.f;
+	float EnemyJumpDistance = 600.f;
 
 	UPROPERTY(EditAnywhere)
 	float PlatformJumpZOffset = 1000.f;
@@ -97,7 +97,9 @@ private:
 
 	FVector CalculateAccessiblePointFurthestFromEnemy(const FVector& EnemyLocation, const FVector& ClosestPointToEnemy,  const FVector& CurrentTargetLocation);
 
-	bool CanReachJumpPoint(const FVector& PointFrom, const FVector& PointTo);
+	FVector CalculatePointTowardsPlayer(const FVector& EnemyLocation, const FVector& ClosestPointToEnemy,  const FVector& CurrentTargetLocation) const;
+
+	bool CanReachJumpPoint(const FVector& PointFrom, const FVector& PointTo) const;
 
 	UPROPERTY(EditAnywhere)
 	TArray<TEnumAsByte<EObjectTypeQuery>> LineTraceObjects;
@@ -109,6 +111,8 @@ private:
 	UFUNCTION(BlueprintCallable)
 	bool HasPathBetweenPoints() const;
 
-	//bool IsLeveledWithJumpPoints(const FVector &EnemyLoc) const;
+	
+
+	bool IsLeveledWithLocation(const FVector &Loc, const FVector &Other) const;
 	
 };

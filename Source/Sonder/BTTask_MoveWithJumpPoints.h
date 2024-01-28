@@ -61,4 +61,6 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AEnemyJumpPoint> JumpPointClass;
+
+	#define REALLY_LARGE_NUMBER 6000000000.f
 };
