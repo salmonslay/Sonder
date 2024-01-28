@@ -11,6 +11,7 @@
 #include "Components/BoxComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
+
 // Sets default values
 AEnemyJumpTrigger::AEnemyJumpTrigger()
 {
@@ -38,14 +39,15 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (JumpPointLocations.IsEmpty())
+	if (!JumpPointLocations.IsEmpty())
 	{
-		for (const auto JumpPoint : JumpPoints)
-		{
-			ensure (JumpPoint != nullptr);
-			JumpPointLocations.Add(JumpPoint->GetActorLocation());
-			JumpPoint->JumpTrigger = this;
-		}
+		return;
+	}
+	for (const auto JumpPoint : JumpPoints)
+	{
+		ensure (JumpPoint != nullptr);
+		JumpPointLocations.Add(JumpPoint->GetActorLocation());
+		JumpPoint->JumpTrigger = this;
 	}
 }
 
@@ -72,6 +74,10 @@ void AEnemyJumpTrigger::RemoveOverlappingPlatform(AMovingPlatform* PlatformToRem
 
 FVector AEnemyJumpTrigger::RequestJumpLocation(const FVector &EnemyLoc, const FVector &CurrentTargetLocation, const FVector &ClosestJumpPoint, const bool bIsOnPlatform)
 {
+	if (IsLeveledWithLocation(ClosestJumpPoint, CurrentTargetLocation))
+	{
+		return CalculatePointTowardsPlayer(EnemyLoc, CurrentTargetLocation, ClosestJumpPoint);
+	}
 	if (bIsOverlappingWithMovingPlatform && !bIsOnPlatform)
 	{
 		return CalculateJumpToPlatform(EnemyLoc, CurrentTargetLocation);
@@ -80,21 +86,20 @@ FVector AEnemyJumpTrigger::RequestJumpLocation(const FVector &EnemyLoc, const FV
 	{
 		return CalculatePointClosetsToTarget(EnemyLoc, CurrentTargetLocation);
 	}
-	if (!bIsOverlappingWithMovingPlatform && JumpPointLocations.Num() <= 2) // if trigger only has tqo jump points, calculate furthest one without regarding for closeness to player
+	if (!bIsOverlappingWithMovingPlatform && JumpPointLocations.Num() <= 1) // if trigger only has tqo jump points, calculate furthest one without regarding for closeness to player
 	{
-		return CalculatePointFurthestFromEnemy(EnemyLoc);
+	return CalculatePointFurthestFromEnemy(EnemyLoc);
 	}
-	if (!bIsOverlappingWithMovingPlatform && JumpPointLocations.Num() > 2) // if trigger has more than 2 jump points
+	if (!bIsOverlappingWithMovingPlatform && JumpPointLocations.Num() >= 2) // if trigger has more than 2 jump points
 	{
-		return CalculateAccessiblePointFurthestFromEnemy(EnemyLoc, ClosestJumpPoint, CurrentTargetLocation);
+	return CalculateAccessiblePointFurthestFromEnemy(EnemyLoc, ClosestJumpPoint, CurrentTargetLocation);
 	}
+	
 	return FVector::ZeroVector;
  }
 
 FVector AEnemyJumpTrigger::CalculateJumpToPlatform(const FVector& EnemyLocation, const FVector& CurrentTargetLocation)  // forward vector * Jumpdistance
 {
-	// TODO: Check if platform is closer to player than enemy, only jump if that is true SHOULD NOT BE HERE; MAYBE IN SERVICE
-	
 	if (OverlappingPlatforms.Num() > 1)
 	{
 		OverlappingPlatform = SelectPlatform(EnemyLocation, CurrentTargetLocation);
@@ -161,6 +166,7 @@ FVector AEnemyJumpTrigger::CalculatePointClosetsToTarget(const FVector& EnemyLoc
 			Point = JumpPointLoc;
 		}
 	}
+	DrawDebugSphere(GetWorld(), Point, 30.f, 6, FColor::Orange, false, 0.2f );
 	const float DirToJumpPointY = Point.Y < EnemyLocation.Y ? -1 : 1;
 	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, Point.Z);
 }
@@ -184,7 +190,7 @@ FVector AEnemyJumpTrigger::CalculatePointFurthestFromEnemy(const FVector& EnemyL
 
 FVector AEnemyJumpTrigger::CalculateAccessiblePointFurthestFromEnemy(const FVector& EnemyLocation, const FVector& ClosestPointToEnemy,  const FVector& CurrentTargetLocation )
 {
-	FVector Point;
+	FVector ReachablePoint;
 
 	TArray<FVector> PossibleJumpPoints;
 	// add all point locations that are further away then the closest one
@@ -198,29 +204,72 @@ FVector AEnemyJumpTrigger::CalculateAccessiblePointFurthestFromEnemy(const FVect
 
 	// Find point closest to player that is reachable from those points
 	// perform a raycast to see if the location is reachable, choosing the location furthest away from enemy that is reachable
-	float MinDistance = 50000000.f;
+	float ReachableMinDistanceToPlayer = 50000000.f;
+	float MinDistanceToPlayer = 500000000.f;
+	FVector DefaultPoint = FVector::ZeroVector;
 
 	for (FVector PossibleJumpLoc : PossibleJumpPoints)
 	{
 		if (CanReachJumpPoint(EnemyLocation, PossibleJumpLoc))
 		{
-			if (FVector::Distance(PossibleJumpLoc, CurrentTargetLocation) <= MinDistance)
+			if (FVector::Distance(PossibleJumpLoc, CurrentTargetLocation) <= ReachableMinDistanceToPlayer)
 			{
-				MinDistance = FVector::Distance(PossibleJumpLoc, CurrentTargetLocation);
-				Point = PossibleJumpLoc;
+				ReachableMinDistanceToPlayer = FVector::Distance(PossibleJumpLoc, CurrentTargetLocation);
+				ReachablePoint = PossibleJumpLoc;
+			}
+		}
+		else
+		{
+			if (FVector::Distance(PossibleJumpLoc, CurrentTargetLocation) <= MinDistanceToPlayer)
+			{
+				MinDistanceToPlayer = FVector::Distance(PossibleJumpLoc, CurrentTargetLocation);
+				DefaultPoint = PossibleJumpLoc;
 			}
 		}
 	}
-	
-	const float DirToJumpPointY = Point.Y < EnemyLocation.Y ? -1 : 1;
-	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, Point.Z + BasicJumpZOffset);
+
+	// if there are no jump points that enemy has sight of, default to jumping to the one closest to current target player
+	if (ReachablePoint == FVector::ZeroVector)
+	{
+		const float DirToJumpPointY = DefaultPoint.Y < EnemyLocation.Y ? -1 : 1;
+		//DrawDebugSphere(GetWorld(), DefaultPoint, 30.f, 6, FColor::Yellow, false, 0.2f );
+		return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, DefaultPoint.Z + BasicJumpZOffset);
+	}
+	const float DirToJumpPointY = ReachablePoint.Y < EnemyLocation.Y ? -1 : 1;
+	//DrawDebugSphere(GetWorld(),  FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, ReachablePoint.Z + BasicJumpZOffset), 30.f, 6, FColor::Yellow, false, 0.2f );
+	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, ReachablePoint.Z + BasicJumpZOffset);
 }
 
-bool AEnemyJumpTrigger::CanReachJumpPoint(const FVector& PointFrom, const FVector& PointTo)
+FVector AEnemyJumpTrigger::CalculatePointTowardsPlayer(const FVector& EnemyLocation, const FVector& ClosestPointToEnemy,
+	const FVector& CurrentTargetLocation) const
+{
+	const FVector DirectionToPlayerVector = (CurrentTargetLocation - EnemyLocation);
+	const float DirToPlayer = CurrentTargetLocation.Y < EnemyLocation.Y ? -1 : 1;
+	
+
+	// Create a point in the direction towards the player with the specified jump distance and offset
+	const FVector JumpPoint = FVector(EnemyLocation.X, EnemyLocation.Y + (DirToPlayer * EnemyJumpDistance), EnemyLocation.Z);
+	const FVector Point = FVector(EnemyLocation.X, EnemyLocation.Y + DirToPlayer * EnemyJumpDistance, JumpPoint.Z + BasicJumpZOffset);
+
+	/*
+	DrawDebugSphere(GetWorld(),CurrentTargetLocation, 30.f, 30, FColor::Red, false, 0.2f);
+
+		DrawDebugSphere(GetWorld(),Point, 30.f, 30, FColor::Blue, false, 0.2f);
+	DrawDebugString(GetWorld(), Point, TEXT("Using point towards player"), nullptr, FColor::White, 0.3f);
+*/
+	return Point;
+	//JumpPoint.Z += BasicJumpZOffset;
+	
+	//return JumpPoint;
+}
+
+bool AEnemyJumpTrigger::CanReachJumpPoint(const FVector& PointFrom, const FVector& PointTo) const
 {
 	FHitResult HitResult;
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(Owner);
+
+	//return !UKismetSystemLibrary::LineTraceSingleForObjects(this, PointFrom, PointTo, LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true, FColor::Red, FColor::Green, 0.3f);
 
 	return !UKismetSystemLibrary::LineTraceSingleForObjects(this, PointFrom, PointTo, LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
 	
@@ -280,38 +329,7 @@ bool AEnemyJumpTrigger::HasPathBetweenPoints() const
 	return false;
 }
 
-/*
-bool AEnemyJumpTrigger::IsLeveledWithJumpPoints(const FVector &EnemyLoc) const
+bool AEnemyJumpTrigger::IsLeveledWithLocation(const FVector& Loc, const FVector& Other) const
 {
-	//UE_LOG(LogTemp, Error, TEXT(" EnemyLoc= %f, Jumppoints loc = %f, %f"), EnemyLoc.Z, JumpPoint1Loc.Z, JumpPoint2Loc.Z );
-	//return FMath::IsNearlyEqual(EnemyLoc.Z, JumpPoint1Loc.Z, 5.f) && FMath::IsNearlyEqual(EnemyLoc.Z, JumpPoint2Loc.Z, 5.f);
+	return FMath::IsNearlyEqual(Loc.Z, Other.Z, 50.f);
 }
-*/
-
-/*for (AActor* Actor : Actors)
-	{
-		if (!Actor || !Actor->IsValidLowLevelFast()) continue;
-
-		FVector ActorLocation = Actor->GetActorLocation();
-
-		// Calculate the direction from the actor to the player
-		FVector DirectionToPlayer = (PlayerLocation - ActorLocation).GetSafeNormal();
-
-		// Calculate the dot product of the direction to player and player's movement direction
-		float DotProduct = FVector::DotProduct(DirectionToPlayer, PlayerMovementDelta.GetSafeNormal());
-
-		// Calculate the distance between the actor and the player
-		float DistanceToPlayer = FVector::Distance(ActorLocation, PlayerLocation);
-
-		// Calculate a score based on direction and distance (you can adjust weights as needed)
-		float Score = DotProduct + (1.0f / DistanceToPlayer);
-
-		// Update the best actor if this actor has a better score
-		if (Score > BestScore)
-		{
-			BestScore = Score;
-			BestActor = Actor;
-		}
-	}
-
-	return BestActor;*/

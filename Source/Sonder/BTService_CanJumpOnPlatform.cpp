@@ -34,6 +34,14 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	{
 		BlackboardComponent->SetValueAsBool("bIsJumping", true);
 	}
+
+	if (OwnerCharacter->IsNearlyAtLocation(BlackboardComponent->GetValueAsVector("ClosestMoveTarget")) && (OwnerCharacter->bHasLandedOnGround || OwnerCharacter->bHasLandedOnPlatform))
+	{
+		OwnerCharacter->JumpToPoint(OwnerCharacter->AvaliableJumpPoint);
+		BlackboardComponent->SetValueAsBool("bIsJumping", true);
+		OwnerCharacter->JumpCoolDownTimer = 0;
+		OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
+	}
 	
 	OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
 	
@@ -47,12 +55,11 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 				{
 					if (bDebug)
 					{
-						DrawDebugSphere(GetWorld(), OwnerCharacter->ClosestJumpPoint, 30.f, 30, FColor::Red, false, 0.2f);
+						//rawDebugSphere(GetWorld(), OwnerCharacter->ClosestJumpPoint, 30.f, 30, FColor::Red, false, 0.2f);
 						DrawDebugSphere(GetWorld(), OwnerCharacter->AvaliableJumpPoint, 30.f, 30, FColor::Blue, false, 0.2f);
-
 					}
 					BlackboardComponent->SetValueAsBool("bIsJumping", true);
-					JumpToPoint(OwnerLocation, OwnerCharacter->AvaliableJumpPoint);
+					OwnerCharacter->JumpToPoint(OwnerCharacter->AvaliableJumpPoint);
 					OwnerCharacter->JumpCoolDownTimer = 0;
 					OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
 				}
@@ -60,7 +67,6 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 				{
 					BlackboardComponent->SetValueAsBool("bIsJumping", false);
 					BlackboardComponent->ClearValue("bIsJumping");
-					UE_LOG(LogTemp, Error, TEXT("Has a valid path and therefore no jumpy :(("))
 					OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
 				}
 			}
@@ -71,59 +77,4 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
 
 }
-
-
-void UBTService_CanJumpOnPlatform::JumpToPoint(const FVector &StartPoint, const FVector &JumpPoint) const 
-{
-	OwnerCharacter->bIsJumping = true;
-	FVector OutVel;
-	OwnerCharacter->GetMovementComponent()->Velocity = FVector(0.f, 0.f, 0.f);
-	UGameplayStatics::SuggestProjectileVelocity_CustomArc(GetWorld(), OutVel, StartPoint, JumpPoint, 0, 0.6);
-	OwnerCharacter->GetCharacterMovement()->AddImpulse(OutVel.GetSafeNormal() * JumpBoost);
-	OwnerCharacter->MakeJump();
-}
-
-/*
-bool UBTService_CanJumpOnPlatform::CheckPathToPlayer(const FVector &StartPoint, const FVector &CurrentTargetPoint)
-{
-	UNavigationSystemV1* NavSystem = UNavigationSystemV1::GetCurrent(GetWorld());
-	if (!NavSystem)
-	{
-		UE_LOG(LogTemp, Error, TEXT("No navsystem lol"));
-		return false;
-	}
-	{
-		AController* EnemyController = OwnerCharacter->GetController();
-		// Check if there's a path between owner character and current target location
-
-		const auto Path = UNavigationSystemV1::FindPathToLocationSynchronously(this, StartPoint, CurrentTargetPoint, EnemyController);
-		
-		if(Path->IsPartial() || Path->IsUnreachable())
-		{
-			UE_LOG(LogTemp, Error, TEXT("Path is partial or unreachable, should return false"));
-		}
-
-		if (!Path)
-		{
-			UE_LOG(LogTemp, Error, TEXT("No path found"));
-			return false;			
-		}
-
-		FVector QueryExtents = OwnerCharacter->GetSimpleCollisionCylinderExtent();
-		TArray<FNavPathPoint> NavPoints = Path->GetPath()->GetPathPoints();
-
-		for (const FNavPathPoint NavPathPoint : NavPoints)
-		{
-			// Check if each point on the path is navigable
-			FNavLocation NavLocation;
-			if (!NavSystem->ProjectPointToNavigation(NavPathPoint.Location, NavLocation, QueryExtents))
-			{
-				return false;
-			}
-		}
-		return true;
-	}
-}
-*/
-
 

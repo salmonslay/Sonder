@@ -45,6 +45,8 @@ private:
 
 	FVector CurrentTargetLocation = FVector::ZeroVector;
 
+	FVector ClosestMoveLoc = FVector::ZeroVector;
+
 	UPROPERTY()
 	UBlackboardComponent* BlackboardComponent;
 
@@ -59,4 +61,6 @@ private:
 
 	UPROPERTY(EditAnywhere)
 	TSubclassOf<AEnemyJumpPoint> JumpPointClass;
+
+	#define REALLY_LARGE_NUMBER 6000000000.f
 };

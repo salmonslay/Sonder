@@ -22,7 +22,7 @@ public:
 	virtual void TickNode(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds) override;
 
 private:
-
+	
 	UPROPERTY()
 	AShadowCharacter* OwnerCharacter = nullptr;
 
@@ -34,9 +34,6 @@ private:
 	
 	UPROPERTY(EditAnywhere)
 	bool bDebug = false;
-	
-	/** Calculates force to jump on platform if jump is possible, and performs jump */ 
-	void JumpToPoint(const FVector &StartPoint, const FVector &JumpPoint) const;
 
 	UPROPERTY(EditAnywhere)
 	FBlackboardKeySelector BBKeyIsJumping;

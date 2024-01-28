@@ -8,7 +8,9 @@
 #include "PROJCharacter.h"
 #include "ShadowCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
+#include "GameFramework/PawnMovementComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
+
 
 UBTService_SetValidPath::UBTService_SetValidPath()
 {
@@ -39,8 +41,14 @@ void UBTService_SetValidPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 		DrawDebugSphere(GetWorld(), FVector(OwnerLocation.X, OwnerLocation.Y, OwnerLocation.Z - HeightDifferenceToMarkInvalid), 30.f, 30, FColor::Red, false, 1.f );
 	}
 
+	if (BlackboardComponent->GetValueAsBool("bIsJumping"))
+	{
+		SetPathIsInvalid(OwnerComp);
+		return;
+	}
 	VerifyGroundStatus(OwnerCharacter);
 
+	
 	if (OwnerCharacter->bHasLandedOnPlatform && !FMath::IsNearlyEqual(BlackboardComponent->GetValueAsVector("CurrentMoveTarget").Z,OwnerLocation.Z, 3 ))
 	{
 		BlackboardComponent->SetValueAsBool("bIsOnPlatform", true);
@@ -129,8 +137,10 @@ void UBTService_SetValidPath::VerifyGroundStatus(AShadowCharacter* Owner) const
 	if (bDebug)
 	{
 		bHit = UKismetSystemLibrary::SphereTraceSingleForObjects(this, OwnerLocation, FVector(OwnerLocation.X, OwnerLocation.Y, OwnerLocation.Z - 90.f), 30.f, LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true, FColor::Red, FColor::Blue, 10.f);
-	} else 
+	} else
+	{
 		bHit = UKismetSystemLibrary::SphereTraceSingleForObjects(this, OwnerLocation, FVector(OwnerLocation.X, OwnerLocation.Y, OwnerLocation.Z - 90.f), 30.f,LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
+	}
 
 	if (bHit)
 	{
@@ -148,10 +158,4 @@ void UBTService_SetValidPath::VerifyGroundStatus(AShadowCharacter* Owner) const
 			OwnerCharacter->bHasLandedOnGround = true;
 		}
 	}
-	// else
-	// {
-		//OwnerCharacter->bHasLandedOnPlatform = false;
-		//	OwnerCharacter->bHasLandedOnGround = false;
-		//OwnerCharacter->bIsPerformingJump = true;
-	// }
 }
