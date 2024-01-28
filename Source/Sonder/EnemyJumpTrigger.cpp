@@ -39,14 +39,15 @@ void AEnemyJumpTrigger::Tick(float DeltaTime)
 {
 	Super::Tick(DeltaTime);
 
-	if (JumpPointLocations.IsEmpty())
+	if (!JumpPointLocations.IsEmpty())
 	{
-		for (const auto JumpPoint : JumpPoints)
-		{
-			ensure (JumpPoint != nullptr);
-			JumpPointLocations.Add(JumpPoint->GetActorLocation());
-			JumpPoint->JumpTrigger = this;
-		}
+		return;
+	}
+	for (const auto JumpPoint : JumpPoints)
+	{
+		ensure (JumpPoint != nullptr);
+		JumpPointLocations.Add(JumpPoint->GetActorLocation());
+		JumpPoint->JumpTrigger = this;
 	}
 }
 
@@ -162,6 +163,7 @@ FVector AEnemyJumpTrigger::CalculatePointClosetsToTarget(const FVector& EnemyLoc
 			Point = JumpPointLoc;
 		}
 	}
+	DrawDebugSphere(GetWorld(), Point, 30.f, 6, FColor::Orange, false, 0.2f );
 	const float DirToJumpPointY = Point.Y < EnemyLocation.Y ? -1 : 1;
 	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, Point.Z);
 }
@@ -227,11 +229,11 @@ FVector AEnemyJumpTrigger::CalculateAccessiblePointFurthestFromEnemy(const FVect
 	if (ReachablePoint == FVector::ZeroVector)
 	{
 		const float DirToJumpPointY = DefaultPoint.Y < EnemyLocation.Y ? -1 : 1;
-		DrawDebugSphere(GetWorld(), DefaultPoint, 30.f, 6, FColor::Yellow, false, 0.2f );
+		//DrawDebugSphere(GetWorld(), DefaultPoint, 30.f, 6, FColor::Yellow, false, 0.2f );
 		return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, DefaultPoint.Z + BasicJumpZOffset);
 	}
 	const float DirToJumpPointY = ReachablePoint.Y < EnemyLocation.Y ? -1 : 1;
-	DrawDebugSphere(GetWorld(),  FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, ReachablePoint.Z + BasicJumpZOffset), 30.f, 6, FColor::Yellow, false, 0.2f );
+	//DrawDebugSphere(GetWorld(),  FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, ReachablePoint.Z + BasicJumpZOffset), 30.f, 6, FColor::Yellow, false, 0.2f );
 	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, ReachablePoint.Z + BasicJumpZOffset);
 }
 

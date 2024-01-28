@@ -19,9 +19,6 @@ EBTNodeResult::Type UBTTask_MoveWithJumpPoints::ExecuteTask(UBehaviorTreeCompone
 {
 	const auto Result = Super::ExecuteTask(OwnerComp, NodeMemory);
 	
-	bNotifyTick = 1; 
-
-
 	if (!IsValid(&OwnerComp) || OwnerComp.GetAIOwner() == nullptr)
 	{
 		return Result;
@@ -49,12 +46,7 @@ EBTNodeResult::Type UBTTask_MoveWithJumpPoints::ExecuteTask(UBehaviorTreeCompone
 	}
 
 	CurrentTargetLocation = OwnerCharacter->CurrentTargetLocation;
-
-	if (CurrentTargetLocation == FVector::ZeroVector)
-	{
-		UE_LOG(LogTemp, Error, TEXT("Current target is 0 från moveWithJumpPoints"));
-	}
-
+	
 	if(JumpPoints.IsEmpty() || JumpPointLocations.IsEmpty())
 	{
 		TArray<AActor*> TempArray; 
@@ -66,47 +58,28 @@ EBTNodeResult::Type UBTTask_MoveWithJumpPoints::ExecuteTask(UBehaviorTreeCompone
 			JumpPointLocations.Add(Cast<AEnemyJumpPoint>(JumpPoint)->GetActorLocation());
 		}
 	}
-	return EBTNodeResult::InProgress; 
-}
 
-void UBTTask_MoveWithJumpPoints::TickTask(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory, float DeltaSeconds)
-{
-	Super::TickTask(OwnerComp, NodeMemory, DeltaSeconds);
+	ClosestMoveLoc = GetClosestReachableJumpPointLocation();
 
-	if (OwnerCharacter == nullptr)
+	if (ClosestMoveLoc == FVector::ZeroVector)
 	{
-		return;
+		ClosestMoveLoc = GetClosestJumpPointTo(CurrentTargetLocation);
 	}
-	
-	// if owner has not updated its location, update it
-	if (OwnerLocation != OwnerCharacter->CurrentLocation)
+	BlackboardComponent->SetValueAsVector(BlackboardKey.SelectedKeyName,  FVector(OwnerLocation.X, ClosestMoveLoc.Y, OwnerLocation.Z ) );
+
+	if (OwnerCharacter->IsNearlyAtLocation(ClosestMoveLoc) && (OwnerCharacter->bHasLandedOnGround || OwnerCharacter->bHasLandedOnPlatform))
 	{
-		OwnerLocation = OwnerCharacter->GetActorLocation();
-		OwnerCharacter->CurrentLocation = OwnerLocation;
+		OwnerCharacter->JumpToPoint(OwnerCharacter->AvaliableJumpPoint);
 	}
-
-	const FVector Closest = GetClosestReachableJumpPointLocation();
-	FVector ClosestToPlayer = GetClosestJumpPointTo(CurrentTargetLocation);
-
-	//BlackboardComponent->SetValueAsVector(BlackboardKey.SelectedKeyName, FVector(OwnerLocation.X, Closest.Y, OwnerLocation.Z ));
-	BlackboardComponent->SetValueAsVector(BlackboardKey.SelectedKeyName,  FVector(OwnerLocation.X, Closest.Y, OwnerLocation.Z ) );
-
 	if (bDebug)
 	{
-		//DrawDebugSphere(GetWorld(), ClosestToPlayer, 30.f, 6, FColor::Purple, false, 0.2f );
-		DrawDebugSphere(GetWorld(), BlackboardComponent->GetValueAsVector(BlackboardKey.SelectedKeyName), 30.f, 6, FColor::Green, false, 0.2f );
+		DrawDebugSphere(GetWorld(), BlackboardComponent->GetValueAsVector(BlackboardKey.SelectedKeyName), 30.f, 6, FColor::Red, false, 0.2f );
 	}
 	
+	bNotifyTick = 1; 
+	return Result;
 }
 
-void UBTTask_MoveWithJumpPoints::OnTaskFinished(UBehaviorTreeComponent& OwnerComp, uint8* NodeMemory,
-	EBTNodeResult::Type TaskResult)
-{
-	Super::OnTaskFinished(OwnerComp, NodeMemory, TaskResult);
-
-	OwnerComp.GetBlackboardComponent()->SetValueAsBool(BlackboardKey.SelectedKeyName, false); 
-	OwnerComp.GetBlackboardComponent()->ClearValue(BlackboardKey.SelectedKeyName); 
-}
 
 FVector UBTTask_MoveWithJumpPoints::GetClosestReachableJumpPointLocation()
 {
@@ -122,12 +95,8 @@ FVector UBTTask_MoveWithJumpPoints::GetClosestReachableJumpPointLocation()
 	// Choose the jump point location that is as close to the player as possible, but also reachable aka the same height as enemy.
 	for (FVector JumpPoint : JumpPointLocations)
 	{
-		DrawDebugSphere(GetWorld(), JumpPoint, 30.f, 6, FColor::Black, false, 0.2f );
-
-		UE_LOG(LogTemp, Error, TEXT("Ownerlocation = %f, %f, %f, dist = %f"), OwnerLocation.X, OwnerLocation.Y, OwnerLocation.Z, FVector::Distance(JumpPoint, OwnerLocation) );
 		if (OwnerCharacter->IsLeveledWithLocation(JumpPoint) && FVector::Distance(JumpPoint, OwnerLocation) <= MaxDistanceToMarkAsReachable)
 		{
-			DrawDebugSphere(GetWorld(), JumpPoint, 30.f, 6, FColor::Yellow, false, 0.2f );
 			if (FVector::Distance(JumpPoint, CurrentTargetLocation) <= MinDistancePlayer)
 			{
 				ClosestToPlayer = JumpPoint;
@@ -135,12 +104,6 @@ FVector UBTTask_MoveWithJumpPoints::GetClosestReachableJumpPointLocation()
 			}
 		}
 	}
-
-	if (ClosestToPlayer == FVector::ZeroVector)
-	{
-  		UE_LOG(LogTemp, Error, TEXT("CLosest == 0"));
-	}
-	
 	return ClosestToPlayer;
 }
 

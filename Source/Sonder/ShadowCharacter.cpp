@@ -11,8 +11,18 @@
 #include "PlayerCharState.h"
 #include "RobotBaseState.h"
 #include "SoulBaseStateNew.h"
+#include "Kismet/GameplayStatics.h"
 #include "Net/UnrealNetwork.h"
 
+
+#if !UE_BUILD_SHIPPING
+namespace Jump
+{
+	bool bDebugJumpMovement = false;
+	FAutoConsoleVariable CVarbDebugJumpMovement = {TEXT("sonder.bDebugJumpMovement"), bDebugJumpMovement, TEXT("Show and draw jump movement"), ECVF_Cheat};
+	
+}
+#endif
 
 AShadowCharacter::AShadowCharacter()
 {
@@ -32,19 +42,16 @@ bool AShadowCharacter::CheckIfJumpNeeded()
 {
 	if (CurrentJumpTrigger == nullptr)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Has set overlapping trigger but does not have pointer to that trigger"))
 		return false;
 	}
 	
 	if (CurrentJumpTrigger->HasPathBetweenJumpPoints)
 	{
-		UE_LOG(LogTemp, Error, TEXT("Has path between points and is a static jump trigger, no need for jump"))
 		return false;
 	}
 
 	if (bHasLandedOnPlatform || bHasLandedOnGround)
 	{
-		//UE_LOG(LogTemp, Error, TEXT("Jump is needed, is grounded and is overlapping a jumptrigger with no path between jump points"))
 		return true;
 	}
 	return false;
@@ -88,6 +95,22 @@ void AShadowCharacter::OnRep_Jump()
 	{
 		Idle();
 	}
+}
+
+void AShadowCharacter::JumpToPoint(const FVector &JumpPoint)
+{
+	bIsJumping = true;
+	FVector OutVel;
+	GetMovementComponent()->Velocity = FVector(0.f, 0.f, 0.f);
+	UGameplayStatics::SuggestProjectileVelocity_CustomArc(GetWorld(), OutVel, CurrentLocation, JumpPoint, 0, 0.6);
+	GetCharacterMovement()->AddImpulse(OutVel.GetSafeNormal() * JumpBoost);
+	MakeJump();
+}
+
+
+bool AShadowCharacter::IsNearlyAtLocation(const FVector& Loc) const
+{
+	return FMath::IsNearlyEqual(CurrentLocation.Y, Loc.Y, 5.f) && FMath::IsNearlyEqual(CurrentLocation.Z, Loc.Z, 5.f);
 }
 
 
@@ -143,11 +166,16 @@ void AShadowCharacter::Tick(const float DeltaSeconds)
 	Super::Tick(DeltaSeconds);
 
 	if(!IsLocallyControlled())
-		return; 
+	{
+		return;
+	}
 
 	if(CurrentState)
+	{
 		CurrentState->Update(DeltaSeconds);
+	}
 	
+	CurrentLocation = GetActorLocation();
 	
 	if (IsOverlappingWithTrigger && JumpCoolDownTimer >= JumpCoolDownDuration)
 	{
@@ -155,12 +183,31 @@ void AShadowCharacter::Tick(const float DeltaSeconds)
 		{
 			if (!bIsPerformingJump)
 			{
-				CurrentLocation = GetActorLocation();
 				bCanBasicJump = true;
 				AvaliableJumpPoint = CurrentJumpTrigger->RequestJumpLocation(GetActorLocation(), CurrentTargetLocation, ClosestJumpPoint, bHasLandedOnPlatform);
 			}
 		}
 	}
+
+#if !UE_BUILD_SHIPPING
+	if (Jump::bDebugJumpMovement)
+	{
+		FString MovementModeString;
+		if (GetCharacterMovement()->MovementMode == MOVE_Falling)
+		{
+
+			UE_LOG(LogTemp, Error, TEXT("Falling"));
+			MovementModeString = TEXT("Falling");
+		}
+		else
+		{
+			UE_LOG(LogTemp, Error, TEXT("Walking"));
+			MovementModeString = TEXT("Walking");
+		}
+		DrawDebugString(GetWorld(), CurrentLocation + FVector(0.f, 0.f, 100.f), MovementModeString, nullptr, FColor::White, 0.1f);
+	}
+#endif
+	
 }
 
 UPlayerCharState* AShadowCharacter::GetStartingState() const

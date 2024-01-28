@@ -83,6 +83,10 @@ public:
 	UFUNCTION()
 	void OnRep_Jump();
 
+	void JumpToPoint(const FVector &JumpPoint);
+
+	bool IsNearlyAtLocation(const FVector &Loc) const;
+
 	UPROPERTY(BlueprintReadOnly)
 	FVector CurrentTargetLocation = FVector::ZeroVector;
 	
@@ -134,6 +138,9 @@ private:
 	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess = true))
 	float MaxDistanceToMarkAsReachable = 200.f;
 
+	UPROPERTY(EditAnywhere, meta=(AllowPrivateAccess = true))
+	float JumpBoost = 110000.f;
+	
 	UFUNCTION(Server, Reliable) 
 	void ServerRPC_SwitchState(UPlayerCharState* NewState); 
 

@@ -49,10 +49,9 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 					{
 						//rawDebugSphere(GetWorld(), OwnerCharacter->ClosestJumpPoint, 30.f, 30, FColor::Red, false, 0.2f);
 						DrawDebugSphere(GetWorld(), OwnerCharacter->AvaliableJumpPoint, 30.f, 30, FColor::Blue, false, 0.2f);
-
 					}
 					BlackboardComponent->SetValueAsBool("bIsJumping", true);
-					JumpToPoint(OwnerLocation, OwnerCharacter->AvaliableJumpPoint);
+					OwnerCharacter->JumpToPoint(OwnerCharacter->AvaliableJumpPoint);
 					OwnerCharacter->JumpCoolDownTimer = 0;
 					OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
 				}
@@ -60,7 +59,6 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 				{
 					BlackboardComponent->SetValueAsBool("bIsJumping", false);
 					BlackboardComponent->ClearValue("bIsJumping");
-					UE_LOG(LogTemp, Error, TEXT("Has a valid path and therefore no jumpy :(("))
 					OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
 				}
 			}
@@ -71,17 +69,4 @@ void UBTService_CanJumpOnPlatform::TickNode(UBehaviorTreeComponent& OwnerComp, u
 	OwnerCharacter->JumpCoolDownTimer += DeltaSeconds;
 
 }
-
-
-void UBTService_CanJumpOnPlatform::JumpToPoint(const FVector &StartPoint, const FVector &JumpPoint) const 
-{
-	OwnerCharacter->bIsJumping = true;
-	FVector OutVel;
-	OwnerCharacter->GetMovementComponent()->Velocity = FVector(0.f, 0.f, 0.f);
-	UGameplayStatics::SuggestProjectileVelocity_CustomArc(GetWorld(), OutVel, StartPoint, JumpPoint, 0, 0.6);
-	OwnerCharacter->GetCharacterMovement()->AddImpulse(OutVel.GetSafeNormal() * JumpBoost);
-	OwnerCharacter->MakeJump();
-}
-
-
 
