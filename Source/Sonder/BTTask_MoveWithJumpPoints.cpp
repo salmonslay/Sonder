@@ -72,8 +72,11 @@ EBTNodeResult::Type UBTTask_MoveWithJumpPoints::ExecuteTask(UBehaviorTreeCompone
 	{
 		DrawDebugSphere(GetWorld(), BlackboardComponent->GetValueAsVector(BlackboardKey.SelectedKeyName), 30.f, 6, FColor::Magenta, false, 0.2f );
 	}
-	
-	bNotifyTick = 1; 
+
+	if (OwnerCharacter != nullptr && OwnerComp.GetAIOwner() != nullptr)
+	{
+		FinishLatentTask(OwnerComp, EBTNodeResult::InProgress);
+	}
 	return Result;
 }
 

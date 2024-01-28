@@ -15,14 +15,6 @@
 #include "Net/UnrealNetwork.h"
 
 
-#if !UE_BUILD_SHIPPING
-namespace Jump
-{
-	bool bDebugJumpMovement = false;
-	FAutoConsoleVariable CVarbDebugJumpMovement = {TEXT("sonder.bDebugJumpMovement"), bDebugJumpMovement, TEXT("Show and draw jump movement"), ECVF_Cheat};
-	
-}
-#endif
 
 AShadowCharacter::AShadowCharacter()
 {
@@ -110,7 +102,7 @@ void AShadowCharacter::JumpToPoint(const FVector &JumpPoint)
 
 bool AShadowCharacter::IsNearlyAtLocation(const FVector& Loc) const
 {
-	return FMath::IsNearlyEqual(CurrentLocation.Y, Loc.Y, 20.f) && FMath::IsNearlyEqual(CurrentLocation.Z, Loc.Z, 20.f);
+	return FMath::IsNearlyEqual(CurrentLocation.Y, Loc.Y, 30.f) && FMath::IsNearlyEqual(CurrentLocation.Z, Loc.Z, 30.f);
 }
 
 
@@ -188,25 +180,6 @@ void AShadowCharacter::Tick(const float DeltaSeconds)
 			}
 		}
 	}
-
-#if !UE_BUILD_SHIPPING
-	if (Jump::bDebugJumpMovement)
-	{
-		FString MovementModeString;
-		if (GetCharacterMovement()->MovementMode == MOVE_Falling)
-		{
-
-			UE_LOG(LogTemp, Error, TEXT("Falling"));
-			MovementModeString = TEXT("Falling");
-		}
-		else
-		{
-			UE_LOG(LogTemp, Error, TEXT("Walking"));
-			MovementModeString = TEXT("Walking");
-		}
-		DrawDebugString(GetWorld(), CurrentLocation + FVector(0.f, 0.f, 100.f), MovementModeString, nullptr, FColor::White, 0.1f);
-	}
-#endif
 	
 }
 
