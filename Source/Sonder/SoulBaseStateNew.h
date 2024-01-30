@@ -46,9 +46,6 @@ private:
 	UPROPERTY(EditAnywhere)
 	class UInputAction* ThrowGrenadeInputAction;
 
-	UPROPERTY(EditAnywhere)
-	class UInputAction* AbilityInputAction;
-
 	UPROPERTY()
 	class ALightGrenade* LightGrenade;
 
@@ -99,8 +96,6 @@ private:
 	void ServerRPC_DisableDashCooldown();
 
 	virtual void GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& OutLifetimeProps) const override;
-
-	void ActivateAbilities();
 
 	void CheckCanThrow();
 	

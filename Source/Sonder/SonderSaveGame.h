@@ -145,6 +145,13 @@ public:
 		SaveGame->EverlookingEyesKilled++;
 		APROJCharacter::SetSaveGame(SaveGame);
 
+		if (GEngine)
+		{
+			USonderGameInstance* GameInstance = Cast<USonderGameInstance>(
+				UGameplayStatics::GetGameInstance(GEngine->GameViewport->GetWorld()));
+			GameInstance->CheckAchievements();
+		}
+
 		return SaveGame->EverlookingEyesKilled;
 	}
 

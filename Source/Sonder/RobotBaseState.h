@@ -58,9 +58,6 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	class UInputAction* PulseInputAction;
 
-	UPROPERTY(EditDefaultsOnly)
-	class UInputAction* AbilityInputAction;
-
 	bool bCanPulse = true;
 
 	UPROPERTY()
@@ -146,8 +143,6 @@ private:
 
 	UFUNCTION(NetMulticast, Reliable)
 	void MulticastRPC_DashBuffEnd();
-
-	void ActivateAbilities();
 
 	void SetPulseCooldown(); 
 	

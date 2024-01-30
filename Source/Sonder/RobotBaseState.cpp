@@ -49,8 +49,6 @@ void URobotBaseState::UpdateInputCompOnEnter(UEnhancedInputComponent* InputComp)
 		InputComp->BindAction(HookShotInputAction, ETriggerEvent::Started, this, &URobotBaseState::ShootHook);
 
 		InputComp->BindAction(PulseInputAction, ETriggerEvent::Started, this, &URobotBaseState::Pulse);
-
-		InputComp->BindAction(AbilityInputAction, ETriggerEvent::Started, this, &URobotBaseState::ActivateAbilities);
 	}
 }
 
@@ -273,12 +271,6 @@ void URobotBaseState::MulticastRPCPulse_Implementation()
 		RobotCharacter->OnPulse();
 	else
 		ShadowRobot->OnPulse();
-}
-
-void URobotBaseState::ActivateAbilities()
-{
-	RobotCharacter->AbilityOne = true;
-	RobotCharacter->AbilityTwo = true;
 }
 
 void URobotBaseState::SetPulseCooldown()
