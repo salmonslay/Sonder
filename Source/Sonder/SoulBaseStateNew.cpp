@@ -43,8 +43,6 @@ void USoulBaseStateNew::UpdateInputCompOnEnter(UEnhancedInputComponent* InputCom
 		InputComp->BindAction(ThrowGrenadeInputAction,ETriggerEvent::Completed,this,&USoulBaseStateNew::ThrowGrenade);
 		InputComp->BindAction(ThrowGrenadeInputAction,ETriggerEvent::Ongoing,this,&USoulBaseStateNew::GetTimeHeld);
 		InputComp->BindAction(ThrowGrenadeInputAction, ETriggerEvent::Started, this, &USoulBaseStateNew::BeginGrenadeThrow);
-		
-		InputComp->BindAction(AbilityInputAction,ETriggerEvent::Started,this,&USoulBaseStateNew::ActivateAbilities);
 	}
 }
 
@@ -192,12 +190,6 @@ void USoulBaseStateNew::MulticastRPCThrowGrenade_Implementation(const float Time
 		LightGrenade->Throw(TimeHeldGrenade);
 	
 	SoulCharacter->OnGrenadeThrowEnd(); 
-}
-
-void USoulBaseStateNew::ActivateAbilities()
-{
-	SoulCharacter->AbilityOne = true;
-	SoulCharacter->AbilityTwo = true;
 }
 
 void USoulBaseStateNew::CheckCanThrow()
