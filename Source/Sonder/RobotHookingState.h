@@ -38,7 +38,7 @@ public:
 
 	/** Returns the location at which to move the hook arm during hook shots */
 	UFUNCTION(BlueprintPure)
-	FVector GetCurrentHookArmLocation() const { return HookArmLocation; }
+	FVector GetCurrentHookArmLocation() const;
 
 	/** Currently travelling towards a valid target */
 	UFUNCTION(BlueprintPure)
@@ -48,6 +48,15 @@ public:
 
 	bool IsTargetSoul() const { return bHookTargetIsSoul; }
 
+	UFUNCTION(BlueprintPure)
+	bool IsTravellingRight() const;
+
+	UFUNCTION(BlueprintPure)
+	bool IsTravellingDownwards() const; 
+
+	UFUNCTION(BlueprintPure)
+	FVector GetCurrentTargetLocation() const { return CurrentHookTargetLocation; } 
+	
 private:
 	
 	/** The location for the arm, used to animate the Robot */
@@ -135,7 +144,16 @@ private:
 
 	/** The component that spawns when spawning the travel effect, used to disable the effect when travel is done */
 	UPROPERTY()
-	class UNiagaraComponent* HookShotTravelComponent; 
+	class UNiagaraComponent* HookShotTravelComponent;
+
+	UPROPERTY(EditAnywhere)
+	float HookArmLocOffsetZ = 25.f; 
+	
+	UPROPERTY(EditAnywhere)
+	float HookArmLocOffsetRightY = -10.f;
+
+	UPROPERTY(EditAnywhere)
+	float HookArmLocOffsetLeftY = 25.f;
 	
 	/** Returns the HookTarget if there is no available target, ensuring hook is shot forwards */
 	FVector GetTargetOnNothingInFront() const;
@@ -212,6 +230,6 @@ private:
 	void ActorOverlap(UPrimitiveComponent* OverlappedComp, AActor* OtherActor, UPrimitiveComponent* OtherComp, int32 OtherBodyIndex, bool bFromSweep, const FHitResult& SweepResult); 
 
 	UFUNCTION(Server, Reliable)
-	void ServerRPC_DamageActor(AActor* ActorToDamage); 
+	void ServerRPC_DamageActor(AActor* ActorToDamage);
 	
 };

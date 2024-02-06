@@ -132,6 +132,23 @@ void URobotHookingState::GetLifetimeReplicatedProps(TArray<FLifetimeProperty>& O
 	DOREPLIFETIME(URobotHookingState, bTravellingTowardsTarget)
 }
 
+FVector URobotHookingState::GetCurrentHookArmLocation() const
+{
+	const float ZOffset = IsTravellingDownwards() ? HookArmLocOffsetZ : -HookArmLocOffsetZ;
+	const FVector NewOffset(0, IsTravellingRight() ? HookArmLocOffsetRightY : HookArmLocOffsetLeftY, ZOffset); 
+	return HookArmLocation + NewOffset; 
+}
+
+bool URobotHookingState::IsTravellingRight() const
+{
+	return CurrentHookTargetLocation.Y > CharOwner->GetActorLocation().Y; 
+}
+
+bool URobotHookingState::IsTravellingDownwards() const
+{
+	return CurrentHookTargetLocation.Z < CharOwner->GetActorLocation().Z; 
+}
+
 bool URobotHookingState::SetHookTarget()
 {
 	FHitResult HitResult;
