@@ -63,7 +63,9 @@ private:
 	inline static APlayerController* RobotPlayerController;
 
 	// The hit result from the latest line trace 
-	inline static FHitResult HitResult; 
+	inline static FHitResult HitResult;
+
+	inline static bool bIsInArena = false;
 
 	/** Returns true if the Hook is a possible target */
 	static bool HookCanBeUsed(const AHookShotAttachment* Hook, const AActor* Robot);

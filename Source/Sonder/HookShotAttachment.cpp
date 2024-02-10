@@ -30,6 +30,8 @@ void AHookShotAttachment::BeginPlay()
 {
 	Super::BeginPlay();
 
+	bIsInArena = UGameplayStatics::GetCurrentLevelName(this).Contains(TEXT("Arena")); 
+
 	// This class is only relevant for the Robot so disable tick for Soul if not playing local 
 	if(!UStaticsHelper::IsPlayingLocal(this) && !UGameplayStatics::GetPlayerController(this, 0)->GetPawn()->IsA(ARobotStateMachine::StaticClass()))
 		SetActorTickEnabled(false); 
@@ -99,7 +101,7 @@ bool AHookShotAttachment::HookCanBeUsed(const AHookShotAttachment* Hook, const A
 	if(!Hook) // No hook 
 		return false;
 
-	if(!UStaticsHelper::ActorIsInFront(Robot, Hook)) 
+	if(!UStaticsHelper::ActorIsInFront(Robot, Hook, -0.1f)) 
 		return false; 
 
 	if(!HookIsOnScreen(Hook))
@@ -143,13 +145,14 @@ AHookShotAttachment* AHookShotAttachment::GetClosestHook(TArray<AHookShotAttachm
 	if(Hooks.Num() == 1)
 		return Hooks[0];
 
-	// Multiple Hooks, find the closest one 
+	// Multiple Hooks, find the closest one
+	const FVector RobotLoc = Robot->GetActorLocation(); 
 	AHookShotAttachment* ClosestHook = Hooks[0];
-	float ClosestDist = FVector::Dist(ClosestHook->GetActorLocation(), Robot->GetActorLocation()); 
+	float ClosestDist = FVector::Dist(ClosestHook->GetActorLocation(), RobotLoc); 
 
 	for(int i = 1; i < Hooks.Num(); i++)
 	{
-		const float DistToHook = FVector::Dist(Hooks[i]->GetActorLocation(), Robot->GetActorLocation()); 
+		const float DistToHook = FVector::Dist(Hooks[i]->GetActorLocation(), RobotLoc); 
 		if(DistToHook < ClosestDist)
 		{
 			ClosestDist = DistToHook;
@@ -177,26 +180,23 @@ AActor* AHookShotAttachment::GetValidTarget()
 	FVector EndLoc = Soul->GetActorLocation();
 
 	AActor* HookTarget = nullptr;
-	bool bTargetingSoul = true;
+	const bool bSoulInFront = UStaticsHelper::ActorIsInFront(Robot, Soul);
+	bool bTargetingSoul = true; 
 
-	// Set new end loc if player does not already have a target 
-	if(!HookState->IsTravellingToTarget())
+	// Set new end loc if player does not already have a target
+	// prioritize hook points over Soul if not in an arena or if soul is not in front of robot 
+	if(!HookState->IsTravellingToTarget() && (!bIsInArena || !bSoulInFront))
 	{
-		// If Soul is NOT in front of Robot, only then check if there is a possible hook point to target 
-		if(!UStaticsHelper::ActorIsInFront(Robot, Soul))
+		HookTarget = GetStaticHookToTarget(); 
+		if(HookTarget)
 		{
+			EndLoc = HookTarget->GetActorLocation();
 			bTargetingSoul = false; 
-			
-			// Set EndLoc to Hook location of there is an eligible hook target 
-			HookTarget = GetStaticHookToTarget(); 
-			if(HookTarget)
-				EndLoc = HookTarget->GetActorLocation();
-		} 
-	} else if(HookState->IsTargetSoul()) // Update target loc if target is Soul, Soul could've moved 
-		EndLoc = Soul->GetActorLocation();
+		}
+	} 
 
 	// Soul not valid and no valid hook 
-	if(!bTargetingSoul && !HookTarget)
+	if(!bSoulInFront && !HookTarget)
 		return nullptr; 
 
 	FCollisionQueryParams Params;
@@ -212,16 +212,26 @@ AActor* AHookShotAttachment::GetValidTarget()
 	if(!HitResult.IsValidBlockingHit())
 		return HookTarget ? HookTarget : Soul;
 
-	// Hit an obstacle and is targeting Soul
-	if(bTargetingSoul)
+	// Hit an obstacle and is targeting Soul in arenas, check for valid hook target 
+	if(bTargetingSoul && bIsInArena)
 	{
 		// Get eventual Hook
 		HookTarget = GetStaticHookToTarget();
-		if(HookTarget) // If there is a valid HookTarget, update the hit result with line trace towards hook instead of towards Soul 
-			GetWorld()->SweepSingleByChannel(HitResult, StartLoc, HookTarget->GetActorLocation(), FQuat::Identity, ECC_Pawn, CollShape, Params);
+		if(!HookTarget)
+			return nullptr;
+		
+		// If there is a valid HookTarget, update the hit result with line trace towards hook instead of towards Soul 
+		GetWorld()->SweepSingleByChannel(HitResult, StartLoc, HookTarget->GetActorLocation(), FQuat::Identity, ECC_Pawn, CollShape, Params);
 
 		// Return hook target if there is a clear path to it, otherwise return nullptr - no valid target 
 		return HitResult.IsValidBlockingHit() ? nullptr : HookTarget; 
+	}
+
+	// Hit an obstacle and is targeting hooks in normal levels, check is Soul is valid 
+	if(!bTargetingSoul && !bIsInArena)
+	{
+		GetWorld()->SweepSingleByChannel(HitResult, StartLoc, Soul->GetActorLocation(), FQuat::Identity, ECC_Pawn, CollShape, Params);
+		return HitResult.IsValidBlockingHit() ? nullptr : Soul; 
 	}
 
 	// No valid target 

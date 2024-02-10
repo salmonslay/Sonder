@@ -6,13 +6,16 @@
 #include "BlueprintDataDefinitions.h"
 #include "Kismet/GameplayStatics.h"
 
-bool UStaticsHelper::ActorIsInFront(const AActor* ActorFrom, const FVector& ToLocation)
+bool UStaticsHelper::ActorIsInFront(const AActor* ActorFrom, const FVector& ToLocation, const float DotCompare)
 {
-	const FVector DirToTarget = ToLocation - ActorFrom->GetActorLocation();
+	FVector DirToTarget = ToLocation - ActorFrom->GetActorLocation();
+
+	if(DotCompare != 0) // no need to normalize if dot is zero since then we only need to see if the dot is pos or neg 
+		DirToTarget.Normalize(); 
 
 	const float Dot = FVector::DotProduct(DirToTarget, ActorFrom->GetActorForwardVector());
 
-	return Dot >= 0; // In front of player if Dot Product is > 0, perpendicular when 0 
+	return Dot >= DotCompare; // In front of player if Dot Product is > 0, perpendicular when 0 
 }
 
 bool UStaticsHelper::IsPlayingLocal(const UObject* WorldRefObject)

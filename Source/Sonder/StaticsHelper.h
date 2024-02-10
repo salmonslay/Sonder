@@ -24,14 +24,21 @@ class SONDER_API UStaticsHelper : public UObject
 	GENERATED_BODY()
 
 public:
-	/** Checks if ActorTo is in front of ActorFrom based on ActorFrom's forward vector. Perpendicular counts as in front */
-	static bool ActorIsInFront(const AActor* ActorFrom, const AActor* ActorTo)
+	
+	/**
+	 * Checks if ActorTo is in front of ActorFrom based on ActorFrom's forward vector. Perpendicular counts as in front
+	 * Set DotCompare (-1 to 1) if other logic is wanted to count something as in front 
+	 */
+	static bool ActorIsInFront(const AActor* ActorFrom, const AActor* ActorTo, const float DotCompare = 0)
 	{
 		return ActorIsInFront(ActorFrom, ActorTo->GetActorLocation());
 	} 
 
-	/** Checks if ToLocation is in front of ActorFrom based on ActorFrom's forward vector. Perpendicular counts as in front */
-	static bool ActorIsInFront(const AActor* ActorFrom, const FVector& ToLocation);
+	/**
+	 * Checks if ActorTo is in front of ActorFrom based on ActorFrom's forward vector. Perpendicular counts as in front
+	 * Set DotCompare if other logic is wanted to count something as in front 
+	 */
+	static bool ActorIsInFront(const AActor* ActorFrom, const FVector& ToLocation, const float DotCompare = 0);
 
 	/** Check if the current session is playing locally (2 people on the same device) */
 	static bool IsPlayingLocal(const UObject* WorldRefObject); 
