@@ -131,6 +131,12 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	int EndlessHighscore = 0;
 
+	UPROPERTY(BlueprintReadWrite)
+	int LastSPPlaytime = -1;
+	
+	UPROPERTY(BlueprintReadWrite)
+	int BestSPPlaytime = -1;
+
 #pragma region achievements
 	UPROPERTY(BlueprintReadOnly)
 	int EverlookingEyesKilled = 0;
