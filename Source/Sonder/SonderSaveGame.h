@@ -128,6 +128,9 @@ public:
 	UPROPERTY(BlueprintReadWrite)
 	bool bFootballUnlocked;
 
+	UPROPERTY(BlueprintReadWrite)
+	int EndlessHighscore = 0;
+
 #pragma region achievements
 	UPROPERTY(BlueprintReadOnly)
 	int EverlookingEyesKilled = 0;
@@ -187,5 +190,16 @@ public:
 		}
 
 		return SaveGame->RobotBoostsWithDash;
+	}
+	
+	UFUNCTION(BlueprintCallable)
+	static void AddHighscoreIfBetter(int score)
+	{
+		USonderSaveGame* SaveGame = APROJCharacter::GetSaveGameSafe();
+		if (score > SaveGame->EndlessHighscore)
+		{
+			SaveGame->EndlessHighscore = score;
+			APROJCharacter::SetSaveGame(SaveGame);
+		}
 	}
 };
