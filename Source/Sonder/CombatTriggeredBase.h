@@ -15,6 +15,6 @@ public:
 	// Sets default values for this actor's properties
 	ACombatTriggeredBase();
 
-	UFUNCTION(BlueprintImplementableEvent)
+	UFUNCTION(BlueprintImplementableEvent, BlueprintCallable)
 	void TriggeredEvent();
 };
