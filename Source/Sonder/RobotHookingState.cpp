@@ -307,7 +307,7 @@ void URobotHookingState::MulticastRPCStartTravel_Implementation()
 	if(GrabEffect)
 		UNiagaraFunctionLibrary::SpawnSystemAtLocation(this, GrabEffect, CurrentHookTargetLocation);
 
-	if(HookShotTravelEffect)
+	if(HookShotTravelEffect && !HookShotTravelComponent)
 		HookShotTravelComponent = UNiagaraFunctionLibrary::SpawnSystemAttached(HookShotTravelEffect, GetOwner()->GetRootComponent(), NAME_None, FVector::ZeroVector, FRotator::ZeroRotator, EAttachLocation::KeepRelativeOffset, false);
 
 	MovementComponent->SetMovementMode(MOVE_Flying); 
@@ -381,6 +381,9 @@ void URobotHookingState::ActorOverlap(UPrimitiveComponent* OverlappedComp, AActo
 
 void URobotHookingState::ServerRPC_DamageActor_Implementation(AActor* ActorToDamage)
 {
+    if(!IsValid(ActorToDamage))
+        return; 
+
 	ActorToDamage->TakeDamage(HookTravelDamageAmount, FDamageEvent(), CharOwner->GetInstigatorController(), CharOwner); 
 }
 
@@ -397,7 +400,10 @@ void URobotHookingState::MulticastRPCHookShotEnd_Implementation()
 	MovementComponent->SetMovementMode(EMovementMode::MOVE_Walking);
 
 	if(HookShotTravelComponent)
-		HookShotTravelComponent->DestroyComponent(); 
+	{
+		HookShotTravelComponent->DestroyComponent();
+		HookShotTravelComponent = nullptr; 
+	}
 
 	RobotCharacter->OnHookShotEnd(); 
 }
