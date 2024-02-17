@@ -3,6 +3,7 @@
 
 #include "EnemyJumpTrigger.h"
 
+#include "BTTask_MoveWithJumpPoints.h"
 #include "EnemyJumpPoint.h"
 #include "MovingPlatform.h"
 #include "NavigationPath.h"
@@ -88,11 +89,11 @@ FVector AEnemyJumpTrigger::RequestJumpLocation(const FVector &EnemyLoc, const FV
 	}
 	if (!bIsOverlappingWithMovingPlatform && JumpPointLocations.Num() <= 1) // if trigger only has tqo jump points, calculate furthest one without regarding for closeness to player
 	{
-	return CalculatePointFurthestFromEnemy(EnemyLoc);
+		return CalculatePointFurthestFromEnemy(EnemyLoc);
 	}
 	if (!bIsOverlappingWithMovingPlatform && JumpPointLocations.Num() >= 2) // if trigger has more than 2 jump points
 	{
-	return CalculateAccessiblePointFurthestFromEnemy(EnemyLoc, ClosestJumpPoint, CurrentTargetLocation);
+		return CalculateAccessiblePointFurthestFromEnemy(EnemyLoc, ClosestJumpPoint, CurrentTargetLocation);
 	}
 	
 	return FVector::ZeroVector;
@@ -204,8 +205,8 @@ FVector AEnemyJumpTrigger::CalculateAccessiblePointFurthestFromEnemy(const FVect
 
 	// Find point closest to player that is reachable from those points
 	// perform a raycast to see if the location is reachable, choosing the location furthest away from enemy that is reachable
-	float ReachableMinDistanceToPlayer = 50000000.f;
-	float MinDistanceToPlayer = 500000000.f;
+	float ReachableMinDistanceToPlayer = REALLY_LARGE_NUMBER;
+	float MinDistanceToPlayer = REALLY_LARGE_NUMBER;
 	FVector DefaultPoint = FVector::ZeroVector;
 
 	for (FVector PossibleJumpLoc : PossibleJumpPoints)
@@ -232,11 +233,9 @@ FVector AEnemyJumpTrigger::CalculateAccessiblePointFurthestFromEnemy(const FVect
 	if (ReachablePoint == FVector::ZeroVector)
 	{
 		const float DirToJumpPointY = DefaultPoint.Y < EnemyLocation.Y ? -1 : 1;
-		//DrawDebugSphere(GetWorld(), DefaultPoint, 30.f, 6, FColor::Yellow, false, 0.2f );
 		return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, DefaultPoint.Z + BasicJumpZOffset);
 	}
 	const float DirToJumpPointY = ReachablePoint.Y < EnemyLocation.Y ? -1 : 1;
-	//DrawDebugSphere(GetWorld(),  FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, ReachablePoint.Z + BasicJumpZOffset), 30.f, 6, FColor::Yellow, false, 0.2f );
 	return FVector(EnemyLocation.X, EnemyLocation.Y + DirToJumpPointY * EnemyJumpDistance, ReachablePoint.Z + BasicJumpZOffset);
 }
 
@@ -250,17 +249,8 @@ FVector AEnemyJumpTrigger::CalculatePointTowardsPlayer(const FVector& EnemyLocat
 	// Create a point in the direction towards the player with the specified jump distance and offset
 	const FVector JumpPoint = FVector(EnemyLocation.X, EnemyLocation.Y + (DirToPlayer * EnemyJumpDistance), EnemyLocation.Z);
 	const FVector Point = FVector(EnemyLocation.X, EnemyLocation.Y + DirToPlayer * EnemyJumpDistance, JumpPoint.Z + BasicJumpZOffset);
-
-	/*
-	DrawDebugSphere(GetWorld(),CurrentTargetLocation, 30.f, 30, FColor::Red, false, 0.2f);
-
-		DrawDebugSphere(GetWorld(),Point, 30.f, 30, FColor::Blue, false, 0.2f);
-	DrawDebugString(GetWorld(), Point, TEXT("Using point towards player"), nullptr, FColor::White, 0.3f);
-*/
-	return Point;
-	//JumpPoint.Z += BasicJumpZOffset;
 	
-	//return JumpPoint;
+	return Point;
 }
 
 bool AEnemyJumpTrigger::CanReachJumpPoint(const FVector& PointFrom, const FVector& PointTo) const

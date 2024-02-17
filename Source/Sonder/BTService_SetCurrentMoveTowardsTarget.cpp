@@ -9,6 +9,12 @@
 #include "BehaviorTree/BlackboardComponent.h"
 #include "Kismet/GameplayStatics.h"
 
+namespace JumpPointMovement
+{
+	bool bDebugDrawJumpPointTarget = false;
+	FAutoConsoleVariableRef CVarDebugDrawJumpPointTarget(TEXT("sonder.DebugDrawJumpPointTarget"), bDebugDrawJumpPointTarget, TEXT("Show current jump point target"), ECVF_Cheat);
+}
+
 UBTService_SetCurrentMoveTowardsTarget::UBTService_SetCurrentMoveTowardsTarget()
 {
 	NodeName = TEXT("SetCurrentMoveTowardsTarget");
@@ -66,18 +72,25 @@ void UBTService_SetCurrentMoveTowardsTarget::TickNode(UBehaviorTreeComponent& Ow
 		}
 
 		ClosestMoveLoc = GetClosestReachableJumpPointLocation();
-
+#if !UE_BUILD_SHIPPING
+		if (JumpPointMovement::bDebugDrawJumpPointTarget && ClosestMoveLoc != FVector::ZeroVector)
+		{
+			DrawDebugSphere(GetWorld(), ClosestMoveLoc, 30.f, 5, FColor::Orange, false, 0.5f);
+		}
+#endif //!UE_BUILD_SHIPPING
+		
 		if (ClosestMoveLoc == FVector::ZeroVector)
 		{
 			ClosestMoveLoc = GetClosestJumpPointTo(CurrentTargetLocation);
+#if !UE_BUILD_SHIPPING
+			if (JumpPointMovement::bDebugDrawJumpPointTarget && ClosestMoveLoc != FVector::ZeroVector)
+			{
+				DrawDebugSphere(GetWorld(), ClosestMoveLoc, 30.f, 5, FColor::Turquoise, false, 0.5f);
+			}
+#endif //!UE_BUILD_SHIPPING
 		}
 		BlackboardComponent->SetValueAsVector(BBKeyClosestMoveTarget.SelectedKeyName,  FVector(OwnerLocation.X, ClosestMoveLoc.Y, OwnerLocation.Z ) );
-	
-		if (bDebug)
-		{
-			DrawDebugSphere(GetWorld(), BlackboardComponent->GetValueAsVector(BBKeyClosestMoveTarget.SelectedKeyName), 30.f, 6, FColor::Magenta, false, 0.2f );
-		}
-	
+		
 		BlackboardComponent->SetValueAsBool("bIsNearlySameHeightAsPlayer", false);
 		BlackboardComponent->ClearValue("bIsNearlySameHeightAsPlayer");
 	}

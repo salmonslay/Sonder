@@ -5,12 +5,16 @@
 
 #include "AIController.h"
 #include "MovingPlatform.h"
-#include "PROJCharacter.h"
 #include "ShadowCharacter.h"
 #include "BehaviorTree/BlackboardComponent.h"
-#include "GameFramework/PawnMovementComponent.h"
 #include "Kismet/KismetSystemLibrary.h"
 
+
+namespace Navigation
+{
+	bool bDebugDrawSightAndGround = false;
+	FAutoConsoleVariableRef CVarDebugDrawSightAndGround(TEXT("sonder.navigation.bDebugDrawSightAndGround"), bDebugDrawSightAndGround, TEXT("Show line tracet to target and ground"), ECVF_Cheat);
+}
 
 UBTService_SetValidPath::UBTService_SetValidPath()
 {
@@ -34,13 +38,7 @@ void UBTService_SetValidPath::TickNode(UBehaviorTreeComponent& OwnerComp, uint8*
 	BlackboardComponent = OwnerComp.GetAIOwner()->GetBlackboardComponent();
 	
 	if (BlackboardComponent == nullptr) return;
-
-	if (bDebug)
-	{
-		DrawDebugSphere(GetWorld(), FVector(OwnerLocation.X, OwnerLocation.Y, OwnerLocation.Z + HeightDifferenceToMarkInvalid), 30.f, 30, FColor::Red, false, 1.f );
-		DrawDebugSphere(GetWorld(), FVector(OwnerLocation.X, OwnerLocation.Y, OwnerLocation.Z - HeightDifferenceToMarkInvalid), 30.f, 30, FColor::Red, false, 1.f );
-	}
-
+	
 	if (BlackboardComponent->GetValueAsBool("bIsJumping"))
 	{
 		SetPathIsInvalid(OwnerComp);
@@ -112,9 +110,9 @@ bool UBTService_SetValidPath::HasLineOfSightToPlayer(AShadowCharacter* Owner, co
 	TArray<AActor*> ActorsToIgnore;
 	ActorsToIgnore.Add(Owner);
 		
-	if (bDebug)
+	if (Navigation::bDebugDrawSightAndGround)
 	{
-		return !UKismetSystemLibrary::LineTraceSingleForObjects(this, Owner->GetActorLocation(), CurrentPlayerTarget, LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true, FColor::Red, FColor::Blue, 10.f);
+		return !UKismetSystemLibrary::LineTraceSingleForObjects(this, Owner->GetActorLocation(), CurrentPlayerTarget, LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true, FColor::Purple, FColor::Purple, 0.2f);
 	}
 	return !UKismetSystemLibrary::LineTraceSingleForObjects(this, Owner->GetActorLocation(), CurrentPlayerTarget, LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
 
@@ -134,9 +132,9 @@ void UBTService_SetValidPath::VerifyGroundStatus(AShadowCharacter* Owner) const
 	ActorsToIgnore.Add(Owner);
 
 	bool bHit;
-	if (bDebug)
+	if (Navigation::bDebugDrawSightAndGround)
 	{
-		bHit = UKismetSystemLibrary::SphereTraceSingleForObjects(this, OwnerLocation, FVector(OwnerLocation.X, OwnerLocation.Y, OwnerLocation.Z - 90.f), 30.f, LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true, FColor::Red, FColor::Blue, 10.f);
+		bHit = UKismetSystemLibrary::SphereTraceSingleForObjects(this, OwnerLocation, FVector(OwnerLocation.X, OwnerLocation.Y, OwnerLocation.Z - 90.f), 30.f, LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::ForDuration, HitResult, true, FColor::Red, FColor::Blue, 0.2f);
 	} else
 	{
 		bHit = UKismetSystemLibrary::SphereTraceSingleForObjects(this, OwnerLocation, FVector(OwnerLocation.X, OwnerLocation.Y, OwnerLocation.Z - 90.f), 30.f,LineTraceObjects, false, ActorsToIgnore, EDrawDebugTrace::None, HitResult, true);
