@@ -121,7 +121,10 @@ private:
 	UPROPERTY(EditDefaultsOnly)
 	TSubclassOf<UUserWidget> WidgetsToHide;
 
-	inline static FString LatestPlayedCutsceneLevel = ""; 
+	inline static FString LatestPlayedCutsceneLevel = "";
+
+	UPROPERTY(EditAnywhere)
+	ESonderLevel LevelToMarkAsCompleted = ESonderLevel::None; 
 
 	/** Plays the assigned cutscene */
 	void PlayCutscene();

@@ -199,14 +199,22 @@ void ACutsceneManager::StopCutscene()
 	CutscenesPlayingCounter--;
 
 	OnCutsceneEnd(!LevelToLoadOnCutsceneEnd.IsNone()); 
-
-	if(HasAuthority() && !LevelToLoadOnCutsceneEnd.IsNone())
-		GetWorld()->ServerTravel("/Game/Maps/" + LevelToLoadOnCutsceneEnd.ToString());
-	else if(LevelToLoadOnCutsceneEnd.IsNone())
-		ShowHud();
-
+	
 	if(CutsceneFinishedDelegate.IsBound())
-		CutsceneFinishedDelegate.Broadcast(); 
+		CutsceneFinishedDelegate.Broadcast();
+	
+	if(HasAuthority() && !LevelToLoadOnCutsceneEnd.IsNone())
+	{
+		GetWorld()->ServerTravel("/Game/Maps/" + LevelToLoadOnCutsceneEnd.ToString());
+		
+		USonderSaveGame* SaveFile = APROJCharacter::GetSaveGameSafe();
+		SaveFile->AddLevelCompleted(LevelToMarkAsCompleted);
+		APROJCharacter::SetSaveGame(SaveFile); 
+	}
+	else if(LevelToLoadOnCutsceneEnd.IsNone())
+	{
+		ShowHud();
+	}
 
 	bHasStopped = true; 
 }
