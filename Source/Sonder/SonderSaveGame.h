@@ -45,6 +45,7 @@ enum class ELanguage : uint8
 {
 	English = 0,
 	Swedish,
+	Chinese,
 };
 
 USTRUCT(BlueprintType)
